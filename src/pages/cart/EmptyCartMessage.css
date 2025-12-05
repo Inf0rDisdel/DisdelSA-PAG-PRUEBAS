@@ -1,0 +1,29 @@
+.empty-cart-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 4rem 2rem;
+    background-color: #fff;
+    border-radius: 16px;
+    text-align: center;
+    border: 2px dashed #e9ecef;
+}
+
+.empty-cart-icon {
+    font-size: 4rem;
+    color: #ced4da;
+    margin-bottom: 1.5rem;
+}
+
+.empty-cart-title {
+    font-size: 1.5rem;
+    color: #495057;
+    margin: 0 0 0.5rem 0;
+}
+
+.empty-cart-text {
+    font-size: 1rem;
+    color: #868e96;
+    max-width: 400px;
+}

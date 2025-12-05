@@ -1,0 +1,106 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+
+.cart-page-background {
+  background-color: #f8f9fa;
+  min-height: 100vh;
+  padding: 3rem 2rem;
+  font-family: 'Poppins', sans-serif;
+}
+
+.cart-page-layout {
+  display: grid;
+  grid-template-columns: 2fr 1fr; /* 2 partes carrito, 1 parte formulario */
+  gap: 3rem;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+/* --- NUEVOS ESTILOS DEL HEADER (Título y Botón) --- */
+.cart-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  flex-wrap: wrap; /* Permite que bajen si no caben */
+  gap: 15px;
+}
+
+.main-title {
+  font-size: 2.25rem;
+  font-weight: 700;
+  color: #1a202c;
+  margin: 0; /* Quitamos margen porque lo controla el padre */
+}
+
+.clear-cart-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background-color: white;
+  border: 1px solid #dc3545;
+  color: #dc3545;
+  padding: 8px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.clear-cart-btn:hover {
+  background-color: #dc3545;
+  color: white;
+}
+
+.cart-items-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* ==================================================
+   DISEÑO RESPONSIVO (TABLETS Y MÓVILES)
+   ================================================== */
+
+/* TABLETS (Pantallas medianas, menos de 1024px) */
+@media (max-width: 1024px) {
+  .cart-page-layout {
+    grid-template-columns: 1fr; /* Una sola columna: Carrito arriba, Formulario abajo */
+    gap: 2rem;
+  }
+  
+  .cart-page-background {
+    padding: 2rem;
+  }
+}
+
+/* MÓVILES (Pantallas pequeñas, menos de 768px) */
+@media (max-width: 768px) {
+  .cart-page-background {
+    padding: 1.5rem 1rem; /* Reducimos padding para ganar espacio */
+  }
+
+  .main-title {
+    font-size: 1.8rem; /* Título un poco más pequeño */
+  }
+
+  /* Ajuste para el botón de "Eliminar todo" en móvil */
+  .clear-cart-btn {
+    padding: 6px 12px;
+    font-size: 13px;
+  }
+}
+
+/* MÓVILES PEQUEÑOS (Menos de 480px) */
+@media (max-width: 480px) {
+  .cart-header {
+    flex-direction: column; /* Ponemos título arriba y botón abajo */
+    align-items: flex-start; /* Alineados a la izquierda */
+    gap: 10px;
+  }
+
+  .clear-cart-btn {
+    width: 100%; /* Botón ancho completo para facilitar el toque */
+    justify-content: center;
+  }
+}

@@ -1,0 +1,91 @@
+.promo-nescafe-wrapper {
+  padding: 0 0;
+  margin-top: 0; 
+}
+
+.promo-nescafe-title {
+  font-size: 24px;
+  text-align: left;
+  margin-bottom: 20px;
+  color: #333;
+  max-width: 1240px;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 0 20px;
+  box-sizing: border-box;
+}
+
+.promo-nescafe-container {
+  display: flex;
+  max-width: 1240px;
+  margin: 0 auto;
+  gap: 20px;
+  padding: 0 20px;
+  box-sizing: border-box;
+ 
+  height: 400px; 
+}
+
+
+.promo-item {
+  /* Eliminamos el box-shadow para un look más limpio como pediste */
+  /* Si quieres la sombra sutil de la imagen de referencia, descomenta la siguiente línea: */
+  /* box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); */
+  
+  border-radius: 12px; /* Un poco más de redondeo como en la imagen */
+  overflow: hidden; /* Muy importante para que la imagen respete el borde redondeado */
+
+  /* ===== CAMBIO CLAVE 2: CREAMOS UN CONTEXTO DE POSICIONAMIENTO ===== */
+  position: relative; 
+}
+
+/* --- Estilo para la imagen --- */
+.promo-item img {
+  /* ===== CAMBIO CLAVE 3: LA IMAGEN AHORA LLENA SU CONTENEDOR ===== */
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* 'cover' se asegura de que la imagen cubra todo el espacio sin deformarse */
+  display: block;
+  transition: transform 0.4s ease; /* Pequeño efecto de zoom al pasar el mouse */
+}
+
+/* Efecto hover opcional pero recomendado */
+.promo-item:hover img {
+  transform: scale(1.03);
+}
+
+/* --- Tamaños para escritorio --- */
+.banner-principal {
+  flex: 0 0 65%; /* Usamos flex para más precisión que width */
+}
+
+.banner-secundario {
+  flex: 0 0 calc(35% - 20px); /* El cálculo considera el 'gap' */
+}
+
+@media (max-width: 800px) {
+  .promo-nescafe-container {
+    display: block; /* Ya no necesitamos flex porque solo habrá un elemento */
+    height: auto;   /* La altura se ajustará al contenido */
+  }
+
+  /* --- Ocultamos el banner secundario --- */
+  .banner-secundario {
+    display: none; 
+  }
+
+  /* --- Ajustamos el banner principal para que se vea grande --- */
+  .banner-principal {
+    width: 100%;
+    
+    /* Aquí defines la altura que quieres que tenga el banner en el celular.
+       300px o 350px suele ser una buena medida para que se vea bien el producto */
+    height: 350px; 
+  }
+  .promo-nescafe-title {
+    font-size: 1.2rem;
+  }
+}

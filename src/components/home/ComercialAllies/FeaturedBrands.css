@@ -1,0 +1,88 @@
+/* --- Estilos Base (Para Escritorio > 1024px) --- */
+.featured-brands-section {
+  max-width: 1200px;
+  margin: 8px auto;
+  padding: 5px 8px;
+  text-align: left;
+  border-radius: 15px;
+}
+
+.featured-brands-section .section-title {
+  display: inline-block;
+  padding: 3px 20px;
+  background-color:  #fafafa;;
+  border-radius: 50px;
+  box-shadow: 0 4px 10px rgba(49, 48, 48, 0.05);
+  margin-bottom: 10px;
+  font-size: 1.3rem;
+  /*font-weight: bold;*/
+  /*font-family: Arial Black, sans-serif;*/
+  color: #135eab;
+}
+
+.brands-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap:0; /* Añadimos un gap base para un espaciado consistente */
+}
+
+.brand-item {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  
+  /* En escritorio, permitimos que sea flexible */
+  flex: 1 1 200px;
+  max-width: 300px; /* Un máximo para que no se estiren demasiado */
+  
+  border-radius: 30px;
+  padding: 0px; /* Añadimos un poco de padding para que la imagen respire */
+  box-sizing: border-box;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.brand-item:hover {
+  transform: translateY(-5px);
+  box-shadow: 
+    inset 0 0 0 2px #6892bc, 
+    0 12px 30px rgba(3, 3, 4, 0.1);
+}
+
+.brand-item img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* 
+ * --- NUEVO BREAKPOINT PARA TABLETS (hasta 1024px) ---
+ * Aquí forzamos a que se muestren 4 marcas por fila.
+ */
+@media (max-width: 1024px) {
+  .brand-item {
+    /* Cada item ocupa el 25% del ancho menos el espacio del gap,
+       lo que resulta en 4 columnas perfectas. */
+    flex-basis: calc(25% - 12px);
+    max-width: calc(25% - 12px);
+  }
+}
+
+
+/* 
+ * --- BREAKPOINT PARA MÓVILES (hasta 768px) ---
+ * Este código se activa en pantallas más pequeñas y SOBREESCRIBE al de tablets.
+ * Aquí forzamos las 2 columnas que querías.
+ */
+@media (max-width: 768px) {
+  .featured-brands-section {
+    text-align: flex-start;
+    padding: 0 15px;
+  }
+
+  .brand-item {
+    /* Cada item ocupa el 50% del ancho menos el espacio del gap,
+       lo que resulta en 2 columnas perfectas. */
+    flex-basis: calc(20% - 8px);
+    max-width: calc(50% - 8px);
+  }
+}

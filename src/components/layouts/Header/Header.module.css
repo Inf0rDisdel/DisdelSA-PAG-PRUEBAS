@@ -1,0 +1,348 @@
+.header {
+  background-color: #135eab;
+  color: white;
+  padding: 10px 0;
+  border-bottom: 5px solid #e0e0e0;
+  width: 100%;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.headerContainer {
+  width: 100%;
+  max-width: 1180px; 
+  margin: 0 auto;    
+  padding: 0 15px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+/* --- IZQUIERDA: LOGO + HAMBURGUESA --- */
+.headerLeft {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  flex-shrink: 0; 
+}
+
+.logo {
+  height: 90px;
+  display: block;
+  margin-left: -20px;
+}
+
+/* El botón de las 3 rayitas (oculto en PC) */
+.hamburgerButton {
+  display: none; 
+  background: none;
+  border: none;
+  color: white;
+  font-size: 28px;
+  cursor: pointer;
+  padding: 0;
+}
+
+.headerCenter {
+  flex-grow: 1; 
+  display: flex;
+  flex-direction: column;
+  
+  /* CAMBIO CLAVE: Alineamos todo a la IZQUIERDA en lugar del centro */
+  align-items: flex-start !important; 
+  
+  gap: 10px;
+  margin-left: 40px !important; /* Ajusta este número si lo quieres más cerca o lejos */
+}
+
+/* Barra de búsqueda */
+.searchBar {
+  display: flex;
+  width: 100%;
+  max-width: 650px; /* Le damos un poco más de ancho si quieres */
+  background-color: white;
+  border-radius: 8px; 
+  overflow: hidden;
+}
+
+.searchBar input {
+  width: 100%;
+  border: none;
+  outline: none;
+  padding: 10px 15px;
+  font-size: 14px;
+  color: #555;
+}
+
+.searchButton {
+  background-color: #f0f0f0;
+  border: none;
+  padding: 0 15px;
+  cursor: pointer;
+  color: #777;
+  font-size: 16px;
+  transition: background 0.2s;
+}
+
+.searchButton:hover { background-color: #e0e0e0; }
+
+.navButton {
+  background-color: #96c121;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 5px 15px;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  
+  /* AQUÍ ESTABA EL ERROR: margin-right: 120px; */
+  margin-right: 0 !important; /* Lo quitamos para que se peguen */
+  transition: transform 0.2s;
+}
+
+.navButton:hover {
+  background-color: #82a81c;
+  transform: translateY(-2px); 
+}
+
+.mainNav {
+  display: flex;
+  gap: 15px;
+  margin-left: 20px;
+  
+  /* CAMBIO CLAVE: Alineamos los botones a la IZQUIERDA */
+  justify-content: flex-start !important; 
+  
+  width: 100%;
+}
+/* --- DERECHA: ACCIONES Y CARRITO --- */
+.headerRight {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.desktopUserActions {
+  display: grid !important; /* Usamos Grid para acomodar arriba y abajo */
+  grid-template-columns: auto auto; /* Dos columnas para Login y MyBusiness */
+  column-gap: 20px; /* Espacio entre Login y MyBusiness */
+  row-gap: 15px;     /* Espacio vertical para separar "Recoge en tienda" */
+  align-items: center;
+  justify-items: end; /* Alineamos todo a la derecha */
+}
+
+/* Estilos para Login y MyBusiness (se mantienen igual) */
+.actionLink {
+  color: white;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 14px;
+  transition: opacity 0.2s;
+}
+
+/* ESTILOS PARA "RECOGE EN TIENDA" */
+.secondaryLink {
+  color: white;
+  text-decoration: none;
+  font-size: 13px; /* Un poquito más chico para que se vea elegante */
+  
+  /* EL TRUCO: */
+  grid-column: 1 / -1; /* Le decimos que ocupe todo el ancho de abajo */
+  justify-self: flex-end; /* Lo centramos debajo de los dos de arriba */
+  /* O usa justify-self: end; si lo quieres pegado a la derecha */
+  
+  transition: opacity 0.2s;
+}
+
+.actionLink:hover, .secondaryLink:hover { opacity: 0.8; }
+.actionIcon { height: 35px; }
+.cartIcon { height: 40px; }
+
+.cartLink {
+  color: white;
+  text-decoration: none;
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.cartNotification {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  background-color: #96c121;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 11px;
+  font-weight: bold;
+  color: white;
+}
+
+/* ========================================================= */
+/* ===   MENÚ LATERAL (SIDEBAR TIPO KEMIK)               === */
+/* ========================================================= */
+
+/* Fondo oscuro detrás del menú */
+.mobileMenuOverlay {
+  position: fixed;
+  top: 0; 
+  left: 0; 
+  width: 100%; 
+  height: 100%;
+  background: rgba(0,0,0,0.5); 
+  z-index: 1999;
+  opacity: 0; 
+  visibility: hidden; 
+  transition: 0.3s;
+}
+.mobileMenuOverlay.open { opacity: 1; visibility: visible; }
+
+/* La caja blanca del menú */
+.mobileMenu {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 280px; /* Ancho del menú */
+  height: 100%;
+  background-color: white;
+  z-index: 2000;
+  transform: translateX(-100%); /* Oculto a la izquierda */
+  transition: transform 0.3s ease-in-out;
+  padding: 0;
+  box-shadow: 2px 0 10px rgba(0,0,0,0.2);
+  display: flex;
+  flex-direction: column;
+}
+.mobileMenu.open { transform: translateX(0); } /* Se muestra */
+
+.mobileMenuHeader {
+  background-color: #f8f9fa;
+  padding: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #eee;
+}
+
+.mobileMenuHeader h3 { margin: 0; color: #333; font-size: 18px; }
+.closeButton { background: none; border: none; font-size: 24px; color: #555; }
+
+.mobileNavLinks {
+  padding: 10px 0;
+  overflow-y: auto;
+}
+
+/* Estilos de los enlaces dentro del Sidebar */
+.sidebarLink {
+  display: flex;
+  align-items: center;
+  padding: 15px 20px;
+  text-decoration: none;
+  border-bottom: 1px solid #f0f0f0;
+  color: #333;
+  transition: background 0.2s;
+}
+.sidebarLink:hover { background-color: #f9f9f9; }
+
+.sidebarIcon { width: 24px; height: 24px; margin-right: 15px; object-fit: contain; }
+.sidebarTitle { display: block; font-weight: bold; font-size: 14px; }
+.sidebarSubtitle { display: block; font-size: 12px; color: #888; }
+
+.sidebarLinkSimple {
+  display: block;
+  padding: 15px 20px;
+  text-decoration: none;
+  color: #555;
+  font-size: 15px;
+}
+
+.divider { border: 0; border-top: 5px solid #f4f4f4; margin: 0; }
+
+.categoriesContainer {
+  position: relative !important; /* IMPORTANTE: Hace que el menú se ancle al botón */
+  display: flex;
+  align-items: center;
+  height: 100%;
+  z-index: 2000; /* Asegura que el menú quede encima de los banners */
+}
+
+
+/* ========================================================= */
+/* ===   ANIMACIÓN DE CARRITO (BUMP)                     === */
+/* ========================================================= */
+@keyframes bumpEffect {
+  0% { transform: scale(1); }
+  25% { transform: scale(1.2); }
+  50% { transform: scale(0.95); }
+  75% { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}
+.bump { animation: bumpEffect 300ms ease-out; }
+
+/* ========================================================= */
+/* ===   RESPONSIVE (TABLETS)                            === */
+/* ========================================================= */
+@media (max-width: 1024px) {
+  .headerContainer { padding: 10px 15px; }
+  .logo { height: 70px; }
+  .actionText { display: none; } /* Ocultar texto "Login" en tablets */
+
+}
+
+/* ========================================================= */
+/* ===   RESPONSIVE MÓVIL (CELULARES)                    === */
+/* ========================================================= */
+@media (max-width: 600px) {
+  
+  .headerContainer {
+    display: flex;
+    flex-wrap: wrap; /* Permitir filas */
+    padding: 10px;
+    gap: 10px;
+  }
+
+  /* 1. MOSTRAR BOTÓN HAMBURGUESA */
+  .hamburgerButton {
+    display: block;
+    margin-right: 10px;
+  }
+
+  /* 2. LOGO */
+  .logo { height: 45px; }
+
+  /* 3. OCULTAR NAVEGACIÓN PC (Login, Depts, etc) */
+  /* Todo esto ahora vive dentro del Sidebar lateral */
+  .desktopUserActions, .mainNav {
+    display: none !important; 
+  }
+
+  /* 4. CARRITO (Se queda arriba a la derecha) */
+  .headerRight {
+    margin-left: auto; /* Empuja el carrito a la orilla derecha */
+    gap: 0;
+  }
+
+  /* 5. BUSCADOR (Se baja a la segunda fila) */
+  .headerCenter {
+    width: 100%; /* Ocupa todo el ancho */
+    order: 3;    /* Lo mandamos al final */
+    margin-top: 5px;
+  }
+  
+  .searchBar {
+    max-width: 100%;
+    margin: 0;
+  }
+}

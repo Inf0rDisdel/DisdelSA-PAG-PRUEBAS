@@ -1,0 +1,120 @@
+.newsletter-wrapper {
+    background-color: #f7f7f7; 
+    padding: 40px 20px;
+    /*font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;*/
+}
+
+.newsletter-container {
+    max-width: 1100px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 30px;
+    flex-wrap: wrap;
+}
+
+
+.newsletter-info {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.newsletter-icon {
+    font-size: 60px; 
+    color: #8dc63f; 
+    flex-shrink: 0; 
+}
+
+.newsletter-info p {
+    margin: 0;
+    color: #333;
+    font-size: 1rem;
+    line-height: 1.5;
+}
+
+.newsletter-info p strong {
+    font-weight: 700;
+}
+
+
+.newsletter-form {
+    display: flex;
+    gap: 10px;
+    flex-grow: 1;
+    min-width: 400px; 
+}
+
+.newsletter-input {
+    width: 100%;
+    padding: 15px 20px;
+    border: 1px solid #ccc;
+    border-radius: 12px;
+    font-size: 1rem;
+    color: #555;
+}
+
+.newsletter-input::placeholder {
+    color: #aaa;
+}
+
+.newsletter-button {
+    background-color: #8dc63f; 
+    color: white;
+    font-weight: bold;
+    font-size: 1.1rem;
+    padding: 15px 30px;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    white-space: nowrap; 
+}
+
+.newsletter-button:hover {
+    background-color: #7ab42f; 
+}
+
+
+.newsletter-acceptance {
+    max-width: 1100px;
+    margin: 20px auto 0 auto;
+    text-align: right;
+    font-size: 0.8rem;
+    color: #666;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+}
+
+.newsletter-acceptance input[type="checkbox"] {
+    margin-right: 8px;
+}
+
+.newsletter-acceptance a {
+    color: #333;
+    /*font-weight: bold;*/
+    text-decoration: underline;
+}
+
+/* ======================================================= */
+/*                     RESPONSIVE DESIGN                   */
+/* ======================================================= */
+@media (max-width: 992px) {
+    .newsletter-container {
+        flex-direction: column; 
+        align-items: center;
+        text-align: center;
+    }
+
+    .newsletter-form {
+        min-width: 100%;
+    }
+
+    .newsletter-acceptance {
+        justify-content: center; 
+        text-align: center;
+        margin-top: 30px;
+    }
+}

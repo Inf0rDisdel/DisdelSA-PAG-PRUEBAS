@@ -1,0 +1,160 @@
+/* --- TU CÓDIGO ORIGINAL --- */
+.category-grid-section {
+  text-align: left; 
+  padding: 5px 40px; 
+  max-width: 1200px;
+  margin: auto; 
+  margin-top: -22px;
+  /* YA NO LLEVA OVERFLOW AQUÍ */
+}
+
+.section-title {
+  display: inline-block; 
+  padding: 3px 20px;
+  background-color: white;
+  border: 1px solid #f0f0f0;
+  border-radius: 50px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+  margin-bottom: 3px; 
+  font-size: 1.2rem;   
+  /*font-weight: bold;*/
+  /*font-family: Arial Black;*/
+  color: #135eab;
+}
+
+/* --- CORRECCIÓN AQUÍ --- */
+.category-slider {
+  position: relative;
+  overflow: hidden; /* <-- El overflow VA AQUÍ, en el contenedor directo del slider */
+  margin: 0 -15px; /* Esto se queda para el espaciado */
+}
+
+/* --- El resto de tu código se queda igual --- */
+.category-item {
+  display: flex !important;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  cursor: pointer;
+  text-decoration: none;
+  padding: 0 15px; 
+}
+
+/* ... (el resto de tus estilos de .category-item p, .category-image, etc. se quedan igual) ... */
+.category-item p {
+  margin-top: 15px;
+  font-size: 1.1rem; 
+  color: #135eab;  
+  /*font-weight: bold;*/
+  /*font-family: Bahnschrift Condensed, Arial, sans-serif;*/
+  height: 10px; 
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.category-image {
+  width: 220px; 
+  height: 205px; 
+  
+  border-radius: 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); 
+  object-fit: cover; 
+  
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.category-item:hover .category-image {
+  transform: translateY(-8px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+}
+
+.slick-arrow {
+  background-color: white;
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  z-index: 10;
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+}
+.slick-arrow:hover {
+  background-color: white;
+}
+.slick-arrow::before {
+  font-family: 'slick';
+  font-size: 20px;
+  color: #135eab;
+}
+
+.slick-prev {
+  left: 2px; 
+}
+.slick-next {
+  right: 2px; 
+}
+
+.slick-dots {
+  bottom: -5px; 
+}
+.slick-dots li button::before {
+  font-size: 12px;
+ color: #8b8b8b;
+}
+
+.slick-dots li.slick-active button::before {
+  color: #96c121;
+}
+
+@media (max-width: 768px) {
+
+  .category-grid-section {
+    padding: 20px 0;
+    margin-top: 0;
+  }
+  
+  .category-slider {
+    margin: 0 -5px;
+  }
+
+  .section-title {
+    font-size: 1.2rem;
+    width: 90%;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: flex-start;
+  }
+
+  .category-item {
+    padding: 0 5px; 
+  }
+
+  .category-image {
+    width: 130px;  
+    height: 120px; 
+  }
+
+  .category-item p {
+    font-size: 0.9rem;
+    margin-top: 10px;
+  }
+
+  .slick-arrow {
+    width: 35px;
+    height: 35px;
+  }
+  
+  .slick-prev {
+    left: 10px; 
+  }
+
+  .slick-next {
+    right: 10px; 
+  }
+
+  .slick-dots {
+    bottom: -25px; 
+  }
+}

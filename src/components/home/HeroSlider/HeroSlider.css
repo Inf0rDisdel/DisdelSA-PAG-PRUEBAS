@@ -1,0 +1,128 @@
+.main-container {
+  max-width: 1200px;
+  margin: 10px auto;
+  display: flex;
+  gap: 20px;
+  height: 320px; 
+}
+
+.banners-container {
+  width: 55%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px; 
+}
+
+.banner-item {
+  flex: 1;
+  border-radius: 8px;
+  overflow: hidden;
+  height: 50%;
+}
+
+.banner-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.slider-container {
+  width: 45%; 
+  display: flex;
+  flex-direction: column;
+  gap: 10px; 
+}
+
+.carousel-wrapper {
+  flex: 2;
+  border-radius: 8px;
+  overflow: hidden;
+  position: relative;
+}
+
+.whatsapp-banner {
+  flex: 1;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.whatsapp-banner img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.carousel-wrapper .carousel-slider,
+.carousel-wrapper .carousel,
+.carousel-wrapper .carousel .slider-wrapper,
+.carousel-wrapper .carousel .slider,
+.carousel-wrapper .carousel .slide,
+.carousel-wrapper .carousel .slide > div {
+  height: 100%; 
+}
+
+.carousel-wrapper .carousel .slide img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.carousel .slide .legend {
+  display: none;
+}
+
+.carousel .control-dots {
+  position: absolute;
+  bottom: 15px;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  list-style: none;
+  z-index: 1;
+}
+
+.carousel .control-dots .dot {
+  background: #ccc !important;
+  box-shadow: none !important;
+  width: 10px !important;
+  height: 10px !important;
+  border-radius: 50%;
+  margin: 0 5px !important;
+}
+
+.carousel .control-dots .dot.selected {
+  background: #333 !important;
+}
+
+@media (max-width: 800px) {
+  
+  /* 1. Ocultamos el contenedor de la izquierda (Wiese y Nescafé) */
+  .banners-container {
+    width: 100%;}
+
+  /* 2. Hacemos que el contenedor del slider ocupe el 100% del ancho */
+  .slider-container {
+    display: none;
+  }
+
+  /* 3. Ajustes al contenedor principal para que no se rompa */
+  .main-container {
+    height: auto;       /* Dejar que crezca según el contenido */
+    display: block;     /* Quitamos flex para evitar comportamientos raros */
+    padding: 0 10px;    /* Un poco de margen a los lados en el celular */
+  }
+  
+  /* 4. Ajustar la altura del carrusel para que se vea bien en el cel */
+  .carousel-wrapper {
+    height: auto;          /* O puedes poner un fijo ej: 250px */
+    aspect-ratio: 16/9;    /* Mantiene una proporción rectangular bonita */
+  }
+  
+  /* Aseguramos que la imagen dentro del carrusel se vea completa */
+  .carousel-wrapper .carousel .slide img {
+    height: 100%;
+    object-fit: contain; /* O 'cover' si prefieres que llene todo el cuadro aunque corte un poco */
+  }
+}

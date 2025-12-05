@@ -1,0 +1,322 @@
+.product-carousel-container {
+  width: 100%;
+  /* ANTES TENÍAS: height: 370px;  <-- ESTO ES LO QUE BLOQUEA */
+  /* CÁMBIALO POR ESTO: */
+  min-height: 370px; 
+  height: auto;      /* Deja que crezca si el contenido es grande */
+  
+  max-width: 1200px;
+  margin: 5px auto;
+  padding: 10px 50px;
+  box-sizing: border-box;
+  position: relative;
+  background-color: #ffffff; 
+  background-size: cover; 
+  background-position: center; 
+  background-repeat: no-repeat; 
+  border-radius: 10px;
+}
+
+.carousel-title {
+   display: inline-block;
+  padding: 3px 20px;
+  background-color:  #fafafa;;
+  border-radius: 50px;
+  box-shadow: 0 4px 10px rgba(49, 48, 48, 0.05);
+  margin-bottom: 10px;
+  font-size: 1.3rem;
+  /*font-weight: bold;*/
+  /* font-family: Arial Black, sans-serif;*/
+  color: #135eab;
+}
+.slick-slide > div {
+  padding: 0 12px;
+  box-sizing: border-box;
+  height: 100%;
+}
+.slick-list {
+  margin: 0 -12px;
+}
+.slick-slide {
+  height: auto;
+  display: flex;
+}
+.product-card {
+  border: 0.5px solid #ffffff;
+  border-radius: 20px;
+  background-color: #ffffff;
+  padding:5px;
+  height: 100%;
+  width: 100%;
+  position: relative;
+  display: flex !important;
+  flex-direction: column;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.product-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
+}
+.product-image {
+  width: 100%;
+  height: 130px;
+  object-fit: contain;
+  margin-bottom: 20px;
+}
+.product-name, .product-disdel-id, .add-cart-button {
+  display: flex;
+  visibility: visible;
+}
+.product-name {
+  flex-grow: 1;
+  font-size: 14px;
+  /*font-weight: 600;*/
+  color: #333;
+  line-height: 1.4;
+  text-align: center;
+  margin: 0 auto 10px auto;
+  min-height: 40px;
+  align-items: center;
+  justify-content: center;
+}
+.product-disdel-id {
+  font-size: 13px;
+  color: #0d47a1;
+  /*font-weight: bold;*/
+  margin: 0 0 12px 0;
+  padding: 0;
+  text-align: center;
+  justify-content: center;
+}
+.add-cart-button {
+  background-color: #0056b3;
+  color: white;
+  margin-left: 60px;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 0;
+  width: 50%;
+  font-size: 1rem;
+  /*font-weight: bold;*/
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: auto;
+}
+
+.slick-arrow, .slick-dots { display: block !important; }
+.slick-arrow { width: 40px; height: 40px; border-radius: 50%; background-color: rgb(243, 243, 243) !important; z-index: 20; }
+.slick-arrow:before { font-size: 20px; color: #96c121 !important; }
+.slick-prev { left: -5px; }
+.slick-next { right: -5px; }
+.slick-dots { bottom: -40px; }
+.slick-dots li button:before { font-size: 12px; color: #ffffff; opacity: 10; }
+.slick-dots li.slick-active button:before { color: #96c121 !important; }
+
+@media (max-width: 780px) {
+
+/* CONTENEDOR GENERAL */
+.product-carousel-container {
+  width: 100%;
+  min-height: auto;
+  height: auto;
+  margin: -10px auto;
+  padding: 10px 20px; /* MENOS padding */
+  box-sizing: border-box;
+  position: relative;
+  background-color: #ffffff;
+  border-radius: 10px;
+}
+
+/* SLIDE */
+.slick-slide {
+  height: auto !important;
+  display: flex !important;
+  align-items: stretch !important;
+}
+.slick-slide > div {
+  display: flex;
+  flex: 1;
+  height: auto !important;
+}
+
+.product-card {
+  display: flex !important;
+  flex-direction: column !important;
+
+  /* Quitar min-height para evitar que el botón se vaya muy abajo */
+  min-height: auto !important;
+  height: auto !important;
+
+  padding: 10px !important;
+  margin-bottom: 10px !important;
+  justify-content: flex-start !important;
+
+  /* Controla los espacios internos */
+  gap: 8px !important;
+}
+
+/* IMAGEN – Más grande, pero sin dejar huecos */
+.product-image {
+  height: 120px !important; 
+  width: 100% !important;
+  object-fit: contain !important;
+  margin-bottom: 5px !important;
+
+}
+
+/* NOMBRE DEL PRODUCTO – Ajustado */
+.product-name {
+  color: #000 !important;
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  text-align: center !important;
+
+  margin: 0 !important;
+  min-height: auto !important; /* ❗ Quitamos el espacio forzado */
+  line-height: 1.2 !important;
+  white-space: normal !important;
+  overflow: visible !important;
+}
+
+/* ID PRODUCTO */
+.product-disdel-id {
+  color: #135eab !important;
+  font-size: 11px !important;
+  margin: 0 !important;
+  text-align: center !important;
+}
+
+.add-cart-button {
+  width: 100% !important;
+  padding: 10px 0 !important;
+
+  background-color: #0056b3 !important;
+  color: #fff !important;
+  font-weight: bold !important;
+  border-radius: 8px !important;
+
+  /* Quitar esto porque empuja el botón hacia abajo */
+  margin-top: 0 !important;
+
+  /* Asegurar que quede dentro y centrado */
+  flex-shrink: 0 !important;
+  align-self: center !important;
+}
+/* FLECHAS */
+.slick-arrow {
+  width: 24px !important;
+  height: 24px !important;
+  top: 20% !important; /* 🔼 un poco más arriba */
+  background-color: #f3f3f3 !important;
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+}
+.slick-prev { left: 2px !important; }
+.slick-next { right: 2px !important; }
+
+/* PUNTOS */
+.slick-dots { bottom: -25px !important; }
+.slick-dots li button:before { font-size: 10px !important; }
+}
+
+@media (max-width: 468px) {
+
+/* CONTENEDOR - MÁS COMPACTO */
+.product-carousel-container {
+  width: 98%;
+  min-height: auto;
+  height: auto;
+
+  margin: -10px auto;
+  padding: 10px 20px;
+  box-sizing: border-box;
+  background: #ffffff;
+  border-radius: 10px;
+}
+
+/* SLIDES */
+.slick-slide {
+  height: auto !important;
+  display: flex !important;
+  align-items: stretch !important;
+}
+
+.slick-slide > div {
+  display: flex;
+  flex: 1;
+  height: auto !important;
+}
+
+/* TARJETA COMPACTA */
+.product-card {
+  display: flex !important;
+  flex-direction: column !important;
+
+  /* Quitamos altura innecesaria */
+  min-height: auto !important;
+  height: auto !important;
+
+  padding: 8px !important;
+  margin-bottom: 8px !important;
+  justify-content: flex-start !important;
+  gap: 6px !important; /* espacios controlados */
+}
+
+/* IMAGEN */
+.product-image {
+  height: 95px !important; /* ajustado para móviles */
+  width: 100% !important;
+  object-fit: contain !important;
+  margin-bottom: 6px !important;
+  flex-shrink: 0 !important;
+}
+
+/* NOMBRE DEL PRODUCTO */
+.product-name {
+  color: #000000 !important;
+  font-size: 11px !important;
+  font-weight: 600 !important;
+  line-height: 1.2 !important;
+  text-align: center !important;
+
+  min-height: auto !important; /* quitamos el espacio forzado */
+  margin: 0 !important;
+  white-space: normal !important;
+  overflow: visible !important;
+  flex-shrink: 0 !important;
+}
+
+/* ID */
+.product-disdel-id {
+  color: #135eab !important;
+  font-size: 11px !important;
+  text-align: center !important;
+  margin: 0 !important;
+  flex-shrink: 0 !important;
+}
+
+.add-cart-button {
+  width: 65% !important;        /* Más pequeño y centrado */
+  padding: 8px 0 !important;     /* Más compacto */
+  
+  background-color: #0056b3 !important;
+  color: #fff !important;
+  font-weight: bold !important;
+  border-radius: 8px !important;
+
+  margin-top: 6px !important;    /* Separación justa del texto */
+  
+  display: flex !important;
+  justify-content: center;
+  align-items: center;
+  margin-right: 35px;
+  align-self: center; /* Centrado en su tarjeta */
+  flex-shrink: 0 !important;     /* Nunca se aplasta */
+}
+
+
+}

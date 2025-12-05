@@ -1,0 +1,243 @@
+.footer-wrapper {
+    padding: 50px 20px;
+    /*font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;*/
+    position: relative;
+    overflow: hidden;
+}
+
+.footer-content-area {
+    max-width: 1100px;
+    margin: 0 -20px;
+    display: flex;
+    align-items: start;
+    gap: 20px;
+}
+
+/* ======================================================= */
+/*         COLUMNA IZQUIERDA (CONTENEDOR AZUL)             */
+/* ======================================================= */
+.footer-container {
+    background-color: #135eab;
+    color: #ffffff;
+    padding: 40px;
+    border-radius: 8px;
+    flex-basis: 70%;
+    flex-shrink: 0;
+}
+
+.footer-columns-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+}
+
+.footer-row {
+    display: flex;
+    gap: 20px;
+}
+
+.footer-column {
+    flex: 1;
+}
+
+.footer-column h3 {
+    font-size: 1rem;
+    font-weight: bold;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+}
+
+.footer-column ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.footer-column a {
+    color: #e0e0e0;
+    text-decoration: none;
+    font-size:1rem;
+}
+
+/* --- CAMBIOS CLAVE PARA LOS ICONOS SOCIALES AQUÍ --- */
+
+/* 1. Hacemos que la lista de links sea una fila horizontal */
+.social-links-list {
+    display: flex;
+    flex-direction: row; /* Alinear en fila */
+    align-items: center;
+    gap: 20px; /* Espacio entre cada icono/link */
+}
+
+/* 2. Le damos el estilo circular a los iconos SVG */
+.social-links-list svg {
+    background-color: white;
+    color: #135eab; /* El color del icono será el azul del fondo */
+    border-radius: 30%; /* Esto los hace perfectamente redondos */
+    width: 20px;       /* Ancho del círculo */
+    height: 20px;      /* Alto del círculo */
+    padding: 5px;      /* Espacio interior para que el icono no toque el borde */
+    box-sizing: content-box; /* Asegura que el padding no afecte el tamaño total */
+}
+
+/* 3. Aseguramos que el texto y el icono de cada link estén bien alineados */
+.social-links-list a {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+
+/* ======================================================= */
+/*          COLUMNA DERECHA (ELEMENTOS GRÁFICOS)           */
+/* ======================================================= */
+.footer-right-area {
+    flex-basis: 30%;
+    position: relative;
+    height: 350px;
+}
+
+.products-text {
+    position: absolute;
+    top: 40px;
+    left: 0;
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: #135eab;
+    display: flex;
+}
+
+.products-text span {
+    font-size: 2rem;
+    font-weight: 900;
+    margin-right: 8px; 
+    color: #135eab;
+}
+
+.mascot {
+    position: absolute;
+    left: 175px;
+    bottom: -40px;
+}
+
+.mascot img {
+    max-height: 375px;
+
+}
+
+.payment-logos {
+    position: absolute;
+    top: 150px; /* Ajusta este valor para subir o bajar los logos */
+    left: 0;
+}
+
+.payment-logos img {
+    max-width: 160px;
+}
+
+/* --- CAMBIO: Posicionamos el copyright en la parte inferior --- */
+.footer-copyright {
+    position: absolute;
+    bottom: 20px; /* Lo anclamos en la parte de abajo */
+    left: 0;
+}
+
+.footer-copyright p {
+    color: #555;
+    font-size: 1.1rem;
+    margin: 0;
+}
+
+/* ======================================================= */
+/*                  WIDGETS FLOTANTES                      */
+/* ======================================================= */
+.footer-floating-widgets {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  gap: 15px; /* Espacio entre los botones */
+}
+
+/* Estilo general para CADA botón */
+.widget-item {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  text-decoration: none;
+  transition: transform 0.2s ease-in-out;
+  cursor: pointer;
+  border-radius: 16px; /* ¡CLAVE! Aplicamos el borde redondeado a AMBOS botones */
+}
+
+.widget-item:hover {
+  transform: translateY(-4px); /* Efecto de "levantarse" al pasar el mouse */
+}
+
+
+.widget-opinions {
+  background-color: #1e60aa;
+  color: white;
+  width: 110px;
+  height: 80px;
+  flex-direction: column;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.widget-opinions img {
+  width: 28px;
+  height: 28px; 
+  margin-bottom: 5px; 
+}
+
+.widget-item:last-child {
+  background-color: white;
+  width: 90px;   
+  height: 70px; 
+}
+
+.widget-item:last-child img {
+  width: 32px;
+  height: 32px;
+}
+
+.widget-whatsapp {
+    background-color: #f0f0f0;
+}
+
+/* ======================================================= */
+/*                     RESPONSIVE DESIGN                   */
+/* ======================================================= */
+@media (max-width: 1200px) {
+    .footer-content-area {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .footer-right-area {
+        display: none;
+    }
+
+    .footer-container {
+        width: 100%;
+        flex-basis: auto;
+    }
+}
+
+@media (max-width: 768px) {
+    .footer-row {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+    .footer-columns-grid {
+        align-items: center;
+    }
+    .social-links-list {
+        justify-content: center; /* Centra los iconos en pantallas pequeñas */
+    }
+}
