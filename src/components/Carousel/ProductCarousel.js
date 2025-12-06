@@ -24,7 +24,7 @@ const ProductCarousel = ({ title, products = [], addToCart }) => {
           slidesToShow: 4, // <--- 4 PRODUCTOS EN TABLET
           slidesToScroll: 1,
           dots: false,
-          arrows: false,
+          arrows: true,
           infinite: products && products.length > 4
         }
       },
