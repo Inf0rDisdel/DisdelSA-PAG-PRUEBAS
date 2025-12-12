@@ -1,9 +1,9 @@
-import DispensadorKCP from '../assets/images/brands/DispensadorKCP.jpg';
-import DispensadorWiese from '../assets/images/brands/DispensadorWiese.jpg';
-import JabonEspumaKCP from '../assets/images/brands/JabonEspumaKCP.jpg';
-import JabonGelManzana from '../assets/images/brands/JabonGelManzana.jpg';
-import DesengrasanteMegax from '../assets/images/brands/DesengrasanteMegax.png';
-import DesinfectanteLeoncito from '../assets/images/brands/DesinfectanteLeoncito.jpg';
+import DispensadorKCP from 'assets/images/products/DispensadorKCP.jpg';
+import DispensadorWiese from 'assets/images/products/DispensadorWiese.jpg';
+import JabonEspumaKCP from 'assets/images/products/JabonEspumaKCP.jpg';
+import JabonGelManzana from 'assets/images/products/JabonGelManzana.jpg';
+import DesengrasanteMegax from 'assets/images/products/DesengrasanteMegax.png';
+import DesinfectanteLeoncito from 'assets/images/products/DesinfectanteLeoncito.jpg';
 
 import CafeInstantaneo from '../assets/images/products/CafeInstantaneo.jpg';
 import CafeMolidoLeonDorado from '../assets/images/products/CafeMolidoLeonDorado.jpg';
@@ -12,12 +12,12 @@ import CremoraBordenOriginal from '../assets/images/products/CremoraBordenOrigin
 import ToallaMayordomo from '../assets/images/products/ToallaMayordomo.jpg';
 import ServilletasKitchen from '../assets/images/products/ServilletasKitchen.jpg';
 
-import CepilloEscobaPInodoro from '../assets/images/brands/CepilloEscobaPInodoro.jpg'
-import PastillasDeBañoWiese from '../assets/images/brands/PastillasDeBañoWiese.jpg'
-import TapeteWiese from '../assets/images/brands/TapeteWiese.jpg'
-import GuanteLatexDomesticoAmarrilo from '../assets/images/brands/GuanteLatexDomesticoAmarrilo.jpg'
-import BasureroPReciclajeVerdeOrganico from '../assets/images/brands/BasureroPReciclajeVerdeOrganico.jpg'
-import ToallaPBañoUnica from '../assets/images/brands/ToallaPBañoUnica.jpg'
+import CepilloEscobaPInodoro from 'assets/images/products/CepilloEscobaPInodoro.jpg'
+import PastillasDeBañoWiese from 'assets/images/products/PastillasDeBañoWiese.jpg'
+import TapeteWiese from 'assets/images/products/TapeteWiese.jpg'
+import GuanteLatexDomesticoAmarrilo from 'assets/images/products/GuanteLatexDomesticoAmarrilo.jpg'
+import BasureroPReciclajeVerdeOrganico from 'assets/images/products/BasureroPReciclajeVerdeOrganico.jpg'
+import ToallaPBañoUnica from 'assets/images/products/ToallaPBañoUnica.jpg'
 
 export const destacados = [
   {

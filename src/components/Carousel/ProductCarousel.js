@@ -4,24 +4,22 @@ import Slider from 'react-slick';
 import "slick-carousel/slick/slick.css"; 
 import "slick-carousel/slick/slick-theme.css";
 import './ProductCarousel.css';
-import fondoImagen from 'assets/icons/FONDO.jpg';
+import fondoImagen from 'assets/icons/FONDO-BLANCO.jpg';
 
 const ProductCarousel = ({ title, products = [], addToCart }) => {
-  const [favorites, setFavorites] = useState([]);
+  ;
 
-  // --- AQUÍ ESTÁ LA CONFIGURACIÓN CORREGIDA ---
   const settings = {
     dots: true,
-    // Solo infinito si hay más de 4 productos, para que no brinque feo
     infinite: products && products.length > 4, 
     speed: 500,
-    slidesToShow: 4, // Por defecto en PC
+    slidesToShow: 4, 
     slidesToScroll: 1,
     responsive: [
       {
-        breakpoint: 1024, // Tablets y Laptops pequeñas
+        breakpoint: 1024,
         settings: {
-          slidesToShow: 4, // <--- 4 PRODUCTOS EN TABLET
+          slidesToShow: 4, 
           slidesToScroll: 1,
           dots: false,
           arrows: true,
@@ -29,9 +27,9 @@ const ProductCarousel = ({ title, products = [], addToCart }) => {
         }
       },
       {
-        breakpoint: 600, // Celulares (Móvil)
+        breakpoint: 600, 
         settings: {
-          slidesToShow: 2, // <--- 3 PRODUCTOS EN MÓVIL
+          slidesToShow: 2, 
           slidesToScroll: 2,
           dots: false,
           arrows: false

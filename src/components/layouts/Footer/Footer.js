@@ -1,6 +1,6 @@
 import React from 'react';
 import './Footer.css'; 
-
+import { Link } from 'react-router-dom';
 
 import { FaFacebookF, FaInstagram, FaLinkedinIn } from 'react-icons/fa';
 
@@ -29,15 +29,19 @@ const Footer = () => {
                             <div className="footer-column">
                                 <h3>SOBRE NOSOTROS</h3>
                                 <ul>
-                                    <li><a href="/">Quiénes Somos</a></li>
-                                    <li><a href="/">Empleos Disdel</a></li>
-                                    <li><a href="/">Ayuda</a></li>
+                                    <Link to="/quienes-somos" className="footer-link">
+                                        Quiénes Somos
+                                        </Link>
+                                    <li><a href="https://disdelsagt.com/MyBusiness/Empleo/SolicitudEmpleo" target="_blank" rel="noopener noreferrer"> Empleos Disdel </a></li>
+                                     <Link to="/ayuda" className="footer-link">
+                                        ayuda
+                                        </Link>
                                 </ul>
                             </div>
                             <div className="footer-column">
                                 <h3>TIENDAS Y SUCURSALES</h3>
                                 <ul>
-                                    <li><a href="/">Ubicaciones y Teléfonos</a></li>
+                                    <Link to="/ubicaciones" className="...">Ubicaciones</Link>
                                 </ul>
                             </div>
                         </div>

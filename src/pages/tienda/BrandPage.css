@@ -1,0 +1,333 @@
+.brand-container {
+  width: 100%;
+  max-width: 1200px; 
+  margin: 0 auto;
+  padding: 20px 0; 
+  color: #135eab;
+  box-sizing: border-box; 
+  --brand-color: #004aad; 
+}
+
+.brand-container * {
+  box-sizing: border-box;
+}
+
+/* --- HERO BANNER --- */
+.brand-container .brand-hero {
+  width: 100%;
+  margin-bottom: 30px;
+  line-height: 0; 
+  border-radius: 8px; 
+  overflow: hidden;
+}
+
+.brand-container .brand-hero img {
+  width: 100%; 
+  height: auto;
+  display: block;
+  object-fit: cover;
+}
+
+/* --- LAYOUT PRINCIPAL (Sidebar + Grid) --- */
+.brand-container .brand-layout {
+  display: flex;
+  width: 100%; 
+  gap: 30px;   
+  align-items: flex-start;
+}
+
+/* =========================================
+   SIDEBAR (IZQUIERDA EN DESKTOP)
+   ========================================= */
+.brand-container .sidebar-filters {
+  width: 250px; 
+  flex-shrink: 0; 
+}
+
+.brand-container .sidebar-title {
+  font-size: 19px;
+  font-weight: 700;
+  margin-bottom: 15px;
+  color: #135eab;
+  padding-left: 5px; 
+}
+
+.brand-container .categories-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* BOTÓN CATEGORÍA (Estilo Base) */
+.brand-container .category-card-btn {
+  background-color: var(--brand-color); 
+  border-radius: 8px;
+  padding: 8px 12px; 
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  transition: transform 0.2s, filter 0.2s;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  border: none;
+  width: 100%; /* Ocupa el ancho disponible */
+}
+
+.brand-container .category-card-btn:hover {
+  transform: translateX(4px);
+  filter: brightness(0.85); 
+}
+
+.brand-container .cat-img-box {
+  background-color: #ffffff;
+  width: 45px; 
+  height: 45px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  overflow: hidden;
+  padding: 3px;
+}
+
+.brand-container .cat-img-box img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.brand-container .cat-text {
+  color: white;
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.2;
+  text-align: left;
+}
+
+/* VALORACIÓN */
+.brand-container .rating-section {
+  margin-top: 25px;
+  border-top: 1px solid #eee;
+  padding-top: 15px;
+  padding-left: 5px;
+}
+
+.brand-container .rating-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+  font-size: 14px;
+  color: #135eab;
+  cursor: pointer;
+}
+
+.brand-container .stars {
+  color: #ffc107;
+  font-size: 15px;
+}
+
+/* =========================================
+   GRILLA DE PRODUCTOS (DERECHA)
+   ========================================= */
+.brand-container .products-area {
+  flex: 1; 
+  min-width: 0; 
+}
+
+.brand-container .grid-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); /* 3 columnas base */
+  gap: 25px; 
+}
+
+.brand-container .product-card {
+  background: #fff;
+  border: 1px solid #eaeaea;
+  border-radius: 12px; 
+  padding: 15px;
+  display: flex;
+  flex-direction: column;
+  transition: box-shadow 0.3s, border-color 0.3s;
+  height: 100%;
+}
+
+.brand-container .product-card:hover {
+  box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+  border-color: var(--brand-color); 
+  transform: translateY(-2px);
+}
+
+.brand-container .prod-img-container {
+  height: 160px; 
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 12px;
+}
+
+.brand-container .prod-img-container img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+.brand-container .prod-category {
+  font-size: 11px;
+  color: #888;
+  font-weight: 700;
+  text-transform: uppercase;
+  margin-bottom: 5px;
+}
+
+.brand-container .prod-title {
+  font-size: 15px; 
+  font-weight: 700;
+  color: #222;
+  margin-bottom: 5px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.brand-container .prod-stars {
+  font-size: 12px;
+  color: #ffc107;
+  margin-bottom: 15px;
+}
+
+.brand-container .btn-details {
+  margin-top: auto;
+  width: 100%;
+  padding: 10px 0;
+  background-color: transparent;
+  border: 1px solid var(--brand-color); 
+  color: var(--brand-color);
+  font-weight: 600;
+  font-size: 13px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.brand-container .btn-details:hover {
+  background-color: var(--brand-color);
+  color: white;
+}
+
+
+/* =========================================================
+   RESPONSIVE (AQUÍ ESTÁ LA MAGIA)
+   ========================================================= */
+
+/* --- TABLETS (Entre 768px y 1024px) --- */
+@media (max-width: 1024px) {
+  
+  .brand-container {
+    padding: 10px 20px;
+  }
+
+  /* 1. Cambiamos el layout a columna (Sidebar arriba, productos abajo) */
+  .brand-container .brand-layout {
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  /* 2. El Sidebar ocupa todo el ancho */
+  .brand-container .sidebar-filters {
+    width: 100%;
+  }
+
+  /* 3. CONVERTIR CATEGORÍAS EN CARRUSEL HORIZONTAL */
+  .brand-container .categories-stack {
+    flex-direction: row; /* En fila */
+    overflow-x: auto;    /* Scroll horizontal */
+    padding-bottom: 10px; /* Espacio para el scrollbar */
+    gap: 15px;
+    
+    /* Scroll suave */
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none; /* Ocultar barra en Firefox */
+  }
+  
+  .brand-container .categories-stack::-webkit-scrollbar {
+    display: none; /* Ocultar barra en Chrome/Safari */
+  }
+
+  /* Estilo "Chip" Compacto para las categorías */
+  .brand-container .category-card-btn {
+    width: auto; /* Ancho automático según contenido */
+    min-width: 140px; /* Tamaño mínimo para que se vean bien */
+    flex-shrink: 0; /* Evita que se aplasten */
+    padding: 6px 12px;
+  }
+
+  .brand-container .cat-img-box {
+    width: 35px; /* Icono más pequeño */
+    height: 35px;
+  }
+
+  .brand-container .cat-text {
+    font-size: 13px; /* Texto más pequeño */
+    white-space: nowrap; /* Evita que el texto salte de línea */
+  }
+
+  /* Ocultamos la sección de valoración en móvil/tablet para ahorrar espacio (opcional) */
+  .brand-container .rating-section {
+    display: none; 
+  }
+
+  /* 4. GRILLA DE PRODUCTOS: 3 COLUMNAS EN TABLET */
+  .brand-container .grid-container {
+    grid-template-columns: repeat(3, 1fr); 
+    gap: 15px;
+  }
+}
+
+/* --- MÓVILES (Menos de 768px) --- */
+@media (max-width: 768px) {
+  
+  .brand-container {
+    padding: 10px 10px;
+  }
+
+  /* Sidebar arriba */
+  .brand-container .brand-layout {
+    flex-direction: column;
+  }
+  
+  .brand-container .sidebar-filters {
+    width: 100%;
+  }
+
+  /* Categorías: Aún más compactas en móvil */
+  .brand-container .category-card-btn {
+    min-width: 120px;
+    padding: 5px 10px;
+  }
+  
+  /* 5. GRILLA DE PRODUCTOS: 2 COLUMNAS EN MÓVIL */
+  .brand-container .grid-container {
+    grid-template-columns: repeat(2, 1fr); 
+    gap: 10px; /* Menos espacio entre tarjetas */
+  }
+
+  /* Ajustes visuales de la tarjeta en móvil */
+  .brand-container .product-card {
+    padding: 10px;
+  }
+
+  .brand-container .prod-img-container {
+    height: 120px; /* Imagen más pequeña */
+  }
+
+  .brand-container .prod-title {
+    font-size: 13px;
+  }
+  
+  .brand-container .btn-details {
+    padding: 8px 0;
+    font-size: 12px;
+  }
+}

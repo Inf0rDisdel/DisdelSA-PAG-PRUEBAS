@@ -1,0 +1,262 @@
+/* --- CONFIGURACIÓN GENERAL --- */
+.cat-page-container {
+  background-color: #ebebeb;
+  min-height: 100vh;
+  padding-bottom: 40px;
+  color: #333;
+}
+
+/* --- 1. BANNER --- */
+.cat-banner {
+  width: 100%;
+  max-width: 1200px; 
+  height: auto;      
+  margin: 0 auto 20px auto; 
+  display: block; 
+}
+
+.cat-banner img {
+  width: 100%;
+  height: auto; 
+  display: block; 
+}
+
+/* --- 2. CONTENEDOR PRINCIPAL --- */
+.cat-content {
+  max-width: 1200px; 
+  margin: 0 auto;    
+  padding: 0 10px;
+  box-sizing: border-box;
+}
+
+/* --- ESTRUCTURA DE COLUMNAS (Desktop) --- */
+.cat-header-split {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+/* COLUMNA IZQUIERDA: Título (30%) */
+.cat-title-section {
+  width: 30%;
+  padding-right: 20px;
+  box-sizing: border-box;
+}
+
+.cat-main-title {
+  font-size: 28px;
+  font-weight: 600;
+  color: #333;
+  margin: 0;
+  line-height: 1.2;
+}
+
+/* COLUMNA DERECHA SUPERIOR: Carrusel (70%) */
+.cat-carousel-section {
+  width: 70%;
+  display: flex;
+  flex-direction: column;
+}
+
+.sub-title-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #666;
+  margin-bottom: 10px;
+}
+
+/* Scroll de Subcategorías */
+.subcategory-scroll {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  padding-bottom: 8px;
+}
+.subcategory-scroll::-webkit-scrollbar { height: 7px; }
+.subcategory-scroll::-webkit-scrollbar-thumb { background-color: #ccc; border-radius: 4px; }
+
+/* Chips (Subcategorías) */
+.subcat-card-chip {
+  background-color: #fff;
+  min-width: 110px;
+  height: 90px;
+  border-radius: 6px;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+  text-align: center;
+  cursor: pointer;
+  transition: transform 0.2s;
+  border: 1px solid transparent;
+}
+
+.subcat-card-chip:hover {
+  transform: translateY(-2px);
+  border-color: #ddd;
+}
+
+.subcat-img-wrapper {
+  width: 40px;
+  height: 40px;
+  margin-bottom: 6px;
+  border-radius: 50%;
+  overflow: hidden;
+}
+.subcat-img-wrapper img { width: 100%; height: 100%; object-fit: cover; }
+.subcat-name { font-size: 12px; color: #333; line-height: 1.1; }
+
+
+/* --- 3. PRODUCTOS (Desktop) --- */
+.products-grid-section {
+  width: 70%; 
+  margin-left: 30%; 
+  box-sizing: border-box;
+}
+
+.products-grid {
+  display: grid;
+  /* En escritorio se ajusta automático según espacio */
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 16px;
+}
+
+/* TARJETAS DE PRODUCTO (Base Desktop) */
+.simple-product-card {
+  background-color: #fff;
+  border-radius: 4px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  transition: box-shadow 0.2s;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  height: 320px; /* Altura original para desktop */
+}
+
+.simple-product-card:hover {
+  box-shadow: 0 6px 14px rgba(0,0,0,0.15);
+}
+
+.card-img-top {
+  height: 200px; /* Altura imagen desktop */
+  padding: 15px;
+  border-bottom: 1px solid #f5f5f5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.card-img-top img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+.card-body {
+  padding: 15px;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.card-body h4 {
+  font-size: 14px;
+  font-weight: 400;
+  color: #333;
+  margin: 0 0 8px 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.price {
+  font-size: 22px;
+  font-weight: 400;
+  color: #333;
+  margin-bottom: 4px;
+}
+
+.shipping-tag {
+  font-size: 12px;
+  color: #00a650;
+  font-weight: 600;
+  margin-top: auto;
+}
+
+/* =========================================
+   MEDIA QUERIES (AQUÍ ESTÁ LA MAGIA)
+   ========================================= */
+
+/* --- TABLETS (Entre 768px y 1024px) --- */
+@media (max-width: 1024px) {
+  /* Rompemos la estructura de lado a lado para apilar todo */
+  .cat-header-split {
+    flex-direction: column;
+  }
+
+  .cat-title-section, 
+  .cat-carousel-section, 
+  .products-grid-section {
+    width: 100%;
+    margin-left: 0;
+    padding-right: 0;
+  }
+  
+  .cat-title-section {
+    margin-bottom: 15px;
+    text-align: left;
+  }
+
+  /* FORZAMOS 3 COLUMNAS EN TABLET */
+  .products-grid {
+    grid-template-columns: repeat(3, 1fr); 
+  }
+}
+
+/* --- MÓVILES (Menos de 768px) --- */
+@media (max-width: 767px) {
+  /* Mantenemos la estructura apilada */
+  .cat-header-split { flex-direction: column; }
+  .cat-title-section, .cat-carousel-section, .products-grid-section {
+    width: 100%; margin-left: 0; padding-right: 0;
+  }
+  .cat-title-section { margin-bottom: 10px; }
+  
+  /* FORZAMOS 2 COLUMNAS EN MÓVIL */
+  .products-grid {
+    grid-template-columns: repeat(2, 1fr); 
+    gap: 10px; /* Menos espacio entre tarjetas */
+  }
+
+  /* --- TARJETAS MÁS COMPACTAS PARA MÓVIL --- */
+  .simple-product-card {
+    height: 250px; /* Reducimos la altura total para que no se vean enormes */
+  }
+
+  .card-img-top {
+    height: 130px; /* Imagen más pequeña */
+    padding: 10px;
+  }
+
+  .card-body {
+    padding: 10px; /* Menos relleno interno */
+  }
+
+  .card-body h4 {
+    font-size: 13px; /* Texto un poco más pequeño */
+  }
+
+  .price {
+    font-size: 18px; /* Precio ajustado */
+  }
+  
+  .subcat-card-chip {
+    min-width: 90px; /* Chips un poco más pequeños también */
+    height: 80px;
+  }
+}

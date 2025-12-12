@@ -2,6 +2,7 @@ import React from 'react';
 import {Link} from 'react-router-dom'
 import './FeaturedBrands.css'; 
 
+
 import SilverLogo from 'assets/logo/SILVERCHEMICAL.png';
 import KimberlyLogo from 'assets/logo/KCP.png';
 import m3Logo from 'assets/logo/3M.png';

@@ -11,13 +11,14 @@
 
 .headerContainer {
   width: 100%;
-  max-width: 1180px; 
+  max-width: 1204px; 
   margin: 0 auto;    
   padding: 0 15px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 10px;
+  box-sizing: border-box;
 }
 
 /* --- IZQUIERDA: LOGO + HAMBURGUESA --- */

@@ -1,262 +1,351 @@
-/* =========================================
-   ESTILOS BASE (ESCRITORIO / PC)
-   ========================================= */
+/* --- ESTILOS GENERALES --- */
 .pdp-container {
-  max-width: 1400px;
+  max-width: 1200px;
   margin: 0 auto;
-  padding: 30px 20px;
-  background-color: #fff;
-  /*font-family: 'Segoe UI', sans-serif;*/
+  padding: 20px;
+  /*font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;*/
   color: #333;
 }
 
-.pdp-breadcrumb {
-  font-size: 0.9rem;
-  color: #666;
-  margin-bottom: 25px;
-}
-
-/* Grid de 3 columnas para escritorio */
-.pdp-grid {
+/* --- SECCIÓN SUPERIOR (Imagen, Info, Compra) --- */
+.pdp-main-grid {
   display: grid;
-  grid-template-columns: 40% 35% 25%; /* Imagen | Info | Caja Compra */
-  gap: 40px;
-  align-items: start;
-}
-
-/* --- IMAGEN --- */
-.pdp-image-section {
-  display: flex;
-  justify-content: center;
-  align-items: center; /* Centrado vertical */
-  border: 1px solid #f0f0f0;
-  border-radius: 8px;
-  padding: 20px;
-  background-color: #fff;
-  height: fit-content;
-  min-height: 400px; /* Altura mínima para que se vea bien en escritorio */
+  grid-template-columns: 1fr 1.2fr 0.8fr; /* 3 Columnas */
+  gap: 30px;
+  margin-bottom: 50px; /* Separación con las especificaciones */
 }
 
 .pdp-main-img {
-  max-width: 100%;
-  max-height: 500px;
-  object-fit: contain;
-}
-
-/* --- INFO CENTRO --- */
-.pdp-info-section {
-  padding-right: 20px;
+  width: 100%;
+  border-radius: 12px;
+  border: 1px solid #eee;
 }
 
 .pdp-brand-label {
-  font-size: 0.85rem;
-  color: #666;
+  color: #888;
+  font-size: 12px;
   text-transform: uppercase;
   letter-spacing: 1px;
-  display: block;
-  margin-bottom: 5px;
 }
 
 .pdp-title {
-  font-size: 1.8rem;
-  font-weight: 600;
-  margin: 10px 0 15px 0;
-  line-height: 1.2;
-  color: #222;
-}
-
-.pdp-meta {
-  font-size: 0.9rem;
-  color: #555;
-  margin-bottom: 25px;
-  padding-bottom: 15px;
-  border-bottom: 1px solid #eee;
-}
-
-.pdp-description h3 {
-  font-size: 1.1rem;
-  margin-bottom: 10px;
-  font-weight: 600;
-}
-
-.pdp-description p {
-  line-height: 1.6;
-  color: #444;
-  margin-bottom: 10px;
-}
-
-/* --- CAJA DERECHA (BUY BOX) --- */
-.pdp-action-section {
-  position: relative;
-  height: 100%;
+  font-size: 26px;
+  margin: 10px 0;
 }
 
 .buy-box {
   border: 1px solid #e0e0e0;
-  border-radius: 8px;
   padding: 20px;
-  margin-right: 30px;
+  border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-  background-color: #fff;
-  position: sticky;
-  top: 20px; /* Se queda pegada al hacer scroll en escritorio */
 }
 
-.buy-box-header {
-  font-size: 1.1rem;
-  margin-bottom: 15px;
-  font-weight: 600;
+.pdp-add-cart-btn {
+  background-color: #004aad;
+  color: white;
+  width: 100%;
+  padding: 12px;
+  border: none;
+  border-radius: 6px;
+  font-size: 16px;
+  cursor: pointer;
+  margin-top: 15px;
 }
 
-.stock-status {
-  color: #2e7d32; /* Verde */
-  font-weight: 600;
-  font-size: 0.95rem;
+/* --- NUEVA SECCIÓN: ESPECIFICACIONES (Estilo Imagen) --- */
+.specs-section {
+  margin-bottom: 40px;
+  border-top: 1px solid #eee;
+  padding-top: 20px;
+}
+
+.section-title {
+  font-size: 20px;
   margin-bottom: 20px;
+  color: #222;
+  font-weight: 700;
+}
+
+.specs-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* Dos columnas grandes */
+  gap: 8px; /* Espacio entre las dos columnas */
+}
+
+/* El estilo de "burbuja" gris de tu imagen */
+.spec-item {
+  background-color: #f8f9fa; /* Gris muy suave */
+  padding: 12px 20px;
+  border-radius: 8px; /* Bordes redondeados */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+}
+
+.spec-label {
+  color: #555;
+  font-weight: 600;
+}
+
+.spec-value {
+  color: #000;
+  font-weight: 500;
+}
+
+/* --- NUEVA SECCIÓN: RESEÑAS --- */
+.reviews-section {
+  border-top: 1px solid #eee;
+  padding-top: 30px;
+  background-color: #fff;
+}
+
+/* Formulario de reseñas */
+.review-form {
+  background-color: #f9f9f9;
+  padding: 20px;
+  border-radius: 12px;
+  margin-bottom: 30px;
+  border: 1px solid #e0e0e0;
+}
+
+.star-input-group {
+  display: flex;
+  gap: 5px;
+  margin: 10px 0;
+  cursor: pointer;
+}
+
+.star-icon {
+  font-size: 24px;
+  color: #ddd; /* Gris por defecto */
+  transition: color 0.2s;
+}
+
+.star-icon.active {
+  color: #ffc107; /* Amarillo activo */
+}
+
+.review-textarea {
+  width: 100%;
+  padding: 10px;
+  margin-top: 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  min-height: 80px;
+  font-family: "Poppins", sans-serif;
+}
+
+.submit-review-btn {
+  background-color: #28a745;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  margin-top: 10px;
+  cursor: pointer;
+}
+
+/* Lista de reseñas */
+.review-card {
+  border-bottom: 1px solid #eee;
+  padding: 20px 0;
+}
+
+.review-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.review-user {
+  font-weight: bold;
+}
+
+.review-stars {
+  color: #ffc107;
+}
+
+.review-date {
+  font-size: 12px;
+  color: #999;
+}
+
+.review-comment {
+  margin-bottom: 10px;
+  line-height: 1.5;
+}
+
+.review-useful {
+  font-size: 12px;
+  color: #666;
+  cursor: pointer;
+}
+.review-useful:hover {
+  text-decoration: underline;
+  color: #004aad;
+}
+
+.pdp-main-grid {
+  display: grid;
+  /* Imagen | Info+Botón | Tarjeta de Confianza */
+  grid-template-columns: 1fr 1.5fr 1fr; 
+  gap: 30px;
+  margin-bottom: 50px;
+  align-items: start;
+}
+
+/* IMAGEN */
+.pdp-main-img {
+  width: 100%;
+  border-radius: 8px;
+  border: 1px solid #eee;
+  padding: 10px; /* Un poco de aire dentro del cuadro */
+  background: #fff;
+}
+
+/* INFO CENTRAL + BOTÓN */
+.pdp-col-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.pdp-brand-label {
+  color: #888;
+  font-size: 13px;
+  text-transform: uppercase;
+  font-weight: 700;
+  margin-bottom: 5px;
+}
+
+.pdp-title {
+  font-size: 28px;
+  margin: 5px 0 15px 0;
+  line-height: 1.2;
+}
+
+.pdp-stock-indicator {
+  color: #28a745;
+  font-weight: 700;
+  font-size: 14px;
+  margin-bottom: 15px;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
 }
 
 .status-dot {
   width: 10px;
   height: 10px;
-  background-color: #2e7d32;
+  background-color: #28a745;
   border-radius: 50%;
   display: inline-block;
 }
 
+.pdp-desc-text {
+  color: #555;
+  line-height: 1.6;
+  margin-bottom: 25px;
+  font-size: 15px;
+}
+
+/* EL "MARCO" DE ACCIÓN (Botón Grande) */
+.pdp-action-frame {
+  margin-top: 10px;
+  padding-top: 20px;
+  border-top: 1px solid #eee; /* Separador sutil */
+}
+
 .pdp-add-cart-btn {
-  width: 90%;
-  background-color: #0071dc; /* Azul Walmart */
+  background-color: #004aad;
   color: white;
-  border: none;
+  width: 100%;
+  max-width: 350px; /* Que no se estire infinito */
   padding: 14px;
-  font-size: 1rem;
-  font-weight: bold;
-  border-radius: 25px;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 700;
   cursor: pointer;
-  margin-bottom: 15px;
-  transition: background 0.2s ease;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  transition: background-color 0.2s;
+  box-shadow: 0 4px 10px rgba(0, 74, 173, 0.2);
 }
 
 .pdp-add-cart-btn:hover {
-  background-color: #005bb5;
-  transform: translateY(-1px);
+  background-color: #003366;
 }
 
-.pdp-wishlist-btn {
-  width: 100%;
-  background: transparent;
-  border: 1px solid #ccc;
-  color: #333;
-  padding: 10px;
-  border-radius: 25px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  font-weight: 500;
-  transition: all 0.2s;
-}
-
-.pdp-wishlist-btn:hover {
-  background-color: #f9f9f9;
-  border-color: #bbb;
-}
-
-.buy-box-footer {
-  margin-top: 20px;
-  text-align: center;
-  font-size: 0.8rem;
+.sold-by-text {
+  font-size: 12px;
   color: #777;
-  border-top: 1px solid #eee;
-  padding-top: 15px;
+  margin-top: 10px;
+  margin-left: 5px;
 }
 
-/* =========================================
-   DISEÑO RESPONSIVO (TABLETS Y MÓVILES)
-   ========================================= */
-
-/* TABLETS (Entre 769px y 1024px) */
-@media (max-width: 1024px) {
-  .pdp-grid {
-    /* Cambiamos a 2 filas: Arriba Imagen e Info, Abajo Caja de compra */
-    grid-template-columns: 1fr; 
-    gap: 30px;
-  }
-
-  .pdp-image-section {
-    min-height: auto; /* Quitamos altura fija */
-  }
-
-  .buy-box {
-    position: static; /* Ya no es sticky en tablet */
-    max-width: 500px; /* Para que no se estire demasiado */
-    margin: 0 auto; /* Centrado */
-  }
+/* --- SIDEBAR DERECHO (TARJETA DE CONFIANZA) --- */
+.trust-card {
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  padding: 20px;
+  background-color: #fff; /* O #fafafa para diferenciarlo */
+  box-shadow: 0 4px 15px rgba(0,0,0,0.03);
 }
 
-/* MÓVILES (Menos de 768px) */
-@media (max-width: 768px) {
-  .pdp-container {
-    padding: 15px 10px; /* Menos relleno en los bordes */
-  }
+.trust-item {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
 
-  .pdp-breadcrumb {
-    font-size: 0.8rem;
-    margin-bottom: 15px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis; /* Puntos suspensivos si es muy largo */
-  }
+.trust-icon-wrapper {
+  color: #004aad; /* Iconos azules Disdel */
+  margin-top: 2px;
+}
 
-  .pdp-grid {
-    display: flex;
-    flex-direction: column; /* Apilamos todo verticalmente */
+.trust-content strong {
+  display: block;
+  font-size: 14px;
+  color: #222;
+  margin-bottom: 4px;
+}
+
+.trust-content p {
+  margin: 0;
+  font-size: 13px;
+  color: #666;
+  line-height: 1.4;
+}
+
+/* Divisor entre items de confianza */
+.divider {
+  height: 1px;
+  background-color: #f0f0f0;
+  margin: 15px 0;
+}
+
+/* RESPONSIVE */
+@media (max-width: 900px) {
+  .pdp-main-grid {
+    grid-template-columns: 1fr; /* Todo en 1 columna */
     gap: 20px;
   }
-
-  /* 1. Imagen */
-  .pdp-image-section {
-    padding: 10px;
-    border: none; /* Quitamos borde en móvil para look más limpio */
-  }
   
-  .pdp-main-img {
-    max-height: 300px; /* Imagen más pequeña en móvil */
-  }
-
-  /* 2. Info */
-  .pdp-info-section {
-    padding-right: 0;
-  }
-
-  .pdp-title {
-    font-size: 1.5rem; /* Título un poco más pequeño */
-  }
-
-  /* 3. Caja de Compra (Buy Box) */
-  .pdp-action-section {
-    width: 100%;
-  }
-
-  .buy-box {
-    width: 100%;
-    max-width: 100%;
-    border: none;
-    background-color: #f8f9fa; /* Fondo gris claro para diferenciar */
-    box-shadow: none;
-    border-top: 1px solid #e0e0e0;
-    border-bottom: 1px solid #e0e0e0;
-    border-radius: 0;
-    padding: 20px 15px;
-  }
-
   .pdp-add-cart-btn {
-    padding: 16px; /* Botón más alto para dedos */
-    font-size: 1.1rem;
+    max-width: 100%;
+  }
+
+  .trust-card {
+    margin-top: 20px;
+    background-color: #f9f9f9; /* Fondo gris en móvil para separar */
+  }
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+  .pdp-main-grid {
+    grid-template-columns: 1fr; /* Todo en 1 columna en móvil */
+  }
+  .specs-grid {
+    grid-template-columns: 1fr; /* Specs en 1 columna en móvil */
   }
 }

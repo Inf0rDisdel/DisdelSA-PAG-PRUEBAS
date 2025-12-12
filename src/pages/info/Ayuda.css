@@ -1,0 +1,136 @@
+/* --- CONTENEDOR PRINCIPAL --- */
+.ayuda-container {
+    max-width: 1000px; /* Ancho máximo para que no se estire demasiado */
+    margin: 0 auto;    /* Centrado en la pantalla */
+    padding: 60px 20px;
+    min-height: 80vh;  /* Para que ocupe buen alto de pantalla */
+    background-color: #ffffff;
+}
+
+/* --- HEADER (Alineado a la izquierda) --- */
+.ayuda-header {
+    text-align: left; /* Alineación solicitada */
+    margin-bottom: 40px;
+    border-bottom: 2px solid #f0f0f0; /* Línea sutil separadora */
+    padding-bottom: 20px;
+}
+
+.ayuda-title {
+    color: #135eab; /* Azul corporativo Disdel */
+    font-size: 36px;
+    font-weight: 800;
+    margin: 0 0 10px 0;
+}
+
+.ayuda-subtitle {
+    color: #666;
+    font-size: 18px;
+    margin: 0;
+}
+
+/* --- GRID (Para poner las tarjetas una al lado de la otra) --- */
+.ayuda-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); /* 2 columnas responsivas */
+    gap: 30px; /* Espacio entre tarjetas */
+}
+
+/* --- TARJETA --- */
+.ayuda-card {
+    background-color: #fff;
+    border: 1px solid #e0e0e0; /* Borde suave solicitado */
+    border-radius: 12px;       /* Bordes redondeados */
+    padding: 30px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05); /* Sombra muy suave */
+    transition: transform 0.2s, box-shadow 0.2s;
+    
+    /* Para alinear contenido */
+    display: flex;
+    flex-direction: row; /* Icono a la izquierda, texto a la derecha */
+    align-items: flex-start;
+    gap: 20px;
+}
+
+.ayuda-card:hover {
+    transform: translateY(-5px); /* Efecto de elevación al pasar el mouse */
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    border-color: #135eab;
+}
+
+/* --- ICONO --- */
+.icon-wrapper {
+    flex-shrink: 0;
+    background-color: #f0f7ff; /* Fondo azulito suave para el icono */
+    width: 70px;
+    height: 70px;
+    border-radius: 50%; /* Círculo */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.ayuda-icon {
+    width: 35px;
+    height: 35px;
+    object-fit: contain;
+}
+
+/* --- INFO DENTRO DE LA TARJETA --- */
+.card-info {
+    flex-grow: 1;
+}
+
+.ayuda-card h3 {
+    color: #135eab;
+    margin: 0 0 15px 0;
+    font-size: 22px;
+}
+
+.ayuda-text {
+    font-size: 15px;
+    color: #555;
+    margin-bottom: 8px;
+    line-height: 1.5;
+}
+
+.ayuda-text a {
+    color: #135eab;
+    text-decoration: none;
+    font-weight: 600;
+    margin-left: 5px;
+}
+
+.ayuda-text a:hover {
+    text-decoration: underline;
+}
+
+/* --- BOTÓN --- */
+.btn-minimal {
+    margin-top: 15px;
+    background-color: transparent;
+    border: 2px solid #135eab;
+    color: #135eab;
+    padding: 8px 20px;
+    border-radius: 6px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-minimal:hover {
+    background-color: #135eab;
+    color: white;
+}
+
+/* --- RESPONSIVE --- */
+@media (max-width: 768px) {
+    .ayuda-card {
+        flex-direction: column; /* En celular, icono arriba y texto abajo */
+        align-items: center;
+        text-align: center;
+    }
+    
+    .ayuda-title {
+        font-size: 28px;
+    }
+}

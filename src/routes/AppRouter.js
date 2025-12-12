@@ -1,35 +1,32 @@
-// src/routes/AppRouter.js
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 
-// Tus páginas
 import HomePage from '../pages/HomePage';
 import EresEmpresaPage from '../pages/EresEmpresa/EresEmpresa';
 import LoginPage from '../pages/login/LoginPage';
 import MyBusinessPage from '../pages/my-business/MyBusinessPage';
-import RecogeEnTiendaPage from '../pages/tienda/RecogeEnTienda';
+import RecogeEnTiendaPage from '../pages/RecojeEnTienda/RecogeEnTienda';
 import CartPage from 'pages/cart/CartPages'; 
 import CategoryPage from '../pages/CategoryPage'; 
 import DepartmentPage from '../pages/DepartmentPage';
-import BrandPage from '../pages/BrandPage'
+import BrandPage from '../pages/tienda/BrandPage'
 import OpinionesPage from 'pages/Opiniones';
-import ProductDetailPage from 'pages/ProductDetailPage'; // <--- Tu import está aquí, excelente.
+import ProductDetailPage from 'pages/ProductDetailPage';
+import AboutUs from 'pages/info/AboutUs'; 
+import Locations from 'pages/info/Locations';
+import Ayuda from 'pages/info/Ayuda';
 
 const AppRouter = ({ cartItems, addToCart, removeFromCart, updateQuantity, clearCart }) => {
   return (
     <Routes>
       <Route path="/" element={<HomePage addToCart={addToCart} />} />
-      
-      {/* 
-          1. AQUÍ AGREGAMOS LA NUEVA RUTA 
-          Le pasamos 'addToCart' para que el botón de "Agregar" dentro del detalle funcione.
-      */}
       <Route 
         path="/producto/:id" 
         element={<ProductDetailPage addToCart={addToCart} />} 
       />
 
-      {/* Ruta del Carrito */}
+      <Route path="/departamento/:slug" element={<CategoryPage />} />
+
       <Route 
         path="/carrito" 
         element={
@@ -52,6 +49,11 @@ const AppRouter = ({ cartItems, addToCart, removeFromCart, updateQuantity, clear
       <Route path="/marca/:slug" element={<BrandPage />} />
       <Route path="/opiniones" element={<OpinionesPage />} />
       
+      <Route path="/quienes-somos" element={<AboutUs />} />
+      <Route path="/ubicaciones" element={<Locations />} />
+      <Route path="/ayuda" element={<Ayuda />} />
+      
+
       <Route path="*" element={<h1>Página no encontrada (404)</h1>} />
     </Routes>
   );
