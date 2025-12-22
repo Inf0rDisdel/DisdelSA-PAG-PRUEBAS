@@ -29,7 +29,7 @@ const HomePage = ({ addToCart }) => {
       {destacados && destacados.length > 0 && (
         <div className="carousel-wrapper">
           <ProductCarousel
-            title="Destacados de temporada"
+            title="Los más Cotizados"
             products={destacados}
             addToCart={addToCart} 
           />

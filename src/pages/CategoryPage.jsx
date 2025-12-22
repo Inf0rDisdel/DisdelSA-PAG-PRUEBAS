@@ -2,7 +2,7 @@ import React from 'react';
 import { useParams } from 'react-router-dom';
 import './CategoryPage.css';
 import bannerBanos from 'assets/images/banners/BANCategoria.jpg';
-/*BAÑOS HE HIGIENE*/
+/*BAÑOS E HIGIENE*/
 import iconAROMATIZANTES from 'assets/images/brands/AROMATIZANTESPARABAÑO.jpg'
 import iconCABELLOCUERPO from 'assets/images/brands/CUIDADODECABELLOYCUERPO.jpg'
 import iconDISPENSADORES from 'assets/images/brands/DISPENSADORESYACCESORIOS.jpg'
@@ -62,8 +62,7 @@ import iconARCHIVO from 'assets/images/brands/ARCHIVO.jpg'
 import iconPAPEL from 'assets/images/brands/PAPEL.jpg'
 const CategoryPage = () => {
 const { slug } = useParams();
-// --- CORRECCIÓN IMPORTANTE AQUÍ ABAJO ---
-// Las llaves ahora están en minúscula y con guiones para coincidir con la URL
+
 const categoriesData = {
 "baños-e-higiene": {
 title: "Baños e Higiene",
@@ -125,7 +124,6 @@ subcategories: [
   ]
 },
 
-// --- CORREGIDO: minúscula y acentos tal cual viene del slug ---
 "cafetería": { 
   title: "Cafetería para tu alacena",
   banner: bannerBanos,
@@ -139,7 +137,6 @@ subcategories: [
   ]
 },
 
-// --- CORREGIDO ---
 "ferretería": { 
   title: "Ferretería",
   banner: bannerBanos,
@@ -150,7 +147,6 @@ subcategories: [
   ]
 },
 
-// --- CORREGIDO ---
 "botiquín": { 
   title: "Botiquín y Primeros Auxilios",
   banner: bannerBanos,
@@ -162,7 +158,6 @@ subcategories: [
   ]
 },
 
-// --- CORREGIDO: con guiones en vez de espacios ---
 "material-de-oficina": { 
   title: "Material de Oficina",
   banner: bannerBanos,
@@ -175,7 +170,7 @@ subcategories: [
   ]
 },
 };
-// Lógica de seguridad: si no existe la categoría, usa un fallback
+
 const currentCategory = categoriesData[slug] || {
 title: "Categoría",
 banner: null,
@@ -190,7 +185,6 @@ const products = [
 return (
 <div className="cat-page-container">
 
-{/* 1. EL BANNER (Ocupa todo el ancho disponible arriba) */}
   <div className="cat-banner">
     {currentCategory.banner ? (
       <img src={currentCategory.banner} alt="Banner Categoría" />
@@ -199,7 +193,6 @@ return (
     )}
   </div>
 
-  {/* 2. CONTENIDO PRINCIPAL (Más angosto que el banner) */}
   <div className="cat-content">
     
     {/* --- NUEVA ESTRUCTURA: TÍTULO IZQUIERDA | CARRUSEL DERECHA --- */}
@@ -231,7 +224,6 @@ return (
       </div>
 
     </div>
-    {/* ----------------------------------------------------------- */}
 
     {/* 3. GRILLA DE PRODUCTOS */}
     <div className="products-grid-section">

@@ -1,106 +1,135 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
-
-.cart-page-background {
-  background-color: #f8f9fa;
-  min-height: 100vh;
-  padding: 3rem 2rem;
-  font-family: 'Poppins', sans-serif;
-}
-
-.cart-page-layout {
-  display: grid;
-  grid-template-columns: 2fr 1fr; /* 2 partes carrito, 1 parte formulario */
-  gap: 3rem;
-  max-width: 1400px;
+.cart-page-container {
+  max-width: 1200px;
   margin: 0 auto;
+  padding: 20px;
 }
 
-/* --- NUEVOS ESTILOS DEL HEADER (Título y Botón) --- */
-.cart-header {
+.cart-header-flex {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 2rem;
-  flex-wrap: wrap; /* Permite que bajen si no caben */
-  gap: 15px;
+  border-bottom: 2px solid #eee;
+  margin-bottom: 20px;
 }
 
-.main-title {
-  font-size: 2.25rem;
-  font-weight: 700;
-  color: #1a202c;
-  margin: 0; /* Quitamos margen porque lo controla el padre */
+.cart-content-grid {
+  display: grid;
+  grid-template-columns: 1fr 380px; /* Productos a la izquierda, form a la derecha */
+  gap: 30px;
+  align-items: start; /* Importante para el sticky */
 }
 
-.clear-cart-btn {
+/* CONTENEDOR DE PRODUCTOS CON SCROLL */
+.cart-items-scroll-container {
+  max-height: 70vh; /* Ajusta este alto según prefieras */
+  overflow-y: auto; /* Activa el scroll solo aquí */
+  padding-right: 15px; /* Espacio para que el scroll no tape el contenido */
+}
+
+/* Personalización del scroll (opcional para que se vea fino) */
+.cart-items-scroll-container::-webkit-scrollbar {
+  width: 6px;
+}
+.cart-items-scroll-container::-webkit-scrollbar-thumb {
+  background-color: #ccc;
+  border-radius: 10px;
+}
+
+/* BOTÓN ELIMINAR TODO */
+.clear-all-btn {
+  background: none;
+  border: none;
+  color: #d33;
+  cursor: pointer;
+  font-weight: 600;
   display: flex;
   align-items: center;
-  gap: 8px;
-  background-color: white;
-  border: 1px solid #dc3545;
-  color: #dc3545;
+  gap: 5px;
+  transition: transform 0.2s;
+}
+
+.clear-all-btn:hover {
+  transform: scale(1.05);
+  text-decoration: underline;
+}
+
+/* FORMULARIO STICKY */
+.cart-form-column {
+  position: sticky;
+  top: 20px; /* Se queda a 20px del techo cuando haces scroll */
+}
+/* === RESPONSIVE (Móviles y Tablets) === */
+.cart-page-container {
+  max-width: 1250px;
+  margin: 0 auto;
+  padding: 40px 20px;
+}
+
+.cart-header-flex {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 2px solid #f0f0f0;
+  margin-bottom: 30px;
+  padding-bottom: 10px;
+}
+
+.cart-content-grid {
+  display: grid;
+  grid-template-columns: 1fr 400px; /* Productos izquierda, form derecha */
+  gap: 40px;
+  align-items: start;
+}
+
+/* SCROLL INDEPENDIENTE PARA PRODUCTOS */
+.cart-items-scroll-container {
+  max-height: 75vh; /* Altura máxima del 75% de la pantalla */
+  overflow-y: auto;
+  padding-right: 20px;
+}
+
+/* Estilo del scroll para que se vea profesional */
+.cart-items-scroll-container::-webkit-scrollbar {
+  width: 8px;
+}
+.cart-items-scroll-container::-webkit-scrollbar-thumb {
+  background: #e0e0e0;
+  border-radius: 10px;
+}
+
+/* FORMULARIO FIJO */
+.cart-form-column {
+  position: sticky;
+  top: 20px; /* Se queda pegado arriba al bajar */
+}
+
+/* BOTÓN ELIMINAR TODO */
+.clear-all-btn {
+  background: none;
+  border: 1px solid #ffcccc;
+  color: #d33;
   padding: 8px 15px;
-  border-radius: 5px;
+  border-radius: 6px;
   cursor: pointer;
-  font-size: 14px;
-  font-weight: 600;
+  font-weight: 500;
   transition: all 0.3s ease;
 }
 
-.clear-cart-btn:hover {
-  background-color: #dc3545;
-  color: white;
+.clear-all-btn:hover {
+  background: #fff5f5;
+  border-color: #d33;
 }
 
-.cart-items-container {
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-}
+@media (max-width: 900px) {
+  .cart-content-grid {
+    grid-template-columns: 1fr; /* Una sola columna */
+  }
 
-/* ==================================================
-   DISEÑO RESPONSIVO (TABLETS Y MÓVILES)
-   ================================================== */
-
-/* TABLETS (Pantallas medianas, menos de 1024px) */
-@media (max-width: 1024px) {
-  .cart-page-layout {
-    grid-template-columns: 1fr; /* Una sola columna: Carrito arriba, Formulario abajo */
-    gap: 2rem;
+  .sticky-form-wrapper {
+    position: static; /* En celular no queremos que sea sticky */
   }
   
-  .cart-page-background {
-    padding: 2rem;
-  }
-}
-
-/* MÓVILES (Pantallas pequeñas, menos de 768px) */
-@media (max-width: 768px) {
-  .cart-page-background {
-    padding: 1.5rem 1rem; /* Reducimos padding para ganar espacio */
-  }
-
-  .main-title {
-    font-size: 1.8rem; /* Título un poco más pequeño */
-  }
-
-  /* Ajuste para el botón de "Eliminar todo" en móvil */
-  .clear-cart-btn {
-    padding: 6px 12px;
-    font-size: 13px;
-  }
-}
-
-/* MÓVILES PEQUEÑOS (Menos de 480px) */
-@media (max-width: 480px) {
-  .cart-header {
-    flex-direction: column; /* Ponemos título arriba y botón abajo */
-    align-items: flex-start; /* Alineados a la izquierda */
-    gap: 10px;
-  }
-
-  .clear-cart-btn {
-    width: 100%; /* Botón ancho completo para facilitar el toque */
-    justify-content: center;
-  }
+  /* Invertir orden si quieres (opcional): 
+     Si quieres el form arriba pon 'order: -1' en .cart-form-column */
 }

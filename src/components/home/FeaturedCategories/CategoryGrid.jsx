@@ -6,6 +6,7 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import './CategoryGrid.css';
 
+// TUS IMÁGENES (Se mantienen igual)
 import higieneIcon from 'assets/images/categories/BañosHigiene.jpg';
 import limpiezaIcon from 'assets/images/categories/HerramientasPLimpieza.jpg';
 import quimicosIcon from 'assets/images/categories/QuimicosLimpieza.jpg';
@@ -43,7 +44,7 @@ const CategoryGrid = () => {
   }, []);
 
   const settings = {
-    arrows:true,
+    arrows: true,
     dots: true, 
     infinite: false, 
     speed: 500, 
@@ -62,36 +63,39 @@ const CategoryGrid = () => {
         settings: {
           slidesToShow: 4,
           slidesToScroll: 4,
-          arrows:false
+          arrows: false
         }
       },
-         {
+      {
         breakpoint: 468, 
         settings: {
           slidesToShow: 3,
           slidesToScroll: 3,
-          arrows:false
+          arrows: false
         }
       }
-      
     ]
   };
 
   return (
-    <section className="category-grid-section">
-      <h2 className="section-title">Categorías Destacadas</h2>
+    // 1. Clase contenedora única: cgs-section
+    <section className="cgs-section">
+      
+      {/* 2. Título único: cgs-title */}
+      <h2 className="cgs-title">Categorías Destacadas</h2>
 
-      <div className="category-slider">
+      {/* 3. Slider wrapper único: cgs-slider */}
+      <div className="cgs-slider">
         <Slider key={sliderKey} {...settings}>
           {categories.map((category) => (
-            // A react-slick le gusta tener un div simple como hijo directo
             <div key={category.name}>
               <Link 
-                className="category-item"
+                className="cgs-item" // 4. Item único
                 to={`/departamento/${createSlug(category.name)}`}
               >
-                <div className="category-image-wrapper">
-                    <img src={category.icon} alt={category.name} className="category-image" />
+                {/* 5. Wrapper de imagen único */}
+                <div className="cgs-image-wrapper">
+                    <img src={category.icon} alt={category.name} className="cgs-image" />
                 </div>
                 <p>{category.name}</p>
               </Link>

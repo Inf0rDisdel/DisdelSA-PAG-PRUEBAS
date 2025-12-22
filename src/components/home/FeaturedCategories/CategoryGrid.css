@@ -1,14 +1,19 @@
-/* --- TU CÓDIGO ORIGINAL --- */
-.category-grid-section {
+/* =========================================
+   ESTILOS ÚNICOS PARA CATEGORY GRID
+   Prefijo usado: cgs-
+   ========================================= */
+
+/* Contenedor Principal */
+.cgs-section {
   text-align: left; 
   padding: 5px 40px; 
   max-width: 1200px;
   margin: auto; 
   margin-top: -22px;
-  /* YA NO LLEVA OVERFLOW AQUÍ */
 }
 
-.section-title {
+/* Título de la sección */
+.cgs-title {
   display: inline-block; 
   padding: 3px 20px;
   background-color: white;
@@ -17,59 +22,69 @@
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
   margin-bottom: 3px; 
   font-size: 1.2rem;   
-  /*font-weight: bold;*/
-  /*font-family: Arial Black;*/
   color: #135eab !important;
 }
 
-/* --- CORRECCIÓN AQUÍ --- */
-.category-slider {
+/* Contenedor del Slider */
+.cgs-slider {
   position: relative;
-  overflow: hidden; /* <-- El overflow VA AQUÍ, en el contenedor directo del slider */
-  margin: 0 -15px; /* Esto se queda para el espaciado */
+  overflow: hidden; 
+  margin: 0 -15px;
 }
 
-/* --- El resto de tu código se queda igual --- */
-.category-item {
-  display: flex !important;
+/* Item Individual (Cada categoría) */
+.cgs-item {
+  display: flex !important; /* Importante para Slick */
   flex-direction: column;
   align-items: center;
   text-align: center;
   cursor: pointer;
   text-decoration: none;
   padding: 0 15px; 
+  outline: none; /* Quita el borde azul al hacer click */
 }
 
-/* ... (el resto de tus estilos de .category-item p, .category-image, etc. se quedan igual) ... */
-.category-item p {
+/* Texto de la categoría */
+.cgs-item p {
   margin-top: 15px;
   font-size: 1.1rem; 
   color: #135eab;  
-  /*font-weight: bold;*/
-  /*font-family: Bahnschrift Condensed, Arial, sans-serif;*/
   height: 10px; 
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-.category-image {
+/* Wrapper de la imagen (opcional si lo usas en el JSX) */
+.cgs-image-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Imagen de la categoría */
+.cgs-image {
   width: 220px; 
   height: 205px; 
-  
   border-radius: 20px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); 
   object-fit: cover; 
-  
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-.category-item:hover .category-image {
+/* Efecto Hover */
+.cgs-item:hover .cgs-image {
   transform: translateY(-8px);
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
 }
 
-.slick-arrow {
+/* =========================================
+   ESTILOS ESPECÍFICOS DE SLICK CAROUSEL
+   (Solo afectan a este slider gracias a .cgs-section)
+   ========================================= */
+
+/* Solo modificamos las flechas que están DENTRO de .cgs-section */
+.cgs-section .slick-arrow {
   background-color: white;
   width: 35px;
   height: 35px;
@@ -80,81 +95,92 @@
   justify-content: center;
   box-shadow: 0 2px 5px rgba(0,0,0,0.15);
 }
-.slick-arrow:hover {
+
+.cgs-section .slick-arrow:hover {
   background-color: white;
 }
-.slick-arrow::before {
-  font-family: 'slick';
+
+.cgs-section .slick-arrow::before {
+  font-family: 'slick'; /* Asegura que cargue la fuente de iconos */
   font-size: 20px;
   color: #135eab;
+  opacity: 1;
 }
 
-.slick-prev {
+.cgs-section .slick-prev {
   left: 2px; 
 }
-.slick-next {
+
+.cgs-section .slick-next {
   right: 2px; 
 }
 
-.slick-dots {
+.cgs-section .slick-dots {
   bottom: -5px; 
 }
-.slick-dots li button::before {
+
+.cgs-section .slick-dots li button::before {
   font-size: 12px;
- color: #8b8b8b;
+  color: #8b8b8b;
+  opacity: 1;
 }
 
-.slick-dots li.slick-active button::before {
+.cgs-section .slick-dots li.slick-active button::before {
   color: #96c121;
 }
 
+/* =========================================
+   RESPONSIVE (MÓVIL)
+   ========================================= */
 @media (max-width: 768px) {
 
-  .category-grid-section {
+  .cgs-section {
     padding: 20px 0;
     margin-top: 0;
   }
   
-  .category-slider {
+  .cgs-slider {
     margin: 0 -5px;
   }
 
-  .section-title {
+  .cgs-title {
     font-size: 1.2rem;
     width: 90%;
     margin-left: auto;
     margin-right: auto;
-    text-align: flex-start;
+    text-align: left; /* Corregido para que no de error en consola */
+    display: block;
   }
 
-  .category-item {
+  .cgs-item {
     padding: 0 5px; 
   }
 
-  .category-image {
+  .cgs-image {
     width: 130px;  
     height: 120px; 
   }
 
-  .category-item p {
+  .cgs-item p {
     font-size: 0.9rem;
     margin-top: 10px;
   }
 
-  .slick-arrow {
+  /* Ajustes específicos de Slick en móvil para ESTE archivo */
+  .cgs-section .slick-arrow {
     width: 35px;
     height: 35px;
   }
   
-  .slick-prev {
+  .cgs-section .slick-prev {
     left: 10px; 
   }
 
-  .slick-next {
+  .cgs-section .slick-next {
     right: 10px; 
   }
 
-  .slick-dots {
+  .cgs-section .slick-dots {
     bottom: -25px; 
   }
 }

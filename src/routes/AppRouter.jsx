@@ -2,15 +2,14 @@ import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 
 import HomePage from '../pages/HomePage';
-import EresEmpresaPage from '../pages/EresEmpresa/EresEmpresa';
 import LoginPage from '../pages/login/LoginPage';
 import MyBusinessPage from '../pages/my-business/MyBusinessPage';
-import RecogeEnTiendaPage from '../pages/RecojeEnTienda/RecogeEnTienda';
+import StoreBradge from 'components/layouts/Header/StoreBadge';
 import CartPage from 'pages/cart/CartPages'; 
 import CategoryPage from '../pages/CategoryPage'; 
 import DepartmentPage from '../pages/DepartmentPage';
 import BrandPage from '../pages/tienda/BrandPage'
-import OpinionesPage from 'pages/Opiniones';
+import OpinionesPage from 'pages/opiniones/OpinionesPage';
 import ProductDetailPage from 'pages/ProductDetailPage';
 import AboutUs from 'pages/info/AboutUs'; 
 import Locations from 'pages/info/Locations';
@@ -40,10 +39,9 @@ const AppRouter = ({ cartItems, addToCart, removeFromCart, updateQuantity, clear
       />
 
       {/* Resto de rutas */}
-      <Route path="/eres-empresa" element={<EresEmpresaPage />} />
       <Route path="/login" element={<LoginPage />} />
       <Route path="/my-business" element={<MyBusinessPage />} />
-      <Route path="/recoge-en-tienda" element={<RecogeEnTiendaPage />} />
+      <Route path="sede-central" element={<StoreBradge/>} />
       <Route path="/categoria/:slug" element={<CategoryPage />} />
       <Route path="/departamento/:slug" element={<DepartmentPage />} />
       <Route path="/marca/:slug" element={<BrandPage />} />

@@ -30,7 +30,7 @@ const Locations = () => {
       img: imgTienda2,
       lat: 14.603456, 
       lng: -90.528765,
-      googleMapsLink: "https://goo.gl/maps/..." 
+      googleMapsLink: "https://www.google.com/maps/place/Disdel,+S.+A./@14.6282923,-90.535314,15z/data=!4m10!1m2!2m1!1stienda+disdel!3m6!1s0x8589a2410996aaab:0x888aca1dddc38f6f!8m2!3d14.6243644!4d-90.5255417!15sCg10aWVuZGEgZGlzZGVskgEaY2xlYW5pbmdfcHJvZHVjdHNfc3VwcGxpZXLgAQA!16s%2Fg%2F11f_428swk?entry=ttu&g_ep=EgoyMDI1MTIwOS4wIKXMDSoASAFQAw%3D%3D"
     },
     {
       id: 3,
@@ -40,7 +40,7 @@ const Locations = () => {
       img: imgTienda3,
       lat: 14.567890, 
       lng: -90.456789,
-      googleMapsLink: "https://goo.gl/maps/..."
+      googleMapsLink: "https://www.google.com/maps/place/L%26G+Representaciones+S.A./@14.6317675,-90.5047123,17z/data=!3m1!4b1!4m6!3m5!1s0x8589a243d58c5a87:0xbd20178b49c98481!8m2!3d14.6317623!4d-90.5021374!16s%2Fg%2F11c2k8mnq5?entry=ttu&g_ep=EgoyMDI1MTIwOS4wIKXMDSoASAFQAw%3D%3D"
     }
   ];
 

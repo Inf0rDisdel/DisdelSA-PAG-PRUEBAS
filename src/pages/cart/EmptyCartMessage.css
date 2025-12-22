@@ -1,29 +1,49 @@
 .empty-cart-wrapper {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 4rem 2rem;
-    background-color: #fff;
-    border-radius: 16px;
-    text-align: center;
-    border: 2px dashed #e9ecef;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  background-color: #fff;
+  border: 2px dashed #e0e0e0; /* Borde punteado elegante */
+  border-radius: 12px;
+  text-align: center;
+  margin-top: 20px;
 }
 
 .empty-cart-icon {
-    font-size: 4rem;
-    color: #ced4da;
-    margin-bottom: 1.5rem;
+  font-size: 60px;
+  color: #ccc;
+  margin-bottom: 20px;
 }
 
 .empty-cart-title {
-    font-size: 1.5rem;
-    color: #495057;
-    margin: 0 0 0.5rem 0;
+  font-size: 20px;
+  color: #333;
+  margin-bottom: 10px;
+  font-weight: 700;
 }
 
 .empty-cart-text {
-    font-size: 1rem;
-    color: #868e96;
-    max-width: 400px;
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 25px;
+}
+
+/* --- ESTILOS DEL NUEVO BOTÓN --- */
+.btn-empty-back {
+  background-color: #004aad; /* Tu azul corporativo */
+  color: #fff;
+  border: none;
+  padding: 12px 25px;
+  font-size: 15px;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s;
+}
+
+.btn-empty-back:hover {
+  background-color: #003380; /* Azul un poco más oscuro al pasar mouse */
+  transform: translateY(-2px); /* Pequeño efecto de elevación */
 }

@@ -80,7 +80,7 @@ const ProductCarousel = ({ title, products = [], addToCart }) => {
                   className="add-cart-button"
                   onClick={() => addToCart(product)}
                 >
-                  Agregar
+                  Cotizar
                 </button>
               </div>
             </div>

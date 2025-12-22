@@ -1,351 +1,319 @@
-/* --- ESTILOS GENERALES --- */
 .pdp-container {
-  max-width: 1200px;
+  max-width: 1200px; 
+  width: 100%;
   margin: 0 auto;
-  padding: 20px;
-  /*font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;*/
+  padding: 40px 0; 
+  
+  box-sizing: border-box;
+  font-family: 'Poppins', sans-serif;
   color: #333;
+  background: #fcfcfc;
 }
 
-/* --- SECCIÓN SUPERIOR (Imagen, Info, Compra) --- */
+/* Títulos de Sección (H2) */
+.section-heading {
+  font-size: 22px;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin-bottom: 20px;
+  position: relative;
+  display: inline-block;
+  border-bottom: 3px solid #004aad; /* Subrayado azul elegante */
+  padding-bottom: 5px;
+}
+
 .pdp-main-grid {
   display: grid;
-  grid-template-columns: 1fr 1.2fr 0.8fr; /* 3 Columnas */
-  gap: 30px;
-  margin-bottom: 50px; /* Separación con las especificaciones */
+  grid-template-columns: 350px 1fr 320px; 
+  gap: 40px;
+  margin-bottom: 60px;
+  
+  /* CAMBIO CLAVE: 'stretch' hace que todas las columnas tengan la misma altura.
+     Así la caja de la imagen bajará hasta donde termine la caja de info/garantía. */
+  align-items: stretch; 
+}
+
+.pdp-col-image {
+  background: #fff;
+  border: 1px solid #eee;
+  border-radius: 12px;
+  padding: 20px;
+  
+  /* Flexbox para centrar la imagen dentro de la caja estirada */
+  display: flex;
+  justify-content: center;
+  align-items: center; 
+  
+  box-shadow: 0 4px 10px rgba(0,0,0,0.03);
+  
+  /* Asegura que llene el alto disponible */
+  height: 100%; 
+  box-sizing: border-box;
 }
 
 .pdp-main-img {
   width: 100%;
-  border-radius: 12px;
-  border: 1px solid #eee;
+  height: auto;
+  max-height: 400px; /* Limitamos la altura visual de la foto, no de la caja blanca */
+  object-fit: contain;
 }
 
-.pdp-brand-label {
-  color: #888;
-  font-size: 12px;
+.pdp-col-info { 
+  display: flex; 
+  flex-direction: column; 
+  justify-content: space-between; /* Esto empuja la Barra de Confianza al fondo si sobra espacio */
+}
+
+.brand-badge {
+  color: #004aad;
+  font-size: 13px;
+  font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 1px;
-}
-
-.pdp-title {
-  font-size: 26px;
-  margin: 10px 0;
-}
-
-.buy-box {
-  border: 1px solid #e0e0e0;
-  padding: 20px;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-}
-
-.pdp-add-cart-btn {
-  background-color: #004aad;
-  color: white;
-  width: 100%;
-  padding: 12px;
-  border: none;
-  border-radius: 6px;
-  font-size: 16px;
-  cursor: pointer;
-  margin-top: 15px;
-}
-
-/* --- NUEVA SECCIÓN: ESPECIFICACIONES (Estilo Imagen) --- */
-.specs-section {
-  margin-bottom: 40px;
-  border-top: 1px solid #eee;
-  padding-top: 20px;
-}
-
-.section-title {
-  font-size: 20px;
-  margin-bottom: 20px;
-  color: #222;
-  font-weight: 700;
-}
-
-.specs-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr; /* Dos columnas grandes */
-  gap: 8px; /* Espacio entre las dos columnas */
-}
-
-/* El estilo de "burbuja" gris de tu imagen */
-.spec-item {
-  background-color: #f8f9fa; /* Gris muy suave */
-  padding: 12px 20px;
-  border-radius: 8px; /* Bordes redondeados */
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 12px;
-}
-
-.spec-label {
-  color: #555;
-  font-weight: 600;
-}
-
-.spec-value {
-  color: #000;
-  font-weight: 500;
-}
-
-/* --- NUEVA SECCIÓN: RESEÑAS --- */
-.reviews-section {
-  border-top: 1px solid #eee;
-  padding-top: 30px;
-  background-color: #fff;
-}
-
-/* Formulario de reseñas */
-.review-form {
-  background-color: #f9f9f9;
-  padding: 20px;
-  border-radius: 12px;
-  margin-bottom: 30px;
-  border: 1px solid #e0e0e0;
-}
-
-.star-input-group {
-  display: flex;
-  gap: 5px;
-  margin: 10px 0;
-  cursor: pointer;
-}
-
-.star-icon {
-  font-size: 24px;
-  color: #ddd; /* Gris por defecto */
-  transition: color 0.2s;
-}
-
-.star-icon.active {
-  color: #ffc107; /* Amarillo activo */
-}
-
-.review-textarea {
-  width: 100%;
-  padding: 10px;
-  margin-top: 10px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  min-height: 80px;
-  font-family: "Poppins", sans-serif;
-}
-
-.submit-review-btn {
-  background-color: #28a745;
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 6px;
-  margin-top: 10px;
-  cursor: pointer;
-}
-
-/* Lista de reseñas */
-.review-card {
-  border-bottom: 1px solid #eee;
-  padding: 20px 0;
-}
-
-.review-header {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 8px;
-}
-
-.review-user {
-  font-weight: bold;
-}
-
-.review-stars {
-  color: #ffc107;
-}
-
-.review-date {
-  font-size: 12px;
-  color: #999;
-}
-
-.review-comment {
-  margin-bottom: 10px;
-  line-height: 1.5;
-}
-
-.review-useful {
-  font-size: 12px;
-  color: #666;
-  cursor: pointer;
-}
-.review-useful:hover {
-  text-decoration: underline;
-  color: #004aad;
-}
-
-.pdp-main-grid {
-  display: grid;
-  /* Imagen | Info+Botón | Tarjeta de Confianza */
-  grid-template-columns: 1fr 1.5fr 1fr; 
-  gap: 30px;
-  margin-bottom: 50px;
-  align-items: start;
-}
-
-/* IMAGEN */
-.pdp-main-img {
-  width: 100%;
-  border-radius: 8px;
-  border: 1px solid #eee;
-  padding: 10px; /* Un poco de aire dentro del cuadro */
-  background: #fff;
-}
-
-/* INFO CENTRAL + BOTÓN */
-.pdp-col-info {
-  display: flex;
-  flex-direction: column;
-}
-
-.pdp-brand-label {
-  color: #888;
-  font-size: 13px;
-  text-transform: uppercase;
-  font-weight: 700;
   margin-bottom: 5px;
 }
 
 .pdp-title {
-  font-size: 28px;
-  margin: 5px 0 15px 0;
+  font-size: 30px;
+  font-weight: 800;
+  color: #111;
+  margin: 0 0 10px 0;
   line-height: 1.2;
 }
 
-.pdp-stock-indicator {
-  color: #28a745;
-  font-weight: 700;
-  font-size: 14px;
+.rating-sku-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   margin-bottom: 15px;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 10px;
+}
+.stars-wrapper { color: #ffc107; display: flex; align-items: center; gap: 5px; font-size: 14px; }
+.stars-wrapper span { color: #888; margin-left: 5px; }
+.sku-badge { background: #eee; padding: 2px 8px; border-radius: 4px; font-size: 12px; font-weight: 600; color: #555; }
+
+.stock-status { margin-bottom: 15px; color: #28a745; font-weight: 600; font-size: 14px; display: flex; align-items: center; gap: 8px; }
+.stock-status .dot { width: 8px; height: 8px; background: #28a745; border-radius: 50%; }
+
+.short-desc { font-size: 15px; color: #555; line-height: 1.5; margin-bottom: 25px; }
+
+/* --- BARRA DE CONFIANZA RENOVADA (Estilo Premium) --- */
+.trust-benefits-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  background: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+}
+
+.trust-benefit-item {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 15px;
 }
 
-.status-dot {
-  width: 10px;
-  height: 10px;
-  background-color: #28a745;
+.benefit-icon {
+  width: 40px;
+  height: 40px;
+  background: #e3f2fd; /* Fondo azul suave */
+  color: #004aad;
   border-radius: 50%;
-  display: inline-block;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 20px;
+  flex-shrink: 0;
 }
 
-.pdp-desc-text {
-  color: #555;
-  line-height: 1.6;
-  margin-bottom: 25px;
-  font-size: 15px;
-}
+.benefit-text strong { display: block; font-size: 14px; color: #222; margin-bottom: 2px; }
+.benefit-text p { margin: 0; font-size: 13px; color: #666; line-height: 1.2; }
 
-/* EL "MARCO" DE ACCIÓN (Botón Grande) */
+
+/* C. COTIZADOR (Derecha) */
 .pdp-action-frame {
-  margin-top: 10px;
-  padding-top: 20px;
-  border-top: 1px solid #eee; /* Separador sutil */
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  padding: 25px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.06);
+  position: sticky;
+  top: 20px;
 }
 
-.pdp-add-cart-btn {
-  background-color: #004aad;
-  color: white;
+.quote-header { font-size: 18px; font-weight: 700; color: #111; margin-bottom: 15px; }
+
+.quote-alert {
+  background: #f0f7ff;
+  border-left: 4px solid #004aad;
+  padding: 10px;
+  font-size: 13px;
+  color: #004aad;
+  font-weight: 500;
+  margin-bottom: 20px;
+  border-radius: 0 4px 4px 0;
+}
+
+.qty-section { margin-bottom: 20px; }
+.qty-section label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 8px; }
+
+.qty-control-group {
+  display: flex;
+  align-items: center;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  width: 100%; /* Ahora ocupa todo el ancho disponible */
+  justify-content: space-between; /* Distribuye botones y número */
+  margin-bottom: 20px; /* Espacio que antes daba el label */
+}
+
+.qty-control-group button { background: #f9f9f9; border: none; padding: 10px 15px; cursor: pointer; color: #333; }
+.qty-control-group span { min-width: 40px; text-align: center; font-weight: 600; }
+
+.btn-add-quote {
   width: 100%;
-  max-width: 350px; /* Que no se estire infinito */
+  background: #004aad;
+  color: #fff;
   padding: 14px;
   border: none;
   border-radius: 8px;
-  font-size: 16px;
   font-weight: 700;
+  font-size: 15px;
   cursor: pointer;
-  transition: background-color 0.2s;
-  box-shadow: 0 4px 10px rgba(0, 74, 173, 0.2);
+  transition: 0.2s;
+}
+.btn-add-quote:hover { background: #003380; transform: translateY(-2px); }
+
+.vendor-info { font-size: 12px; text-align: center; margin-top: 15px; color: #777; }
+
+
+/* =========================================
+   BLOQUE 2: DETALLES Y CARACTERÍSTICAS
+   ========================================= */
+.details-layout-grid {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr; /* Izquierda más ancha que Derecha */
+  gap: 50px;
+  margin-top: 60px;
+  padding-top: 40px;
+  border-top: 1px solid #eee;
 }
 
-.pdp-add-cart-btn:hover {
-  background-color: #003366;
+/* Descripción Larga */
+.description-content p {
+  font-size: 15px;
+  line-height: 1.8;
+  color: #444;
+  margin-bottom: 15px;
 }
 
-.sold-by-text {
-  font-size: 12px;
-  color: #777;
-  margin-top: 10px;
-  margin-left: 5px;
+/* Ficha Técnica (Tabla Moderna) */
+.specs-table {
+  background: #fff;
+  border: 1px solid #eee;
+  border-radius: 8px;
+  overflow: hidden;
 }
 
-/* --- SIDEBAR DERECHO (TARJETA DE CONFIANZA) --- */
-.trust-card {
-  border: 1px solid #e0e0e0;
-  border-radius: 12px;
-  padding: 20px;
-  background-color: #fff; /* O #fafafa para diferenciarlo */
-  box-shadow: 0 4px 15px rgba(0,0,0,0.03);
-}
-
-.trust-item {
+.spec-row {
   display: flex;
-  gap: 12px;
-  align-items: flex-start;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 20px;
+  border-bottom: 1px solid #f5f5f5;
+}
+.spec-row:last-child { border-bottom: none; }
+.spec-row:hover { background: #fdfdfd; }
+
+.spec-key { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; color: #666; text-transform: uppercase; }
+.spec-key svg { color: #004aad; } /* Iconos azules */
+.spec-val { font-size: 14px; font-weight: 600; color: #222; }
+.spec-val.highlight { color: #004aad; }
+.spec-val.code { font-family: monospace; background: #eee; padding: 2px 6px; border-radius: 4px; color: #555; }
+
+
+/* =========================================
+   BLOQUE 3: RESEÑAS
+   ========================================= */
+.reviews-wrapper {
+  margin-top: 60px;
+  padding-top: 40px;
+  border-top: 1px solid #eee;
 }
 
-.trust-icon-wrapper {
-  color: #004aad; /* Iconos azules Disdel */
-  margin-top: 2px;
+.reviews-split {
+  display: grid;
+  grid-template-columns: 350px 1fr; /* Formulario fijo | Lista flexible */
+  gap: 50px;
 }
 
-.trust-content strong {
-  display: block;
-  font-size: 14px;
-  color: #222;
-  margin-bottom: 4px;
+/* Formulario */
+.review-input-box {
+  background: #fff;
+  padding: 25px;
+  border-radius: 12px;
+  border: 1px solid #eee;
+  height: fit-content;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+}
+.review-input-box h3 { margin: 0 0 5px 0; font-size: 18px; color: #222; }
+.review-input-box p { font-size: 13px; color: #666; margin-bottom: 15px; }
+
+.star-selector { font-size: 24px; color: #ddd; margin-bottom: 15px; cursor: pointer; }
+.s-star.active { color: #ffc107; }
+
+.review-input-box textarea {
+  width: 100%;
+  height: 100px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  resize: none;
+  margin-bottom: 15px;
+  font-family: inherit;
+  box-sizing: border-box;
 }
 
-.trust-content p {
-  margin: 0;
-  font-size: 13px;
-  color: #666;
-  line-height: 1.4;
+.btn-submit-review {
+  width: 100%;
+  background: #28a745;
+  color: #fff;
+  border: none;
+  padding: 12px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
 }
 
-/* Divisor entre items de confianza */
-.divider {
-  height: 1px;
-  background-color: #f0f0f0;
-  margin: 15px 0;
+/* Lista de Comentarios */
+.review-feed { display: flex; flex-direction: column; gap: 20px; }
+
+.review-bubble {
+  background: #fff;
+  border: 1px solid #eee;
+  padding: 20px;
+  border-radius: 8px;
 }
 
-/* RESPONSIVE */
-@media (max-width: 900px) {
-  .pdp-main-grid {
-    grid-template-columns: 1fr; /* Todo en 1 columna */
-    gap: 20px;
-  }
+.rb-header { display: flex; gap: 12px; margin-bottom: 10px; }
+.rb-avatar { width: 40px; height: 40px; background: #004aad; color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; }
+.rb-meta { display: flex; flex-direction: column; }
+.rb-user { font-weight: 700; color: #333; font-size: 14px; }
+.rb-date { font-size: 12px; color: #888; }
+.rb-stars { color: #ffc107; font-size: 14px; margin-bottom: 8px; display: flex; gap: 2px; }
+.rb-text { color: #444; font-size: 14px; line-height: 1.5; }
+
+
+/* =========================================
+   RESPONSIVE
+   ========================================= */
+@media (max-width: 1024px) {
+  .pdp-main-grid { grid-template-columns: 1fr; } /* Todo en 1 columna arriba */
+  .pdp-action-frame { position: static; }
   
-  .pdp-add-cart-btn {
-    max-width: 100%;
-  }
-
-  .trust-card {
-    margin-top: 20px;
-    background-color: #f9f9f9; /* Fondo gris en móvil para separar */
-  }
-}
-
-/* RESPONSIVE */
-@media (max-width: 768px) {
-  .pdp-main-grid {
-    grid-template-columns: 1fr; /* Todo en 1 columna en móvil */
-  }
-  .specs-grid {
-    grid-template-columns: 1fr; /* Specs en 1 columna en móvil */
-  }
+  .details-layout-grid { grid-template-columns: 1fr; } /* Descripción arriba, Ficha abajo */
+  .reviews-split { grid-template-columns: 1fr; } /* Reseñas en 1 columna */
 }

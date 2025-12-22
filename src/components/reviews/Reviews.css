@@ -1,0 +1,243 @@
+/* src/components/reviews/Reviews.css */
+
+/* --- CONFIGURACIÓN DE LA PÁGINA (Para que coincida con tu Header) --- */
+.opiniones-page-background {
+  background-color: #f8f9fa; /* Gris muy suave de fondo */
+  min-height: 100vh;
+  padding: 3rem 0;
+  font-family: 'Poppins', sans-serif;
+}
+
+.opiniones-container-master {
+  max-width: 1212px; /* 🔥 EL ANCHO EXACTO DE TU HEADER */
+  width: 100%;
+  margin: 0 auto;
+  padding: 0 15px; /* Margen interno de seguridad */
+  box-sizing: border-box;
+}
+
+/* Títulos centrados y elegantes */
+.page-header-center {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.page-title {
+  font-size: 2.5rem;
+  color: #1a202c;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+.page-subtitle {
+  color: #718096;
+  font-size: 1.1rem;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* =========================================================
+   1. TARJETA DE ESTADÍSTICAS (ENCABEZADO BLANCO)
+   ========================================================= */
+.reviews-header {
+  background-color: white;
+  border-radius: 16px; /* Bordes más redondeados */
+  padding: 2rem 3rem;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.06); /* Sombra difusa elegante */
+  
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 30px;
+  
+  margin-bottom: 3rem; /* Espacio antes de los comentarios */
+  border: 1px solid #f0f0f0;
+}
+
+/* Lado Izquierdo: El Promedio */
+.rating-summary {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.big-rating {
+  font-size: 4.5rem; /* Número gigante */
+  font-weight: 800;
+  color: #1a202c;
+  line-height: 1;
+  margin: 0;
+}
+
+.stars-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.total-reviews {
+  color: #718096;
+  font-size: 0.95rem;
+  margin-top: 5px;
+  font-weight: 500;
+}
+
+/* Lado Derecho: Llamada a la acción */
+.reviews-actions {
+  text-align: right;
+  max-width: 450px;
+}
+
+.reviews-actions h3 {
+  font-size: 1.4rem;
+  margin: 0 0 8px 0;
+  color: #2d3748;
+}
+
+.reviews-actions p {
+  color: #718096;
+  margin: 0 0 20px 0;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.btn-write-review {
+  background-color: #135eab; /* TU AZUL */
+  color: white;
+  border: none;
+  padding: 12px 28px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(19, 94, 171, 0.3); /* Sombra azulada en el botón */
+}
+
+.btn-write-review:hover {
+  background-color: #0e4b8a;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(19, 94, 171, 0.4);
+}
+
+.btn-cancel {
+  background-color: #e53e3e;
+  box-shadow: 0 4px 12px rgba(229, 62, 62, 0.3);
+}
+.btn-cancel:hover { background-color: #c53030; }
+
+/* =========================================================
+   2. EL FORMULARIO (Animado)
+   ========================================================= */
+.review-form {
+  background-color: white;
+  padding: 2.5rem;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.08); /* Sombra más fuerte para resaltar */
+  max-width: 700px;
+  margin: 0 auto 3rem auto;
+  border: 1px solid #e2e8f0;
+  position: relative;
+  z-index: 10;
+}
+
+/* =========================================================
+   3. GRID DE RESEÑAS (TARJETAS ORDENADAS)
+   ========================================================= */
+.reviews-grid {
+  display: grid;
+  /* 🔥 AQUÍ ESTÁ EL TRUCO: Columnas automáticas pero mínimo 350px */
+  grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); 
+  gap: 25px; /* Espacio entre tarjetas */
+}
+
+.review-card {
+  background-color: white;
+  border-radius: 12px;
+  padding: 25px;
+  border: 1px solid #f0f0f0;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+  transition: all 0.3s ease;
+  
+  display: flex;
+  flex-direction: column;
+  height: 100%; /* Para que todas midan lo mismo */
+}
+
+.review-card:hover {
+  transform: translateY(-5px); /* Se levanta al pasar el mouse */
+  box-shadow: 0 12px 24px rgba(0,0,0,0.08);
+  border-color: #cbd5e0;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 15px;
+  border-bottom: 1px solid #f7fafc;
+  padding-bottom: 15px;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.user-avatar {
+  font-size: 42px;
+  color: #cbd5e0;
+  background: #edf2f7;
+  border-radius: 50%;
+  padding: 2px;
+}
+
+.user-name {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #2d3748;
+  margin: 0;
+}
+
+.review-date {
+  font-size: 0.8rem;
+  color: #a0aec0;
+  display: block;
+  margin-top: 2px;
+}
+
+.review-text {
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: #4a5568;
+  font-style: italic;
+  margin: 0;
+  flex-grow: 1; /* Empuja el contenido hacia abajo si agregamos algo más */
+}
+
+/* =========================================================
+   RESPONSIVE (Móvil)
+   ========================================================= */
+@media (max-width: 768px) {
+  .reviews-header {
+    flex-direction: column;
+    text-align: center;
+    padding: 2rem;
+    gap: 20px;
+  }
+
+  .rating-summary {
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .reviews-actions {
+    text-align: center;
+  }
+
+  .reviews-grid {
+    grid-template-columns: 1fr; /* Una sola columna en móvil */
+  }
+}

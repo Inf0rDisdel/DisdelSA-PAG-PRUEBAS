@@ -1,7 +1,3 @@
-/* =========================================
-   ESTILOS BASE (Escritorio / Pantallas grandes)
-   ========================================= */
-
 .info-section-container {
   display: flex;
   justify-content: space-between;
@@ -16,10 +12,13 @@
   flex: 1;
   text-align: center;
   padding: 0 15px; 
-  border-right: 1px solid #e0e0e0; /* Color gris suave para la línea */
-  
-  /* Asegura que la caja no se rompa */
+  border-right: 1px solid #e0e0e0; 
   box-sizing: border-box; 
+  
+  /* ✅ CORRECCIÓN: Usamos Flexbox vertical para forzar el centro */
+  display: flex;
+  flex-direction: column; /* Apila icono, título y texto verticalmente */
+  align-items: center;    /* CENTRA HORIZONTALMENTE TODO EL CONTENIDO */
 }
 
 .info-item:last-child {
@@ -28,16 +27,23 @@
 
 .icon-wrapper {
   height: 60px;
+  width: 100%; /* Asegura que tenga espacio para centrar */
   margin-bottom: 15px;
+  
+  /* Mantenemos el flex interno por seguridad */
   display: flex;
   justify-content: center;
-  align-items: flex-end;
+  align-items: flex-end; 
 }
 
 .icon-wrapper img {
   max-height: 100%;
   max-width: 100%;
   object-fit: contain;
+  
+  /* ✅ SEGURIDAD EXTRA: Si el flex falla, esto lo centra igual */
+  display: block;
+  margin: 0 auto;
 }
 
 .info-title {
@@ -46,6 +52,7 @@
   font-weight: 700;
   font-size: 1.1rem;
   margin-bottom: 10px;
+  text-align: center; /* Aseguramos texto centrado */
 }
 
 .info-text {
@@ -55,61 +62,57 @@
   font-size: 0.85rem;
   line-height: 1.4;
   margin: 0;
+  text-align: center; /* Aseguramos texto centrado */
 }
 
 /* =========================================
    TABLETS (Aprox entre 768px y 1024px)
-   Aquí forzamos que se mantenga en 1 sola línea
-   pero reduciendo el tamaño de letra
    ========================================= */
 @media (max-width: 1024px) {
   .info-section-container {
-    padding: 30px 10px; /* Menos espacio a los lados */
+    padding: 30px 10px; 
   }
 
   .info-title {
-    font-size: 0.95rem; /* Título un poco más pequeño */
+    font-size: 0.95rem; 
   }
 
   .info-text {
-    font-size: 0.75rem; /* Texto más pequeño para que quepa */
+    font-size: 0.75rem; 
   }
   
   .icon-wrapper {
-    height: 45px; /* Iconos un poco más pequeños */
+    height: 45px; 
   }
   
-  /* Reducimos el espacio entre las líneas divisorias */
   .info-item {
     padding: 0 10px;
+    /* Recordamos mantener el flex centrado aquí también */
+    align-items: center; 
   }
 }
 
 /* =========================================
    MÓVILES (Menos de 768px)
-   Aquí hacemos el diseño de "Grid" (2 columnas)
    ========================================= */
 @media (max-width: 768px) {
   .info-section-container {
-    flex-wrap: wrap; /* PERMITE QUE BAJEN A LA SIGUIENTE LÍNEA */
+    flex-wrap: wrap; 
     justify-content: center;
-    gap: 30px 0; /* Espacio vertical entre filas */
+    gap: 30px 0; 
   }
 
   .info-item {
-    /* Esto es la magia: 
-       50% del ancho = 2 items por fila. 
-       El 5to item se centrará o estirará solo. */
     flex: 0 0 50%; 
+    border-right: none; 
     
-    border-right: none; /* Quitamos las líneas verticales en móvil (se ven mal en grid) */
-    
-    /* Opcional: Ponemos borde abajo en móvil para separar filas */
-    /* border-bottom: 1px dashed #e0e0e0; */
-    /* padding-bottom: 20px; */
+    /* REFORZAMOS EN MÓVIL */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   }
 
   .info-title {
-    font-size: 1rem; /* Volvemos a subir un poco el tamaño para leer bien en cel */
+    font-size: 1rem; 
   }
 }

@@ -6,7 +6,7 @@ import MegaMenu from './MegaMenu';
 import logo from 'assets/logo/LOGO-BLANCO.png';
 import iconUser from 'assets/icons/INICIAR-SESION-USUARIO.png';
 import iconBuilding from 'assets/icons/MY-BUSINESS.png';
-import iconCart from 'assets/icons/CARRITO-DE-COMPRAS.png';
+import iconCart from 'assets/icons/portapapeles-removebg-preview.png';
 
 import {
   FaSearch, FaAngleDown, FaShoppingCart, FaBars, FaTimes, FaMapMarkerAlt
@@ -91,7 +91,7 @@ const Header = ({ cartItemCount = 0 }) => {
                 <img src={iconBuilding} alt="MyBusiness" className={styles.actionIcon} />
                 <span className={styles.actionText}>MyBusiness</span>
               </Link>
-              <Link to="/recoge-en-tienda" className={styles.secondaryLink}>Recoge en tienda</Link>
+              <Link to="/sede-central" className={styles.secondaryLink}>Tienda Disdel</Link>
             </div>
             
             <Link to="/carrito" className={cartClasses}>
@@ -128,7 +128,7 @@ const Header = ({ cartItemCount = 0 }) => {
               <span>MyBusiness</span>
             </Link>
 
-            <Link to="/recoge-en-tienda" onClick={() => setIsMobileMenuOpen(false)} className={styles.sidebarLink}>
+            <Link to="/sede-central" onClick={() => setIsMobileMenuOpen(false)} className={styles.sidebarLink}>
               <FaMapMarkerAlt className={styles.sidebarIcon} style={{color: '#135eab'}}/> 
               <span>Recoge en tienda</span>
             </Link>
