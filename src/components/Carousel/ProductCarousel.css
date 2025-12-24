@@ -51,7 +51,7 @@
   position: relative;
   display: flex !important;
   flex-direction: column;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 4px 12px rgba(255, 255, 255, 0.05);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 .product-card:hover {
@@ -82,7 +82,7 @@
 }
 .product-disdel-id {
   font-size: 13px;
-  color: #0d47a1;
+  color: #4e5665;
   /*font-weight: bold;*/
   margin: 0 0 12px 0;
   padding: 0;
@@ -106,13 +106,14 @@
   margin-top: auto;
 }
 
+
 .slick-arrow, .slick-dots { display: block !important; }
 .slick-arrow { width: 40px; height: 40px; border-radius: 50%; background-color: rgb(255, 255, 255) !important; z-index: 20; }
-.slick-arrow:before { font-size: 20px; color: #96c121 !important; }
+.slick-arrow:before { font-size: 20px; color: #135eab !important; }
 .slick-prev { left: -50px; }
 .slick-next { right:-50px; }
 .slick-dots { bottom: -40px; }
-.slick-dots li button:before { font-size: 12px; color: #ffffff; opacity: 10; }
+.slick-dots li button:before { font-size: 12px; color: #ffffff;  }
 .slick-dots li.slick-active button:before { color: #96c121 !important; }
 
 @media (max-width: 780px) {

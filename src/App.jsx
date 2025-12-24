@@ -1,5 +1,6 @@
 // src/App.js
 import React, { useState, useEffect } from 'react'; 
+import { HelmetProvider } from 'react-helmet-async';
 import "slick-carousel/slick/slick.css"; 
 import "slick-carousel/slick/slick-theme.css";
 import './App.css';
@@ -66,6 +67,7 @@ function App() {
   const totalItemsInCart = cartItems.reduce((total, item) => total + (item.quantity || 1), 0);
 
   return (
+    <HelmetProvider>
       <div className="App">
         <Header cartItemCount={totalItemsInCart} /> 
         
@@ -83,6 +85,8 @@ function App() {
         <FloatingWidgets />
         <Footer />
       </div>
+
+    </HelmetProvider>
   );
 }
 
