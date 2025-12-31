@@ -66,7 +66,7 @@ const HomePage = ({ addToCart }) => {
       {liquidacion && liquidacion.length > 0 && (
         <div className="carousel-wrapper">
           <ProductCarousel
-            title="Productos en Liquidación"
+            title="Todo para el Coffe Break"
             products={liquidacion}
             addToCart={addToCart} 
           />
