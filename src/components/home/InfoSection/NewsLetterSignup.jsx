@@ -1,4 +1,5 @@
 import React from 'react';
+import {Link} from 'react-router-dom';
 import './NewsLetterSignup.css'; 
 
 import { HiOutlineMail } from 'react-icons/hi';
@@ -33,7 +34,7 @@ const NewsletterSignup = () => {
             <div className="newsletter-acceptance">
                 <input type="checkbox" id="terms-acceptance" required />
                 <label htmlFor="terms-acceptance">
-                    Acepto que he leído y acepto los términos de <a href="/politicas-de-privacidad">Políticas de privacidad</a>
+                    Acepto que he leído y acepto los términos de <Link to="/politicas-de-privacidad" className="Políticas de privacidad">Políticas de privacidad</Link>
                 </label>
             </div>
         </section>

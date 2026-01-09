@@ -12,11 +12,9 @@ const Footer = () => {
         <footer className="footer-wrapper">
             <div className="footer-content-area">
 
-                {/* === COLUMNA IZQUIERDA: Contenedor azul con la información === */}
                 <div className="footer-container">
                     <div className="footer-columns-grid">
                         
-                        {/* Fila Superior */}
                         <div className="footer-row">
                             <div className="footer-column">
                                 <h3>CONTÁCTANOS</h3>
@@ -46,7 +44,6 @@ const Footer = () => {
                             </div>
                         </div>
 
-                        {/* Fila Inferior (solo "Encuéntranos") */}
                         <div className="footer-row">
                             <div className="footer-column">
                                 <h3>ENCUÉNTRANOS</h3>
@@ -61,7 +58,6 @@ const Footer = () => {
                     </div>
                 </div>
 
-                {/* === COLUMNA DERECHA: Todos los elementos gráficos === */}
                 <div className="footer-right-area">
                     <div className="products-text">
                         <span>+1000</span> productos
@@ -73,7 +69,7 @@ const Footer = () => {
                             <img src={paymentCardsImage} alt="Visa y Mastercard" />
                         </div>
                         <div className="footer-copyright">
-                            <p>© 2025 Copyright Disdel S.A</p>
+                            <p>© 2026 Copyright Disdel S.A</p>
                         </div>
                 </div>
             </div>

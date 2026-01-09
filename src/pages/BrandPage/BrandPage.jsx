@@ -2,27 +2,26 @@ import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import './BrandPage.css';
 
+// --- BANNERS ---
 import bannerKimberly from 'assets/images/banners/BANNER-KCP.png'; 
 import bannerSilver from 'assets/images/banners/banners_silver-2.jpg';
 import banner3m from 'assets/images/banners/BANNERS-3M.png';
 import bannerWiese from 'assets/images/banners/BANNERS-WIESE.jpg';
 
+// --- CATEGORÍAS IMÁGENES ---
 import imgPastillas from 'assets/images/categories/BañosHigiene.jpg'; 
 import imgDispensador from 'assets/images/categories/Botiquin.jpg';
 import imgPapel from 'assets/images/categories/EPP.jpg';
 import imgDiscos from 'assets/images/categories/KCP.jpg';
 import imgQuimicos from 'assets/images/categories/Ferreteria.jpg'; 
-import Automotriz from 'assets/images/brands/1975.png'
-
-// --- ICONO PARA "VER TODO" ---
-// Puedes usar uno específico o repetir uno genérico por ahora
-import iconVerTodo from 'assets/images/categories/BañosHigiene.jpg'; // O usa un icono de "Home"
+import Automotriz from 'assets/images/brands/1975.png';
+import iconVerTodo from 'assets/images/categories/BañosHigiene.jpg'; 
 
 const brandConfig = {
-  "kimberly-clark": { banner: bannerKimberly, color: "#00558C" },
-  "wiese": { banner: bannerWiese, color: "#692C90" },
-  "3m": { banner: banner3m, color: "#EE2737" },
-  "silver": { banner: bannerSilver, color: "#76BD1D" }
+  "kimberly-clark": { name: "Kimberly-Clark", banner: bannerKimberly, color: "#00558C" },
+  "wiese": { name: "Wiese", banner: bannerWiese, color: "#692C90" },
+  "3m": { name: "3M", banner: banner3m, color: "#EE2737" },
+  "silver": { name: "Silver", banner: bannerSilver, color: "#76BD1D" }
 };
 
 const categoryImagesMap = {
@@ -64,92 +63,89 @@ const mockProducts = [
 
 const BrandPage = () => {
   const { slug } = useParams();
-  const currentBrand = slug ? slug.toLowerCase().trim().replace(/\s+/g, '-') : "";
-  const brandData = brandConfig[currentBrand] || { banner: null, color: "#004aad" };
 
-  const [products, setProducts] = useState([]);
+  // NORMALIZACIÓN: Convierte "Kimberly Clark" o "kimberly-clark" en "kimberly-clark"
+  const currentBrand = slug ? slug.toLowerCase().trim().replace(/\s+/g, '-') : "";
+  
+  // Obtenemos la configuración de la marca o valores por defecto
+  const brandData = brandConfig[currentBrand] || { name: slug, banner: null, color: "#004aad" };
+
+  const [filteredProducts, setFilteredProducts] = useState([]);
   const [categories, setCategories] = useState([]);
-  // ESTADO NUEVO: Para saber cuál botón está activo (y resaltar el de "Ver Todo")
   const [activeCategory, setActiveCategory] = useState("all");
 
   useEffect(() => {
-    // 1. Cargar productos INICIALES (Todos los de la marca)
+    // Al cambiar de marca, filtramos los productos que pertenecen a ella
     const brandSpecificProducts = mockProducts.filter(
       p => p.brand.toLowerCase() === currentBrand
     );
-    setProducts(brandSpecificProducts);
+    setFilteredProducts(brandSpecificProducts);
 
-    // 2. Generar lista de categorías
+    // Extraemos las categorías únicas de esos productos
     const uniqueCats = [...new Set(brandSpecificProducts.map(p => p.category))];
     setCategories(uniqueCats);
     
-    // 3. Resetear el filtro visual a "all"
+    // Resetear filtro al cambiar de marca
     setActiveCategory("all");
+
+    // Scroll al inicio cuando cambia la marca
+    window.scrollTo(0, 0);
 
   }, [currentBrand]);
 
-  // FUNCIÓN PARA MANEJAR EL CLIC
   const handleCategoryClick = (categoryName) => {
-    setActiveCategory(categoryName); // Marcamos el botón como activo
+    setActiveCategory(categoryName);
+
+    const allBrandProducts = mockProducts.filter(p => p.brand.toLowerCase() === currentBrand);
 
     if (categoryName === "all") {
-      // SI ES "VER TODO": Mostramos TODOS los productos de la marca (Regresamos al inicio)
-      const allBrandProducts = mockProducts.filter(
-        p => p.brand.toLowerCase() === currentBrand
-      );
-      setProducts(allBrandProducts);
+      setFilteredProducts(allBrandProducts);
     } else {
-      // SI ES UNA CATEGORÍA: Filtramos
-      const filtered = mockProducts.filter(
-        p => p.brand.toLowerCase() === currentBrand && p.category === categoryName
-      );
-      setProducts(filtered);
+      const filtered = allBrandProducts.filter(p => p.category === categoryName);
+      setFilteredProducts(filtered);
     }
   };
 
   return (
     <div className="brand-container" style={{ '--brand-color': brandData.color }}>
       
-      {/* BANNER */}
+      {/* SECCIÓN HERO / BANNER */}
       <div className="brand-hero">
         {brandData.banner ? (
-          <img src={brandData.banner} alt={`${slug} Banner`} />
+          <img src={brandData.banner} alt={`${brandData.name} Banner`} />
         ) : (
-          <div style={{width: '100%', height: '250px', background: brandData.color}}></div>
+          <div className="brand-hero-fallback" style={{ background: brandData.color }}>
+            <h1>{brandData.name}</h1>
+          </div>
         )}
       </div>
 
       <div className="brand-layout">
         
-        {/* SIDEBAR */}
+        {/* SIDEBAR DE FILTROS */}
         <aside className="sidebar-filters">
           <span className="sidebar-title">Categorías</span>
           
           <div className="categories-stack">
             
-            {/* --- 1. BOTÓN DE INICIO / VER TODO --- */}
+            {/* BOTÓN INICIO (VER TODO) */}
             <div 
-              className="category-card-btn" 
-              // Si la categoría activa es "all", le damos un estilo diferente (opcional) o lo dejamos igual
-              style={activeCategory === "all" ? { filter: 'brightness(0.8)' } : {}}
+              className={`category-card-btn ${activeCategory === "all" ? 'active-filter' : ''}`}
               onClick={() => handleCategoryClick("all")}
             >
               <div className="cat-img-box">
-                {/* Icono genérico para "Ver Todo" */}
-                <img src={iconVerTodo} alt="Ver Todo" />
+                <img src={iconVerTodo} alt="Inicio" />
               </div>
               <span className="cat-text">Inicio</span>
             </div>
-
-            {/* --- 2. LISTA DE CATEGORÍAS DINÁMICAS --- */}
+          
+            {/* CATEGORÍAS DISPONIBLES */}
             {categories.map((cat, index) => {
               const catImage = categoryImagesMap[cat] || imgPastillas; 
               return (
                 <div 
                   key={index} 
-                  className="category-card-btn" 
-                  // Resaltamos visualmente si esta es la categoría activa
-                  style={activeCategory === cat ? { filter: 'brightness(0.8)', border: '2px solid white' } : {}}
+                  className={`category-card-btn ${activeCategory === cat ? 'active-filter' : ''}`}
                   onClick={() => handleCategoryClick(cat)}
                 >
                   <div className="cat-img-box">
@@ -168,21 +164,28 @@ const BrandPage = () => {
           </div>
         </aside>
 
-        {/* GRILLA */}
+        {/* ÁREA DE PRODUCTOS */}
         <main className="products-area">
-          <div className="grid-container">
-            {products.map((prod) => (
-              <div className="product-card" key={prod.id}>
-                <div className="prod-img-container">
-                  <img src={prod.img} alt={prod.name} />
+          {filteredProducts.length > 0 ? (
+            <div className="grid-container">
+              {filteredProducts.map((prod) => (
+                <div className="product-card" key={prod.id}>
+                  <div className="prod-img-container">
+                    <img src={prod.img} alt={prod.name} />
+                  </div>
+                  <div className="prod-category">{prod.category}</div>
+                  <div className="prod-title">{prod.name}</div>
+                  <div className="prod-stars">{'★'.repeat(prod.rating)}</div>
+                  <button className="btn-details">Ver detalles</button>
                 </div>
-                <div className="prod-category">{prod.category}</div>
-                <div className="prod-title">{prod.name}</div>
-                <div className="prod-stars">{'★'.repeat(prod.rating)}</div>
-                <button className="btn-details">Ver detalles</button>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          ) : (
+            <div className="no-products-message">
+              <h3>No se encontraron productos para esta selección.</h3>
+              <p>Intenta explorar otras categorías o marcas.</p>
+            </div>
+          )}
         </main>
       </div>
     </div>

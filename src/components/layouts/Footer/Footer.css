@@ -20,7 +20,6 @@
     background-color: #135eab;
     color: #ffffff;
     padding: 40px;
-    border-radius: 8px;
     flex-basis: 70%;
     flex-shrink: 0;
 }
@@ -115,8 +114,8 @@
 
 .mascot {
     position: absolute;
-    left: 175px;
-    bottom: -40px;
+    left: 200px;
+    bottom: -25px;
 }
 
 .mascot img {

@@ -1,36 +1,46 @@
 import React from 'react';
-import CartItem from './CarItem'; // Verifica si es CarItem o CartItem
+import CartItem from './CarItem'; 
 import EmptyCartMessage from './EmptyCartMessage';
 import QuoteForm from './QuoteForm'; 
 import Swal from 'sweetalert2'; 
 import './CartPage.css';
 
-// ✅ CORRECCIÓN: Cambiado de carItems a cartItems para que coincida con AppRouter
 const CartPage = ({ cartItems, removeFromCart, updateQuantity, clearCart }) => {
   
-  // Ahora cartItems ya no será undefined
   const isEmpty = !cartItems || cartItems.length === 0;
 
+  // 1. ALERTA PARA VACIAR TODO 
   const handleClearAll = () => {
     Swal.fire({
       title: '¿Vaciar lista?',
       text: "Se eliminarán todos los productos de la cotización.",
       icon: 'warning',
+      iconColor: '#f8bb86',
+      width: '350px',
       showCancelButton: true,
-      confirmButtonColor: '#0056b3',
-      cancelButtonColor: '#d33',
       confirmButtonText: 'Sí, borrar todo',
       cancelButtonText: 'Cancelar',
-      reverseButtons: true
+      confirmButtonColor: '#0056b3',
+      cancelButtonColor: '#e2e8f0',
+      customClass: {
+        popup: 'swal-custom-popup',
+        title: 'swal-custom-title',
+        htmlContainer: 'swal-custom-text',
+        confirmButton: 'swal-confirm-btn',
+        cancelButton: 'swal-cancel-btn'
+      }
     }).then((result) => {
       if (result.isConfirmed) {
-        clearCart(); // Esta función viene de App.js
+        clearCart();
+        // Toast rápido de éxito
         Swal.fire({
-          title: '¡Borrado!',
-          text: 'Tu lista ha sido limpiada.',
+          toast: true,
+          position: 'top-end',
           icon: 'success',
-          timer: 1500,
-          showConfirmButton: false
+          title: 'Lista vaciada correctamente',
+          showConfirmButton: false,
+          timer: 2000,
+          timerProgressBar:true
         });
       }
     });
@@ -38,7 +48,6 @@ const CartPage = ({ cartItems, removeFromCart, updateQuantity, clearCart }) => {
 
   return (
     <div className="cart-page-container">
-      {/* 1. Encabezado dinámico */}
       <div className="cart-header-flex">
         <h1 className="cart-page-title">
           {isEmpty ? 'Estado de la Solicitud' : 'Mi Lista de Cotización'}
@@ -54,26 +63,23 @@ const CartPage = ({ cartItems, removeFromCart, updateQuantity, clearCart }) => {
         <EmptyCartMessage />
       ) : (
         <div className="cart-content-grid">
-          
-          {/* 2. Contenedor con Scroll para productos */}
           <div className="cart-items-scroll-container">
             {cartItems.map((item) => (
               <CartItem 
                 key={item.id} 
                 product={item} 
-                removeFromCart={removeFromCart} 
+                // Usamos la nueva función con alerta en lugar de removeFromCart directo
+                removeFromCart={removeFromCart}
                 updateQuantity={updateQuantity}
               />
             ))}
           </div>
 
-          {/* 3. Columna fija para el formulario (aparece solo si hay productos) */}
           <div className="cart-form-column">
             <div className="sticky-form-wrapper">
-                <QuoteForm cartItems={cartItems} /> 
+                <QuoteForm cartItems={cartItems} clearCart={clearCart} /> 
             </div>
           </div>
-
         </div>
       )}
     </div>

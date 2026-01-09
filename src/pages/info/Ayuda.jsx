@@ -2,8 +2,8 @@ import React from "react";
 import './Ayuda.css';
 
 // Asegúrate de que las rutas a tus iconos sean correctas
-import iconMercadeo from '../../assets/icons/mercadeo.png'; // Ajusta la ruta si es necesario
-import iconSoporte from '../../assets/icons/soporte.png';   // Ajusta la ruta si es necesario
+import iconMercadeo from 'assets/icons/mercadeo.png'; // Ajusta la ruta si es necesario
+import iconSoporte from 'assets/icons/soporte.png';   // Ajusta la ruta si es necesario
 
 const Ayuda = () => {
     return (

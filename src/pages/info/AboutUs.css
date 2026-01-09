@@ -21,8 +21,8 @@
 
 .about-header h1 {
   color: #135eab;
-  font-size: 36px;
-  font-weight: 700;
+  font-size: 33px;
+  font-weight: 650;
   margin: 0;
   text-align: left;
 }
@@ -36,8 +36,8 @@
 
 .content-block h2 {
   color: #135eab;
-  font-size: 28px;
-  font-weight: 700;
+  font-size: 25px;
+  font-weight: 650;
   margin-bottom: 15px;
 }
 
@@ -111,8 +111,8 @@
 
 .vm-text-side h2 {
   color: #135eab;
-  font-size: 26px;
-  font-weight: 700;
+  font-size: 22px;
+  font-weight: 650;
   margin-top: 0;
   margin-bottom: 10px;
 }

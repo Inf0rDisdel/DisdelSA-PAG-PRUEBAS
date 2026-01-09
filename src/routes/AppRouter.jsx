@@ -8,12 +8,17 @@ import StoreBradge from 'components/layouts/Header/StoreBadge';
 import CartPage from 'pages/cart/CartPages'; 
 import CategoryPage from '../pages/CategoryPage'; 
 import DepartmentPage from '../pages/DepartmentPage';
-import BrandPage from '../pages/tienda/BrandPage'
+import BrandPage from '../pages/BrandPage/BrandPage'
 import OpinionesPage from 'pages/opiniones/OpinionesPage';
 import ProductDetailPage from 'pages/ProductDetailPage';
 import AboutUs from 'pages/info/AboutUs'; 
 import Locations from 'pages/info/Locations';
 import Ayuda from 'pages/info/Ayuda';
+import PrivacyPolicy from 'pages/info/PrivacyPolicy';
+
+// --- NUEVA IMPORTACIÓN (AÑADIDA) ---
+import CategoryDetail from '../pages/CategoryDetail/CategoryDetail';
+
 
 const AppRouter = ({ cartItems, addToCart, removeFromCart, updateQuantity, clearCart }) => {
   return (
@@ -25,6 +30,12 @@ const AppRouter = ({ cartItems, addToCart, removeFromCart, updateQuantity, clear
       />
 
       <Route path="/departamento/:slug" element={<CategoryPage />} />
+
+      {/* --- NUEVA RUTA PARA CATEGORY DETAIL (AÑADIDA) --- */}
+      <Route 
+        path="/seccion/:categorySlug" 
+        element={<CategoryDetail addToCart={addToCart} />} 
+      />
 
       <Route 
         path="/carrito" 
@@ -46,7 +57,9 @@ const AppRouter = ({ cartItems, addToCart, removeFromCart, updateQuantity, clear
       <Route path="/departamento/:slug" element={<DepartmentPage />} />
       <Route path="/marca/:slug" element={<BrandPage />} />
       <Route path="/opiniones" element={<OpinionesPage />} />
-      
+
+      <Route path="politicas-de-privacidad" element={<PrivacyPolicy/>} />
+
       <Route path="/quienes-somos" element={<AboutUs />} />
       <Route path="/ubicaciones" element={<Locations />} />
       <Route path="/ayuda" element={<Ayuda />} />

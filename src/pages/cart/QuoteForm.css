@@ -12,7 +12,7 @@
 
 .form-title {
     text-align: center;
-    font-size: 1.5rem;
+    font-size: 1.3rem;
     margin-bottom: 2rem;
     color: #343a40;
 }
@@ -54,11 +54,27 @@
     color: white; 
     border: none; 
     border-radius: 8px; 
-    font-size: 1.1rem; 
+    font-size: 1rem; 
     font-weight: 600; 
     cursor: pointer; 
     transition: all 0.3s ease; }
 
 .submit-button:hover { transform: translateY(-3px); 
     box-shadow: 0 4px 15px rgba(76, 110, 245, 0.4); 
+}
+
+.swal2-container.swal2-top-end {
+    top: 85px !important; /* Ajusta según el alto de tu header azul */
+    right: 20px !important;
+}
+
+.swal2-toast {
+    font-family: 'Poppins', sans-serif !important;
+    border-radius: 12px !important;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.08) !important;
+}
+
+.swal2-toast .swal2-title {
+    font-size: 0.9rem !important;
+    font-weight: 500 !important;
 }

@@ -1,12 +1,13 @@
-// src/pages/cart/components/CartItem.js
+// src/pages/cart/components/CarItem.jsx
 import React from 'react';
 import { FiMinus, FiPlus, FiTrash2 } from 'react-icons/fi';
+import useCartStore from 'store/useCartStore'; 
 import './CarItem.css'; 
 
-// 1. RECIBIMOS la prop 'updateQuantity'
-const CartItem = ({ product, removeFromCart, updateQuantity }) => {
+const CartItem = ({ product }) => {
+  const { removeFromCart, updateQuantity } = useCartStore();
   
-  const quantity = product.quantity || 1;
+  const quantity = product.quantity || 1; 
 
   return (
     <div className="cart-item-wrapper">
@@ -24,25 +25,16 @@ const CartItem = ({ product, removeFromCart, updateQuantity }) => {
       </div>
 
       <div className="quantity-control">
-        {/* 
-            2. BOTÓN MENOS (-) 
-            Llamamos a updateQuantity pasando el ID y -1 (restar).
-            Validamos que no baje de 1.
-        */}
         <button 
           className="quantity-btn"
-          disabled={quantity <= 1} // Desactiva el botón si es 1 para no tener negativos
+          disabled={quantity <= 1} 
           onClick={() => updateQuantity(product.id, -1)}
         >
           <FiMinus />
         </button>
-
+        
         <span className="quantity-display">{quantity}</span>
 
-        {/* 
-            3. BOTÓN MÁS (+) 
-            Llamamos a updateQuantity pasando el ID y +1 (sumar).
-        */}
         <button 
           className="quantity-btn"
           onClick={() => updateQuantity(product.id, 1)}

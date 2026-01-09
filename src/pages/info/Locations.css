@@ -5,8 +5,8 @@
 }
 
 .locations-header h1 {
-  font-size: 36px; /* Tamaño grande */
-  font-weight: 800; /* Letra gruesa */
+  font-size: 28px; /* Tamaño grande */
+  font-weight: 650; /* Letra gruesa */
   margin: 0 0 10px 0;
   color: #000; /* Color negro o el azul oscuro que usas */
 }
@@ -105,8 +105,8 @@
 
 .card-content h3 {
   color: #262725;
-  font-size: 20px;
-  font-weight: 800;
+  font-size: 18px;
+  font-weight: 700;
   text-transform: uppercase;
   margin-bottom: 15px;
   line-height: 1.3;

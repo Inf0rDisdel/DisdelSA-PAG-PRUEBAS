@@ -1,7 +1,6 @@
 import React from 'react';
-import {Link} from 'react-router-dom'
+import { Link } from 'react-router-dom';
 import './FeaturedBrands.css'; 
-
 
 import SilverLogo from 'assets/logo/SILVERCHEMICAL.png';
 import KimberlyLogo from 'assets/logo/KCP.png';
@@ -14,23 +13,22 @@ const FeaturedBrands = () => {
       <h2 className="section-title">Aliados Comerciales</h2>
       
       <div className="brands-container">
-        
-        <Link to="/marca/Kimberly Clark" className="brand-item">
+        {/* Rutas normalizadas a minúsculas y con guiones */}
+        <Link to="/marca/kimberly-clark" className="brand-item">
           <img src={KimberlyLogo} alt="Kimberly-Clark Professional" />
         </Link>
         
-        <Link to="/marca/Silver" className="brand-item">
+        <Link to="/marca/silver" className="brand-item">
           <img src={SilverLogo} alt="Silver" />
         </Link>
 
-        <Link to="/marca/Wiese" className="brand-item">
+        <Link to="/marca/wiese" className="brand-item">
           <img src={WieseLogo} alt="Wiese" />
         </Link>
         
-        <Link to="/marca/3M" className="brand-item">
+        <Link to="/marca/3m" className="brand-item">
           <img src={m3Logo} alt="3M Distribuidor Autorizado" />
         </Link>
-
       </div>
     </section>
   );

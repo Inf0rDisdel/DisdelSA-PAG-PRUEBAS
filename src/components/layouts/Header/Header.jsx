@@ -6,7 +6,7 @@ import MegaMenu from './MegaMenu';
 import logo from 'assets/logo/LOGO-BLANCO.png';
 import iconUser from 'assets/icons/INICIAR-SESION-USUARIO.png';
 import iconBuilding from 'assets/icons/MY-BUSINESS.png';
-import iconCart from 'assets/icons/portapapeles-removebg-preview.png';
+import iconCart from 'assets/icons/CARRITO-DE-COMPRAS.png';
 
 import {
   FaSearch, FaAngleDown, FaShoppingCart, FaBars, FaTimes, FaMapMarkerAlt
@@ -70,7 +70,7 @@ const Header = ({ cartItemCount = 0 }) => {
                 onMouseEnter={() => setIsMegaMenuOpen(true)}
                 onMouseLeave={() => setIsMegaMenuOpen(false)}
               >
-                <button className={styles.navButton}>Departamentos <FaAngleDown /></button>
+                <button className={styles.navButton}>Categorias <FaAngleDown /></button>
                 {/* El menú aparece aquí dentro */}
                 {isMegaMenuOpen && <MegaMenu />}
               </div>

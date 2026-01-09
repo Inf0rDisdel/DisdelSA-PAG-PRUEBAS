@@ -17,14 +17,14 @@
 
 .ayuda-title {
     color: #135eab; /* Azul corporativo Disdel */
-    font-size: 36px;
-    font-weight: 800;
+    font-size: 30px;
+    font-weight: 0;
     margin: 0 0 10px 0;
 }
 
 .ayuda-subtitle {
     color: #666;
-    font-size: 18px;
+    font-size: 16px;
     margin: 0;
 }
 
@@ -83,7 +83,7 @@
 .ayuda-card h3 {
     color: #135eab;
     margin: 0 0 15px 0;
-    font-size: 22px;
+    font-size: 20px;
 }
 
 .ayuda-text {
