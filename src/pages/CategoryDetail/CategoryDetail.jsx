@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
+import useCartStore from 'store/useCartStore';
 import './CategoryDetail.css';
 
 const sectionConfig = {
@@ -25,8 +26,10 @@ const sectionConfig = {
   }
 };
 
-const CategoryDetail = ({ addToCart }) => {
+const CategoryDetail = () => { // 2. ELIMINAR prop addToCart
   const { categorySlug } = useParams();
+  const addItem = useCartStore((state) => state.addItem); // 3. TRAER FUNCIÓN
+  
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeSubcat, setActiveSubcat] = useState("all");
@@ -35,18 +38,14 @@ const CategoryDetail = ({ addToCart }) => {
 
   useEffect(() => {
     setLoading(true);
-    setActiveSubcat("all"); 
-
     setTimeout(() => {
       const dummyProducts = [
-        { id: 1, name: "Producto de Ejemplo 1", category: config.title, image: "https://via.placeholder.com/300" },
-        { id: 2, name: "Producto de Ejemplo 2", category: config.title, image: "https://via.placeholder.com/300" },
-        { id: 3, name: "Producto de Ejemplo 3", category: config.title, image: "https://via.placeholder.com/300" },
+        { id: 101, name: `Producto ${config.title} 1`, category: config.title, image: "https://via.placeholder.com/300" },
+        { id: 102, name: `Producto ${config.title} 2`, category: config.title, image: "https://via.placeholder.com/300" },
       ];
       setProducts(dummyProducts);
       setLoading(false);
-      window.scrollTo(0, 0);
-    }, 800);
+    }, 500);
   }, [categorySlug, config.title]);
 
   return (
@@ -92,7 +91,7 @@ const CategoryDetail = ({ addToCart }) => {
         </aside>
 
         {/* GRILLA DE PRODUCTOS ESTILO LIMPIO */}
-        <main className="cd-grid-area">
+         <main className="cd-grid-area">
           <div className="cd-product-grid">
             {loading ? (
               [1, 2, 3].map(i => <div key={i} className="cd-skeleton-card"></div>)
@@ -105,17 +104,21 @@ const CategoryDetail = ({ addToCart }) => {
                   <div className="cd-info-wrapper">
                     <span className="cd-item-category">{prod.category}</span>
                     <h3 className="cd-item-title">{prod.name}</h3>
-                    <button className="cd-view-details-btn">Ver detalles</button>
+                    {/* 4. BOTÓN COTIZAR CON ZUSTAND */}
+                    <button 
+                      className="cd-quote-btn"
+                      onClick={() => addItem(prod)}
+                    >
+                      Cotizar ahora
+                    </button>
                   </div>
                 </div>
               ))
             )}
           </div>
         </main>
-
       </div>
     </div>
   );
 };
-
 export default CategoryDetail;

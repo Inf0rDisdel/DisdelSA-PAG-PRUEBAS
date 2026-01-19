@@ -6,7 +6,7 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import './CategoryGrid.css';
 
-// TUS IMÁGENES (Se mantienen igual)
+// IMAGENES CATEGORIAS
 import higieneIcon from 'assets/images/categories/BañosHigiene.jpg';
 import limpiezaIcon from 'assets/images/categories/HerramientasPLimpieza.jpg';
 import quimicosIcon from 'assets/images/categories/QuimicosLimpieza.jpg';
@@ -91,7 +91,7 @@ const CategoryGrid = () => {
             <div key={category.name}>
               <Link 
                 className="cgs-item" // 4. Item único
-                to={`/departamento/${createSlug(category.name)}`}
+                to={`/categoria/${createSlug(category.name)}`}
               >
                 {/* 5. Wrapper de imagen único */}
                 <div className="cgs-image-wrapper">

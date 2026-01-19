@@ -65,11 +65,11 @@ const MegaMenu = () => {
             <div className={`${styles.megaMenuColumn} ${styles.categoriesColumn}`}>
                 <ul>
                     {menuCategories.map((category) => {
-                        // LÓGICA DE RUTA: Si no es "Todos los Deptos", es una Marca
                         const isBrand = category.name !== 'Todos los Departamentos';
+                        // Si es marca va a /marca/, si es Todos los Deptos va a /categoria/
                         const targetPath = isBrand 
                             ? `/marca/${createSlug(category.name)}` 
-                            : `/categoria/${createSlug(category.name)}`;
+                            : `/categoria/todos-los-departamentos`;
 
                         return (
                             <li
@@ -97,7 +97,8 @@ const MegaMenu = () => {
                         <ul>
                             {subCat.items && subCat.items.map(item => (
                                 <li key={item.name} onMouseEnter={() => setActiveSubItem(item)}>
-                                    <Link to={`/departamento/${createSlug(item.name)}`}>
+                                    {/* CAMBIO CLAVE: Cambiamos /departamento/ por /categoria/ */}
+                                    <Link to={`/categoria/${createSlug(item.name)}`}>
                                         {item.name}
                                     </Link>
                                 </li>
@@ -116,8 +117,8 @@ const MegaMenu = () => {
                         
                         <Link 
                             to={activeSubItem 
-                                ? `/departamento/${createSlug(activeSubItem.name)}` 
-                                : (activeCategory === 'Todos los Departamentos' ? '/ofertas' : `/marca/${createSlug(activeCategory)}`)
+                                ? `/categoria/${createSlug(activeSubItem.name)}` // CAMBIO CLAVE
+                                : (activeCategory === 'Todos los Departamentos' ? '/categoria/baños-e-higiene' : `/marca/${createSlug(activeCategory)}`)
                             } 
                             className={styles.promoButton}
                         >

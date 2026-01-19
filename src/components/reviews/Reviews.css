@@ -9,7 +9,7 @@
 }
 
 .opiniones-container-master {
-  max-width: 1212px; /* 🔥 EL ANCHO EXACTO DE TU HEADER */
+  max-width: 1200px !important; /* 🔥 EL ANCHO EXACTO DE TU HEADER */
   width: 100%;
   margin: 0 auto;
   padding: 0 15px; /* Margen interno de seguridad */

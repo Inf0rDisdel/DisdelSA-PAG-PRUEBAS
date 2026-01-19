@@ -1,5 +1,6 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
+import useCartStore from 'store/useCartStore';
 import './CategoryPage.css';
 import bannerBanos from 'assets/images/banners/BANCategoria.jpg';
 /*BAÑOS E HIGIENE*/
@@ -60,8 +61,10 @@ import iconADHESIVOS from 'assets/images/brands/ADHESIVOS.jpg'
 import iconESCRITURA from 'assets/images/brands/ESCRITURA.jpg'
 import iconARCHIVO from 'assets/images/brands/ARCHIVO.jpg'
 import iconPAPEL from 'assets/images/brands/PAPEL.jpg'
+
 const CategoryPage = () => {
 const { slug } = useParams();
+const addItem = useCartStore((state) => state.addItem); 
 
 const categoriesData = {
 "baños-e-higiene": {
@@ -233,13 +236,23 @@ return (
             <div className="card-img-top">
                <img src={prod.img} alt={prod.name} />
             </div>
-          </div>
-        ))}
+
+            <div className="card-body">
+                <p className="prod-name-simple">{prod.name}</p>
+                {/* 3. BOTÓN CONECTADO A ZUSTAND */}
+                <button 
+                  className="btn-cotizar-simple" 
+                  onClick={() => addItem(prod)}
+                >
+                  Cotizar
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
-
-  </div>
-</div>
-);
+    </div>
+  );
 };
 export default CategoryPage;

@@ -1,47 +1,27 @@
 import React from 'react';
+import useCartStore from '../../store/useCartStore'; // <--- IMPORTANTE: Usamos Zustand
 import CartItem from './CarItem'; 
 import EmptyCartMessage from './EmptyCartMessage';
 import QuoteForm from './QuoteForm'; 
 import Swal from 'sweetalert2'; 
 import './CartPage.css';
 
-const CartPage = ({ cartItems, removeFromCart, updateQuantity, clearCart }) => {
+const CartPage = () => {
+  // 1. Extraemos TODO de Zustand. Ya NO usamos props.
+  const { cart, clearCart, removeFromCart, updateQuantity } = useCartStore();
   
-  const isEmpty = !cartItems || cartItems.length === 0;
+  const isEmpty = !cart || cart.length === 0;
 
-  // 1. ALERTA PARA VACIAR TODO 
   const handleClearAll = () => {
     Swal.fire({
       title: '¿Vaciar lista?',
-      text: "Se eliminarán todos los productos de la cotización.",
+      text: "Se eliminarán todos los productos.",
       icon: 'warning',
-      iconColor: '#f8bb86',
-      width: '350px',
       showCancelButton: true,
       confirmButtonText: 'Sí, borrar todo',
-      cancelButtonText: 'Cancelar',
-      confirmButtonColor: '#0056b3',
-      cancelButtonColor: '#e2e8f0',
-      customClass: {
-        popup: 'swal-custom-popup',
-        title: 'swal-custom-title',
-        htmlContainer: 'swal-custom-text',
-        confirmButton: 'swal-confirm-btn',
-        cancelButton: 'swal-cancel-btn'
-      }
     }).then((result) => {
       if (result.isConfirmed) {
         clearCart();
-        // Toast rápido de éxito
-        Swal.fire({
-          toast: true,
-          position: 'top-end',
-          icon: 'success',
-          title: 'Lista vaciada correctamente',
-          showConfirmButton: false,
-          timer: 2000,
-          timerProgressBar:true
-        });
       }
     });
   };
@@ -64,11 +44,11 @@ const CartPage = ({ cartItems, removeFromCart, updateQuantity, clearCart }) => {
       ) : (
         <div className="cart-content-grid">
           <div className="cart-items-scroll-container">
-            {cartItems.map((item) => (
+            {cart.map((item) => (
               <CartItem 
                 key={item.id} 
                 product={item} 
-                // Usamos la nueva función con alerta en lugar de removeFromCart directo
+                // Estas funciones ahora vienen de Zustand
                 removeFromCart={removeFromCart}
                 updateQuantity={updateQuantity}
               />
@@ -77,7 +57,8 @@ const CartPage = ({ cartItems, removeFromCart, updateQuantity, clearCart }) => {
 
           <div className="cart-form-column">
             <div className="sticky-form-wrapper">
-                <QuoteForm cartItems={cartItems} clearCart={clearCart} /> 
+                {/* QuoteForm ya no necesita props, él solo lee Zustand */}
+                <QuoteForm /> 
             </div>
           </div>
         </div>

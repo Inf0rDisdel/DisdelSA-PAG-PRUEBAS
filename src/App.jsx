@@ -1,104 +1,48 @@
-import React, { useState, useEffect } from 'react'; 
+import React from 'react'; 
 import { HelmetProvider } from 'react-helmet-async';
-import "slick-carousel/slick/slick.css"; 
-import "slick-carousel/slick/slick-theme.css";
+import { Toaster } from 'react-hot-toast'; // Notificaciones rápidas
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'; // 1. IMPORTAR
+
 import ScrollToTop from 'components/ui/Button/ScrollToTop';
-import './App.css';
-
-// --- 1. NUEVO: IMPORTAR TOAST ---
-import toast, { Toaster } from 'react-hot-toast';
-
 import AppRouter from './routes/AppRouter';
 import Header from './components/layouts/Header/Header';
 import Footer from './components/layouts/Footer/Footer';
 import FloatingWidgets from "./components/ui/FloatingWidgets";
+import './App.css';
+
+// 2. CONFIGURAR EL CLIENTE DE TANSTACK QUERY
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false, // Evita recargas innecesarias al cambiar de pestaña
+      retry: 1, // Reintenta una vez si falla
+    },
+  },
+});
 
 function App() {
-  const [cartItems, setCartItems] = useState(() => {
-    try {
-      const savedCart = localStorage.getItem('cartItems');
-      return savedCart ? JSON.parse(savedCart) : [];
-    } catch (error) {
-      console.error("Error al leer del localStorage:", error);
-      return [];
-    }
-  });
-
-  useEffect(() => {
-    localStorage.setItem('cartItems', JSON.stringify(cartItems));
-  }, [cartItems]);
-
-  const addToCart = (product) => {
-    const existingItem = cartItems.find(item => item.id === product.id);
-    
-    // --- 2. NUEVO: DISPARAR NOTIFICACIÓN ---
-    toast.success(`${product.name} agregado a la cotización`, {
-      position: "bottom-right", // Puedes cambiar a "top-center" o donde prefieras
-      style: {
-        background: '#135eab', // Color azul de tu marca
-        color: '#fff',
-        borderRadius: '10px',
-        fontSize: '14px'
-      },
-      iconTheme: {
-        primary: '#fff',
-        secondary: '#135eab',
-      },
-    });
-
-    if (existingItem) {
-      setCartItems(cartItems.map(item =>
-        item.id === product.id ? { ...item, quantity: (item.quantity || 1) + 1 } : item
-      ));
-    } else {
-      setCartItems([...cartItems, { ...product, quantity: 1 }]);
-    }
-  };
-
-  const removeFromCart = (productId) => {
-    setCartItems(currentItems => currentItems.filter(item => item.id !== productId));
-  };
-
-  const updateQuantity = (productId, amount) => {
-    setCartItems(currentItems => 
-      currentItems.map(item => {
-        if (item.id === productId) {
-          const newQuantity = (item.quantity || 1) + amount;
-          return { ...item, quantity: newQuantity < 1 ? 1 : newQuantity };
-        }
-        return item;
-      })
-    );
-  };
-
-  const clearCart = () => {
-    setCartItems([]);
-  };
-
-  const totalItemsInCart = cartItems.reduce((total, item) => total + (item.quantity || 1), 0);
-
   return (
-    <HelmetProvider>
-      <div className="App">
-        {/* --- 3. NUEVO: CONTENEDOR DE LAS NOTIFICACIONES --- */}
-        <Toaster /> 
+    // 3. ENVOLVER CON EL PROVIDER
+    <QueryClientProvider client={queryClient}>
+      <HelmetProvider>
+        <div className="App">
+          {/* Toaster para las notificaciones de Zustand y Query */}
+          <Toaster /> 
 
-        <Header cartItemCount={totalItemsInCart} /> 
-        <ScrollToTop/>
-        <main>
-          <AppRouter 
-            cartItems={cartItems} 
-            addToCart={addToCart}
-            removeFromCart={removeFromCart}
-            updateQuantity={updateQuantity}
-            clearCart={clearCart} 
-          />
-        </main>
-        
-        <FloatingWidgets />
-        <Footer />
-      </div>
-    </HelmetProvider>
+          {/* Componentes estructurales sin props (usan Zustand internamente) */}
+          <Header /> 
+          
+          <ScrollToTop/>
+          
+          <main>
+            <AppRouter />
+          </main>
+          
+          <FloatingWidgets />
+          <Footer />
+        </div>
+      </HelmetProvider>
+    </QueryClientProvider>
   );
 }
 

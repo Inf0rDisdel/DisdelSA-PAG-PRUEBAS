@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'; 
 import { Link } from 'react-router-dom';
+import useCartStore from 'store/useCartStore';
 import styles from './Header.module.css';
 import MegaMenu from './MegaMenu';
 
@@ -12,14 +13,18 @@ import {
   FaSearch, FaAngleDown, FaShoppingCart, FaBars, FaTimes, FaMapMarkerAlt
 } from 'react-icons/fa';
 
-const Header = ({ cartItemCount = 0 }) => {
+const Header = () => {
   const whatsappUrl = `https://api.whatsapp.com/send/?phone=50231094985&text&type=phone_number&app_absent=0`;
+
+  // 3. OBTENER EL CARRITO DE ZUSTAND
+  const cart = useCartStore((state) => state.cart);
+  const cartItemCount = cart.length; // Calculamos el total
 
   const [isMegaMenuOpen, setIsMegaMenuOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [btnIsHighlighted, setBtnIsHighlighted] = useState(false);
 
-  useEffect(() => {
+   useEffect(() => {
     if (cartItemCount === 0) return;
     setBtnIsHighlighted(true);
     const timer = setTimeout(() => setBtnIsHighlighted(false), 300);

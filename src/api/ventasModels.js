@@ -26,5 +26,13 @@ export const VentasModels = {
         PrecioIVA: item.price || 0,
         Base: "1",
         Almacen: "03"
+    }),
+
+    crearSuscripcionDTO: (correo) => ({
+        Correo:correo,
+        Tipo:'Suscripción',
+        Log: {
+            Activo: true
+        }
     })
 };

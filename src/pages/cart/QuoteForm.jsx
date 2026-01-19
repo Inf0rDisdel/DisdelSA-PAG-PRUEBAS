@@ -39,6 +39,8 @@ const QuoteForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    console.log  ("¿Que hay en el carrito de Zustand?", cart);
+
     // Validación usando el estado global de Zustand
     if (!cart || cart.length === 0) {
       Toast.fire({

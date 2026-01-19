@@ -2,7 +2,7 @@ import React from 'react';
 import './PromoNescafe.css'; // Crearemos este archivo CSS en el siguiente paso
 
 // Importa las imágenes de la promoción. Asegúrate de que las rutas sean correctas.
-import promoPrincipalImg from 'assets/images/banners/NescafeBann.jpg'; // <-- CAMBIA ESTA RUTA
+import promoPrincipalImg from 'assets/images/banners/BANNER-PROMOCIONAL-NESCAFE.jpg'; // <-- CAMBIA ESTA RUTA
 import promoSecundariaImg from 'assets/images/banners/NescafePosst.jpg'; // <-- CAMBIA ESTA RUTA
 
 const PromoNescafe = () => {

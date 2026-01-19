@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
+import useCartStore from 'store/useCartStore';
 import './BrandPage.css';
 
 // --- BANNERS ---
@@ -63,6 +64,7 @@ const mockProducts = [
 
 const BrandPage = () => {
   const { slug } = useParams();
+  const addItem = useCartStore((state) => state.addItem);
 
   // NORMALIZACIÓN: Convierte "Kimberly Clark" o "kimberly-clark" en "kimberly-clark"
   const currentBrand = slug ? slug.toLowerCase().trim().replace(/\s+/g, '-') : "";

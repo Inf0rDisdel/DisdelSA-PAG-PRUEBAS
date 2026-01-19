@@ -12,7 +12,6 @@ const ReviewForm = ({ onAddReview }) => {
     if (rating === 0) return alert("¡Por favor selecciona una calificación!");
     if (!name.trim() || !comment.trim()) return;
 
-    // Crear objeto de nueva review
     const newReview = {
       id: Date.now(),
       name,

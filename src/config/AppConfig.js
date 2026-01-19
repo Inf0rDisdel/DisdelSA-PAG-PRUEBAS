@@ -2,12 +2,14 @@ const estoyEnModoLocal = true;
 
 const URLs = {
     local: {
+        suscripcion: "http://localhost:56110/",
         ventas: "http://localhost:60839/",
         maestros: "http://localhost:51855/",
         compra: "http://localhost:65324/"
     },
     produccion: {
         ventas: "https://www.disdelsagt.com/MyWsOneVenta/",
+        suscripcion: "https://www.disdelsagt.com/MyWsOneVenta/",
         maestros: "https://www.disdelsagt.com/MyWsMaestro/",
         compra: "https://www.disdelsagt.com/MyWsCompra/"
     }
@@ -15,6 +17,7 @@ const URLs = {
 
 export const AppConfig = {
     baseUrlVentas: estoyEnModoLocal ? URLs.local.ventas : URLs.produccion.ventas,
+     baseUrlSuscripcion: estoyEnModoLocal ? URLs.local.suscripcion : URLs.produccion.suscripcion,
     baseUrlMaestros: estoyEnModoLocal ? URLs.local.maestros : URLs.produccion.maestros,
     baseImageUrl: "https://www.disdelsa.com/imagenes/productos/"
 };
