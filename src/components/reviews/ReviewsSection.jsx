@@ -1,42 +1,46 @@
-// src/components/reviews/ReviewsSection.jsx
 import React, { useState } from 'react';
-import ReviewStats from './ReviewStats'; // (Renombrado de ReviewState)
+import ReviewStats from './ReviewStats';
 import ReviewForm from './ReviewForm';
 import ReviewList from './ReviewList';
 import './Reviews.css';
 
-// Datos falsos iniciales (luego esto vendría de tu API)
 const INITIAL_DATA = [
-  { id: 1, name: "Distribuidora El Sol", date: "14/12/2024", rating: 5, comment: "Excelente servicio y tiempos de entrega." },
-  { id: 2, name: "Juan Mecánico", date: "10/12/2024", rating: 4, comment: "Buenos productos, pero la web podría ser más rápida." },
+  { id: 1, name: "Distribuidora El Sol", date: "14/01/2025", rating: 5, comment: "Excelente servicio y tiempos de entrega." },
+  { id: 2, name: "Corporación Omega", date: "10/01/2025", rating: 4, comment: "Buenos productos, atención al cliente muy profesional." },
+  { id: 3, name: "Hotel Central", date: "05/01/2025", rating: 5, comment: "Los insumos de limpieza son de alta calidad, muy recomendados." },
 ];
 
 const ReviewsSection = () => {
   const [reviews, setReviews] = useState(INITIAL_DATA);
   const [showForm, setShowForm] = useState(false);
 
-  // Función para agregar nueva review (se pasa al hijo Form)
   const handleAddReview = (newReview) => {
-    setReviews([newReview, ...reviews]); // Pone la nueva arriba
-    setShowForm(false); // Cierra el form
+    setReviews([newReview, ...reviews]);
+    setShowForm(false);
   };
 
   return (
-    <div className="reviews-wrapper">
-      {/* 1. Componente de Estadísticas */}
-      <ReviewStats 
-        reviews={reviews} 
-        showForm={showForm} 
-        onWriteReviewClick={() => setShowForm(!showForm)} 
-      />
+    <div className="opiniones-page-wrapper">
+      <div className="opiniones-container-master">
+        
+        <div className="page-header-center">
+            <h1 className="page-title">Opiniones de nuestros clientes</h1>
+            <p className="page-subtitle">Nuestra prioridad es tu satisfacción. Conoce lo que dicen las empresas que ya confían en Disdel.</p>
+        </div>
 
-      {/* 2. Componente Formulario (Condicional) */}
-      {showForm && (
-        <ReviewForm onAddReview={handleAddReview} />
-      )}
+        <ReviewStats 
+          reviews={reviews} 
+          showForm={showForm} 
+          onWriteReviewClick={() => setShowForm(!showForm)} 
+        />
 
-      {/* 3. Componente Lista */}
-      <ReviewList reviews={reviews} />
+        {showForm && (
+          <ReviewForm onAddReview={handleAddReview} />
+        )}
+
+        <ReviewList reviews={reviews} />
+        
+      </div>
     </div>
   );
 };

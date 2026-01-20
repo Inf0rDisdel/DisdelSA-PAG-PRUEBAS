@@ -18,7 +18,7 @@ const Header = () => {
 
   // 3. OBTENER EL CARRITO DE ZUSTAND
   const cart = useCartStore((state) => state.cart);
-  const cartItemCount = cart.length; // Calculamos el total
+  const cartItemCount = cart.reduce((total, item) => total + (item.quantity || 1), 0);
 
   const [isMegaMenuOpen, setIsMegaMenuOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
