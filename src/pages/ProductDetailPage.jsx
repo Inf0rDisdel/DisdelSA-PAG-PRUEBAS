@@ -1,136 +1,178 @@
-import React, { useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import React, { useState, useEffect, useMemo } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
-import useCartStore from 'store/useCartStore'; // 1. IMPORTAMOS ZUSTAND
-// Iconos Premium
-import { FiMinus, FiPlus, FiStar, FiCheckCircle, FiShield, FiCreditCard, FiPackage, FiActivity, FiLayers, FiBox, FiShoppingBag, FiMaximize2 } from 'react-icons/fi';
+
+import { AppConfig } from 'config/AppConfig';
+import useCartStore from 'store/useCartStore';
+import { useProductDetail } from 'hooks/useProductDetail';
+
+import { 
+  FiCheckCircle, FiShield, FiCreditCard, 
+  FiPackage, FiLayers, FiChevronLeft, FiBox, FiTarget 
+} from 'react-icons/fi';
 import './ProductDetailPage.css';
+import defaultImage from 'assets/images/categories/KCP.jpg'; 
+
+// ... (resto de imports igual)
 
 const ProductDetailPage = () => {
-  const location = useLocation();
-  const product = location.state?.product;
-
-  // 2. TRAEMOS LA ACCIÓN DEL STORE
+  const { id } = useParams();
+  const navigate = useNavigate();
   const addItem = useCartStore((state) => state.addItem);
 
-  const [quantity, setQuantity] = useState(1);
-  
-  // Datos simulados de reseñas
-  const [reviews, setReviews] = useState([
-    { id: 1, user: "Industrias Unidas", rating: 5, comment: "El producto cumple con los estándares de calidad. Muy rendidor.", date: "12 Oct 2023" },
-    { id: 2, user: "Oficinas Centrales", rating: 4, comment: "Buen servicio de entrega, el empaque llegó intacto.", date: "08 Oct 2023" }
-  ]);
+  const { data: product, isLoading, isError } = useProductDetail(id);
 
-  const [newRating, setNewRating] = useState(0);
-  const [newComment, setNewComment] = useState("");
-  const [hoverStar, setHoverStar] = useState(0);
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [selectedUnit, setSelectedUnit] = useState(''); 
+  const [selectedType, setSelectedType] = useState('Y');
 
-  if (!product) return null;
+  const hasDifferentOptions = useMemo(() => {
+    if (!product) return false;
+    if (!product.Unidad || !product.Empaque) return false;
+    return product.Unidad.trim().toLowerCase() !== product.Empaque.trim().toLowerCase();
+  }, [product]);
 
-  const renderStars = (rating) => {
-    return [...Array(5)].map((_, i) => (
-      <FiStar key={i} className={`star-icon ${i < rating ? 'filled' : 'empty'}`} />
-    ));
+  const seleccionarUnidad = () => {
+    setSelectedUnit(product.Unidad);
+    setSelectedType('Y');
   };
 
-  const metaDescription = product.description 
-    ? product.description.substring(0, 160) 
-    : `Compra ${product.name} en Disdel. Calidad garantizada para abastecimiento institucional e industrial.`;
+  const seleccionarEmpaque = () => {
+    setSelectedUnit(product.Empaque);
+    setSelectedType('N');
+  };
+
+  const productImages = useMemo(() => {
+      if (!product) return [];
+      if (product.Imagenes && product.Imagenes.length > 0) {
+          return product.Imagenes.filter(img => img.Imagen).map(img => img.Imagen);
+      }
+      return product.Imagen ? [product.Imagen] : [];
+  }, [product]);
+
+  // 🔥 SOLUCIÓN IMAGEN: Inicializar al terminar la carga
+  useEffect(() => {
+    if (product) {
+        // Inicializar imágenes
+        if (productImages.length > 0) {
+            setSelectedImage(productImages[0]);
+        }
+
+        // Inicializar unidades (Lógica de Y/N)
+        if (product.Unidad) {
+            setSelectedUnit(product.Unidad);
+            setSelectedType('Y');
+        } else if (product.Empaque) {
+            setSelectedUnit(product.Empaque);
+            setSelectedType('N');
+        }
+    }
+  }, [product, productImages]);
+
+  const getImageUrl = (imgName) => imgName ? `${AppConfig.baseImageUrl}productos/${imgName}` : defaultImage;
+
+  const handleAddToCart = () => {
+    addItem({
+        ...product,
+        presentationSelected: selectedUnit,
+        unitType: selectedType
+    });
+  };
+
+  if (isLoading) return <div className="pdp-loading"><div className="spinner"></div></div>;
+  if (isError || !product) return (
+      <div className="pdp-error">
+          <h2>Producto no encontrado</h2>
+          <button onClick={() => navigate(-1)} className="pdp-back-btn">Regresar</button>
+      </div>
+  );
 
   return (
     <div className="pdp-container">
-      <Helmet>
-        <title>{`${product.name} | Disdel`}</title>
-        <meta name="description" content={metaDescription} />
-        {/* ... Meta tags se mantienen igual ... */}
-      </Helmet>
+      <Helmet><title>{`${product.Descripcion} | Disdel`}</title></Helmet>
+
+      <button className="pdp-back-btn" onClick={() => navigate(-1)}>
+        <FiChevronLeft /> Volver al catálogo
+      </button>
 
       <div className="pdp-main-grid">
-        <div className="pdp-col-image">
-          <img src={product.img || product.image} alt={product.name} className="pdp-main-img" />
+        <div className="pdp-gallery-section">
+            <div className="pdp-main-image-wrapper">
+                {/* 🔥 CAMBIO AQUÍ: Usamos un fallback directo para que cargue de inmediato */}
+                <img 
+                    src={getImageUrl(selectedImage || product.Imagen)} 
+                    alt={product.Descripcion} 
+                    className="pdp-main-img" 
+                />
+            </div>
+            {productImages.length > 1 && (
+                <div className="pdp-thumbnails">
+                    {productImages.map((img, index) => (
+                        <div key={index} className={`pdp-thumb ${selectedImage === img ? 'active' : ''}`} onClick={() => setSelectedImage(img)}>
+                            <img src={getImageUrl(img)} alt="thumb" />
+                        </div>
+                    ))}
+                </div>
+            )}
         </div>
-
-        <div className="pdp-col-info">
-          <h1 className="pdp-title">{product.name}</h1>
-          <div className="rating-sku-row">
-            <div className="stars-wrapper">{renderStars(4)} <span>({reviews.length} opiniones)</span></div>
-            <span className="sku-badge">SKU: {product.id || "0000"}</span>
+        
+        {/* ... Resto del código igual ... */}
+        <div className="pdp-info-section">
+          <div className="pdp-meta-top">
+              <span className="pdp-brand">{product.Marca}</span>
+              <span className="pdp-category-badge">{product.Categoria}</span>
           </div>
 
-          <div className="stock-status">
-             <span className="dot"></span> Disponible para cotización inmediata
+          <h1 className="pdp-title">{product.Descripcion}</h1>
+          
+          <div className="pdp-sku-row">
+            <span className="pdp-sku">CÓDIGO: {product.IdProducto}</span>
+            <span className="pdp-stock in-stock"><span className="dot"></span> Disponible</span>
           </div>
 
-          <p className="short-desc">
-            Solución ideal para abastecimiento institucional. Producto garantizado para alto rendimiento y eficiencia en su categoría.
-          </p>
-
-          {/* 
-              LOS BOTONES DE CANTIDAD SE HAN ELIMINADO DE AQUÍ 
-              PARA REGRESAR AL DISEÑO ORIGINAL DE TU IMAGEN 1
-          */}
-
-          <div className="trust-benefits-grid">
-            <div className="trust-benefit-item">
-              <div className="benefit-icon"><FiCheckCircle /></div>
-              <div className="benefit-text">
-                <strong>Calidad Premium</strong>
-                <p>Estándares industriales verificados.</p>
+          {hasDifferentOptions ? (
+              <div className="pdp-unit-selector">
+                  <label className="pdp-label">Seleccionar Presentación:</label>
+                  <div className="pdp-unit-options">
+                      <button 
+                          className={`unit-opt ${selectedType === 'Y' ? 'active' : ''}`}
+                          onClick={seleccionarUnidad}
+                      >
+                          <FiTarget className="icon" />
+                          <div className="unit-info">
+                              <span className="unit-title">Por Unidad</span>
+                              <span className="unit-desc">{product.Unidad}</span>
+                          </div>
+                      </button>
+                      <button 
+                          className={`unit-opt ${selectedType === 'N' ? 'active' : ''}`}
+                          onClick={seleccionarEmpaque}
+                      >
+                          <FiPackage className="icon" />
+                          <div className="unit-info">
+                              <span className="unit-title">Por Empaque</span>
+                              <span className="unit-desc">{product.Empaque}</span>
+                          </div>
+                      </button>
+                  </div>
               </div>
-            </div>
-            <div className="trust-benefit-item">
-              <div className="benefit-icon"><FiShield /></div>
-              <div className="benefit-text">
-                <strong>Garantía Total</strong>
-                <p>15 días de respaldo directo.</p>
+          ) : (
+              <div className="pdp-unit-info-single">
+                  <FiCheckCircle className="icon-check" /> 
+                  <span>Presentación: <strong>{selectedUnit}</strong></span>
               </div>
-            </div>
-            <div className="trust-benefit-item">
-              <div className="benefit-icon"><FiCreditCard /></div>
-              <div className="benefit-text">
-                <strong>Pago Flexible</strong>
-                <p>Efectivo y Tarjetas contra entrega.</p>
-              </div>
-            </div>
-          </div>
-        </div>
+          )}
 
-        <div className="pdp-action-frame">
-          <div className="quote-header">Solicitar Cotización</div>
-          <div className="quote-alert">
-             Precios especiales por volumen para mayoristas y empresas.
+          <div className="pdp-action-box">
+              <button className="pdp-add-btn" onClick={handleAddToCart}>
+                AGREGAR A COTIZACIÓN
+              </button>
+              <p className="pdp-action-note">La unidad seleccionada aparecerá en su solicitud.</p>
           </div>
-
-          {/* 3. CONEXIÓN A ZUSTAND: Enviamos el producto (cantidad por defecto 1) */}
-          <button className="btn-add-quote" onClick={() => addItem({...product, quantity: 1})}>
-            AGREGAR A COTIZACIÓN
-          </button>
-          <p className="vendor-info">Vendido y distribuido por <strong>Disdel</strong></p>
+          {/* ... resto del JSX ... */}
         </div>
       </div>
-
-      <div className="details-layout-grid">
-        <div className="description-col">
-          <h2 className="section-heading">Descripción Detallada</h2>
-          <div className="description-content">
-            <p>{product.description || "Este producto ha sido seleccionado rigurosamente..."}</p>
-          </div>
-        </div>
-
-        <div className="specs-col">
-          <h2 className="section-heading">Características del Producto</h2>
-          <div className="specs-table">
-            <div className="spec-row">
-              <span className="spec-key"><FiPackage /> Venta por Fardo</span>
-              <span className="spec-val">{product.ventaFardo ? "Disponible" : "No aplica"}</span>
-            </div>
-            <div className="spec-row">
-              <span className="spec-key"><FiLayers /> Marca</span>
-              <span className="spec-val highlight">{product.brand || "Genérica"}</span>
-            </div>
-          </div>
-        </div>
-      </div>
+      {/* ... descripción y specs ... */}
     </div>
   );
 };

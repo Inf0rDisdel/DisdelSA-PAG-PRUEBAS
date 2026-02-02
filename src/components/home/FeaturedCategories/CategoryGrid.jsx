@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import Slider from "react-slick"; 
 
@@ -6,32 +6,41 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import './CategoryGrid.css';
 
-// IMAGENES CATEGORIAS
-import higieneIcon from 'assets/images/categories/BañosHigiene.jpg';
-import limpiezaIcon from 'assets/images/categories/HerramientasPLimpieza.jpg';
-import quimicosIcon from 'assets/images/categories/QuimicosLimpieza.jpg';
-import EPPIcon from 'assets/images/categories/EPP.jpg';
-import cafeteriaIcon from 'assets/images/categories/Cafetería.jpg';
-import BotiquinIcon from 'assets/images/categories/Botiquin.jpg';
-import FerreteriaIcon from 'assets/images/categories/Ferreteria.jpg';
-import MaterialOficinaIcon from 'assets/images/categories/MaterialOficina.jpg';
+// 1. Imports Dinámicos
+import { AppConfig } from '../../../config/AppConfig';
+import { useMenu } from '../../../hooks/useMenu';
 
-const categories = [
-  { name: 'Baños e Higiene', icon: higieneIcon },
-  { name: 'Herramientas para Limpieza', icon: limpiezaIcon },
-  { name: 'Químicos para Limpieza', icon: quimicosIcon },
-  { name: 'EPP', icon: EPPIcon },
-  { name: 'Cafetería', icon: cafeteriaIcon },
-  { name: 'Ferretería', icon: FerreteriaIcon },
-  { name: 'Botiquín', icon: BotiquinIcon },
-  { name: 'Material de Oficina', icon: MaterialOficinaIcon },
-];
-
-const createSlug = (text) => text.toLowerCase().replace(/ /g, '-');
+// Imagen por defecto por si alguna categoría no tiene foto en BD
+import defaultIcon from 'assets/images/categories/KCP.jpg'; 
 
 const CategoryGrid = () => {
+  // 2. Traemos los datos
+  const { data: menuData, isLoading } = useMenu();
   const [sliderKey, setSliderKey] = useState(Date.now());
 
+  // 3. FILTRADO INTELIGENTE (Excluir marcas)
+  const categories = useMemo(() => {
+      if (!menuData) return [];
+      
+      // Palabras clave de las marcas que NO queremos mostrar aquí
+      const excludedBrands = ['KIMBERLY', '3M', 'WIESE', 'SILVER'];
+
+      return menuData.filter(seg => 
+          !excludedBrands.some(brand => seg.NombreSegmento.toUpperCase().includes(brand))
+      );
+  }, [menuData]);
+
+  // Helper para slugs (limpio y seguro)
+  const createSlug = (text) => {
+      return text
+        .toString()
+        .toLowerCase()
+        .trim()
+        .normalize("NFD").replace(/[\u0300-\u036f]/g, "") // Quita tildes
+        .replace(/\s+/g, '-'); // Espacios a guiones
+  };
+
+  // Fix para Slick Slider en algunos navegadores (Mantenemos tu lógica)
   useEffect(() => {
     const handleResize = () => {
       setTimeout(() => {
@@ -53,55 +62,52 @@ const CategoryGrid = () => {
     responsive: [
       {
         breakpoint: 1024,
-        settings: {
-          slidesToShow: 4,
-          slidesToScroll: 4,
-        }
+        settings: { slidesToShow: 4, slidesToScroll: 4 }
       },
       {
         breakpoint: 768, 
-        settings: {
-          slidesToShow: 4,
-          slidesToScroll: 4,
-          arrows: false
-        }
+        settings: { slidesToShow: 4, slidesToScroll: 4, arrows: false }
       },
       {
         breakpoint: 468, 
-        settings: {
-          slidesToShow: 3,
-          slidesToScroll: 3,
-          arrows: false
-        }
+        settings: { slidesToShow: 3, slidesToScroll: 3, arrows: false }
       }
     ]
   };
 
+  if (isLoading) return null; // No mostramos nada mientras carga para no saltar
+
   return (
-    // 1. Clase contenedora única: cgs-section
     <section className="cgs-section">
       
-      {/* 2. Título único: cgs-title */}
       <h2 className="cgs-title">Categorías Destacadas</h2>
 
-      {/* 3. Slider wrapper único: cgs-slider */}
       <div className="cgs-slider">
-        <Slider key={sliderKey} {...settings}>
-          {categories.map((category) => (
-            <div key={category.name}>
-              <Link 
-                className="cgs-item" // 4. Item único
-                to={`/categoria/${createSlug(category.name)}`}
-              >
-                {/* 5. Wrapper de imagen único */}
-                <div className="cgs-image-wrapper">
-                    <img src={category.icon} alt={category.name} className="cgs-image" />
+        {/* Validamos que existan categorías filtradas antes de renderizar el Slider */}
+        {categories.length > 0 ? (
+            <Slider key={sliderKey} {...settings}>
+            {categories.map((category) => (
+                <div key={category.IdSegmento}>
+                <Link 
+                    className="cgs-item" 
+                    to={`/categoria/${createSlug(category.NombreSegmento)}`}
+                >
+                    <div className="cgs-image-wrapper">
+                        <img 
+                            // Usamos la imagen de la API + tu URL base
+                            src={category.Imagen ? `${AppConfig.baseImageUrl}${category.Imagen}` : defaultIcon} 
+                            alt={category.NombreSegmento} 
+                            className="cgs-image" 
+                        />
+                    </div>
+                    <p>{category.NombreSegmento}</p>
+                </Link>
                 </div>
-                <p>{category.name}</p>
-              </Link>
-            </div>
-          ))}
-        </Slider>
+            ))}
+            </Slider>
+        ) : (
+            <p style={{textAlign:'center'}}>No hay categorías disponibles.</p>
+        )}
       </div>
     </section>
   );

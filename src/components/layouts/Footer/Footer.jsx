@@ -32,7 +32,7 @@ const Footer = () => {
                                         </Link>
                                     <li><a href="https://disdelsagt.com/MyBusiness/Empleo/SolicitudEmpleo" target="_blank" rel="noopener noreferrer"> Empleos Disdel </a></li>
                                      <Link to="/ayuda" className="footer-link">
-                                        ayuda
+                                        Ayuda
                                         </Link>
                                 </ul>
                             </div>

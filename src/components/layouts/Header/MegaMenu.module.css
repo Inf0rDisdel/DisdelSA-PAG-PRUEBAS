@@ -2,9 +2,15 @@
   position: absolute;
   top: 100%; 
   left: 0;
-  padding-top: 10px; 
   
   width: 980px; 
+  
+  /* 🔥 CAMBIO CLAVE AQUÍ */
+  /* Quitamos height: 480px; que era fijo */
+  height: auto; 
+  min-height: 350px; /* Altura mínima para que la tarjeta de la derecha quepa bien */
+  max-height: 550px; /* Altura máxima para que no se salga de la pantalla en laptops */
+  
   background-color: #fff;
   border: 1px solid #ddd;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);

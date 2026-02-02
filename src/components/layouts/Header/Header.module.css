@@ -58,14 +58,86 @@
   margin-left: 40px !important; /* Ajusta este número si lo quieres más cerca o lejos */
 }
 
-/* Barra de búsqueda */
+/* --- BUSCADOR --- */
 .searchBar {
   display: flex;
   width: 100%;
-  max-width: 650px; /* Le damos un poco más de ancho si quieres */
+  max-width: 650px;
   background-color: white;
   border-radius: 8px; 
-  overflow: hidden;
+  /* CAMBIO IMPORTANTE: Cambiar de hidden a visible para que se vea el dropdown */
+  overflow: visible !important; 
+  position: relative; /* Necesario para posicionar el dropdown */
+}
+
+/* --- DROPDOWN DE RESULTADOS (Agrégalo al final de tu CSS) --- */
+.searchDropdown {
+  position: absolute;
+  top: 100%; /* Justo debajo de la barra */
+  left: 0;
+  right: 0;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 0 0 8px 8px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+  z-index: 9999; /* Por encima de todo */
+  max-height: 350px;
+  overflow-y: auto;
+}
+
+.searchResultItem {
+  display: flex;
+  align-items: center;
+  padding: 10px 15px;
+  text-decoration: none;
+  border-bottom: 1px solid #f0f0f0;
+  transition: background 0.2s;
+  gap: 12px;
+}
+
+.searchResultItem:hover {
+  background-color: #f7f9fc;
+}
+
+.searchResultItem img {
+  width: 45px;
+  height: 45px;
+  object-fit: contain;
+  background: #fff;
+}
+
+.resNombre {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: #333;
+  line-height: 1.2;
+  text-align: left; /* Asegura alineación */
+}
+
+.resCodigo {
+  margin: 0;
+  font-size: 11px;
+  color: #135eab;
+  font-weight: bold;
+  text-align: left;
+}
+
+.resVerTodo {
+  width: 100%;
+  padding: 12px;
+  background: #f8f9fa;
+  border: none;
+  color: #135eab;
+  font-weight: bold;
+  font-size: 12px;
+  cursor: pointer;
+  border-radius: 0 0 8px 8px;
+}
+
+.resVerTodo:hover {
+  background: #e9ecef;
+  text-decoration: underline;
 }
 
 .searchBar input {

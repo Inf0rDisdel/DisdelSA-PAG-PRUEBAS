@@ -1,4 +1,4 @@
-// src/routes/AppRouter.jsx
+// src/routes/AppRouter.jsxapprouter
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 
@@ -9,6 +9,7 @@ import StoreBradge from 'components/layouts/Header/StoreBadge'; // Tienda Disdel
 import CartPage from 'pages/cart/CartPages'; 
 import ProductDetailPage from 'pages/ProductDetailPage';
 import CategoryDetail from '../pages/CategoryDetail/CategoryDetail';
+import SearchResultsPage from 'pages/SearchResults/SearchResultsPage';
 
 import CategoryPage from '../pages/CategoryPage'; 
 import DepartmentPage from '../pages/DepartmentPage';
@@ -23,11 +24,13 @@ import PrivacyPolicy from 'pages/info/PrivacyPolicy';
 import ReviewStats from 'components/reviews/ReviewStats';
 import ReviewsSection from 'components/reviews/ReviewsSection';
 
+
 const AppRouter = () => {
   return (
     <Routes>
       <Route path="/" element={<HomePage />} />
       <Route path="/producto/:id" element={<ProductDetailPage />} />
+      <Route path="/buscar" element={<SearchResultsPage />} />
       
       {/* Estas son las que se encargan de las secciones de "Categorías Destacadas" */}
       <Route path="/categoria/:slug" element={<CategoryPage />} />

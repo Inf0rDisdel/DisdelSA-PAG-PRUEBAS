@@ -1,60 +1,62 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import './PromoLayout.css'; 
+import './PromoLayout.css';
 
-import imgPanos from 'assets/images/products/Paños de Limpieza.jpg';
-import imgEsponjas3M from 'assets/images/products/Esponjas3M.jpg';
-import imgAlfombras from 'assets/images/products/Alfombras.jpg';
-import imgReciclaje from 'assets/images/products/Reciclaje.jpg';
-
-const promoItems = [
-  {
-    id: 'panos-limpieza', // Minúsculas para coincidir con CategoryDetail
-    image: imgPanos,
-    label: 'Paños de Limpieza',
-    alt: 'Hombre usando paños de limpieza'
-  },
-  {
-    id: 'esponjas-3m', 
-    image: imgEsponjas3M,
-    label: 'Esponjas 3M',
-    alt: 'Esponjas de limpieza'
-  },
-  {
-    id: 'alfombras',
-    image: imgAlfombras,
-    label: 'Alfombras',
-    alt: 'Alfombra gris moderna'
-  },
-  {
-    id: 'reciclaje',
-    image: imgReciclaje,
-    label: 'Reciclaje',
-    alt: 'Contenedores de reciclaje'
-  }
-];
+// Imports
+import { AppConfig } from '../../../config/AppConfig';
+import { useBanners } from '../../../hooks/useBanners';
 
 const PromoLayout = () => {
   const navigate = useNavigate();
+  const { data: banners, isLoading, isError } = useBanners();
 
-  const handleItemClick = (id) => {
-    // ✅ CLAVE: Navegar a /seccion/ para que AppRouter cargue CategoryDetail.jsx
-    navigate(`/seccion/${id}`);
+  // 🔥 1. MAPA DE REDIRECCIÓN
+  // Aquí configuramos a mano a dónde debe ir cada título exacto.
+  // "segment": Es la URL del departamento (ej: herramientas-para-limpieza).
+  // "catId": Es el ID numérico de la categoría que quieres activar.
+  const LINK_MAP = {
+      // Estos van para MARCA
+      "Paños de Limpieza": { type: "marca", segment: "kimberly-clark-professional", catId: 2266 },
+      "Esponjas 3M":       { type: "marca", segment: "3m", catId: 2275 },
+      
+      // Estos van para CATEGORIA normal
+      "Reciclaje":         { type: "categoria", segment: "herramientas-para-limpieza", catId: 2153 },
+      "Alfombras":         { type: "categoria", segment: "herramientas-para-limpieza", catId: 2151 },
   };
+
+  const handleItemClick = (title) => {
+    const config = LINK_MAP[title];
+
+    if (config) {
+        // Navega dinámicamente según el 'type' definido (marca o categoria)
+        navigate(`/${config.type}/${config.segment}`, { 
+            state: { preSelectedCatId: config.catId } 
+        });
+    } else {
+        // Caso por defecto si no está en el mapa
+        const slug = title.toLowerCase().trim().replace(/\s+/g, '-');
+        navigate(`/categoria/${slug}`);
+    }
+  };
+
+  if (isLoading || isError || !banners.promoGrid?.length) return null;
 
   return (
     <section className="pl-section">
       <div className="pl-grid-container">
-        {promoItems.map((item) => (
-          <div 
-            key={item.id}
+        {banners.promoGrid.map((ban) => (
+          <div
+            key={ban.EntityID}
             className="pl-card"
-            onClick={() => handleItemClick(item.id)}
+            onClick={() => handleItemClick(ban.Titulo)}
             style={{ cursor: 'pointer' }}
           >
-            <img src={item.image} alt={item.alt} />
+            <img
+                src={`${AppConfig.baseImageUrl}${ban.Imagen}`}
+                alt={ban.Titulo || "Promoción"}
+            />
             <div className="pl-card-label">
-              <span>{item.label}</span>
+              <span>{ban.Titulo}</span>
             </div>
           </div>
         ))}

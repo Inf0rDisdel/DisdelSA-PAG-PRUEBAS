@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import useCartStore from '../../store/useCartStore'; // Ajusta la ruta según tu estructura
+import useCartStore from '../../store/useCartStore'; 
 import Swal from 'sweetalert2';
 import './QuoteForm.css';
 
-// 1. Configuración global del Toast con todas tus especificaciones visuales
+// 1. Configuración global del Toast con tus especificaciones visuales
 const Toast = Swal.mixin({
   toast: true,
   position: 'top-end',
@@ -19,7 +19,7 @@ const Toast = Swal.mixin({
 const QuoteForm = () => {
   const [loading, setLoading] = useState(false);
   
-  // 2. Consumimos Zustand: eliminamos las props del componente
+  // 2. Consumimos Zustand
   const { cart, sendQuote } = useCartStore();
 
   const [formData, setFormData] = useState({
@@ -28,7 +28,8 @@ const QuoteForm = () => {
     lastname: '',
     phone: '',
     email: '',
-    address: ''
+    address: '',
+    nit: 'C/F' // Agregado para que SAP no falle
   });
 
   const handleChange = (e) => {
@@ -39,13 +40,12 @@ const QuoteForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    console.log  ("¿Que hay en el carrito de Zustand?", cart);
-
-    // Validación usando el estado global de Zustand
+    // Validación de carrito
     if (!cart || cart.length === 0) {
       Toast.fire({
         icon: 'warning',
-        title: 'Agrega productos antes de cotizar'
+        title: 'Agrega productos antes de cotizar',
+        background: '#fff3cd'
       });
       return;
     }
@@ -53,8 +53,7 @@ const QuoteForm = () => {
     setLoading(true);
 
     try {
-      // 3. Enviamos la data al Store. 
-      // El Store ya se encarga de usar VentasModels y llamar a la API.
+      // 3. Enviamos la data al Store
       const resultado = await sendQuote(formData);
 
       if (resultado.success) {
@@ -65,13 +64,13 @@ const QuoteForm = () => {
           iconColor: '#22c55e'
         });
         
-        // Limpiamos el formulario local tras el éxito
-        setFormData({ company: '', name: '', lastname: '', phone: '', email: '', address: '' });
+        // Limpiamos el formulario tras el éxito
+        setFormData({ company: '', name: '', lastname: '', phone: '', email: '', address: '', nit: 'C/F' });
 
       } else {
         Toast.fire({
           icon: 'error',
-          title: 'No se pudo enviar la cotización',
+          title: 'Error al cotizar',
           text: resultado.message,
           background: '#fef2f2', 
           iconColor: '#ef4444'
@@ -104,6 +103,18 @@ const QuoteForm = () => {
             placeholder="Nombre de su empresa" 
             value={formData.company} 
             onChange={handleChange} 
+          />
+        </div>
+
+        {/* CAMPO NIT integrado en tu diseño */}
+        <div className="input-group">
+          <label htmlFor="nit">NIT</label>
+          <input 
+            type="text" id="nit" 
+            placeholder="Ej: 1234567-8 o C/F" 
+            value={formData.nit} 
+            onChange={handleChange} 
+            required
           />
         </div>
 

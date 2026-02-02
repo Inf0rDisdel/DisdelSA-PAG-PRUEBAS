@@ -9,10 +9,10 @@ import whatsappButtonImage from 'assets/icons/CONTACTANOS-WA.png';
 const FloatingWidgets = () => {
     return (
         <div className="footer-floating-widgets">
-            <Link to="/opiniones" className="widget-item widget-opinions">
+            {/* <Link to="/opiniones" className="widget-item widget-opinions">
                 <img src={opinionsButtonImage} alt="Opiniones de clientes" />
                 <span>Opiniones</span>
-            </Link>
+            </Link> */}
             <a href="https://wa.me/50231094985" target="_blank" rel="noopener noreferrer" className="widget-item widget-whatsapp">
                 <img src={whatsappButtonImage} alt="Contáctanos por WhatsApp" />
             </a>

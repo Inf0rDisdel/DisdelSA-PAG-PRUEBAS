@@ -12,7 +12,14 @@ export const apiVentas = axios.create({
 
 // Instancia para Suscripciones (Puerto 56110)
 export const apiSuscripcion = axios.create({
-    baseURL: AppConfig.baseUrlSuscripcion, // Asegúrate de tener esta clave en AppConfig.js
+    baseURL: AppConfig.baseUrlMobil, // Asegúrate de tener esta clave en AppConfig.js
+    headers: {
+        'Content-Type': 'application/json'
+    }
+});
+
+export const ApiMobil = axios.create({
+    baseURL: AppConfig.baseUrlMobil, 
     headers: {
         'Content-Type': 'application/json'
     }

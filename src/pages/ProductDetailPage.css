@@ -1,319 +1,284 @@
 .pdp-container {
-  max-width: 1200px; 
-  width: 100%;
+  max-width: 1200px;
   margin: 0 auto;
-  padding: 40px 0; 
-  
-  box-sizing: border-box;
-  font-family: 'Poppins', sans-serif;
+  padding: 30px 20px;
+  font-family: 'Segoe UI', system-ui, sans-serif;
   color: #333;
-  background: #fcfcfc;
 }
 
-/* Títulos de Sección (H2) */
-.section-heading {
-  font-size: 22px;
-  font-weight: 700;
-  color: #1a1a1a;
+.pdp-loading, .pdp-error {
+  text-align: center;
+  padding: 100px;
+  font-size: 1.5rem;
+  color: #666;
+}
+
+.pdp-back-btn {
+  background: none;
+  border: none;
+  color: #666;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  cursor: pointer;
   margin-bottom: 20px;
-  position: relative;
-  display: inline-block;
-  border-bottom: 3px solid #004aad; /* Subrayado azul elegante */
-  padding-bottom: 5px;
+  padding: 0;
 }
+.pdp-back-btn:hover { color: #135eab; }
 
+/* GRID PRINCIPAL */
 .pdp-main-grid {
   display: grid;
-  grid-template-columns: 350px 1fr 320px; 
-  gap: 40px;
+  grid-template-columns: 1fr 450px;
+  gap: 50px;
   margin-bottom: 60px;
-  
-  /* CAMBIO CLAVE: 'stretch' hace que todas las columnas tengan la misma altura.
-     Así la caja de la imagen bajará hasta donde termine la caja de info/garantía. */
-  align-items: stretch; 
 }
 
-.pdp-col-image {
-  background: #fff;
+/* GALERÍA */
+.pdp-main-image-wrapper {
+  height: 450px;
   border: 1px solid #eee;
   border-radius: 12px;
-  padding: 20px;
-  
-  /* Flexbox para centrar la imagen dentro de la caja estirada */
   display: flex;
+  align-items: center;
   justify-content: center;
-  align-items: center; 
-  
-  box-shadow: 0 4px 10px rgba(0,0,0,0.03);
-  
-  /* Asegura que llene el alto disponible */
-  height: 100%; 
-  box-sizing: border-box;
+  background: white;
+  margin-bottom: 15px;
 }
-
 .pdp-main-img {
-  width: 100%;
-  height: auto;
-  max-height: 400px; /* Limitamos la altura visual de la foto, no de la caja blanca */
+  max-width: 100%;
+  max-height: 100%;
   object-fit: contain;
 }
 
-.pdp-col-info { 
-  display: flex; 
-  flex-direction: column; 
-  justify-content: space-between; /* Esto empuja la Barra de Confianza al fondo si sobra espacio */
+.pdp-thumbnails {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
 }
+.pdp-thumb {
+  width: 80px;
+  height: 80px;
+  border: 2px solid transparent;
+  border-radius: 8px;
+  cursor: pointer;
+  padding: 5px;
+  background: white;
+  border: 1px solid #eee;
+}
+.pdp-thumb.active { border-color: #135eab; }
+.pdp-thumb img { width: 100%; height: 100%; object-fit: contain; }
 
-.brand-badge {
-  color: #004aad;
-  font-size: 13px;
-  font-weight: 700;
+/* INFO */
+.pdp-meta-top {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+.pdp-brand {
+  color: #135eab;
+  font-weight: 800;
   text-transform: uppercase;
-  letter-spacing: 1px;
-  margin-bottom: 5px;
+  font-size: 14px;
+}
+.pdp-category-badge {
+  background: #f0f4f8;
+  color: #555;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 600;
 }
 
 .pdp-title {
-  font-size: 30px;
-  font-weight: 800;
-  color: #111;
-  margin: 0 0 10px 0;
-  line-height: 1.2;
-}
-
-.rating-sku-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  font-size: 28px;
+  line-height: 1.3;
   margin-bottom: 15px;
-  border-bottom: 1px solid #eee;
-  padding-bottom: 10px;
 }
-.stars-wrapper { color: #ffc107; display: flex; align-items: center; gap: 5px; font-size: 14px; }
-.stars-wrapper span { color: #888; margin-left: 5px; }
-.sku-badge { background: #eee; padding: 2px 8px; border-radius: 4px; font-size: 12px; font-weight: 600; color: #555; }
 
-.stock-status { margin-bottom: 15px; color: #28a745; font-weight: 600; font-size: 14px; display: flex; align-items: center; gap: 8px; }
-.stock-status .dot { width: 8px; height: 8px; background: #28a745; border-radius: 50%; }
-
-.short-desc { font-size: 15px; color: #555; line-height: 1.5; margin-bottom: 25px; }
-
-/* --- BARRA DE CONFIANZA RENOVADA (Estilo Premium) --- */
-.trust-benefits-grid {
+.pdp-sku-row {
   display: flex;
-  flex-direction: column;
-  gap: 15px;
-  background: #fff;
-  border: 1px solid #e0e0e0;
-  border-radius: 8px;
-  padding: 20px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.02);
-}
-
-.trust-benefit-item {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-}
-
-.benefit-icon {
-  width: 40px;
-  height: 40px;
-  background: #e3f2fd; /* Fondo azul suave */
-  color: #004aad;
-  border-radius: 50%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-size: 20px;
-  flex-shrink: 0;
-}
-
-.benefit-text strong { display: block; font-size: 14px; color: #222; margin-bottom: 2px; }
-.benefit-text p { margin: 0; font-size: 13px; color: #666; line-height: 1.2; }
-
-
-/* C. COTIZADOR (Derecha) */
-.pdp-action-frame {
-  background: #fff;
-  border: 1px solid #ddd;
-  border-radius: 12px;
-  padding: 25px;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.06);
-  position: sticky;
-  top: 20px;
-}
-
-.quote-header { font-size: 18px; font-weight: 700; color: #111; margin-bottom: 15px; }
-
-.quote-alert {
-  background: #f0f7ff;
-  border-left: 4px solid #004aad;
-  padding: 10px;
+  gap: 20px;
   font-size: 13px;
-  color: #004aad;
-  font-weight: 500;
-  margin-bottom: 20px;
-  border-radius: 0 4px 4px 0;
+  color: #777;
+  margin-bottom: 30px;
+}
+.pdp-stock .dot {
+  display: inline-block;
+  width: 8px; height: 8px;
+  background: #28a745;
+  border-radius: 50%;
+  margin-right: 5px;
 }
 
-.qty-section { margin-bottom: 20px; }
-.qty-section label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 8px; }
-
-.qty-control-group {
-  display: flex;
-  align-items: center;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  width: 100%; /* Ahora ocupa todo el ancho disponible */
-  justify-content: space-between; /* Distribuye botones y número */
-  margin-bottom: 20px; /* Espacio que antes daba el label */
+/* CAJA DE ACCIÓN */
+.pdp-action-box {
+  background: #f8f9fa;
+  border: 1px solid #e9ecef;
+  padding: 25px;
+  border-radius: 12px;
+  margin-bottom: 30px;
 }
+.pdp-action-header { font-weight: 700; margin-bottom: 10px; font-size: 18px; }
+.pdp-action-text { font-size: 13px; color: #666; margin-bottom: 20px; }
 
-.qty-control-group button { background: #f9f9f9; border: none; padding: 10px 15px; cursor: pointer; color: #333; }
-.qty-control-group span { min-width: 40px; text-align: center; font-weight: 600; }
-
-.btn-add-quote {
+.pdp-add-btn {
   width: 100%;
-  background: #004aad;
-  color: #fff;
-  padding: 14px;
+  padding: 15px;
+  background: #135eab;
+  color: white;
   border: none;
   border-radius: 8px;
   font-weight: 700;
-  font-size: 15px;
+  font-size: 16px;
   cursor: pointer;
   transition: 0.2s;
 }
-.btn-add-quote:hover { background: #003380; transform: translateY(-2px); }
+.pdp-add-btn:hover { background: #0e4480; }
 
-.vendor-info { font-size: 12px; text-align: center; margin-top: 15px; color: #777; }
-
-
-/* =========================================
-   BLOQUE 2: DETALLES Y CARACTERÍSTICAS
-   ========================================= */
-.details-layout-grid {
+/* BENEFICIOS */
+.pdp-benefits {
   display: grid;
-  grid-template-columns: 1.5fr 1fr; /* Izquierda más ancha que Derecha */
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+}
+.benefit-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  color: #555;
+}
+.benefit-item .icon { color: #135eab; font-size: 18px; }
+
+/* SECCIÓN INFERIOR */
+.pdp-details-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
   gap: 50px;
-  margin-top: 60px;
-  padding-top: 40px;
   border-top: 1px solid #eee;
+  padding-top: 40px;
 }
 
-/* Descripción Larga */
-.description-content p {
-  font-size: 15px;
-  line-height: 1.8;
-  color: #444;
-  margin-bottom: 15px;
-}
+.pdp-section-title { font-size: 20px; margin-bottom: 20px; }
 
-/* Ficha Técnica (Tabla Moderna) */
-.specs-table {
-  background: #fff;
-  border: 1px solid #eee;
-  border-radius: 8px;
-  overflow: hidden;
-}
+.pdp-html-content { line-height: 1.6; color: #444; }
+.pdp-html-content p { margin-bottom: 15px; }
 
+.pdp-specs-table { border: 1px solid #eee; border-radius: 8px; }
 .spec-row {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  padding: 12px 20px;
-  border-bottom: 1px solid #f5f5f5;
+  padding: 12px 15px;
+  border-bottom: 1px solid #eee;
+  font-size: 14px;
 }
 .spec-row:last-child { border-bottom: none; }
-.spec-row:hover { background: #fdfdfd; }
+.spec-label { display: flex; gap: 8px; align-items: center; color: #666; }
+.spec-value { font-weight: 600; }
 
-.spec-key { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; color: #666; text-transform: uppercase; }
-.spec-key svg { color: #004aad; } /* Iconos azules */
-.spec-val { font-size: 14px; font-weight: 600; color: #222; }
-.spec-val.highlight { color: #004aad; }
-.spec-val.code { font-family: monospace; background: #eee; padding: 2px 6px; border-radius: 4px; color: #555; }
-
-
-/* =========================================
-   BLOQUE 3: RESEÑAS
-   ========================================= */
-.reviews-wrapper {
-  margin-top: 60px;
-  padding-top: 40px;
-  border-top: 1px solid #eee;
+@media (max-width: 900px) {
+  .pdp-main-grid, .pdp-details-grid { grid-template-columns: 1fr; }
+  .pdp-main-image-wrapper { height: 300px; }
+}
+/* SELECTOR DE PRESENTACIÓN */
+.pdp-unit-selector {
+    margin-bottom: 25px;
 }
 
-.reviews-split {
-  display: grid;
-  grid-template-columns: 350px 1fr; /* Formulario fijo | Lista flexible */
-  gap: 50px;
+.pdp-label {
+    display: block;
+    font-size: 14px;
+    font-weight: 700;
+    color: #444;
+    margin-bottom: 12px;
 }
 
-/* Formulario */
-.review-input-box {
-  background: #fff;
-  padding: 25px;
-  border-radius: 12px;
-  border: 1px solid #eee;
-  height: fit-content;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.03);
-}
-.review-input-box h3 { margin: 0 0 5px 0; font-size: 18px; color: #222; }
-.review-input-box p { font-size: 13px; color: #666; margin-bottom: 15px; }
-
-.star-selector { font-size: 24px; color: #ddd; margin-bottom: 15px; cursor: pointer; }
-.s-star.active { color: #ffc107; }
-
-.review-input-box textarea {
-  width: 100%;
-  height: 100px;
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  resize: none;
-  margin-bottom: 15px;
-  font-family: inherit;
-  box-sizing: border-box;
+.pdp-unit-options {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
 }
 
-.btn-submit-review {
-  width: 100%;
-  background: #28a745;
-  color: #fff;
-  border: none;
-  padding: 12px;
-  border-radius: 8px;
-  font-weight: 600;
-  cursor: pointer;
+.unit-opt {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    background: white;
+    border: 2px solid #eee;
+    border-radius: 10px;
+    cursor: pointer;
+    text-align: left;
+    transition: all 0.2s;
 }
 
-/* Lista de Comentarios */
-.review-feed { display: flex; flex-direction: column; gap: 20px; }
-
-.review-bubble {
-  background: #fff;
-  border: 1px solid #eee;
-  padding: 20px;
-  border-radius: 8px;
+.unit-opt:hover {
+    border-color: #135eab;
+    background: #f0f7ff;
 }
 
-.rb-header { display: flex; gap: 12px; margin-bottom: 10px; }
-.rb-avatar { width: 40px; height: 40px; background: #004aad; color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; }
-.rb-meta { display: flex; flex-direction: column; }
-.rb-user { font-weight: 700; color: #333; font-size: 14px; }
-.rb-date { font-size: 12px; color: #888; }
-.rb-stars { color: #ffc107; font-size: 14px; margin-bottom: 8px; display: flex; gap: 2px; }
-.rb-text { color: #444; font-size: 14px; line-height: 1.5; }
+.unit-opt.active {
+    border-color: #135eab;
+    background: #f0f7ff;
+    box-shadow: 0 4px 12px rgba(19, 94, 171, 0.1);
+}
 
+.unit-opt .icon {
+    font-size: 20px;
+    color: #999;
+}
 
-/* =========================================
-   RESPONSIVE
-   ========================================= */
-@media (max-width: 1024px) {
-  .pdp-main-grid { grid-template-columns: 1fr; } /* Todo en 1 columna arriba */
-  .pdp-action-frame { position: static; }
-  
-  .details-layout-grid { grid-template-columns: 1fr; } /* Descripción arriba, Ficha abajo */
-  .reviews-split { grid-template-columns: 1fr; } /* Reseñas en 1 columna */
+.unit-opt.active .icon {
+    color: #135eab;
+}
+
+.unit-title {
+    display: block;
+    font-size: 13px;
+    font-weight: 700;
+    color: #333;
+}
+
+.unit-desc {
+    display: block;
+    font-size: 11px;
+    color: #666;
+    margin-top: 2px;
+}
+
+.pdp-action-note {
+    font-size: 11px;
+    color: #888;
+    text-align: center;
+    margin-top: 10px;
+}
+
+/* Responsivo para el selector */
+@media (max-width: 500px) {
+    .pdp-unit-options {
+        grid-template-columns: 1fr;
+    }
+}
+
+.pdp-unit-info-single {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: #f0f7ff;
+    padding: 15px;
+    border-radius: 10px;
+    border-left: 5px solid #135eab;
+    margin-bottom: 25px;
+    font-size: 15px;
+}
+
+.pdp-unit-info-single .icon-check {
+    color: #96c121;
+    font-size: 20px;
+}
+
+.pdp-unit-info-single strong {
+    color: #135eab;
 }

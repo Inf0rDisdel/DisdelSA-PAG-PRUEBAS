@@ -1,51 +1,61 @@
 import React from 'react';
-import "react-responsive-carousel/lib/styles/carousel.min.css";
 import { Carousel } from 'react-responsive-carousel';
+import "react-responsive-carousel/lib/styles/carousel.min.css";
+
+// 1. Importamos tu Configuración Global
+import { AppConfig } from '../../../config/AppConfig';
+
+// 2. Importamos Hooks y Estilos
+import { useBanners } from '../../../hooks/useBanners';
 import './HeroSlider.css';
 
-import bannerCotiza from 'assets/images/banners/COTIZA.jpg';
-import bannerCredito from 'assets/images/banners/CREDITO.jpg';
-import bannerEntregaGT from 'assets/images/banners/ENTREGAGT.jpg';
-
-import bannerWiese from 'assets/images/banners/BANNERWIESEAEROSOL.jpg'; 
-import bannerNescafe from 'assets/images/banners/BANNERNESCAFE.jpg'; 
-
-const slideData = [
-  { image: bannerCotiza, title: 'Cotiza' },
-  { image: bannerCredito, title: 'Credito' },
-  { image: bannerEntregaGT, title: 'Entrega' }
-];
-
 const HeroSlider = () => {
-  return (
+  const { data: banners, isLoading, isError } = useBanners();
 
+  if (isLoading || isError) return null;
+
+  return (
     <div className="main-container">
 
+      {/* --- BANNERS LATERALES (Tipo 26) --- */}
       <div className="banners-container">
-        <div className="banner-item">
-          <img src={bannerWiese} alt="Wiese y Glade" />
-        </div>
-        <div className="banner-item">
-          <img src={bannerNescafe} alt="Nescafé y Coffee-Mate" />
-        </div>
+        {banners.lateralesPrincipal?.slice(0, 2).map((ban) => (
+            <div className="banner-item" key={ban.EntityID}>
+                <img 
+                    // 🔥 USAMOS AppConfig AQUÍ
+                    src={`${AppConfig.baseImageUrl}${ban.Imagen}`} 
+                    alt={ban.Titulo || "Oferta Disdelsa"} 
+                />
+            </div>
+        ))}
       </div>
 
+      {/* --- SLIDER PRINCIPAL (Tipo 3) --- */}
       <div className="slider-container">
         <div className="carousel-wrapper">
-          <Carousel
-            showArrows={false}
-            showThumbs={false}
-            showStatus={false}
-            infiniteLoop={true}
-            autoPlay={true}
-            interval={3000}
-          >
-            {slideData.map((slide, index) => (
-              <div key={index}>
-                <img src={slide.image} alt={slide.title} />
-              </div>
-            ))}
-          </Carousel>
+          
+          {banners.sliderPrincipal?.length > 0 && (
+            <Carousel
+                showArrows={false}
+                showThumbs={false}
+                showStatus={false}
+                infiniteLoop={true}
+                autoPlay={true}
+                interval={4000}
+                stopOnHover={true}
+            >
+                {banners.sliderPrincipal.map((slide) => (
+                    <div key={slide.EntityID}>
+                        <img 
+                            // 🔥 USAMOS AppConfig AQUÍ TAMBIÉN
+                            src={`${AppConfig.baseImageUrl}${slide.BannerImagenMovil}`} 
+                            alt={slide.Titulo || "Promoción Principal"} 
+                        />
+                    </div>
+                ))}
+            </Carousel>
+          )}
+
         </div>
       </div>
 

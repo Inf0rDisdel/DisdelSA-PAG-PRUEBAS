@@ -1,191 +1,222 @@
-import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
-import useCartStore from 'store/useCartStore';
+import React, { useState, useEffect, useMemo } from 'react';
+import { useParams, Link, useLocation } from 'react-router-dom';
 import './BrandPage.css';
 
-// --- BANNERS ---
+import { AppConfig } from 'config/AppConfig';
+import useCartStore from 'store/useCartStore';
+import { useMenu } from 'hooks/useMenu';
+import { useProducts } from 'hooks/useProducts';
+
+// Banners Fijos
 import bannerKimberly from 'assets/images/banners/BANNER-KCP.png'; 
 import bannerSilver from 'assets/images/banners/banners_silver-2.jpg';
 import banner3m from 'assets/images/banners/BANNERS-3M.png';
 import bannerWiese from 'assets/images/banners/BANNERS-WIESE.jpg';
 
-// --- CATEGORÍAS IMÁGENES ---
-import imgPastillas from 'assets/images/categories/BañosHigiene.jpg'; 
-import imgDispensador from 'assets/images/categories/Botiquin.jpg';
-import imgPapel from 'assets/images/categories/EPP.jpg';
-import imgDiscos from 'assets/images/categories/KCP.jpg';
-import imgQuimicos from 'assets/images/categories/Ferreteria.jpg'; 
-import Automotriz from 'assets/images/brands/1975.png';
-import iconVerTodo from 'assets/images/categories/BañosHigiene.jpg'; 
+import defaultImage from 'assets/images/categories/KCP.jpg'; 
+import iconInicio from 'assets/icons/icon-inicio-removebg-preview.png';
 
 const brandConfig = {
-  "kimberly-clark": { name: "Kimberly-Clark", banner: bannerKimberly, color: "#00558C" },
-  "wiese": { name: "Wiese", banner: bannerWiese, color: "#692C90" },
-  "3m": { name: "3M", banner: banner3m, color: "#EE2737" },
-  "silver": { name: "Silver", banner: bannerSilver, color: "#76BD1D" }
+  "kimberly-clark-professional": { banner: bannerKimberly, color: "#00558C" },
+  "wiese": { banner: bannerWiese, color: "#692C90" },
+  "3m": { banner: banner3m, color: "#EE2737" },
+  "silver": { banner: bannerSilver, color: "#76BD1D" }
 };
-
-const categoryImagesMap = {
-  "Pastillas de Baño": imgPastillas,
-  "Dispensadores": imgDispensador,
-  "Papel Higiénico": imgPapel,
-  "Químicos de Limpieza": imgQuimicos,
-  "Automotriz": Automotriz,
-  "Aromatizantes": imgPastillas,
-  "Discos de Piso": imgDiscos,
-  "Herramientas de Limpieza": imgDiscos
-};
-
-const mockProducts = [
-  // --- WIESE ---
-  { id: 1, name: "Aromatizante Lavanda", category: "Aromatizantes", brand: "wiese", img: "https://disdelsa.com/imagenes/productos/PTQ4025-imgS-11-11-2024-92600-.jpg?w=380&h=380", rating: 5 },
-  { id: 2, name: "Pastilla para Tanque", category: "Pastillas de Baño", brand: "wiese", img: "https://disdelsa.com/imagenes/productos/PTQ4025-imgS-11-11-2024-92600-.jpg?w=380&h=380", rating: 4 },
-  { id: 3, name: "Dispensador Aerosol", category: "Dispensadores", brand: "wiese", img: "https://disdelsa.com/imagenes/productos/PTQ4025-imgS-11-11-2024-92600-.jpg?w=380&h=380", rating: 5 },
-  { id: 4, name: "Aromatizante Cítrico", category: "Aromatizantes", brand: "wiese", img: "https://disdelsa.com/imagenes/productos/PTQ4025-imgS-11-11-2024-92600-.jpg?w=380&h=380", rating: 4 },
-  { id: 5, name: "Pastilla Azul Wiese", category: "Pastillas de Baño", brand: "wiese", img: "https://disdelsa.com/imagenes/productos/PTQ4025-imgS-11-11-2024-92600-.jpg?w=380&h=380", rating: 3 },
-  // --- KIMBERLY-CLARK ---
-  { id: 6, name: "Papel Jumbo Roll", category: "Papel Higiénico", brand: "kimberly-clark", img: "https://disdelsa.com/imagenes/productos/135858-imgS-19-2-2020-84206-.jpg?w=380&h=380", rating: 5 },
-  { id: 7, name: "Toalla Scott Interdoblada", category: "Papel Higiénico", brand: "kimberly-clark", img: "https://disdelsa.com/imagenes/productos/135858-imgS-19-2-2020-84206-.jpg?w=380&h=380", rating: 4 },
-  { id: 8, name: "Jabonera Mod", category: "Dispensadores", brand: "kimberly-clark", img: "https://disdelsa.com/imagenes/productos/PTQ4025-imgS-11-11-2024-92600-.jpg?w=380&h=380", rating: 5 },
-  { id: 9, name: "Pañuelos Kleenex", category: "Papel Higiénico", brand: "kimberly-clark", img: "https://disdelsa.com/imagenes/productos/135858-imgS-19-2-2020-84206-.jpg?w=380&h=380", rating: 5 },
-  { id: 10, name: "Dispensador de Toalla", category: "Dispensadores", brand: "kimberly-clark", img: "https://disdelsa.com/imagenes/productos/PTQ4025-imgS-11-11-2024-92600-.jpg?w=380&h=380", rating: 4 },
-  { id: 11, name: "Jabón en Espuma", category: "Dispensadores", brand: "kimberly-clark", img: "https://disdelsa.com/imagenes/productos/PTQ4025-imgS-11-11-2024-92600-.jpg?w=380&h=380", rating: 5 },
-  // --- 3M ---
-  { id: 12, name: "Disco Rojo 20 Pulgadas", category: "Discos de Piso", brand: "3m", img: "https://via.placeholder.com/150", rating: 5 },
-  { id: 13, name: "Disco Negro Removedor", category: "Discos de Piso", brand: "3m", img: "https://via.placeholder.com/150", rating: 5 },
-  { id: 14, name: "Fibra Esponja P96", category: "Herramientas de Limpieza", brand: "3m", img: "https://via.placeholder.com/150", rating: 4 },
-  { id: 15, name: "Paño de Microfibra", category: "Herramientas de Limpieza", brand: "3m", img: "https://via.placeholder.com/150", rating: 5 },
-  // --- SILVER ---
-  { id: 16, name: "Desinfectante Galón", category: "Químicos de Limpieza", brand: "silver", img: "https://via.placeholder.com/150", rating: 4 },
-  { id: 17, name: "Cloro Líquido", category: "Químicos de Limpieza", brand: "silver", img: "https://via.placeholder.com/150", rating: 5 },
-  { id: 18, name: "Limpiador de Vidrios", category: "Químicos de Limpieza", brand: "silver", img: "https://via.placeholder.com/150", rating: 4 },
-  { id: 19, name: "Shampoo para Carros", category: "Automotriz", brand: "silver", img: "https://via.placeholder.com/150", rating: 5 },
-];
 
 const BrandPage = () => {
   const { slug } = useParams();
+  const location = useLocation(); // 2. Inicializamos location
   const addItem = useCartStore((state) => state.addItem);
 
-  // NORMALIZACIÓN: Convierte "Kimberly Clark" o "kimberly-clark" en "kimberly-clark"
-  const currentBrand = slug ? slug.toLowerCase().trim().replace(/\s+/g, '-') : "";
+  const { data: menuData, isLoading: loadingMenu } = useMenu();
+  const { data: productsData, isLoading: loadingProducts } = useProducts();
+
+  const [activeCatId, setActiveCatId] = useState(null);
+
+  // --- HELPER NORMALIZADOR (IGUAL QUE EN CATEGORY PAGE) ---
+  const norm = (id) => (id === null || id === undefined) ? '' : String(id).trim();
+
+  const createSlug = (text) => text?.toString().toLowerCase().trim()
+        .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+        .replace(/ñ/g, 'n').replace(/\s+/g, '-') || '';
+
+  // 1. ENCONTRAR MARCA (SEGMENTO)
+  const currentBrandSegment = useMemo(() => {
+      if (!menuData) return null;
+      return menuData.find(seg => createSlug(seg.NombreSegmento).includes(slug) || slug.includes(createSlug(seg.NombreSegmento)));
+  }, [menuData, slug]);
+
+  const visualConfig = brandConfig[slug] || { banner: null, color: "#004aad" };
+
+  // Reset filtro al cambiar de marca
+    useEffect(() => {
+      if (currentBrandSegment && currentBrandSegment.Categorias?.length > 0) {
+          const preId = location.state?.preSelectedCatId;
+
+          if (preId) {
+              // Validamos que la categoría pertenezca a esta marca
+              const exists = currentBrandSegment.Categorias.some(c => String(c.IdCategoria) === String(preId));
+              if (exists) {
+                  setActiveCatId(preId);
+              } else {
+                  setActiveCatId(null);
+              }
+          } else {
+              // Si no hay state, resetear a "Ver Todo"
+              setActiveCatId(null);
+          }
+      }
+  }, [currentBrandSegment, location.state, slug]); // Se dispara al cambiar marca o recibir nuevo state
+
+  // --- 2. FILTRADO MAESTRO (BLINDADO) ---
+  const filteredProducts = useMemo(() => {
+      if (!productsData || !currentBrandSegment) return [];
+
+      // A. FILTRO
+      const filtered = productsData.filter(prod => {
+          const pSeg = norm(prod.IdSegmento);
+          const pCat = norm(prod.IdCategoria);
+          
+          const mSeg = norm(currentBrandSegment.IdSegmento);
+          const mCat = activeCatId ? norm(activeCatId) : null;
+
+          // Regla 1: Debe ser de esta Marca
+          if (pSeg !== mSeg) return false;
+
+          // Regla 2: Si hay categoría, debe coincidir
+          if (mCat && pCat !== mCat) return false;
+
+          return true;
+      });
+
+      // B. ANTI-DUPLICADOS
+      const uniqueProducts = [];
+      const seenIds = new Set();
+      filtered.forEach(prod => {
+          if (!seenIds.has(prod.IdProducto)) {
+              seenIds.add(prod.IdProducto);
+              uniqueProducts.push(prod);
+          }
+      });
+
+      return uniqueProducts;
+
+  }, [productsData, currentBrandSegment, activeCatId]);
+
+  // --- SKELETON LOADING (PANTALLA DE CARGA PROFESIONAL) ---
+  if (loadingMenu || loadingProducts) {
+      return (
+        <div className="brand-container">
+            <div className="sk-banner"></div>
+            <div className="brand-layout">
+                <div className="sk-sidebar"></div>
+                <div className="products-area">
+                    <div className="grid-container">
+                        {[1,2,3,4,5,6].map(i => (
+                            <div key={i} className="sk-card">
+                                <div className="sk-img"></div>
+                                <div className="sk-line"></div>
+                                <div className="sk-line" style={{width:'50%'}}></div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </div>
+        </div>
+      );
+  }
   
-  // Obtenemos la configuración de la marca o valores por defecto
-  const brandData = brandConfig[currentBrand] || { name: slug, banner: null, color: "#004aad" };
-
-  const [filteredProducts, setFilteredProducts] = useState([]);
-  const [categories, setCategories] = useState([]);
-  const [activeCategory, setActiveCategory] = useState("all");
-
-  useEffect(() => {
-    // Al cambiar de marca, filtramos los productos que pertenecen a ella
-    const brandSpecificProducts = mockProducts.filter(
-      p => p.brand.toLowerCase() === currentBrand
-    );
-    setFilteredProducts(brandSpecificProducts);
-
-    // Extraemos las categorías únicas de esos productos
-    const uniqueCats = [...new Set(brandSpecificProducts.map(p => p.category))];
-    setCategories(uniqueCats);
-    
-    // Resetear filtro al cambiar de marca
-    setActiveCategory("all");
-
-    // Scroll al inicio cuando cambia la marca
-    window.scrollTo(0, 0);
-
-  }, [currentBrand]);
-
-  const handleCategoryClick = (categoryName) => {
-    setActiveCategory(categoryName);
-
-    const allBrandProducts = mockProducts.filter(p => p.brand.toLowerCase() === currentBrand);
-
-    if (categoryName === "all") {
-      setFilteredProducts(allBrandProducts);
-    } else {
-      const filtered = allBrandProducts.filter(p => p.category === categoryName);
-      setFilteredProducts(filtered);
-    }
-  };
+  if (!currentBrandSegment) return (
+    <div className="brand-container">
+        <div className="brand-hero">
+            {visualConfig.banner && <img src={visualConfig.banner} alt="Banner" />}
+        </div>
+        <div style={{textAlign:'center', padding:'50px'}}>
+            <h2>Estamos actualizando el catálogo de {slug}</h2>
+        </div>
+    </div>
+  );
 
   return (
-    <div className="brand-container" style={{ '--brand-color': brandData.color }}>
+    <div className="brand-container" style={{ '--brand-color': visualConfig.color }}>
       
-      {/* SECCIÓN HERO / BANNER */}
+      {/* BANNER */}
       <div className="brand-hero">
-        {brandData.banner ? (
-          <img src={brandData.banner} alt={`${brandData.name} Banner`} />
+        {visualConfig.banner ? (
+          <img src={visualConfig.banner} alt={currentBrandSegment.NombreSegmento} />
         ) : (
-          <div className="brand-hero-fallback" style={{ background: brandData.color }}>
-            <h1>{brandData.name}</h1>
+          <div className="brand-hero-fallback" style={{ background: visualConfig.color }}>
+            <h1>{currentBrandSegment.NombreSegmento}</h1>
           </div>
         )}
       </div>
 
       <div className="brand-layout">
         
-        {/* SIDEBAR DE FILTROS */}
+        {/* SIDEBAR: CATEGORÍAS */}
         <aside className="sidebar-filters">
-          <span className="sidebar-title">Categorías</span>
+          <span className="sidebar-title">Categorías {currentBrandSegment.NombreSegmento}</span>
           
           <div className="categories-stack">
             
-            {/* BOTÓN INICIO (VER TODO) */}
+            {/* Botón Ver Todo */}
             <div 
-              className={`category-card-btn ${activeCategory === "all" ? 'active-filter' : ''}`}
-              onClick={() => handleCategoryClick("all")}
+              className={`category-card-btn ${!activeCatId ? 'active-filter' : ''}`}
+              onClick={() => setActiveCatId(null)}
             >
               <div className="cat-img-box">
-                <img src={iconVerTodo} alt="Inicio" />
+                <img src={iconInicio} alt="Inicio" />
               </div>
-              <span className="cat-text">Inicio</span>
+              <span className="cat-text">Ver Todo</span>
             </div>
           
-            {/* CATEGORÍAS DISPONIBLES */}
-            {categories.map((cat, index) => {
-              const catImage = categoryImagesMap[cat] || imgPastillas; 
-              return (
+            {/* Lista Dinámica */}
+            {currentBrandSegment.Categorias?.map((cat) => (
                 <div 
-                  key={index} 
-                  className={`category-card-btn ${activeCategory === cat ? 'active-filter' : ''}`}
-                  onClick={() => handleCategoryClick(cat)}
+                  key={cat.IdCategoria} 
+                  className={`category-card-btn ${norm(activeCatId) === norm(cat.IdCategoria) ? 'active-filter' : ''}`}
+                  onClick={() => setActiveCatId(cat.IdCategoria)}
                 >
                   <div className="cat-img-box">
-                    <img src={catImage} alt={cat} />
+                    <img 
+                        src={cat.Imagen ? `${AppConfig.baseImageUrl}${cat.Imagen}` : defaultImage} 
+                        alt={cat.NombreCategoria} 
+                    />
                   </div>
-                  <span className="cat-text">{cat}</span>
+                  <span className="cat-text">{cat.NombreCategoria}</span>
                 </div>
-              );
-            })}
-          </div>
-
-          <div className="rating-section">
-            <span className="sidebar-title" style={{fontSize: '18px'}}>Valoración</span>
-            <div className="rating-row"><span className="stars">★★★★★</span> 5.0</div>
-            <div className="rating-row"><span className="stars">★★★★☆</span> 4.0 y más</div>
+            ))}
           </div>
         </aside>
 
-        {/* ÁREA DE PRODUCTOS */}
+        {/* PRODUCTOS */}
         <main className="products-area">
-          {filteredProducts.length > 0 ? (
-            <div className="grid-container">
-              {filteredProducts.map((prod) => (
-                <div className="product-card" key={prod.id}>
-                  <div className="prod-img-container">
-                    <img src={prod.img} alt={prod.name} />
-                  </div>
-                  <div className="prod-category">{prod.category}</div>
-                  <div className="prod-title">{prod.name}</div>
-                  <div className="prod-stars">{'★'.repeat(prod.rating)}</div>
-                  <button className="btn-details">Ver detalles</button>
+          <div className="grid-container">
+            {filteredProducts.map((prod) => (
+                <div className="product-card" key={prod.IdProducto}>
+                  
+                  <div style={{position:'absolute', top:10, right:10, fontSize:10, color:'#aaa'}}>ID: {prod.IdProducto}</div>
+
+                  <Link to={`/producto/${prod.IdProducto}`} style={{textDecoration:'none', color:'inherit', flexGrow:1, display:'flex', flexDirection:'column'}}>
+                      <div className="prod-img-container">
+                        <img 
+                            src={prod.Imagen ? `${AppConfig.baseImageUrl}productos/${prod.Imagen}` : defaultImage} 
+                            alt={prod.Descripcion} 
+                            loading="lazy"
+                        />
+                      </div>
+                      <div className="prod-category">{prod.Categoria}</div>
+                      <div className="prod-title">{prod.Descripcion}</div>
+                  </Link>
+                  
+                  <button className="btn-details" onClick={() => addItem(prod)}>Cotizar</button>
                 </div>
-              ))}
-            </div>
-          ) : (
+            ))}
+          </div>
+
+          {filteredProducts.length === 0 && (
             <div className="no-products-message">
-              <h3>No se encontraron productos para esta selección.</h3>
-              <p>Intenta explorar otras categorías o marcas.</p>
+              <h3>No hay productos disponibles en esta categoría.</h3>
             </div>
           )}
         </main>
