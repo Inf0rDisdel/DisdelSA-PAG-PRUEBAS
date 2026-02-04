@@ -64,18 +64,39 @@
     display: flex;
     flex-direction: row; /* Alinear en fila */
     align-items: center;
-    gap: 20px; /* Espacio entre cada icono/link */
+    gap: 15px; /* Espacio entre cada icono/link */
+    list-style: none;
+    padding: 0;
 }
 
 /* 2. Le damos el estilo circular a los iconos SVG */
 .social-links-list svg {
-    background-color: white;
-    color: #135eab; /* El color del icono será el azul del fondo */
-    border-radius: 30%; /* Esto los hace perfectamente redondos */
-    width: 20px;       /* Ancho del círculo */
-    height: 20px;      /* Alto del círculo */
-    padding: 5px;      /* Espacio interior para que el icono no toque el borde */
-    box-sizing: content-box; /* Asegura que el padding no afecte el tamaño total */
+    background-color: white !important;
+    color: white; /* El color del icono será el azul del fondo */
+    border-radius: 30% !important; /* Esto los hace perfectamente redondos */
+    width: 20px !important;       /* Ancho del círculo */
+    height: 20px !important;      /* Alto del círculo */
+    padding: 8px !important;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    transition: transform 0.3s ease;
+}
+
+.social-links-list a:hover svg{
+    transform: translateY(-5px);
+}
+
+.social-links-list a.facebook svg {
+    color: #1877F2 !important;
+}
+
+/* Instagram Rosa/Morado oficial */
+.social-links-list a.instagram svg {
+    color: #E4405F !important;
+}
+
+/* LinkedIn Azul oscuro oficial */
+.social-links-list a.linkedin svg {
+    color: #0A66C2 !important;
 }
 
 /* 3. Aseguramos que el texto y el icono de cada link estén bien alineados */
@@ -227,15 +248,76 @@
 }
 
 @media (max-width: 768px) {
-    .footer-row {
-        flex-direction: column;
+    
+    /* 1. Centramos todos los textos y columnas */
+    .footer-container {
+        padding: 30px 20px;
+    }
+
+    .footer-columns-grid {
         align-items: center;
         text-align: center;
     }
-    .footer-columns-grid {
-        align-items: center;
+
+    .footer-row {
+        flex-direction: column;
+        width: 100%;
+        gap: 25px;
     }
+
+    .footer-column h3 {
+        margin-bottom: 15px;
+        font-size: 1.1rem;
+    }
+
+    .footer-column ul {
+        padding: 0;
+    }
+
+    .footer-column ul li {
+        margin-bottom: 12px;
+    }
+
+    /* 2. DISEÑO DE REDES SOCIALES (ESTILO IMAGEN 2) */
+    
+    .social-title {
+        margin-top: 10px;
+        font-size: 1.2rem !important;
+    }
+
     .social-links-list {
-        justify-content: center; /* Centra los iconos en pantallas pequeñas */
+        display: flex;
+        flex-direction: row; /* Alineación horizontal */
+        justify-content: center;
+        gap: 8px; /* Espacio entre círculos */
+        margin-top: 10px;
+    }
+
+    /* Ocultamos el texto de las redes */
+    .social-text {
+        display: none;
+    }
+
+    /* Estilo de los iconos redondos blancos */
+    .social-links-list svg {
+        background-color: white !important;
+        /*color: white !important;  Color del logo en negro/oscuro como la imagen */
+        border-radius: 30% !important; /* Círculo perfecto */
+        width: 40px !important;  /* Tamaño grande como pediste */
+        height: 40px !important;
+        padding: 12px !important;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.2); /* Sombra para que resalten */
+        box-sizing: border-box;
+    }
+
+    .social-links-list a {
+        display: block;
+        padding: 0;
+    }
+
+    /* Efecto al tocar el icono */
+    .social-links-list a:active svg {
+        transform: scale(0.9);
+        background-color: #f0f0f0 !important;
     }
 }

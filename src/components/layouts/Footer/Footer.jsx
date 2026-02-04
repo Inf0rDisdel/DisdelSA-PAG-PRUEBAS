@@ -46,11 +46,23 @@ const Footer = () => {
 
                         <div className="footer-row">
                             <div className="footer-column">
-                                <h3>ENCUÉNTRANOS</h3>
+                                <h3>Conéctate con nosotros</h3>
                                 <ul className="social-links-list">
-                                    <li><a href="https://www.facebook.com/Disdelsagt" target="_blank" rel="noopener noreferrer"><FaFacebookF /> Disdelsagt</a></li>
-                                    <li><a href="https://www.instagram.com/disdelsagt/" target="_blank" rel="noopener noreferrer"><FaInstagram /> Disdelsagt</a></li>
-                                    <li><a href="https://www.linkedin.com/company/disdelsa/" target="_blank" rel="noopener noreferrer"><FaLinkedinIn /> Disdelsagt</a></li>
+                                    <li>
+                                        <a href="https://www.facebook.com/Disdelsagt" target="_blank" rel="noopener noreferrer" className="facebook">
+                                            <FaFacebookF /> <span className="social-text">Disdelsagt</span>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="https://www.instagram.com/disdelsagt/" target="_blank" rel="noopener noreferrer" className="instagram">
+                                            <FaInstagram /> <span className="social-text">Disdelsagt</span>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="https://www.linkedin.com/company/disdelsa/" target="_blank" rel="noopener noreferrer" className="linkedin">
+                                            <FaLinkedinIn /> <span className="social-text">Disdelsagt</span>
+                                        </a>
+                                    </li>
                                 </ul>
                             </div>
                         </div>

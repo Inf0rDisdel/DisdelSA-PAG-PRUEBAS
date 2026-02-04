@@ -19,6 +19,19 @@ const HomePage = () => {
   const addItem = useCartStore((state) => state.addItem);
   const { data: allProducts, isLoading } = useProducts();
 
+  const orgSchema = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "Disdel, S.A.",
+    "url": "https://www.disdelsa.com/",
+    "logo": "https://www.disdelsa.com/logo.png", // Pon la URL real de tu logo
+    "contactPoint": {
+    "@type": "ContactPoint",
+    "telephone": "+502-2422-6100",
+    "contactType": "customer service"
+  }
+};
+
   // --- LÓGICA DE FILTRADO Y ALEATORIZACIÓN ---
   const carruseles = useMemo(() => {
     if (!allProducts || !Array.isArray(allProducts)) {
@@ -63,6 +76,10 @@ const HomePage = () => {
     <main>
       <Helmet>
         <title>Disdel, S.A. | Suministros de Limpieza y Mantenimiento</title>
+        {/* 🔥 AGREGAR ESTA LÍNEA QUE FALTABA */}
+        <script type="application/ld+json">
+          {JSON.stringify(orgSchema)}
+        </script>
       </Helmet>
 
       <HeroSlider />
