@@ -1,0 +1,17 @@
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /
+
+  # --- REDIRECCIONES 301 (Para que Google actualice sus resultados rápido) ---
+  # Estas le dicen al servidor que mande el tráfico viejo a las nuevas rutas
+  Redirect 301 /Contactanos /ubicaciones
+  Redirect 301 /Conocenos /quienes-somos
+  Redirect 301 /limpieza /categoria/herramientas-para-limpieza
+
+  # --- CONFIGURACIÓN PARA REACT SPA (Evita el error 404 al refrescar) ---
+  RewriteRule ^index\.html$ - [L]
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteCond %{REQUEST_FILENAME} !-l
+  RewriteRule . /index.html [L]
+</IfModule>

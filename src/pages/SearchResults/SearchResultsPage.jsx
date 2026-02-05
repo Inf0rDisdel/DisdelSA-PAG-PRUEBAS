@@ -1,6 +1,7 @@
 // src/pages/SearchResults/SearchResultsPage.jsx
 import React, { useMemo } from 'react';
 import { useLocation } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import { useProducts } from 'hooks/useProducts'; 
 import ProductCard from 'components/ui/ProductCard/ProductCard';
 import styles from './SearchResults.module.css';
@@ -12,6 +13,17 @@ const SearchResultsPage = () => {
   // Obtener el término de búsqueda de la URL
   const queryParams = new URLSearchParams(location.search);
   const query = queryParams.get('q') || '';
+
+  const searchSchema = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "url": "https://www.disdelsa.com/",
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": "https://www.disdelsa.com/buscar?q={search_term_string}",
+      "query-input": "required name=search_term_string"
+    }
+  };
 
   // LÓGICA DE FILTRADO "PARECIDO"
   const resultados = useMemo(() => {
@@ -40,6 +52,12 @@ const SearchResultsPage = () => {
 
   return (
     <div className={styles.searchPageWrapper}>
+      <Helmet>
+        <title>{`Resultados para "${query}" | Disdel`}</title>
+        <script type="application/ld+json">
+          {JSON.stringify(searchSchema)}
+        </script>
+      </Helmet>
       <div className={styles.container}>
         <header className={styles.searchHeader}>
           <h1>Resultados para: <span>"{query}"</span></h1>

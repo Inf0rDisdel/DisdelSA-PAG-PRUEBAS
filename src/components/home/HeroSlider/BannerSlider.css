@@ -1,12 +1,14 @@
+/* --- ESTILOS BASE (Escritorio) --- */
 .banner-slider-container {
   width: 100%;
   max-width: 1220px; 
-  height:100%;
-  margin:40px auto;    
+  height: 100%;
+  margin: 40px auto;    
   padding: 0 8px;  
   box-sizing: border-box; 
 }
 
+/* Este es el límite en escritorio */
 .banner-slider-container .slick-slide {
   max-height: 270px; 
 }
@@ -19,18 +21,38 @@
   border-radius: 15px;
 }
 
+/* --- ESTILOS PARA MÓVILES (Aquí es donde lo agrandamos) --- */
+@media (max-width: 768px) {
+  
+  .banner-slider-container {
+    margin: 20px auto; /* Menos margen arriba para que no baje tanto */
+  }
 
-.banner-slider-container .slick-dots {
-  bottom: 8px; 
+  .banner-slider-container .slick-slide {
+    max-height: none;  /* ¡IMPORTANTE! Quitamos el límite de 270px */
+    height: 400px;     /* <--- AQUÍ CAMBIAS EL ALTO. Pon 350px o 400px si lo quieres más gigante */
+  }
+
+  .banner-slider-container .slick-slide img {
+    height: 400px;     /* Debe coincidir con el alto de arriba */
+    object-fit: cover; /* Evita que la imagen se estire, la centra y recorta lo necesario */
+    border-radius: 12px;
+  }
+
+  /* Ajustamos los puntitos para que no se pierdan */
+  .banner-slider-container .slick-dots {
+    bottom: -25px; 
+  }
 }
 
+/* --- ESTILOS DE LOS PUNTOS (Generales) --- */
 .banner-slider-container .slick-dots li button:before {
   font-size: 9px; 
-  color: white; 
+  color: #135eab; /* Cambié a azul para que se vea mejor sobre blanco */
   opacity: 0.25;
 }
 
 .banner-slider-container .slick-dots li.slick-active button:before {
   opacity: 1;
-  color: white;
+  color: #135eab;
 }
