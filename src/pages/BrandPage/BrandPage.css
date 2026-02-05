@@ -1,180 +1,139 @@
-/* --- CONTENEDOR PRINCIPAL --- */
+/* --- ESTILOS BASE ESCRITORIO --- */
 .brand-container {
-  width: 100%;
-  background-color: #f9fafb;
-  min-height: 100vh;
-  padding-bottom: 60px;
-  font-family: 'Segoe UI', system-ui, sans-serif;
-  --brand-color: #004aad;
+  width: 100%; background-color: #f9fafb; min-height: 100vh;
+  padding-bottom: 60px; font-family: 'Poppins', sans-serif;
+  --brand-color: #135eab;
 }
 
-/* Espacio arriba para que no se pegue al header */
 .brand-hero {
-  max-width: 1350px;
-  margin: 20px auto 30px auto;
-  width: 95%;
-  height: 280px;
-  border-radius: 16px;
-  overflow: hidden;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-  position: relative;
-  background-color: #e0e0e0; /* Fondo gris mientras carga imagen */
+  max-width: 1300px; margin: 20px auto; width: 95%; height: 250px;
+  border-radius: 16px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.08);
 }
+.brand-hero img { width: 100%; height: 100%; object-fit: cover; }
 
-.brand-hero img {
-  width: 100%; height: 100%; object-fit: cover;
-}
-
-.brand-hero-fallback {
-  width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;
-  color: white; font-size: 40px; font-weight: 800; text-transform: uppercase; letter-spacing: 2px;
-}
-
-/* --- LAYOUT --- */
 .brand-layout {
-  max-width: 1350px;
-  margin: 0 auto;
-  padding: 0 25px;
-  display: grid;
-  grid-template-columns: 280px 1fr;
-  gap: 35px;
-  align-items: flex-start;
+  max-width: 1300px; margin: 0 auto; padding: 0 20px;
+  display: grid; grid-template-columns: 280px 1fr; gap: 30px;
 }
 
-/* --- SIDEBAR --- */
 .sidebar-filters {
-  background: white;
-  border-radius: 12px;
-  padding: 20px;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.03);
-  position: sticky;
-  top: 20px;
-  border: 1px solid #eee;
+  background: white; border-radius: 12px; padding: 20px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.03); position: sticky;
+  top: 110px; z-index: 10; border: 1px solid #eee;
 }
 
-.sidebar-title {
-  display: block; font-size: 15px; font-weight: 800; color: #333;
-  margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid #f0f0f0;
+.sidebar-label-grey {
+  font-size: 11px; color: #999; font-weight: 700; text-transform: uppercase;
+  margin-bottom: 15px; letter-spacing: 1px; display: block;
 }
 
-.categories-stack { display: flex; flex-direction: column; gap: 8px; }
+/* 🔥 OCULTAMOS FLECHAS EN PANTALLA GRANDE */
+.cat-nav-arrows { display: none !important; } 
 
-/* BOTONES DEL MENÚ */
+.categories-stack { display: flex; flex-direction: column; gap: 5px; }
+
 .category-card-btn {
-  display: flex; align-items: center; padding: 12px 15px;
-  margin-bottom: 8px; border-radius: 8px; cursor: pointer;
-  background-color: white; color: #555; border: 1px solid transparent;
-  transition: all 0.2s ease;
+  display: flex; align-items: center; padding: 12px 15px; border-radius: 8px;
+  cursor: pointer; color: #555; font-size: 13px; transition: all 0.2s;
+  border-left: 3px solid transparent;
 }
-
-.category-card-btn:hover {
-  background-color: #f5f5f5; color: var(--brand-color);
-  transform: translateX(5px);
-}
-
 .category-card-btn.active-filter {
-  background-color: #f0f7ff; color: var(--brand-color);
-  font-weight: 700; border-left: 4px solid var(--brand-color);
-  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  background-color: #f0f7ff; color: var(--brand-color); font-weight: 700; border-left-color: var(--brand-color);
 }
-
-.cat-img-box {
-  width: 30px; height: 30px; margin-right: 12px;
-  display: flex; align-items: center; justify-content: center;
-}
+.cat-img-box { width: 24px; height: 24px; margin-right: 12px; }
 .cat-img-box img { width: 100%; height: 100%; object-fit: contain; }
 
-.cat-text { font-size: 14px; line-height: 1.2; }
-
-/* --- PRODUCTOS (Súper Separado y Pequeño) --- */
-.products-area { width: 100%; }
-
+/* 🔥 4 PRODUCTOS EN PC */
 .grid-container {
-  display: grid;
-  /* Tarjetas de 200px (Más pequeñas) */
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  
-  /* Mucho espacio entre ellas */
-  gap: 35px; 
-  
-  padding: 10px;
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px;
 }
 
 .product-card {
-  background: white;
-  border-radius: 10px; /* Menos redondeado para que se vea serio */
-  padding: 15px;
-  border: 1px solid #f0f0f0; /* Borde casi invisible */
-  transition: all 0.2s ease-in-out;
-  display: flex; 
-  flex-direction: column;
-  height: 100%;
-  position: relative;
+  background: white; border-radius: 12px; padding: 20px; border: 1px solid #eee;
+  display: flex; flex-direction: column; height: 100%; position: relative; transition: 0.3s;
+}
+.product-card:hover { transform: translateY(-5px); box-shadow: 0 15px 30px rgba(0,0,0,0.08); }
+.cat-id-badge { position: absolute; top: 10px; right: 10px; font-size: 10px; color: #bbb; }
+.prod-img-container { height: 160px; display: flex; align-items: center; justify-content: center; margin: 15px 0; }
+.prod-img-container img { max-width: 100%; max-height: 100%; object-fit: contain; }
+.prod-category-label { font-size: 11px; color: var(--brand-color); font-weight: 700; text-transform: uppercase; margin-bottom: 5px; }
+.prod-title-text { font-size: 14px; font-weight: 600; color: #222; flex-grow: 1; line-height: 1.4; }
+.btn-details-brand {
+  width: 100%; padding: 12px; background: white; border: 1.5px solid var(--brand-color);
+  color: var(--brand-color); border-radius: 8px; font-weight: 700; cursor: pointer; margin-top: 15px;
+}
+.brand-container a, 
+.brand-container .prod-link-wrapper,
+.brand-container .category-card-btn {
+    text-decoration: none !important; /* Quita el subrayado */
+    outline: none;
 }
 
-.product-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 10px 25px rgba(0,0,0,0.05); /* Sombra muy suave */
+/* 2. Aseguramos que el título del producto no se subraye ni cambie de color */
+.prod-title-text {
+    text-decoration: none !important;
+    color: #222; /* Mantiene el color oscuro */
 }
 
-.prod-img-container {
-  height: 140px; /* Imagen pequeña */
-  display: flex; align-items: center; justify-content: center;
-  margin-bottom: 15px;
-  padding: 5px;
-}
-.prod-img-container img { 
-  max-width: 100%; max-height: 100%; object-fit: contain; 
+/* 3. Evitamos que al pasar el mouse (hover) aparezca el subrayado */
+.product-card:hover .prod-title-text,
+.category-card-btn:hover .cat-text {
+    text-decoration: none !important;
 }
 
-.prod-category {
-  font-size: 9px; /* Texto mini */
-  text-transform: uppercase; 
-  font-weight: 700;
-  color: #999;
-  margin-bottom: 4px;
+/* 4. Por si acaso, el link de "Volver al inicio" del mensaje de actualización */
+.brand-container div[style*="text-align:center"] a {
+    text-decoration: none !important;
+    font-weight: bold;
+}
+/* ======================================================= */
+/*  1. TABLETS (Hasta 1024px) - 3 PRODUCTOS               */
+/* ======================================================= */
+@media (max-width: 768px) {
+  .brand-layout { display: flex !important; flex-direction: column !important; gap: 15px !important; }
+
+  .sidebar-filters {
+    position: sticky !important; top: 115px !important;
+    width: 100% !important; z-index: 1000 !important;
+    padding: 10px 0 !important; border-radius: 0; background: white !important;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.08) !important; border-bottom: 1px solid #eee;
+  }
+
+  .cat-sidebar-header-mobile { display: flex !important; justify-content: space-between; align-items: center; padding: 0 15px 5px 15px; }
+  
+  /* 🔥 ACTIVAMOS FLECHAS SOLO EN RESPONSIVE */
+  .cat-nav-arrows { display: flex !important; gap: 10px; }
+  .scroll-arrow { background: #f5f5f5; border: none; border-radius: 50%; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; color: var(--brand-color); font-size: 18px; }
+
+  .categories-stack {
+    flex-direction: row !important; flex-wrap: nowrap !important;
+    overflow-x: auto !important; padding: 5px 15px !important; gap: 12px !important;
+    scrollbar-width: none;
+  }
+  .categories-stack::-webkit-scrollbar { display: none; }
+
+  /* CAJITAS MÁS BAJAS (Ajuste de altura solicitado) */
+  .category-card-btn {
+    flex: 0 0 105px !important; flex-direction: column !important; 
+    height: 75px !important; /* Altura reducida para nitidez */
+    justify-content: center !important; text-align: center !important; padding: 5px !important;
+    margin-bottom: 0 !important; border: 1px solid #eee !important;
+  }
+  .cat-img-box { margin-right: 0 !important; margin-bottom: 5px !important; height: 32px !important; width: 100% !important; }
+  .cat-text { font-size: 10px !important; line-height: 1.1 !important; display: block !important; }
+
+  /* 🔥 3 PRODUCTOS POR FILA PARA TABLET */
+  .grid-container { grid-template-columns: repeat(3, 1fr) !important; gap: 15px; padding: 15px !important; }
+  .brand-hero { height: 180px; width: 100%; border-radius: 0; margin-top: 0; }
 }
 
-.prod-title {
-  font-size: 13px; /* Título pequeño */
-  color: #333; 
-  font-weight: 600;
-  line-height: 1.3; 
-  margin-bottom: 15px; 
-  flex-grow: 1;
-}
-
-.btn-details {
-  width: 100%; 
-  padding: 6px 0; /* Botón compacto */
-  background: white; 
-  border: 1px solid var(--brand-color);
-  color: var(--brand-color);
-  font-weight: 600; 
-  font-size: 11px;
-  border-radius: 4px;
-  cursor: pointer; 
-  transition: 0.2s;
-  text-transform: uppercase;
-}
-
-.btn-details:hover {
-  background: var(--brand-color); 
-  color: white;
-}
-
-/* --- SKELETON LOADING (COPIADO DE CATEGORY PAGE) --- */
-.sk-banner { width: 100%; height: 280px; background: #e0e0e0; border-radius: 16px; margin: 20px auto; width: 95%; animation: shimmer 1.5s infinite; }
-.sk-sidebar { height: 400px; background: white; border-radius: 12px; }
-.sk-card { height: 350px; background: white; border-radius: 12px; padding: 20px; border: 1px solid #eee; }
-.sk-img { width: 100%; height: 180px; background: #eee; border-radius: 8px; margin-bottom: 20px; animation: shimmer 1.5s infinite; }
-.sk-line { height: 15px; background: #eee; border-radius: 4px; margin-bottom: 10px; width: 80%; animation: shimmer 1.5s infinite; }
-
-@keyframes shimmer { 0% { background-color: #f0f0f0; } 50% { background-color: #e0e0e0; } 100% { background-color: #f0f0f0; } }
-
-/* RESPONSIVO */
-@media (max-width: 1024px) {
-  .brand-layout { grid-template-columns: 1fr; }
-  .sidebar-filters { display: none; }
-  .brand-hero { height: 180px; width: 100%; border-radius: 0; margin-top: 0;}
+/* ======================================================= */
+/*  2. MÓVILES (Hasta 768px / 468px) - 2 PRODUCTOS          */
+/* ======================================================= */
+@media (max-width: 468px) {
+  /* 🔥 2 PRODUCTOS POR FILA PARA MÓVIL */
+  .grid-container { grid-template-columns: repeat(2, 1fr) !important; gap: 12px !important; }
+  .product-card { padding: 12px !important; }
+  .prod-img-container { height: 120px !important; }
+  .prod-title-text { font-size: 12px !important; height: 32px; overflow: hidden; }
 }
