@@ -2,6 +2,7 @@ import { useLocation, Link, useParams } from 'react-router-dom';
 import React, { useState, useMemo, useEffect, useRef } from 'react'; 
 import { Helmet } from 'react-helmet-async';
 import { FiChevronLeft, FiChevronRight } from 'react-icons/fi'; 
+import { toast } from 'react-hot-toast'; // Notificación añadida
 import './CategoryPage.css';
 
 import { AppConfig } from 'config/AppConfig';
@@ -47,19 +48,14 @@ const CategoryPage = () => {
       return currentSegment.Categorias?.find(cat => norm(cat.IdCategoria) === norm(activeCatId));
   }, [currentSegment, activeCatId]);
 
-  // FILTRADO + ELIMINACIÓN DE DUPLICADOS
   const filteredProducts = useMemo(() => {
       if (!productsData || !currentSegment) return [];
-      
-      // 1. Filtrado por categorías y subcategorías
       const filtered = productsData.filter(prod => {
           if (norm(prod.IdSegmento) !== norm(currentSegment.IdSegmento)) return false;
           if (activeCatId && norm(prod.IdCategoria) !== norm(activeCatId)) return false;
           if (activeSubCatId && norm(prod.IdSubCategoria) !== norm(activeSubCatId)) return false;
           return true;
       });
-
-      // 2. Eliminar duplicados por IDProducto
       const seenIds = new Set();
       return filtered.filter(prod => {
           const duplicate = seenIds.has(prod.IdProducto);
@@ -161,7 +157,16 @@ const CategoryPage = () => {
                       <span className="cat-card-tag">{prod.Categoria}</span>
                       <h3 className="cat-title">{prod.Descripcion}</h3>
                     </Link>
-                    <button className="cat-btn" onClick={() => addItem(prod)}>Cotizar</button>
+                    <button className="cat-btn" onClick={() => {
+                        addItem({
+                            ...prod,
+                            presentationSelected: prod.Unidad || prod.Empaque,
+                            unitType: prod.Unidad ? 'Y' : 'N'
+                        });
+                        toast.success('Añadido a tu lista');
+                    }}>
+                        Cotizar
+                    </button>
                   </div>
               ))}
             </div>

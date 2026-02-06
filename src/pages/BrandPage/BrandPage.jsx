@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react'; 
 import { useParams, Link, useLocation } from 'react-router-dom';
 import { FiChevronLeft, FiChevronRight } from 'react-icons/fi';
+import { toast } from 'react-hot-toast';
 import './BrandPage.css';
 
 import { AppConfig } from 'config/AppConfig';
@@ -148,7 +149,29 @@ const BrandPage = () => {
                       <div className="prod-category-label">{prod.Categoria}</div>
                       <div className="prod-title-text">{prod.Descripcion}</div>
                   </Link>
-                  <button className="btn-details-brand" onClick={() => addItem(prod)}>Cotizar</button>
+                  
+                  {/* 🔥 BOTÓN ACTUALIZADO CON NOTIFICACIÓN Y DATA DE UNIDAD */}
+                  <button className="btn-details-brand" onClick={() => {
+                      const defaultPresentation = prod.Unidad || prod.Empaque || 'Unidad';
+                      addItem({
+                          ...prod,
+                          presentationSelected: defaultPresentation,
+                          unitType: prod.Unidad ? 'Y' : 'N'
+                      });
+                      toast.success(`Agregado: ${defaultPresentation}`, {
+                        position: 'top-center',
+                        icon: '✅',
+                        style: {
+                            borderRadius: '10px',
+                            background: '#fff',
+                            color: '#333',
+                            border: '1px solid #e0e0e0',
+                            fontWeight: '500'
+                        },
+                      });
+                  }}>
+                    Cotizar
+                  </button>
                 </div>
             ))}
           </div>

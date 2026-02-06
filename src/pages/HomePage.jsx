@@ -1,8 +1,9 @@
 import React, { useMemo } from 'react';
 import { Helmet } from 'react-helmet-async';
 import useCartStore from 'store/useCartStore';
-import { useProducts } from 'hooks/useProducts'; // Tu hook de productos
-import { AppConfig } from 'config/AppConfig'; // Para la ruta de imágenes
+import { toast } from 'react-hot-toast'; // Importación necesaria
+import { useProducts } from 'hooks/useProducts'; 
+import { AppConfig } from 'config/AppConfig'; 
 
 // Componentes
 import FeaturedBrands from 'components/home/ComercialAllies/FeaturedBrands';
@@ -24,21 +25,44 @@ const HomePage = () => {
     "@type": "Organization",
     "name": "Disdel, S.A.",
     "url": "https://www.disdelsa.com/",
-    "logo": "https://www.disdelsa.com/logo.png", // Pon la URL real de tu logo
+    "logo": "https://www.disdelsa.com/logo.png",
     "contactPoint": {
-    "@type": "ContactPoint",
-    "telephone": "+502-2422-6100",
-    "contactType": "customer service"
-  }
-};
+      "@type": "ContactPoint",
+      "telephone": "+502-2422-6100",
+      "contactType": "customer service"
+    }
+  };
 
-  // --- LÓGICA DE FILTRADO Y ALEATORIZACIÓN ---
+  // 🔥 FUNCIÓN PARA AGREGAR CON NOTIFICACIÓN (Imagen 2)
+  const handleAddToCart = (product) => {
+    // Definimos la unidad por defecto al agregar desde el inicio
+    const defaultPresentation = product.Unidad || 'Unidad';
+    const defaultType = product.Unidad ? 'Y' : 'N';
+
+    addItem({
+      ...product,
+      presentationSelected: defaultPresentation,
+      unitType: defaultType
+    });
+
+    // Notificación centrada arriba como pediste
+    toast.success(`Agregado: ${defaultPresentation}`, {
+      position: 'top-center',
+      icon: '✅',
+      style: {
+        borderRadius: '10px',
+        background: '#fff',
+        color: '#333',
+        border: '1px solid #e0e0e0',
+        fontWeight: '500'
+      },
+    });
+  };
+
   const carruseles = useMemo(() => {
     if (!allProducts || !Array.isArray(allProducts)) {
       return { higiene: [], coffee: [], cotizados: [] };
     }
-
-    // Función auxiliar para desordenar array y tomar N elementos
     const shuffleAndSlice = (array, count) => {
       return [...array]
         .sort(() => 0.5 - Math.random())
@@ -48,17 +72,11 @@ const HomePage = () => {
           name: p.Descripcion,
           image: `${AppConfig.baseImageUrl}productos/${p.Imagen}`,
           disdelId: p.IdProducto,
-          ...p // Mantenemos el resto por si el componente lo usa
+          ...p 
         }));
     };
-
-    // 1. Soluciones Higiene (IdSegmento: 1059) - 15 productos
     const higieneData = allProducts.filter(p => String(p.IdSegmento) === "1059");
-    
-    // 2. Coffee Break (IdCategoria: 2166) - 15 productos
     const coffeeData = allProducts.filter(p => String(p.IdCategoria) === "2166");
-    
-    // 3. Los más cotizados (Cualquiera del catálogo) - 10 productos
     const cotizadosData = [...allProducts];
 
     return {
@@ -76,10 +94,7 @@ const HomePage = () => {
     <main>
       <Helmet>
         <title>Disdel, S.A. | Suministros de Limpieza y Mantenimiento</title>
-        {/* 🔥 AGREGAR ESTA LÍNEA QUE FALTABA */}
-        <script type="application/ld+json">
-          {JSON.stringify(orgSchema)}
-        </script>
+        <script type="application/ld+json">{JSON.stringify(orgSchema)}</script>
       </Helmet>
 
       <HeroSlider />
@@ -87,37 +102,35 @@ const HomePage = () => {
       <FeaturedBrands />
       <BannerSlider />
 
-      {/* --- CARRUSEL DE COTIZADOS (RANDOM 10) --- */}
+      {/* --- NOTA: Se cambió addItem por handleAddToCart --- */}
       {carruseles.cotizados.length > 0 && (
         <div className="carousel-wrapper">
           <ProductCarousel
             title="Los más Cotizados"
             products={carruseles.cotizados}
-            addToCart={addItem}
+            addToCart={handleAddToCart} 
           />
         </div>
       )}
 
-      {/* --- CARRUSEL DE HIGIENE (SEGMENTO 1059 - RANDOM 15) --- */}
       {carruseles.higiene.length > 0 && (
         <div className="carousel-wrapper">
           <ProductCarousel
             title="Soluciones integrales de higiene"
             products={carruseles.higiene}
-            addToCart={addItem} 
+            addToCart={handleAddToCart} 
           />
         </div>
       )}
 
       <PromoNescafe />
 
-      {/* --- CARRUSEL DE COFFEE BREAK (CATEGORIA 2166 - RANDOM 15) --- */}
       {carruseles.coffee.length > 0 && (
         <div className="carousel-wrapper">
           <ProductCarousel
             title="Todo para el Coffee Break"
             products={carruseles.coffee}
-            addToCart={addItem} 
+            addToCart={handleAddToCart} 
           />
         </div>
       )}

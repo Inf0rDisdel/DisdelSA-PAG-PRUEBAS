@@ -1,20 +1,18 @@
 import React from 'react';
-import useCartStore from 'store/useCartStore'; 
-import CartItem from './CarItem'; 
+import useCartStore from 'store/useCartStore';
+import CartItem from './CarItem';
 import EmptyCartMessage from './EmptyCartMessage';
-import QuoteForm from './QuoteForm'; 
-import Swal from 'sweetalert2'; 
+import QuoteForm from './QuoteForm';
+import Swal from 'sweetalert2';
 import './CartPage.css';
 
 const CartPage = () => {
-  // Solo extraemos lo necesario. 
-  // Nota: removeFromCart y updateQuantity ya los usa CartItem internamente desde el store.
   const { cart, clearCart, _hasHydrated } = useCartStore();
-  
 
-    if (!_hasHydrated) {
+  if (!_hasHydrated) {
     return <div className="pdp-loading">Cargando tu lista...</div>;
   }
+
   const isEmpty = !cart || cart.length === 0;
 
   const handleClearAll = () => {
@@ -57,11 +55,7 @@ const CartPage = () => {
           <div className="cart-items-scroll-container">
             {cart.map((item) => (
               <CartItem 
-                /* 
-                   🔥 SOLUCIÓN AL ELIMINAR Y LENTITUD:
-                   La llave debe ser única. Si el ID es 50105 y el tipo es 'Y', 
-                   la llave es '50105-Y'. Esto evita que React se trabe.
-                */
+                /* 🔥 Mantenemos la llave única por producto y unidad */
                 key={`${item.IdProducto}-${item.unitType}`} 
                 product={item} 
               />
