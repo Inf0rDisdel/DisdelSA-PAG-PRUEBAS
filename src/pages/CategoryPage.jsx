@@ -1,7 +1,7 @@
 import { useLocation, Link, useParams } from 'react-router-dom';
-import React, { useState, useMemo, useEffect, useRef } from 'react'; // 1. Añadimos useRef
+import React, { useState, useMemo, useEffect, useRef } from 'react'; 
 import { Helmet } from 'react-helmet-async';
-import { FiChevronLeft, FiChevronRight } from 'react-icons/fi'; // 2. Importamos flechas
+import { FiChevronLeft, FiChevronRight } from 'react-icons/fi'; 
 import './CategoryPage.css';
 
 import { AppConfig } from 'config/AppConfig';
@@ -22,12 +22,11 @@ const CategoryPage = () => {
   const [activeCatId, setActiveCatId] = useState(null);
   const [activeSubCatId, setActiveSubCatId] = useState(null);
 
-  // --- 3. Lógica para controlar el scroll manual ---
   const scrollRef = useRef(null);
 
   const handleScroll = (direction) => {
     if (scrollRef.current) {
-      const { scrollLeft, clientWidth } = scrollRef.current;
+      const { scrollLeft } = scrollRef.current;
       const scrollTo = direction === 'left' ? scrollLeft - 150 : scrollLeft + 150;
       scrollRef.current.scrollTo({ left: scrollTo, behavior: 'smooth' });
     }
@@ -48,14 +47,19 @@ const CategoryPage = () => {
       return currentSegment.Categorias?.find(cat => norm(cat.IdCategoria) === norm(activeCatId));
   }, [currentSegment, activeCatId]);
 
+  // FILTRADO + ELIMINACIÓN DE DUPLICADOS
   const filteredProducts = useMemo(() => {
       if (!productsData || !currentSegment) return [];
+      
+      // 1. Filtrado por categorías y subcategorías
       const filtered = productsData.filter(prod => {
           if (norm(prod.IdSegmento) !== norm(currentSegment.IdSegmento)) return false;
           if (activeCatId && norm(prod.IdCategoria) !== norm(activeCatId)) return false;
           if (activeSubCatId && norm(prod.IdSubCategoria) !== norm(activeSubCatId)) return false;
           return true;
       });
+
+      // 2. Eliminar duplicados por IDProducto
       const seenIds = new Set();
       return filtered.filter(prod => {
           const duplicate = seenIds.has(prod.IdProducto);
@@ -114,11 +118,9 @@ const CategoryPage = () => {
         </div>
 
         <div className="cat-content-layout">
-          {/* 4. SIDEBAR - Ajustado con flechas para móvil */}
           <aside className="cat-sidebar-left">
             <div className="cat-sidebar-header-mobile">
                 <div className="cat-sidebar-label">SUBCATEGORÍAS</div>
-                {/* Flechas visibles solo en móvil por CSS */}
                 <div className="cat-nav-arrows">
                     <button onClick={() => handleScroll('left')} className="scroll-arrow"><FiChevronLeft /></button>
                     <button onClick={() => handleScroll('right')} className="scroll-arrow"><FiChevronRight /></button>

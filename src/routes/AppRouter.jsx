@@ -12,7 +12,6 @@ import CategoryDetail from '../pages/CategoryDetail/CategoryDetail';
 import SearchResultsPage from 'pages/SearchResults/SearchResultsPage';
 
 import CategoryPage from '../pages/CategoryPage'; 
-import DepartmentPage from '../pages/DepartmentPage';
 import BrandPage from '../pages/BrandPage/BrandPage';
 
 import AboutUs from 'pages/info/AboutUs';
@@ -39,12 +38,11 @@ const AppRouter = () => {
       <Route path="/limpieza" element={<LegacyRedirect isLimpieza={true} />} />
       
       {/* Redirecciones directas para páginas informativas */}
-      <Route path="/Contactanos" element={<Navigate to="/ubicaciones" replace />} />
+      <Route path="/Contactanos" element={<Navigate to="/ayuda" replace />} />
       <Route path="/Conocenos" element={<Navigate to="/quienes-somos" replace />} />
 
       {/* --- CATEGORÍAS Y SECCIONES --- */}
       <Route path="/categoria/:slug" element={<CategoryPage />} />
-      <Route path="/departamento/:slug" element={<DepartmentPage />} />
       <Route path="/seccion/:categorySlug" element={<CategoryDetail />} />
       <Route path="/marca/:slug" element={<BrandPage />} />
 
@@ -61,6 +59,11 @@ const AppRouter = () => {
       <Route path="/ayuda" element={<Ayuda/>} />
       <Route path="/ubicaciones" element={<Locations/>} />
 
+      <Route path="/subcategoria/mopas-y-accesorios" element={<Navigate to="/categoria/herramientas-para-limpieza" replace />} />
+      <Route path="/subcategoria/detergente-para-ropa" element={<Navigate to="/categoria/quimicos-de-limpieza-y-desinfectantes" replace />} />
+      <Route path="/subcategoria/plataformas-y-accesorios" element={<Navigate to="/categoria/papeleria" replace />} />
+
+
       {/* --- 404 RESCATE --- */}
       <Route path="*" element={
         <div style={{textAlign: 'center', padding: '100px 20px'}}>
@@ -73,22 +76,10 @@ const AppRouter = () => {
   );
 };
 
-const LegacyRedirect = ({ isLimpieza = false }) => {
+const LegacyRedirect = () => {
     const { slug } = useParams();
-    
-    // 1. Si el enlace es disdelsa.com/limpieza
-    if (isLimpieza) {
-        return <Navigate to="/categoria/herramientas-para-limpieza" replace />;
-    }
-
-    // 2. Si el enlace es disdelsa.com/subcategoria/mopas-y-accesorios
-    if (slug === 'mopas-y-accesorios') {
-        return <Navigate to="/categoria/mopa-y-mecha" replace />;
-    }
-
-    // 3. Para cualquier otra subcategoría que Google tenga guardada, 
-    // lo mandamos al buscador para que encuentre los productos actuales.
     return <Navigate to={`/buscar?q=${slug}`} replace />;
 };
+
 
 export default AppRouter;
