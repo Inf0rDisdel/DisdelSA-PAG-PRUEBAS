@@ -19,11 +19,11 @@ const ProductCarousel = ({ title, products = [], addToCart }) => {
       {
         breakpoint: 1024,
         settings: {
-          slidesToShow: 4, 
+          slidesToShow: 3, 
           slidesToScroll: 1,
           dots: false,
           arrows: true,
-          infinite: products && products.length > 4
+          infinite: products && products.length > 3
         }
       },
       {

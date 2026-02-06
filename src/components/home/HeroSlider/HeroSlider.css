@@ -96,33 +96,52 @@
   background: #333 !important;
 }
 
+
 @media (max-width: 800px) {
   
-  /* 1. Ocultamos el contenedor de la izquierda (Wiese y Nescafé) */
-  .banners-container {
-    width: 100%;}
+  /* 1. Aseguramos que el contenedor principal ocupe todo el ancho */
+  .main-container {
+    height: auto;       
+    display: flex;      /* Cambiamos a flex para controlar mejor el ancho */
+    flex-direction: column;
+    width: 100%;
+    max-width: 100%;
+    padding: 0;         /* Quitamos el padding lateral para que el banner toque los bordes */
+    margin: 10px 0;     /* Margen arriba y abajo solamente */
+    gap: 15px;
+  }
 
-  /* 2. Hacemos que el contenedor del slider ocupe el 100% del ancho */
+  /* 2. Forzamos a que el contenedor de banners sea del 100% */
+  .banners-container {
+    width: 100% !important;
+    padding: 0 10px;    /* Si quieres un pequeño espacio a los lados, déjalo aquí */
+    box-sizing: border-box;
+  }
+
+  /* 3. Ajustamos cada item de banner */
+  .banner-item {
+    width: 100%;
+    height: auto;       /* Dejamos que la altura sea automática según la imagen */
+    min-height: 120px;  /* Altura mínima para que no se vea vacío */
+    border-radius: 12px;
+  }
+
+  .banner-item img {
+    width: 100%;        /* 🔥 IMPORTANTE: Fuerza a la imagen a llenar el ancho */
+    height: auto;
+    display: block;
+    object-fit: cover;  /* Mantiene la proporción sin deformar */
+  }
+
+  /* 4. Ocultamos el slider principal en móvil si así lo deseas */
   .slider-container {
     display: none;
   }
 
-  /* 3. Ajustes al contenedor principal para que no se rompa */
-  .main-container {
-    height: auto;       /* Dejar que crezca según el contenido */
-    display: block;     /* Quitamos flex para evitar comportamientos raros */
-    padding: 0 10px;    /* Un poco de margen a los lados en el celular */
-  }
-  
-  /* 4. Ajustar la altura del carrusel para que se vea bien en el cel */
+  /* Si decides mostrarlo, usa esta configuración: */
   .carousel-wrapper {
-    height: auto;          /* O puedes poner un fijo ej: 250px */
-    aspect-ratio: 16/9;    /* Mantiene una proporción rectangular bonita */
-  }
-  
-  /* Aseguramos que la imagen dentro del carrusel se vea completa */
-  .carousel-wrapper .carousel .slide img {
-    height: 100%;
-    object-fit: contain; /* O 'cover' si prefieres que llene todo el cuadro aunque corte un poco */
+    width: 100%;
+    height: auto;
+    aspect-ratio: 16 / 9;
   }
 }

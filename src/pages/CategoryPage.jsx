@@ -1,6 +1,7 @@
 import { useLocation, Link, useParams } from 'react-router-dom';
-import React, { useState, useMemo, useEffect } from 'react'; 
+import React, { useState, useMemo, useEffect, useRef } from 'react'; // 1. Añadimos useRef
 import { Helmet } from 'react-helmet-async';
+import { FiChevronLeft, FiChevronRight } from 'react-icons/fi'; // 2. Importamos flechas
 import './CategoryPage.css';
 
 import { AppConfig } from 'config/AppConfig';
@@ -21,13 +22,22 @@ const CategoryPage = () => {
   const [activeCatId, setActiveCatId] = useState(null);
   const [activeSubCatId, setActiveSubCatId] = useState(null);
 
-  // --- HELPERS ---
+  // --- 3. Lógica para controlar el scroll manual ---
+  const scrollRef = useRef(null);
+
+  const handleScroll = (direction) => {
+    if (scrollRef.current) {
+      const { scrollLeft, clientWidth } = scrollRef.current;
+      const scrollTo = direction === 'left' ? scrollLeft - 150 : scrollLeft + 150;
+      scrollRef.current.scrollTo({ left: scrollTo, behavior: 'smooth' });
+    }
+  };
+
   const norm = (id) => (id === null || id === undefined) ? '' : String(id).trim();
   const createSlug = (text) => text?.toString().toLowerCase().trim()
         .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
         .replace(/ñ/g, 'n').replace(/\s+/g, '-') || '';
 
-  // --- DATA PROCESSING ---
   const currentSegment = useMemo(() => {
       if (!menuData) return null;
       return menuData.find(seg => createSlug(seg.NombreSegmento) === slug);
@@ -54,7 +64,6 @@ const CategoryPage = () => {
       });
   }, [productsData, currentSegment, activeCatId, activeSubCatId]);
 
-  // Schema para Google List
   const itemListSchema = useMemo(() => {
     return {
         "@context": "https://schema.org",
@@ -105,9 +114,18 @@ const CategoryPage = () => {
         </div>
 
         <div className="cat-content-layout">
+          {/* 4. SIDEBAR - Ajustado con flechas para móvil */}
           <aside className="cat-sidebar-left">
-            <div className="cat-sidebar-label">CATEGORÍAS</div>
-            <div className="cat-sidebar-nav">
+            <div className="cat-sidebar-header-mobile">
+                <div className="cat-sidebar-label">SUBCATEGORÍAS</div>
+                {/* Flechas visibles solo en móvil por CSS */}
+                <div className="cat-nav-arrows">
+                    <button onClick={() => handleScroll('left')} className="scroll-arrow"><FiChevronLeft /></button>
+                    <button onClick={() => handleScroll('right')} className="scroll-arrow"><FiChevronRight /></button>
+                </div>
+            </div>
+
+            <div className="cat-sidebar-nav" ref={scrollRef}>
               {currentSegment.Categorias?.map((cat) => (
                 <div key={cat.IdCategoria} className={`cat-nav-item ${norm(activeCatId) === norm(cat.IdCategoria) ? 'active-filter' : ''}`} onClick={() => handleCategoryClick(cat)}>
                   <div className="cat-nav-icon">

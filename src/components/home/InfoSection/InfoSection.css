@@ -62,20 +62,26 @@
     flex-wrap: wrap; /* Permite las filas */
     justify-content: center;
     padding: 30px 10px;
-    gap: 25px 0; /* Espacio vertical reducido entre filas */
+    gap: 35px 0; /* Espacio vertical reducido entre filas */
   }
 
   .info-item {
-    flex: 0 0 50%; /* 2 elementos por fila */
     border-right: none; /* Quitamos bordes verticales en grid */
-    padding: 0 20px;
+    padding: 0 10px;
+    box-sizing: border-box;
   }
 
-  /* Centramos el 5to elemento ocupando todo el ancho */
-  .info-item:last-child {
-    flex: 0 0 100%;
+   /* Fila 1: Los primeros 3 elementos ocupan el 33.33% cada uno */
+  .info-item:nth-child(-n+3) {
+    flex: 0 0 33.33%;
+  }
+
+  /* Fila 2: Los últimos 2 elementos ocupan el 50% cada uno */
+  .info-item:nth-child(n+4) {
+    flex: 0 0 50%;
     margin-top: 10px;
   }
+
 
   /* Ajustamos el tamaño para que no se vea "gigante" */
   .icon-wrapper {
@@ -88,11 +94,12 @@
   }
 
   .info-title {
-    font-size: 0.95rem;
+    font-size: 0.9rem;
   }
 
   .info-text {
-    font-size: 0.78rem;
+    font-size: 0.75rem;
+    max-width: 220px;
   }
 }
 
