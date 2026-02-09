@@ -1,4 +1,3 @@
-// src/pages/SearchResults/SearchResultsPage.jsx
 import React, { useMemo } from 'react';
 import { useLocation } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
@@ -10,7 +9,6 @@ const SearchResultsPage = () => {
   const location = useLocation();
   const { data: productos, isLoading } = useProducts();
   
-  // Obtener el término de búsqueda de la URL
   const queryParams = new URLSearchParams(location.search);
   const query = queryParams.get('q') || '';
 
@@ -25,20 +23,19 @@ const SearchResultsPage = () => {
     }
   };
 
-  // LÓGICA DE FILTRADO "PARECIDO"
+  // LÓGICA DE FILTRADO + ELIMINACIÓN DE DUPLICADOS
   const resultados = useMemo(() => {
     if (!productos || !Array.isArray(productos)) return [];
     
     const searchLower = query.toLowerCase().trim();
     
-    return productos.filter(p => {
-      // Campos de tu JSON: IdProducto, Descripcion, Marca, Categoria
+    // 1. Primero filtramos por coincidencia de texto
+    const matched = productos.filter(p => {
       const descripcion = (p.Descripcion || "").toString().toLowerCase();
       const id = (p.IdProducto || "").toString().toLowerCase();
       const marca = (p.Marca || "").toString().toLowerCase();
       const categoria = (p.Categoria || "").toString().toLowerCase();
       
-      // La búsqueda es "parecida" si el texto está incluido en cualquiera de estos campos
       return (
         descripcion.includes(searchLower) || 
         id.includes(searchLower) || 
@@ -46,6 +43,15 @@ const SearchResultsPage = () => {
         categoria.includes(searchLower)
       );
     });
+
+    // 2. Luego eliminamos duplicados por ID usando un Set
+    const seenIds = new Set();
+    return matched.filter(p => {
+      if (seenIds.has(p.IdProducto)) return false;
+      seenIds.add(p.IdProducto);
+      return true;
+    });
+
   }, [productos, query]);
 
   if (isLoading) return <div className={styles.loading}>Buscando productos...</div>;
@@ -60,7 +66,6 @@ const SearchResultsPage = () => {
       </Helmet>
       <div className={styles.container}>
         <header className={styles.searchHeader}>
-          <h1>Resultados para: <span>"{query}"</span></h1>
           <p>Se encontraron {resultados.length} coincidencias</p>
         </header>
 
@@ -70,13 +75,12 @@ const SearchResultsPage = () => {
               <ProductCard 
                 key={p.IdProducto} 
                 product={{
-                  // Mapeamos tu JSON al formato que espera tu ProductCard si es necesario
                   id: p.IdProducto,
                   name: p.Descripcion,
                   price: p.PrecioIVA,
                   image: p.Imagen,
                   brand: p.Marca,
-                  ...p // Pasamos todo lo demás por si acaso
+                  ...p 
                 }} 
               />
             ))}

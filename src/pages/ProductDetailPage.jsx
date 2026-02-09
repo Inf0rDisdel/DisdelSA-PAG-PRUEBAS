@@ -1,14 +1,14 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
+import { toast } from 'react-hot-toast'; 
 
 import { AppConfig } from 'config/AppConfig';
 import useCartStore from 'store/useCartStore';
 import { useProductDetail } from 'hooks/useProductDetail';
 
 import { 
-  FiCheckCircle, FiShield, FiCreditCard, 
-  FiPackage, FiLayers, FiChevronLeft, FiBox, FiTarget 
+  FiCheckCircle, FiPackage, FiChevronLeft, FiTarget 
 } from 'react-icons/fi';
 import './ProductDetailPage.css';
 import defaultImage from 'assets/images/categories/KCP.jpg'; 
@@ -24,7 +24,7 @@ const ProductDetailPage = () => {
   const [selectedUnit, setSelectedUnit] = useState(''); 
   const [selectedType, setSelectedType] = useState('Y');
 
-  // --- 1. HELPERS PRIMERO ---
+  // --- 1. HELPERS PRIMERO (Definir antes de usar en useMemo) ---
   const getImageUrl = (imgName) => imgName ? `${AppConfig.baseImageUrl}productos/${imgName}` : defaultImage;
 
   // --- 2. HOOKS DE LÓGICA (SIEMPRE ARRIBA) ---
@@ -41,7 +41,7 @@ const ProductDetailPage = () => {
     return product.Unidad.trim().toLowerCase() !== product.Empaque.trim().toLowerCase();
   }, [product]);
 
-  // Schema para Google
+  // Schema dinámico para Google
   const productSchema = useMemo(() => {
     if (!product) return null;
     return {
@@ -49,20 +49,22 @@ const ProductDetailPage = () => {
       "@type": "Product",
       "name": product.Descripcion,
       "image": [getImageUrl(product.Imagen)],
-      "description": `Comprar ${product.Descripcion} en Disdel. Suministros de limpieza profesional.`,
+      "description": `Compra ${product.Descripcion} en Disdel. Suministros de limpieza profesional con entrega en toda Guatemala.`,
       "sku": product.IdProducto,
       "brand": { "@type": "Brand", "name": product.Marca || "Disdel" },
       "offers": {
         "@type": "Offer",
         "url": `https://www.disdelsa.com/producto/${product.IdProducto}`,
         "priceCurrency": "GTQ",
-        "availability": "https://schema.org/InStock"
+        "availability": "https://schema.org/InStock",
+        "itemCondition": "https://schema.org/NewCondition"
       }
     };
   }, [product]);
 
-  // --- 3. EFECTOS ---
+  // --- 3. EFECTOS (Manejo de Carga y Rescate) ---
   useEffect(() => {
+    // Si el ID de Google no existe, rescatamos mandando a búsqueda
     if (isError && id) {
         console.warn("Producto no encontrado, redirigiendo a búsqueda...");
         navigate(`/buscar?q=${id}`, { replace: true });
@@ -70,22 +72,36 @@ const ProductDetailPage = () => {
     }
 
     if (product) {
-        if (productImages.length > 0) setSelectedImage(productImages[0]);
-        if (product.Unidad) {
-            setSelectedUnit(product.Unidad);
-            setSelectedType('Y');
-        } else if (product.Empaque) {
-            setSelectedUnit(product.Empaque);
-            setSelectedType('N');
+        if (!selectedImage) setSelectedImage(product.Imagen);
+        
+        // Inicialización de unidad/empaque preservando tu lógica Y/N
+        if (!selectedUnit) {
+            if (product.Unidad) {
+                setSelectedUnit(product.Unidad);
+                setSelectedType('Y');
+            } else if (product.Empaque) {
+                setSelectedUnit(product.Empaque);
+                setSelectedType('N');
+            }
         }
     }
-  }, [product, productImages, isError, id, navigate]);
+  }, [product, isError, id, navigate]);
 
+  // --- 4. FUNCIONES DE ACCIÓN ---
   const handleAddToCart = () => {
-    addItem({ ...product, presentationSelected: selectedUnit, unitType: selectedType });
+    addItem({ 
+        ...product, 
+        presentationSelected: selectedUnit, 
+        unitType: selectedType 
+    });
+
+    // Tu notificación nítida
+    toast.success(`${product.Descripcion} añadido correctamente`, {
+        position: 'bottom-center',
+        style: { background: '#135eab', color: '#fff', borderRadius: '10px' }
+    });
   };
 
-  // --- 4. RETURNOS CONDICIONALES (DESPUÉS DE LOS HOOKS) ---
   if (isLoading) return <div className="pdp-loading"><div className="spinner"></div></div>;
   if (isError || !product) return null;
 
@@ -135,14 +151,20 @@ const ProductDetailPage = () => {
               <div className="pdp-unit-selector">
                   <label className="pdp-label">Seleccionar Presentación:</label>
                   <div className="pdp-unit-options">
-                      <button className={`unit-opt ${selectedType === 'Y' ? 'active' : ''}`} onClick={() => {setSelectedUnit(product.Unidad); setSelectedType('Y')}}>
+                      <button 
+                        className={`unit-opt ${selectedType === 'Y' ? 'active' : ''}`} 
+                        onClick={() => { setSelectedUnit(product.Unidad); setSelectedType('Y'); }}
+                      >
                           <FiTarget className="icon" />
                           <div className="unit-info">
                               <span className="unit-title">Por Unidad</span>
                               <span className="unit-desc">{product.Unidad}</span>
                           </div>
                       </button>
-                      <button className={`unit-opt ${selectedType === 'N' ? 'active' : ''}`} onClick={() => {setSelectedUnit(product.Empaque); setSelectedType('N')}}>
+                      <button 
+                        className={`unit-opt ${selectedType === 'N' ? 'active' : ''}`} 
+                        onClick={() => { setSelectedUnit(product.Empaque); setSelectedType('N'); }}
+                      >
                           <FiPackage className="icon" />
                           <div className="unit-info">
                               <span className="unit-title">Por Empaque</span>
@@ -160,6 +182,7 @@ const ProductDetailPage = () => {
 
           <div className="pdp-action-box">
               <button className="pdp-add-btn" onClick={handleAddToCart}>AGREGAR A COTIZACIÓN</button>
+              <p className="pdp-action-note">La unidad seleccionada aparecerá en su solicitud.</p>
           </div>
         </div>
       </div>

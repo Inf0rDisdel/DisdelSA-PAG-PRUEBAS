@@ -1,7 +1,8 @@
 import { useLocation, Link, useParams } from 'react-router-dom';
-import React, { useState, useMemo, useEffect, useRef } from 'react'; // 1. Añadimos useRef
+import React, { useState, useMemo, useEffect, useRef } from 'react'; 
 import { Helmet } from 'react-helmet-async';
-import { FiChevronLeft, FiChevronRight } from 'react-icons/fi'; // 2. Importamos flechas
+import { FiChevronLeft, FiChevronRight } from 'react-icons/fi'; 
+import { toast } from 'react-hot-toast'; // Notificación añadida
 import './CategoryPage.css';
 
 import { AppConfig } from 'config/AppConfig';
@@ -22,12 +23,11 @@ const CategoryPage = () => {
   const [activeCatId, setActiveCatId] = useState(null);
   const [activeSubCatId, setActiveSubCatId] = useState(null);
 
-  // --- 3. Lógica para controlar el scroll manual ---
   const scrollRef = useRef(null);
 
   const handleScroll = (direction) => {
     if (scrollRef.current) {
-      const { scrollLeft, clientWidth } = scrollRef.current;
+      const { scrollLeft } = scrollRef.current;
       const scrollTo = direction === 'left' ? scrollLeft - 150 : scrollLeft + 150;
       scrollRef.current.scrollTo({ left: scrollTo, behavior: 'smooth' });
     }
@@ -114,11 +114,9 @@ const CategoryPage = () => {
         </div>
 
         <div className="cat-content-layout">
-          {/* 4. SIDEBAR - Ajustado con flechas para móvil */}
           <aside className="cat-sidebar-left">
             <div className="cat-sidebar-header-mobile">
                 <div className="cat-sidebar-label">SUBCATEGORÍAS</div>
-                {/* Flechas visibles solo en móvil por CSS */}
                 <div className="cat-nav-arrows">
                     <button onClick={() => handleScroll('left')} className="scroll-arrow"><FiChevronLeft /></button>
                     <button onClick={() => handleScroll('right')} className="scroll-arrow"><FiChevronRight /></button>
@@ -159,7 +157,16 @@ const CategoryPage = () => {
                       <span className="cat-card-tag">{prod.Categoria}</span>
                       <h3 className="cat-title">{prod.Descripcion}</h3>
                     </Link>
-                    <button className="cat-btn" onClick={() => addItem(prod)}>Cotizar</button>
+                    <button className="cat-btn" onClick={() => {
+                        addItem({
+                            ...prod,
+                            presentationSelected: prod.Unidad || prod.Empaque,
+                            unitType: prod.Unidad ? 'Y' : 'N'
+                        });
+                        toast.success('Añadido a tu lista');
+                    }}>
+                        Cotizar
+                    </button>
                   </div>
               ))}
             </div>
