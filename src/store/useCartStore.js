@@ -26,7 +26,6 @@ const useCartStore = create(
             ),
           });
         } else {
-          // 🔥 Aseguramos que se guarden estas propiedades fundamentales
           set({ 
             cart: [
               ...cart, 
@@ -65,36 +64,46 @@ const useCartStore = create(
       clearCart: () => set({ cart: [] }),
 
       sendQuote: async (userData) => {
-        const currentCart = get().cart;
-        let miDocumento = VentasModels.crearDocAuxDTO();
-        miDocumento.Encabezado = VentasModels.crearDocDTO();
-        
-        miDocumento.Encabezado.NombreCliente = `${userData.name} ${userData.lastname}`;
-        miDocumento.Encabezado.U_DoctoNIT = userData.nit;
-        miDocumento.Encabezado.U_NumTel = userData.phone;
-        miDocumento.Encabezado.U_Correo = userData.email;
-        miDocumento.Encabezado.Comments = `Empresa: ${userData.company}. Dirección: ${userData.address}`;
-
-        currentCart.forEach(item => {
-          miDocumento.Detalle.push(
-            VentasModels.crearDocDetalleDTO(
-              item.IdProducto, 
-              item.quantity, 
-              0,
-              item.unitType 
-            )
-          );
-        });
-
         try {
+          const currentCart = get().cart;
+          
+          // Ahora VentasModels ya tiene estas funciones:
+          let miDocumento = VentasModels.crearDocAuxDTO();
+          miDocumento.Encabezado = VentasModels.crearDocDTO();
+          
+          miDocumento.Encabezado.NombreCliente = `${userData.name} ${userData.lastname}`;
+          miDocumento.Encabezado.U_DoctoNIT = userData.nit;
+          miDocumento.Encabezado.U_NumTel = userData.phone;
+          miDocumento.Encabezado.U_Correo = userData.email;
+          miDocumento.Encabezado.Comments = `Empresa: ${userData.company}. Dirección: ${userData.address}`;
+          miDocumento.Encabezado.Autor = `${userData.name} ${userData.lastname}`;
+
+          currentCart.forEach(item => {
+            miDocumento.Detalle.push(
+              VentasModels.crearDocDetalleDTO(
+                item.IdProducto, 
+                item.quantity, 
+                item.Precio || 0,
+                item.unitType 
+              )
+            );
+          });
+
           const res = await solicitarCotizador(miDocumento);
-          if (res.Resultado) {
+
+          if (res && res.Resultado) {
             get().clearCart();
             return { success: true, message: res.Mensaje, docEntry: res.DocEntry };
           }
-          return { success: false, message: res.Mensaje };
+          
+          return { success: false, message: res ? res.Mensaje : "Error en respuesta del servidor" };
+
         } catch (error) {
-          return { success: false, message: "Error de conexión con el servidor" };
+          console.error("Error al enviar cotización:", error);
+          return { 
+            success: false, 
+            message: "Error al procesar la cotización. Revise la consola." 
+          };
         }
       },
     }),
