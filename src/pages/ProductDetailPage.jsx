@@ -36,12 +36,6 @@ const ProductDetailPage = () => {
       return product.Imagen ? [product.Imagen] : [];
   }, [product]);
 
-  const hasDifferentOptions = useMemo(() => {
-    if (!product || !product.Unidad || !product.Empaque) return false;
-    return product.Unidad.trim().toLowerCase() !== product.Empaque.trim().toLowerCase();
-  }, [product]);
-
-  // Schema dinámico para Google
   const productSchema = useMemo(() => {
     if (!product) return null;
     return {
@@ -49,17 +43,21 @@ const ProductDetailPage = () => {
       "@type": "Product",
       "name": product.Descripcion,
       "image": [getImageUrl(product.Imagen)],
-      "description": `Compra ${product.Descripcion} en Disdel. Suministros de limpieza profesional con entrega en toda Guatemala.`,
+      "description": `Compra ${product.Descripcion} en Disdel. Suministros profesionales con entrega en toda Guatemala.`,
       "sku": product.IdProducto,
       "brand": { "@type": "Brand", "name": product.Marca || "Disdel" },
       "offers": {
         "@type": "Offer",
         "url": `https://www.disdelsa.com/producto/${product.IdProducto}`,
         "priceCurrency": "GTQ",
-        "availability": "https://schema.org/InStock",
-        "itemCondition": "https://schema.org/NewCondition"
+        "availability": "https://schema.org/InStock"
       }
     };
+  }, [product]);
+
+  const hasDifferentOptions = useMemo(() => {
+    if (!product || !product.Unidad || !product.Empaque) return false;
+    return product.Unidad.trim().toLowerCase() !== product.Empaque.trim().toLowerCase();
   }, [product]);
 
   // --- 3. EFECTOS (Manejo de Carga y Rescate) ---
@@ -74,15 +72,9 @@ const ProductDetailPage = () => {
     if (product) {
         if (!selectedImage) setSelectedImage(product.Imagen);
         
-        // Inicialización de unidad/empaque preservando tu lógica Y/N
         if (!selectedUnit) {
-            if (product.Unidad) {
-                setSelectedUnit(product.Unidad);
-                setSelectedType('Y');
-            } else if (product.Empaque) {
-                setSelectedUnit(product.Empaque);
-                setSelectedType('N');
-            }
+            setSelectedUnit(product.Unidad || product.Empaque || 'Unidad');
+            setSelectedType(product.Unidad ? 'Y' : 'N');
         }
     }
   }, [product, isError, id, navigate]);
@@ -93,12 +85,6 @@ const ProductDetailPage = () => {
         ...product, 
         presentationSelected: selectedUnit, 
         unitType: selectedType 
-    });
-
-    // Tu notificación nítida
-    toast.success(`${product.Descripcion} añadido correctamente`, {
-        position: 'bottom-center',
-        style: { background: '#135eab', color: '#fff', borderRadius: '10px' }
     });
   };
 

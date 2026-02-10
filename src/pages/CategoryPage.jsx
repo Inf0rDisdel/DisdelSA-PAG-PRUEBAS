@@ -163,7 +163,6 @@ const CategoryPage = () => {
                             presentationSelected: prod.Unidad || prod.Empaque,
                             unitType: prod.Unidad ? 'Y' : 'N'
                         });
-                        toast.success('Añadido a tu lista');
                     }}>
                         Cotizar
                     </button>

@@ -1,43 +1,9 @@
 export const VentasModels = {
-    // --- Funciones nuevas que pedía el Store ---
-    crearDocAuxDTO: () => ({
-        Encabezado: {},
-        Detalle: [],
-        Adjuntos: [],
-        Autorizacion: {}
-    }),
-
-    crearDocDTO: () => ({
-        U_DoctoNIT: "",
-        NombreCliente: "",
-        CardCode: " ", 
-        Empresa: "Disdel, S.A.",
-        Comments: "",
-        U_Correo: "",
-        U_NumTel: "",
-        TipoCliente: "1",
-        Autor: "",
-        DireccionEntrega: "",
-        Recaptcha_key: "N/A", 
-        PaginaProvenienteRecaptcha: window.location.hostname,
-        BaseDatos: "SBO_DISDELSA_2013",
-        Almacen: "03"
-    }),
-
-    // --- Ajustamos esta para recibir parámetros sueltos (como lo hace el store) ---
-    crearDocDetalleDTO: (id, quantity, price, unitType) => ({
-        CodProducto: id, 
-        Cantidad: parseFloat(quantity || 1),
-        PrecioIVA: parseFloat(price || 0),
-        Base: unitType || "Y", 
-        Almacen: "03"
-    }),
-
-    // --- Tus funciones originales (se mantienen intactas) ---
+    // Función principal para armar todo el paquete
     prepararCotizacion: (formData, cart) => {
         return {
             Encabezado: VentasModels.crearEncabezado(formData),
-            Detalle: cart.map(item => VentasModels.crearDocDetalleDTO(item.IdProducto, item.quantity, item.Precio, item.unitType)),
+            Detalle: cart.map(item => VentasModels.crearDocDetalleDTO(item)),
             Adjuntos: [],
             Autorizacion: {}
         };
@@ -53,12 +19,21 @@ export const VentasModels = {
         TipoCliente: "1",
         Autor: `${formData.name} ${formData.lastname}`,
         DireccionEntrega: formData.address || "",
+        // Campos técnicos para el API
         Recaptcha_key: "N/A", 
         PaginaProvenienteRecaptcha: window.location.hostname,
         BaseDatos: "SBO_DISDELSA_2013",
         Almacen: "03"
     }),
 
+    crearDocDetalleDTO: (item) => ({
+        // Usamos IdProducto que es tu SKU real de SAP
+        CodProducto: item.IdProducto || item.id, 
+        Cantidad: parseFloat(item.quantity || 1),
+        PrecioIVA: parseFloat(item.Precio || 0),
+        Base: item.unitType || "Y", 
+        Almacen: "03"
+    }),
     crearSuscripcionDTO: (correo) => ({
         Correo:correo,
         Tipo:'Suscripción',

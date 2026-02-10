@@ -6,7 +6,7 @@ import "slick-carousel/slick/slick-theme.css";
 import './ProductCarousel.css';
 import fondoImagen from 'assets/icons/FONDO-BLANCO.jpg';
 
-const ProductCarousel = ({ title, products = [], addToCart }) => {
+const ProductCarousel = ({ title, products = [], addToCart, variant = '' }) => {
   ;
 
   const settings = {
@@ -43,7 +43,7 @@ const ProductCarousel = ({ title, products = [], addToCart }) => {
   }
 
   return (
-    <div className="product-carousel-container"
+    <div className={`product-carousel-container ${variant}`}
       style={{ 
         backgroundImage: `url(${fondoImagen})`,
         backgroundColor: '#ffffff' 
@@ -62,6 +62,7 @@ const ProductCarousel = ({ title, products = [], addToCart }) => {
                 <Link 
                   to={`/producto/${product.id}`} 
                   state={{ product: product }}
+                  className='product_link'
                   style={{ 
                     textDecoration: 'none', 
                     color: 'inherit', 

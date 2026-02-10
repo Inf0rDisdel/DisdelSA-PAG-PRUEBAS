@@ -33,10 +33,10 @@ const AppRouter = () => {
       {/* --- 🚀 RESCATE DE GOOGLE (Legacy Redirects) --- */}
       
       {/* 1. Mopas y accesorios -> Categoria Herramientas */}
-      <Route path="/subcategoria/mopas-y-accesorios" element={<Navigate to="/categoria/herramientas-para-limpieza" replace />} />
+      <Route path="/subcategoria/mopas-y-accesorios" element={<Navigate to="/categoria/herramientas-para-limpieza/mopa-y-mecha" replace />} />
       
       {/* 2. Detergente para ropa -> Categoria Químicos */}
-      <Route path="/subcategoria/detergente-para-ropa" element={<Navigate to="/categoria/quimicos-de-limpieza-y-desinfectantes" replace />} />
+      <Route path="/subcategoria/detergente-para-ropa" element={<Navigate to="/categoria/quimicos-para-limpieza" replace />} />
       
       {/* 3. Plataformas y accesorios -> Papelería */}
       <Route path="/subcategoria/plataformas-y-accesorios" element={<Navigate to="/categoria/papeleria" replace />} />

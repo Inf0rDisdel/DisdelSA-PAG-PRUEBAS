@@ -44,19 +44,6 @@ const HomePage = () => {
       presentationSelected: defaultPresentation,
       unitType: defaultType
     });
-
-    // Notificación centrada arriba como pediste
-    toast.success(`Agregado: ${defaultPresentation}`, {
-      position: 'top-center',
-      icon: '✅',
-      style: {
-        borderRadius: '10px',
-        background: '#fff',
-        color: '#333',
-        border: '1px solid #e0e0e0',
-        fontWeight: '500'
-      },
-    });
   };
 
   const carruseles = useMemo(() => {
@@ -109,6 +96,7 @@ const HomePage = () => {
             title="Los más Cotizados"
             products={carruseles.cotizados}
             addToCart={handleAddToCart} 
+            variant="carousel-cotizados"
           />
         </div>
       )}
@@ -119,6 +107,7 @@ const HomePage = () => {
             title="Soluciones integrales de higiene"
             products={carruseles.higiene}
             addToCart={handleAddToCart} 
+            variant="carousel-higiene"
           />
         </div>
       )}
@@ -131,6 +120,7 @@ const HomePage = () => {
             title="Todo para el Coffee Break"
             products={carruseles.coffee}
             addToCart={handleAddToCart} 
+            variant="carousel-coffe"
           />
         </div>
       )}
