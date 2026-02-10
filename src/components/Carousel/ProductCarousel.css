@@ -235,102 +235,77 @@
 
 @media (max-width: 468px) {
 
-  .slick-track{
-  display: flex;
-}
+  /* Slick base */
+  .slick-track {
+    display: flex !important;
+  }
 
-/* CONTENEDOR - MÁS COMPACTO */
-.product-carousel-container {
-  width: 100%;
-  min-height: auto;
-  height: auto;
+  .slick-slide {
+    padding-bottom: 12px;
+  }
 
-  margin: -32px auto;
-  padding: 10px 20px;
-  box-sizing: border-box;
-  background: #ffffff;
-  border-radius: 10px;
-}
+  .slick-slide > div {
+    display: flex !important;
+    height: auto !important;
+  }
 
-/* SLIDES */
-.slick-slide {
-  height: auto !important;
-  display: flex !important;
-  align-items: stretch !important;
-}
+  .slick-list {
+    overflow: visible !important;
+  }
+  /* CARD */
+  .product-carousel-container .product-card {
+    min-height: 360px !important;
 
-.slick-slide > div {
-  display: flex;
-  flex: 1;
-  height: auto !important;
-}
+    display: flex !important;
+    flex-direction: column !important;
 
-/* TARJETA COMPACTA */
-.product-card {
-  display: flex !important;
-  flex-direction: column !important;
+    padding: 12px !important;
+    gap: 8px !important;
 
-  /* Quitamos altura innecesaria */
-  min-height: auto !important;
-  height: auto !important;
+    overflow: visible !important;
+  }
 
-  padding: 8px !important;
-  margin-bottom: 8px !important;
-  justify-content: flex-start !important;
-  gap: 6px !important; /* espacios controlados */
-}
+  /* LINK CONTENEDOR REAL */
+  .product-carousel-container .product_link {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
 
-/* IMAGEN */
-.product-image {
-  height: 95px !important; /* ajustado para móviles */
-  width: 100% !important;
-  object-fit: contain !important;
-  margin-bottom: 6px !important;
-  flex-shrink: 0 !important;
-}
+    flex-grow: 0 !important;   /* 🔥 NO estirar */
+  }
 
-/* NOMBRE DEL PRODUCTO */
-.product-name {
-  color: #000000 !important;
-  font-size: 11px !important;
-  font-weight: 600 !important;
-  line-height: 1.2 !important;
-  text-align: center !important;
+  /* IMAGEN */
+  .product-image {
+    height: 95px !important;
+    width: 100% !important;
+    object-fit: contain !important;
+    margin-bottom: 6px !important;
+  }
 
-  min-height: auto !important; /* quitamos el espacio forzado */
-  margin: 0 !important;
-  white-space: normal !important;
-  overflow: visible !important;
-  flex-shrink: 0 !important;
-}
+  /* TEXTO */
+  .product-name {
+    font-size: 13px !important;
+    text-align: center !important;
+    white-space: normal !important;
+  }
 
-/* ID */
-.product-disdel-id {
-  color: #135eab !important;
-  font-size: 11px !important;
-  text-align: center !important;
-  margin: 0 !important;
-  flex-shrink: 0 !important;
-}
+  .product-disdel-id {
+    display: block !important;
+    font-size: 11px !important;
+    color: #135eab !important;
+    text-align: center !important;
+  }
 
-.add-cart-button {
-  width: 65% !important;        /* Más pequeño y centrado */
-  padding: 7px 0 !important;     /* Más compacto */
-  
-  background-color: #0056b3 !important;
-  color: #fff !important;
-  font-weight: bold !important;
-  border-radius: 8px !important;
+  /* BOTÓN */
+  .product-carousel-container .add-cart-button {
+    margin-top: auto !important;  /* 🔥 siempre abajo */
+    align-self: center !important;
 
-  margin-top: 6px !important;    /* Separación justa del texto */
-  
-  display: flex !important;
-  justify-content: center;
-  align-items: center;
-  margin-right: 12px;
-  align-self: center; /* Centrado en su tarjeta */
-  flex-shrink: 0 !important;     /* Nunca se aplasta */
-}
+    width: 75% !important;
+    padding: 10px 0 !important;
 
-
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+  }
 }

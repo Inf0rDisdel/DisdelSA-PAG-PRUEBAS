@@ -158,17 +158,6 @@ const BrandPage = () => {
                           presentationSelected: defaultPresentation,
                           unitType: prod.Unidad ? 'Y' : 'N'
                       });
-                      toast.success(`Agregado: ${defaultPresentation}`, {
-                        position: 'top-center',
-                        icon: '✅',
-                        style: {
-                            borderRadius: '10px',
-                            background: '#fff',
-                            color: '#333',
-                            border: '1px solid #e0e0e0',
-                            fontWeight: '500'
-                        },
-                      });
                   }}>
                     Cotizar
                   </button>

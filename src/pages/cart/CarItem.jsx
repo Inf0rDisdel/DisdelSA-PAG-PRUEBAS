@@ -31,6 +31,7 @@ const CartItem = ({ product }) => {
         </p>
       </div>
 
+
       <div className="quantity-control">
         <button className="quantity-btn" disabled={quantity <= 1} onClick={() => updateQuantity(product.IdProducto, product.unitType, -1)}>
           <FiMinus />
