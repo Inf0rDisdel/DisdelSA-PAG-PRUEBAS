@@ -95,7 +95,31 @@ const CategoryPage = () => {
       setActiveSubCatId(cat.SubCategorias?.length > 0 ? cat.SubCategorias[0].IdSubCategoria : null);
   };
 
-  if (loadingMenu || loadingProducts) return <div className="pdp-loading"><div className="spinner"></div></div>;
+  if (loadingMenu || loadingProducts) {
+    return (
+      <div className="cat-master-wrapper">
+        <div className="cat-container">
+          <div className="skeleton-shimmer" style={{width: '100%', height: '200px', borderRadius: '16px', marginBottom: '20px'}}></div>
+          <div className="cat-content-layout">
+            <aside className="cat-sidebar-left">
+               <div className="skeleton-shimmer" style={{width: '100%', height: '300px'}}></div>
+            </aside>
+            <main className="cat-right-column">
+               <div className="cat-grid-products">
+                  {[1,2,3,4,5,6].map(n => (
+                    <div key={n} className="skeleton-card">
+                      <div className="skeleton-shimmer" style={{height: '130px'}}></div>
+                      <div className="skeleton-shimmer" style={{height: '18px', width: '90%'}}></div>
+                      <div className="skeleton-shimmer" style={{height: '40px', marginTop: 'auto'}}></div>
+                    </div>
+                  ))}
+               </div>
+            </main>
+          </div>
+        </div>
+      </div>
+    );
+  }
   if (!currentSegment) return <div className="no-products-msg">Categoría no encontrada</div>;
 
   return (

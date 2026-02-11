@@ -6,8 +6,24 @@ import "slick-carousel/slick/slick-theme.css";
 import './ProductCarousel.css';
 import fondoImagen from 'assets/icons/FONDO-BLANCO.jpg';
 
-const ProductCarousel = ({ title, products = [], addToCart, variant = '' }) => {
-  ;
+const ProductCarousel = ({ title, products = [],isLoading, addToCart, variant = '' }) => {
+   if (isLoading) {
+    return (
+      <div className="product-carousel-container">
+        <div className="skeleton-box" style={{ width: '200px', height: '30px', borderRadius: '50px', marginBottom: '20px' }}></div>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+          {[1, 2].map((n) => (
+            <div key={n} className="product-card" style={{ border: '1px solid #eee' }}>
+              <div className="skeleton-box" style={{ width: '100%', height: '120px', borderRadius: '10px' }}></div>
+              <div className="skeleton-box" style={{ width: '80%', height: '15px', marginTop: '15px' }}></div>
+              <div className="skeleton-box" style={{ width: '60%', height: '12px', marginTop: '10px' }}></div>
+              <div className="skeleton-box" style={{ width: '90%', height: '40px', marginTop: 'auto', borderRadius: '8px' }}></div>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  };
 
   const settings = {
     dots: true,

@@ -86,6 +86,63 @@
     height: 350px; 
   }
   .promo-nescafe-title {
-    font-size: 1.2rem;
+    font-size: 1.1rem;
+  }
+}
+
+/* ============================================================
+   AJUSTE DE SECCIÓN PROMO NESCAFÉ (MÓVIL)
+   ============================================================ */
+@media (max-width: 468px) {
+
+  /* 1. SEPARACIÓN DE LA SECCIÓN COMPLETA */
+  .promo-nescafe-wrapper {
+    padding: 20px 0 !important;
+    /* Espacio arriba y abajo para que no choque con los carruseles */
+    margin: 30px 0 !important; 
+  }
+
+  /* 2. EL TÍTULO: Lo hacemos lucir como los otros títulos pill-shape */
+  .promo-nescafe-title {
+    display: inline-block !important;
+    width: auto !important;
+    font-size: 1rem !important; /* Tamaño más balanceado */
+    font-weight: 630 !important;
+    text-align:start !important;
+    color: #313335 !important;
+    
+    /* Estilo de "píldora" igual a los carruseles */
+    background-color: white !important;
+    border-radius: 50px !important;
+    padding: 8px 25px !important;
+    
+    /* Centrado del título */
+    margin: 0 auto 25px auto !important;
+    display: table !important; /* Truco para centrar un elemento con auto margins */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05) !important;
+  }
+
+  /* 3. EL BANNER PRINCIPAL (LA IMAGEN) */
+  .promo-nescafe-container {
+    padding: 0 15px !important; /* Margen a los lados para que no toque los bordes del cel */
+    height: auto !important;
+  }
+
+  .banner-principal {
+    width: 100% !important;
+    /* Bajamos un poco la altura para que no ocupe toda la pantalla y se vea el producto */
+    height: 250px !important; 
+    border-radius: 15px !important; /* Bordes redondeados profesionales */
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1) !important;
+    overflow: hidden !important;
+  }
+
+  .promo-item img {
+    object-position: center !important; /* Asegura que lo importante de la foto esté al centro */
+  }
+
+  /* Ocultamos definitivamente el secundario en móviles muy pequeños */
+  .banner-secundario {
+    display: none !important;
   }
 }

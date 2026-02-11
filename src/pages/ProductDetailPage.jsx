@@ -93,13 +93,31 @@ const ProductDetailPage = () => {
 
   return (
     <div className="pdp-container">
-      <Helmet>
-        <title>{`${product.Descripcion} | Disdel`}</title>
-        <link rel="canonical" href={`https://www.disdelsa.com/producto/${product.IdProducto}`} />
-        {productSchema && (
-          <script type="application/ld+json">{JSON.stringify(productSchema)}</script>
-        )}
-      </Helmet>
+    <Helmet>
+  {/* 1. Básico y SEO de Google */}
+  <title>{`${product.Descripcion} | Disdel`}</title>
+  <meta name="description" content={`Compra ${product.Descripcion} al mejor precio en Disdel. Suministros de limpieza profesional en Guatemala.`} />
+  <link rel="canonical" href={`https://www.disdelsa.com/producto/${product.IdProducto}`} />
+
+  {/* 2. Open Graph / Facebook / WhatsApp (Para que se vea la foto al compartir el link) */}
+  <meta property="og:type" content="product" />
+  <meta property="og:title" content={`${product.Descripcion} | Disdel`} />
+  <meta property="og:description" content={`Adquiere ${product.Descripcion} en nuestra tienda en línea. Calidad profesional garantizada.`} />
+  <meta property="og:image" content={product.Imagen ? `${AppConfig.baseImageUrl}productos/${product.Imagen}` : 'URL_DE_TU_LOGO_POR_DEFECTO'} />
+  <meta property="og:url" content={`https://www.disdelsa.com/producto/${product.IdProducto}`} />
+  <meta property="og:site_name" content="Disdel" />
+
+  {/* 3. Twitter Card */}
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content={`${product.Descripcion} | Disdel`} />
+  <meta name="twitter:description" content={`Compra ${product.Descripcion} en Disdel.`} />
+  <meta name="twitter:image" content={product.Imagen ? `${AppConfig.baseImageUrl}productos/${product.Imagen}` : 'URL_DE_TU_LOGO_POR_DEFECTO'} />
+
+  {/* 4. Datos Estructurados (Lo que ya tenías, que está muy bien) */}
+  {productSchema && (
+    <script type="application/ld+json">{JSON.stringify(productSchema)}</script>
+  )}
+</Helmet>
 
       <button className="pdp-back-btn" onClick={() => navigate(-1)}>
         <FiChevronLeft /> Volver al catálogo
