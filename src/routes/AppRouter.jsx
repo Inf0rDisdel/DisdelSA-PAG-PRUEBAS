@@ -28,6 +28,7 @@ const AppRouter = () => {
     <Routes>
       <Route path="/" element={<HomePage />} />
       <Route path="/producto/:id" element={<ProductDetailPage />} />
+       <Route path="/producto/:id/" element={<ProductDetailPage />} /> {/* <--- ACEPTA CON BARRA */}
       <Route path="/buscar" element={<SearchResultsPage />} />
 
       {/* --- 🚀 RESCATE DE GOOGLE (Legacy Redirects) --- */}
