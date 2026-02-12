@@ -2,13 +2,21 @@
   RewriteEngine On
   RewriteBase /
 
-  # --- REDIRECCIONES 301 (Para que Google actualice sus resultados rápido) ---
-  # Estas le dicen al servidor que mande el tráfico viejo a las nuevas rutas
-  Redirect 301 /Contactanos /ubicaciones
-  Redirect 301 /Conocenos /quienes-somos
-  Redirect 301 /limpieza /categoria/herramientas-para-limpieza
+  # --- 1. QUITAR EL WWW (Evita el logo viejo y conflictos) ---
+  RewriteCond %{HTTP_HOST} ^www\.disdelsa\.com [NC]
+  RewriteRule ^(.*)$ https://disdelsa.com/$1 [R=301,L]
 
-  # --- CONFIGURACIÓN PARA REACT SPA (Evita el error 404 al refrescar) ---
+  # --- 2. REDIRIGIR LINKS VIEJOS DE SUBCATEGORÍAS AL HOME ---
+  # Cualquier link que empiece con /subcategoria/ irá a la página principal
+  RewriteRule ^subcategoria/.*$ https://disdelsa.com/ [L,R=301,NC]
+  RewriteRule ^subcategorias/.*$ https://disdelsa.com/ [L,R=301,NC]
+
+  # --- 3. QUITAR LA BARRA DIAGONAL DEL FINAL (Trailing Slash) ---
+  # Redirige /producto/ptq4002/ a /producto/ptq4002 para que React lo entienda
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteRule ^(.*)/$ /$1 [L,R=301]
+
+  # --- 4. REGLA ESTÁNDAR PARA REACT (SPA) ---
   RewriteRule ^index\.html$ - [L]
   RewriteCond %{REQUEST_FILENAME} !-f
   RewriteCond %{REQUEST_FILENAME} !-d
