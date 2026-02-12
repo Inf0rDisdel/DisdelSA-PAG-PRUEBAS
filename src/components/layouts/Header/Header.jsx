@@ -10,7 +10,7 @@ import iconBuilding from 'assets/icons/MY-BUSINESS.png';
 import iconCart from 'assets/icons/CARRITO-DE-COMPRAS.png';
 
 import {
-  FaSearch, FaAngleDown, FaBars, FaTimes, FaMapMarkerAlt
+  FaSearch, FaAngleDown, FaBars, FaTimes
 } from 'react-icons/fa';
 
 const Header = () => {
@@ -94,7 +94,7 @@ const Header = () => {
               {/* LOGIN EXTERNO (asidelimpio.com) */}
               <a href="https://asidelimpio.com" target="_blank" rel="noopener noreferrer" className={styles.actionLink}>
                 <img src={iconUser} alt="Login" className={styles.actionIcon} />
-                <span className={styles.actionText}>Login</span>
+                <span className={styles.actionText}>Así de Limpio</span>
               </a>
 
               {/* MY BUSINESS EXTERNO (disdelsagt.com) */}
@@ -102,8 +102,6 @@ const Header = () => {
                 <img src={iconBuilding} alt="MyBusiness" className={styles.actionIcon} />
                 <span className={styles.actionText}>MyBusiness</span>
               </a>
-
-              <Link to="/sede-central" className={styles.secondaryLink}>Tienda Disdel</Link>
             </div>
             
             <Link to="/carrito" className={cartClasses}>
@@ -162,11 +160,6 @@ const Header = () => {
               <img src={iconBuilding} alt="Business" className={styles.sidebarIcon} />
               <span>MyBusiness</span>
             </a>
-
-            <Link to="/sede-central" onClick={() => setIsMobileMenuOpen(false)} className={styles.sidebarLink}>
-              <FaMapMarkerAlt className={styles.sidebarIcon} style={{color: '#135eab'}}/> 
-              <span>Recoge en tienda</span>
-            </Link>
 
             <hr className={styles.divider} />
 
