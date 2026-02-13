@@ -144,7 +144,7 @@ const Header = () => {
             >
               <img src={iconUser} alt="User" className={styles.sidebarIcon} />
               <div>
-                <span className={styles.sidebarTitle}>Iniciar Sesión / Regístrate</span>
+                <span className={styles.sidebarTitle}>Así de Limpio</span>
                 <span className={styles.sidebarSubtitle}>Mi Cuenta</span>
               </div>
             </a>

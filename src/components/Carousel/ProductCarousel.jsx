@@ -74,7 +74,6 @@ const ProductCarousel = ({ title, products = [],isLoading, addToCart, variant = 
             <div key={product.id}>
               <div className="product-card">
                 
-                {/* ENLACE QUE SE COMPORTA COMO FLEX */}
                 <Link 
                   to={`/producto/${product.id}`} 
                   state={{ product: product }}

@@ -5,7 +5,6 @@ import { Routes, Route, Navigate, useParams, Link } from 'react-router-dom';
 import HomePage from '../pages/HomePage';
 import LoginPage from '../pages/login/LoginPage';
 import MyBusinessPage from '../pages/my-business/MyBusinessPage';
-import StoreBradge from 'components/layouts/Header/StoreBadge'; // Tienda Disdel
 import CartPage from 'pages/cart/CartPages'; 
 import ProductDetailPage from 'pages/ProductDetailPage';
 import CategoryDetail from '../pages/CategoryDetail/CategoryDetail';
@@ -56,7 +55,6 @@ const AppRouter = () => {
       <Route path="/carrito" element={<CartPage />} />
       <Route path="/login" element={<LoginPage />} />
       <Route path="/my-business" element={<MyBusinessPage />} />
-      <Route path="/sede-central" element={<StoreBradge/>} />
       <Route path="/politicas-de-privacidad" element={<PrivacyPolicy /> } />
       <Route path="/opiniones" element={<ReviewsSection/>} />
       <Route path="/quienes-somos" element={<AboutUs/>} />
