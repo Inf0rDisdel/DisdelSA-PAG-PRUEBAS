@@ -24,7 +24,7 @@ const HeroSlider = () => {
                 <img 
                     // 🔥 USAMOS AppConfig AQUÍ
                     src={`${AppConfig.baseImageUrl}${ban.Imagen}`} 
-                    alt={ban.Titulo || "Oferta Disdelsa"} 
+                    alt={ban.Titulo || "Disdelsa, distribucion y comercializacion de productos de limpieza"} 
                 />
             </div>
         ))}
