@@ -9,8 +9,9 @@ import './FeaturedBrands.css';
 import { AppConfig } from '../../../config/AppConfig';
 import { useBanners } from '../../../hooks/useBanners';
 
-const FeaturedBrands = () => {
-  const { data: banners, isLoading, isError } = useBanners();
+const FeaturedBrands = ({brands, isLoading}) => {
+  // --- 1. TODOS LOS HOOKS VAN ARRIBA (Sin excepciones) ---
+  const { data: banners, isError } = useBanners();
   const [isPhone, setIsPhone] = useState(window.innerWidth <= 480);
 
   useEffect(() => {
@@ -19,6 +20,7 @@ const FeaturedBrands = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
+  // --- 2. FUNCIONES HELPER ---
   const crearSlug = (titulo) => {
       if (!titulo) return 'marca';
       return titulo.toLowerCase().trim().replace(/\s+/g, '-');
@@ -33,7 +35,23 @@ const FeaturedBrands = () => {
     arrows: false
   };
 
-  if (isLoading || isError || !banners.aliados?.length) return null;
+  // --- 3. CONDICIONALES DE RENDERIZADO (Después de los Hooks) ---
+  
+  // Skeleton Loader
+  if (isLoading) {
+    return(
+      <div className='brands-container' style={{display :'flex', gap:'15px', overflow:'hidden', padding:'20px'}}>
+        {[1,2,3,4,5].map((i) => (
+          <div key={i} style={{flexShrink: 0}}>
+            <div className='skeleton-shimmer' style={{width:'80px', height:'80px', borderRadius:'50%'}}></div>
+            <div className='skeleton-shimmer' style={{width:'60px', height:'10px', marginTop:'10px', borderRadius:'4px', marginInline:'auto'}}></div>
+          </div>
+        ))}
+      </div>
+    );
+  }
+
+  if (isError || !banners?.aliados?.length) return null;
 
   return (
     <section className="featured-brands-section">

@@ -1,103 +1,155 @@
 import React from 'react';
+import {FiClock, FiMapPin, FiNavigation, FiCheckCircle, FiPhone} from 'react-icons/fi';
 import './Locations.css'; 
 
-import imgTienda1 from 'assets/images/banners/Disdel-Central.jpg'; 
-import imgTienda2 from 'assets/images/banners/Z3-TIENDA.jpg'; 
-import imgTienda3 from 'assets/images/banners/Disdel-Plsnts.jpg'; 
+import imgOficina from 'assets/images/banners/Disdel-Central.jpg'; 
+import imgTienda from 'assets/images/banners/Z3-TIENDA.jpg'; 
+import imgLaboratorio from 'assets/images/banners/Disdel-Plsnts.jpg'; 
+import imgTienda3 from 'assets/images/banners/tienda-Z3.jpg'
 import iconWaze from 'assets/icons/waze.png';
 import iconMaps from 'assets/icons/google-maps.png';
 
 const Locations = () => {
-
   const storesData = [
-    // ... tus datos siguen igual ...
     {
       id: 1,
-      name: "DISDEL ZONA 1 (OFICINA)",
-      address: "15 Calle 16-30, Zona 1, Ciudad de Guatemala",
-      hours: "Lunes a Viernes: 7:00 AM - 5:00 PM",
-      img: imgTienda1,
+      badge: "Oficinas Administrativas",
+      name: "Disdel Zona 1 (Oficina)",
+      desc: "Nuestras oficinas centrales donde gestionamos la atención corporativa y administrativa para brindarte el mejor servicio.",
+      address: "15 Calle 16-30, Zona 1",
+      city: "Ciudad de Guatemala",
+      phone:"2422-6120",
+      hours: "7:00 AM - 5:00 PM",
+      imgMain: imgOficina,
+      imgSec: imgOficina,
       lat: 14.634915, 
       lng: -90.506882,
-      googleMapsLink: "https://www.google.com/maps/place/Disdel,+S.A./..."
+      maps: "https://www.google.com/maps/place/Disdel,+S.A./@14.634915,-90.506882,15z",
+      features: ["Atención Mayorista", "Carga Segura"]
     },
-    // ... (resto de tiendas) ...
     {
       id: 2,
-      name: "DISDEL ZONA 3 (TIENDA)",
-      address: "27 Calle a-41, Zona 3, Ciudad de Guatemala",
-      hours: "Lunes a Viernes: 7:00 AM - 5:00 PM",
-      img: imgTienda2,
-      lat: 14.603456, 
-      lng: -90.528765,
-      googleMapsLink: "https://www.google.com/maps/place/Disdel,+S.+A./@14.6282923,-90.535314,15z/data=!4m10!1m2!2m1!1stienda+disdel!3m6!1s0x8589a2410996aaab:0x888aca1dddc38f6f!8m2!3d14.6243644!4d-90.5255417!15sCg10aWVuZGEgZGlzZGVskgEaY2xlYW5pbmdfcHJvZHVjdHNfc3VwcGxpZXLgAQA!16s%2Fg%2F11f_428swk?entry=ttu&g_ep=EgoyMDI1MTIwOS4wIKXMDSoASAFQAw%3D%3D"
+      badge: "Tienda Central",
+      name: "Disdel Zona 3 (Tienda)",
+      desc: "Contamos con amplio stock y asesores expertos listos para atenderte. Puedes cotizar en línea y retirar tu pedido inmediatamente.",
+      address: "27 Calle 1-41, Zona 3",
+      city: "Ciudad de Guatemala",
+      phone:"2422-6120",
+      hours: "7:00 AM - 5:00 PM",
+      imgMain: imgTienda3,
+      imgSec: imgTienda,
+      lat: 14.6243644,
+      lng: -90.5255417,
+      maps: "https://www.google.com/maps/place/Disdel,+S.+A./@14.6243644,-90.5255417,15z",
+      features: ["Parqueo Disponible", "Retiro Inmediato"]
     },
     {
       id: 3,
-      name: "DISDEL ZONA 1 (LABORATORIO)",
-      address: "15 Calle 18-08, Zona 1, Ciudad de Guatemala",
-      hours: "Lunes a Viernes: 7:00 AM - 5:00 PM",
-      img: imgTienda3,
-      lat: 14.567890, 
-      lng: -90.456789,
-      googleMapsLink: "https://www.google.com/maps/place/L%26G+Representaciones+S.A./@14.6317675,-90.5047123,17z/data=!3m1!4b1!4m6!3m5!1s0x8589a243d58c5a87:0xbd20178b49c98481!8m2!3d14.6317623!4d-90.5021374!16s%2Fg%2F11c2k8mnq5?entry=ttu&g_ep=EgoyMDI1MTIwOS4wIKXMDSoASAFQAw%3D%3D"
+      badge: "Producción y Calidad",
+      name: "Disdel Zona 1 (Laboratorio)",
+      desc: "Centro especializado en desarrollo y control de calidad de nuestros productos de limpieza profesional.",
+      address: "15 Calle 18-08, Zona 1",
+      city: "Ciudad de Guatemala",
+      phone:"2247-1620",
+      hours: "7:00 AM - 5:00 PM",
+      imgMain: imgLaboratorio,
+      imgSec: imgLaboratorio,
+      lat: 14.6317623, 
+      lng: -90.5021374,
+      maps: "https://www.google.com/maps/place/L%26G+Representaciones+S.A./@14.6317623,-90.5021374,17z",
+      features: ["Control de Calidad", "Despacho Logístico"]
     }
   ];
 
-  return (
-    <div className="locations-page">
+ return (
+    <div className="loc-page-wrapper">
+      {/* Eliminamos el Header vacío para ganar espacio inmediato */}
       
-      {/* --- CAMBIO AQUÍ: ENVOLVEMOS EL HEADER --- */}
-      <div className="locations-header">
-        {/* Agregamos esta clase para que respete los márgenes iguales a las tarjetas */}
-        <div className="main-layout-container">
-            <h1>Nuestras Ubicaciones</h1>
-            <p>Visítanos en tu sucursal más cercana. ¡Te esperamos!</p>
-        </div>
-      </div>
+      {storesData.map((store, index) => (
+        <section key={store.id} className={`loc-showcase-section ${index % 2 !== 0 ? 'loc-reverse' : ''}`}>
+          <div className="loc-container">
+            
+            <div className="loc-images-col">
+              <div className="loc-image-wrapper loc-main-img">
+                <img src={store.imgMain} alt={store.name} />
+              </div>
+              <div className="loc-image-wrapper loc-secondary-img">
+                <img src={store.imgSec} alt="Detalle" />
+              </div>
+              {store.id === 2 && (
+                <div className="loc-floating-badge">
+                  <span className="loc-years-number">50+</span>
+                  <span className="loc-years-text">Años de Experiencia</span>
+                </div>
+              )}
+            </div>
 
-      <div className="main-layout-container">
-        {/* GRILLA DE TARJETAS */}
-        <div className="locations-grid">
-          {storesData.map((store) => (
-            <div key={store.id} className="location-card">
-              <div className="card-image-wrapper">
-                <img src={store.img} alt={store.name} />
+            <div className="loc-info-col">
+              <div className="loc-badge-tag">{store.badge}</div>
+              <h2 className="loc-title">
+                Visita nuestra {store.id === 1 ? 'oficina' : store.id === 3 ? 'planta' : 'tienda'} <br/>
+                <span className="loc-highlight-text">{store.name}</span>
+              </h2>
+              <p className="loc-desc">{store.desc}</p>
+
+              <div className="loc-details-grid">
+                <div className="loc-detail-card">
+                  <div className="loc-icon-box"><FiClock /></div>
+                  <div>
+                    <h4>Horario</h4>
+                    <p className="loc-time-highlight">{store.hours}</p>
+                  </div>
+                </div>
+
+                <div className="loc-detail-card">
+                  <div className="loc-icon-box"><FiPhone /></div>
+                  <div>
+                    <h4>Teléfono</h4>
+                    <p className="loc-time-highlight">{store.phone}</p>
+                  </div>
+                </div>
+
+                <div className="loc-detail-card loc-full-width-detail">
+                  <div className="loc-icon-box"><FiMapPin /></div>
+                  <div>
+                    <h4>Ubicación</h4>
+                    <p>{store.address}, {store.city}</p>
+                  </div>
+                </div>
               </div>
-              <div className="card-content">
-                <h3>{store.name}</h3>
-                <p className="address-text">{store.address}</p>
-                <p className="hours-text">
-                  {store.hours.split('\n').map((line, i) => (
-                    <span key={i}>{line}<br/></span>
-                  ))}
-                </p>
-              </div>
-              <div className="card-actions">
+
+              <div className="loc-actions-group">
                 <a 
                   href={`https://waze.com/ul?ll=${store.lat},${store.lng}&navigate=yes`} 
                   target="_blank" 
-                  rel="noopener noreferrer"
-                  className="btn-app btn-waze"
+                  rel="noopener noreferrer" 
+                  className="btn-loc-action btn-waze"
                 >
-                <img src={iconWaze} alt='Waze' className='icon-waze' /> 
+                  <img src={iconWaze} alt="Waze" className="btn-icon-img" />
                   Ir con Waze
                 </a>
-
+                
                 <a 
-                  href={store.googleMapsLink} 
+                  href={store.maps} 
                   target="_blank" 
-                  rel="noopener noreferrer"
-                  className="btn-app btn-maps"
+                  rel="noopener noreferrer" 
+                  className="btn-loc-action btn-maps-grey"
                 >
-                  <img src={iconMaps} alt='Maaps' className='icon-maps' /> 
-                   Ir o ver con Google Maps
+                  <img src={iconMaps} alt="Maps" className="btn-icon-img-small" />
+                  Ir o ver con Google Maps
                 </a>
+
+                <div className="loc-features-mini">
+                  {store.features.map((feat, i) => (
+                    <span key={i}><FiCheckCircle color="#28a745"/> {feat}</span>
+                  ))}
+                </div>
               </div>
             </div>
-          ))}
-        </div>
-      </div>
+
+          </div>
+        </section>
+      ))}
     </div>
   );
 };

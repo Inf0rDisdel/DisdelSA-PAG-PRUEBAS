@@ -33,7 +33,6 @@ const HomePage = () => {
     }
   };
 
-  // 🔥 FUNCIÓN PARA AGREGAR CON NOTIFICACIÓN (Imagen 2)
   const handleAddToCart = (product) => {
     // Definimos la unidad por defecto al agregar desde el inicio
     const defaultPresentation = product.Unidad || 'Unidad';
@@ -73,10 +72,6 @@ const HomePage = () => {
     };
   }, [allProducts]);
 
-  if (isLoading) {
-    return <div style={{padding: '100px', textAlign: 'center'}}>Cargando ofertas...</div>;
-  }
-
   return (
     <main>
       <Helmet>
@@ -85,42 +80,48 @@ const HomePage = () => {
       </Helmet>
 
       <HeroSlider />
-      <CategoryGrid />
-      <FeaturedBrands />
+
+      <CategoryGrid isLoading={isLoading}/>
+      <FeaturedBrands isLoading={isLoading}/>
+
       <BannerSlider />
 
-      {/* --- NOTA: Se cambió addItem por handleAddToCart --- */}
-      {carruseles.cotizados.length > 0 && (
+      {/* Condición ajustada: Si está cargando O tiene productos, muestra el componente */}
+      {(isLoading || carruseles.cotizados.length > 0) && (
         <div className="carousel-wrapper">
           <ProductCarousel
             title="Los más Cotizados"
             products={carruseles.cotizados}
             addToCart={handleAddToCart} 
             variant="carousel-cotizados"
+            isLoading={isLoading} 
           />
         </div>
       )}
 
-      {carruseles.higiene.length > 0 && (
+
+      {(isLoading || carruseles.higiene.length > 0) && (
         <div className="carousel-wrapper">
           <ProductCarousel
             title="Soluciones integrales de higiene"
             products={carruseles.higiene}
             addToCart={handleAddToCart} 
             variant="carousel-higiene"
+            isLoading={isLoading}
           />
         </div>
       )}
 
       <PromoNescafe />
 
-      {carruseles.coffee.length > 0 && (
+      {(isLoading || carruseles.coffee.length > 0) && (
         <div className="carousel-wrapper">
           <ProductCarousel
             title="Todo para el Coffee Break"
             products={carruseles.coffee}
             addToCart={handleAddToCart} 
             variant="carousel-coffe"
+            isLoading={isLoading}
           />
         </div>
       )}

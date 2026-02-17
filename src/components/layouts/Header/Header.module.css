@@ -203,9 +203,8 @@
 
 .desktopUserActions {
   display: grid !important; /* Usamos Grid para acomodar arriba y abajo */
-  grid-template-columns: auto auto; /* Dos columnas para Login y MyBusiness */
-  column-gap: 20px; /* Espacio entre Login y MyBusiness */
-  row-gap: 15px;     /* Espacio vertical para separar "Recoge en tienda" */
+  grid-template-columns: auto; /* Dos columnas para Login y MyBusiness */
+  row-gap: 10px;     
   align-items: center;
   justify-items: end; /* Alineamos todo a la derecha */
 }

@@ -1,3 +1,4 @@
+
 .product-carousel-container {
   width: 100%;
   /* ANTES TENÍAS: height: 370px;  <-- ESTO ES LO QUE BLOQUEA */
@@ -234,14 +235,13 @@
 }
 
 @media (max-width: 468px) {
-
   /* Slick base */
   .slick-track {
     display: flex !important;
   }
 
   .slick-slide {
-    padding-bottom: 12px;
+    padding-bottom: 8px;
   }
 
   .slick-slide > div {
@@ -252,14 +252,16 @@
   .slick-list {
     overflow: visible !important;
   }
+
   /* CARD */
   .product-carousel-container .product-card {
+
     min-height: 360px !important;
 
     display: flex !important;
     flex-direction: column !important;
 
-    padding: 12px !important;
+    padding: 0 !important;
     gap: 8px !important;
 
     overflow: visible !important;
@@ -272,6 +274,7 @@
     align-items: center !important;
 
     flex-grow: 0 !important;   /* 🔥 NO estirar */
+    text-decoration: none;
   }
 
   /* IMAGEN */
@@ -279,12 +282,12 @@
     height: 95px !important;
     width: 100% !important;
     object-fit: contain !important;
-    margin-bottom: 6px !important;
+    margin-bottom: 0 !important;
   }
 
   /* TEXTO */
   .product-name {
-    font-size: 13px !important;
+    font-size: 12px !important;
     text-align: center !important;
     white-space: normal !important;
   }
@@ -307,5 +310,8 @@
     display: flex !important;
     justify-content: center !important;
     align-items: center !important;
+  }
+  .carousel-title{
+    font-size: 16px;
   }
 }

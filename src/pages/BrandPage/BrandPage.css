@@ -93,7 +93,7 @@
   .brand-layout { display: flex !important; flex-direction: column !important; gap: 15px !important; }
 
   .sidebar-filters {
-    position: sticky !important; top: 115px !important;
+    position: sticky !important; top: 138px !important;
     width: 100% !important; z-index: 1000 !important;
     padding: 10px 0 !important; border-radius: 0; background: white !important;
     box-shadow: 0 4px 10px rgba(0,0,0,0.08) !important; border-bottom: 1px solid #eee;
@@ -136,4 +136,31 @@
   .product-card { padding: 12px !important; }
   .prod-img-container { height: 120px !important; }
   .prod-title-text { font-size: 12px !important; height: 32px; overflow: hidden; }
+}
+
+/* Animación de carga */
+@keyframes shimmer {
+  0% { background-position: -468px 0; }
+  100% { background-position: 468px 0; }
+}
+
+.skeleton-shimmer {
+  background: #f6f7f8;
+  background-image: linear-gradient(to right, #f6f7f8 0%, #edeef1 20%, #f6f7f8 40%, #f6f7f8 100%);
+  background-repeat: no-repeat;
+  background-size: 800px 104px;
+  animation: shimmer 1.2s linear infinite forwards;
+  border-radius: 8px;
+}
+
+/* Estilo para las tarjetas vacías */
+.skeleton-card {
+  background: white;
+  border: 1px solid #eee;
+  border-radius: 12px;
+  padding: 15px;
+  min-height: 380px; /* Igual a tus tarjetas reales */
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }

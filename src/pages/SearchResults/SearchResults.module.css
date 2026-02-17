@@ -5,34 +5,41 @@
 }
 
 .container {
-  max-width: 1300px; /* Un poco más ancho para que quepan bien */
+  max-width: 1200px; /* Un poco más ancho para que quepan bien */
   margin: 0 auto;
-  padding: 0 25px;
+  padding: 0 15px;
 }
 
 .searchHeader {
-  margin-bottom: 30px;
-  text-align: left;
+  margin-bottom: 25px;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 15px;
 }
 
 .searchHeader h1 {
-  font-size: 26px;
+  font-size: 22px;
   color: #333;
+  margin-bottom: 5px;
 }
 
 .searchHeader h1 span {
   color: #135eab;
 }
 
+.metchCount {
+  font-size: 14px;
+  color: #666;
+}
+
 .productGrid {
   display: grid;
   /* Aumentamos el ancho mínimo a 260px para que las cards respiren */
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); 
+  grid-template-columns: repeat(3, 1fr); 
   
   /* Aumentamos la separación a 35px */
-  gap: 35px; 
+  gap: 15px; 
   
-  padding: 30px 0;
+  padding: 10px 0;
   width: 100%;
 }
 
@@ -66,4 +73,58 @@
   text-align: center;
   padding: 100px;
   font-size: 20px;
+}
+
+/*DISEÑO RESPONSIVO PARA TABLES*/
+@media (min-width: 768px) {
+  .productGrid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+  .searchHeader h1 { font-size: 28px; }
+}
+
+/* Desktop: 4 columnas (1024px o más) */
+@media (min-width: 1024px) {
+  .productGrid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 30px;
+  }
+}
+
+.noResults {
+  text-align: center;
+  background: white;
+  padding: 60px 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+  margin-top: 40px;
+}
+
+.icon {
+  font-size: 50px;
+  margin-bottom: 20px;
+}
+
+.btnBack {
+  background: #135eab;
+  color: white;
+  border: none;
+  padding: 12px 25px;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-top: 20px;
+  font-weight: 600;
+  transition: background 0.3s;
+}
+
+.btnBack:hover {
+  background: #0d4a8a;
+}
+
+.loading {
+  text-align: center;
+  padding: 150px 20px;
+  font-size: 18px;
+  color: #666;
 }

@@ -31,7 +31,6 @@ const BrandPage = () => {
   const { data: menuData, isLoading: loadingMenu } = useMenu();
   const { data: productsData, isLoading: loadingProducts } = useProducts();
   const [activeCatId, setActiveCatId] = useState(null);
-
   const scrollRef = useRef(null);
 
   const handleScroll = (direction) => {
@@ -84,7 +83,30 @@ const BrandPage = () => {
     return uniqueProducts;
   }, [productsData, currentBrandSegment, activeCatId]);
 
-  if (loadingMenu || loadingProducts) return <div className="pdp-loading"><div className="spinner"></div></div>;
+ if (loadingMenu || loadingProducts) {
+    return (
+      <div className="brand-container">
+        <div className="skeleton-shimmer" style={{width: '100%', height: '280px', marginBottom: '30px'}}></div>
+        <div className="brand-layout">
+          <aside className="sidebar-filters">
+             <div className="skeleton-shimmer" style={{width: '100%', height: '200px'}}></div>
+          </aside>
+          <main className="products-area">
+             <div className="grid-container">
+                {[1,2,3,4,5,6].map(n => (
+                  <div key={n} className="skeleton-card">
+                    <div className="skeleton-shimmer" style={{height: '150px'}}></div>
+                    <div className="skeleton-shimmer" style={{height: '20px', width: '80%'}}></div>
+                    <div className="skeleton-shimmer" style={{height: '15px', width: '60%'}}></div>
+                    <div className="skeleton-shimmer" style={{height: '40px', marginTop: 'auto'}}></div>
+                  </div>
+                ))}
+             </div>
+          </main>
+        </div>
+      </div>
+    );
+  }
 
   if (!currentBrandSegment) return (
     <div className="brand-container">
