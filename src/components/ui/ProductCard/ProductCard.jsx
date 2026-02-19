@@ -1,21 +1,33 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { Link } from 'react-router-dom';
 import useCartStore from 'store/useCartStore';
 import { AppConfig } from 'config/AppConfig';
 import { FaCheckCircle } from 'react-icons/fa';
 import './ProductCard.css';
 
-const ProductCard = ({ product }) => {
+import defaultImg from 'assets/images/categories/KCP.jpg'
+
+const ProductCard =memo (({ product }) => {
   const { IdProducto, Descripcion, Imagen, Marca, Categoria } = product;
   const addItem = useCartStore((state) => state.addItem);
 
-  // Ruta corregida: base + productos/ + nombre
-  const imageUrl = Imagen 
+  const imageUrl = (Imagen && Imagen.trim() !== "") 
     ? `${AppConfig.baseImageUrl}productos/${Imagen}` 
-    : 'https://via.placeholder.com/300?text=Sin+Imagen';
+    : defaultImg;
+    
+    const handlePrefetch = () => {
+      if (Imagen) {
+        const img = new Image();
+        img.src = imageUrl;
+      }
+    };
 
   return (
-    <div className="product-card">
+    <div 
+      className="product-card"
+      onMouseEnter={handlePrefetch}
+      onTouchStart={handlePrefetch}
+      >
       {/* Badge de ID discreto */}
       <div className="product-id-badge">ID: {IdProducto}</div>
 
@@ -27,6 +39,7 @@ const ProductCard = ({ product }) => {
             alt={Descripcion} 
             className="product-image" 
             loading="lazy" 
+            decoding='async'
           />
         </div>
         
@@ -54,6 +67,6 @@ const ProductCard = ({ product }) => {
       </div>
     </div>
   );
-};
+});
 
 export default ProductCard;

@@ -25,7 +25,9 @@ const ProductDetailPage = () => {
   const [selectedType, setSelectedType] = useState('Y');
 
   // --- 1. HELPERS PRIMERO (Definir antes de usar en useMemo) ---
-  const getImageUrl = (imgName) => imgName ? `${AppConfig.baseImageUrl}productos/${imgName}` : defaultImage;
+    const getImageUrl = (imgName) => (imgName && imgName.trim() !== "") 
+    ? `${AppConfig.baseImageUrl}productos/${imgName}` 
+    : defaultImage;
 
   // --- 2. HOOKS DE LÓGICA (SIEMPRE ARRIBA) ---
   const productImages = useMemo(() => {
@@ -35,6 +37,7 @@ const ProductDetailPage = () => {
       }
       return product.Imagen ? [product.Imagen] : [];
   }, [product]);
+
 
   const productSchema = useMemo(() => {
     if (!product) return null;
@@ -88,6 +91,24 @@ const ProductDetailPage = () => {
     });
   };
 
+   useEffect(() => {
+    if (isError && id) {
+      navigate(`/buscar?q=${id}`, { replace: true });
+      return;
+    }
+
+    if(product) {
+      //Solo cambiamos si no hay una imagen seleccionada actualmente
+      if (!selectedImage) setSelectedImage(product.Imagen);
+
+      if (!selectedUnit) {
+        setSelectedUnit(product.Unidad || product.Empaque || 'Unidad');
+        setSelectedType(product.Unidad ? 'Y' : 'N');
+      }
+    }
+  }, [product, isError, id,navigate,selectedImage, selectedUnit]);
+
+
   if (isLoading) return <div className="pdp-loading"><div className="spinner"></div></div>;
   if (isError || !product) return null;
 
@@ -96,6 +117,7 @@ const ProductDetailPage = () => {
     <Helmet>
   {/* 1. Básico y SEO de Google */}
   <title>{`${product.Descripcion} | Disdel`}</title>
+  <link rel="preload" as="image" href={getImageUrl(selectedImage || product.Imagen)} />
   <meta name="description" content={`Compra ${product.Descripcion} al mejor precio en Disdel. Suministros de limpieza profesional en Guatemala.`} />
   <link rel="canonical" href={`https://www.disdelsa.com/producto/${product.IdProducto}`} />
 
@@ -126,13 +148,19 @@ const ProductDetailPage = () => {
       <div className="pdp-main-grid">
         <div className="pdp-gallery-section">
             <div className="pdp-main-image-wrapper">
-                <img src={getImageUrl(selectedImage || product.Imagen)} alt={product.Descripcion} className="pdp-main-img" />
+              <img 
+                    src={getImageUrl(selectedImage || product.Imagen)} 
+                    alt={product.Descripcion} 
+                    className="pdp-main-img" 
+                    fetchpriority="high" // 🔥 Le dice a Chrome: "Baja esta imagen YA"
+                    loading="eager" // 🔥 Desactiva el lazy loading solo para esta imagen
+                />  
             </div>
             {productImages.length > 1 && (
                 <div className="pdp-thumbnails">
                     {productImages.map((img, index) => (
                         <div key={index} className={`pdp-thumb ${selectedImage === img ? 'active' : ''}`} onClick={() => setSelectedImage(img)}>
-                            <img src={getImageUrl(img)} alt="thumb" />
+                            <img src={getImageUrl(img)} alt="thumb" loading='lazy'/>
                         </div>
                     ))}
                 </div>
