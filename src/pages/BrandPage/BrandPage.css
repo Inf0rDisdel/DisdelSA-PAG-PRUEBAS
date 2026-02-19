@@ -8,7 +8,13 @@
 .brand-hero {
   max-width: 1300px; margin: 20px auto; width: 95%; height: 250px;
   border-radius: 16px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+  transition: height 0.3s ease;
 }
+
+.banner-fade-in {
+  animation: fadeIn 0.5s ease-in;
+}
+
 .brand-hero img { width: 100%; height: 100%; object-fit: cover; }
 
 .brand-layout {
@@ -86,6 +92,11 @@
     text-decoration: none !important;
     font-weight: bold;
 }
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
 /* ======================================================= */
 /*  1. TABLETS (Hasta 1024px) - 3 PRODUCTOS               */
 /* ======================================================= */
@@ -98,6 +109,24 @@
     padding: 10px 0 !important; border-radius: 0; background: white !important;
     box-shadow: 0 4px 10px rgba(0,0,0,0.08) !important; border-bottom: 1px solid #eee;
   }
+
+  /*BANNER PARA MOVIL*/
+  .brand-hero {
+    height: auto !important; /* Altura ajustada para banners de celular */
+    width: 100%;
+    max-width: 100% !important;
+    margin: 0 auto 15px auto;
+    border-radius: 0; /* En móvil se ve mejor de orilla a orilla */
+    box-shadow: none;
+  }
+  
+  .brand-hero img {
+    height: auto !important;
+    width: 100% !important;
+    object-fit: contain !important;
+    display: block;
+  }
+
 
   .cat-sidebar-header-mobile { display: flex !important; justify-content: space-between; align-items: center; padding: 0 15px 5px 15px; }
   
@@ -124,14 +153,34 @@
 
   /* 🔥 3 PRODUCTOS POR FILA PARA TABLET */
   .grid-container { grid-template-columns: repeat(3, 1fr) !important; gap: 15px; padding: 15px !important; }
-  .brand-hero { height: 180px; width: 100%; border-radius: 0; margin-top: 0; }
+
 }
 
 /* ======================================================= */
 /*  2. MÓVILES (Hasta 768px / 468px) - 2 PRODUCTOS          */
 /* ======================================================= */
 @media (max-width: 468px) {
-  /* 🔥 2 PRODUCTOS POR FILA PARA MÓVIL */
+  
+  .brand-hero {
+    height: auto !important; /* Permitimos que la imagen dicte la altura */
+    width: 100% !important;
+    margin: 0 auto 10px auto;
+    border-radius: 0;
+    box-shadow: none;
+  }
+  
+  .brand-hero img {
+    height: auto !important; /* Altura automática para no estirar */
+    width: 100% !important;
+    object-fit: contain !important; /* Muestra el banner móvil COMPLETO */
+    display: block;
+  }
+
+  /* Ajustamos el skeleton para que coincida con el banner móvil */
+  .skeleton-shimmer.banner-sk {
+    height: 180px !important;
+  }
+
   .grid-container { grid-template-columns: repeat(2, 1fr) !important; gap: 12px !important; }
   .product-card { padding: 12px !important; }
   .prod-img-container { height: 120px !important; }

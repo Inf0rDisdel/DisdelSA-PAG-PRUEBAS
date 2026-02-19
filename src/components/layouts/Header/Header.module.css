@@ -33,6 +33,68 @@
   height: 90px;
   display: block;
   margin-left: -20px;
+
+    /* --- NUEVAS LÍNEAS PARA EL EFECTO --- */
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); /* Transición suave tipo app */
+  user-select: none; /* Evita que se seleccione la imagen al dar muchos clics */
+  -webkit-tap-highlight-color: transparent; /* Quita el cuadro azul feo en Android/iOS */
+
+}
+
+/* Efecto al pasar el mouse (PC) */
+.logo:hover {
+  transform: scale(1.03); /* Crece un pelín */
+  filter: brightness(1.1); /* Le da un toque de luz */
+}
+
+.logo:active {
+  filter: brightness(1.5) drop-shadow(0 0 10px white);
+  transition: 0.1s;
+}
+
+/*EFECTO DEL LOGO*/
+/* --- PANTALLA DE TRANSICIÓN (SPLASH) --- */
+.splashOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: #ffffff; /* Fondo blanco puro */
+  z-index: 99999; /* Por encima de TODO */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.splashContent {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.splashContent img {
+  width: 180px; /* Ajusta el tamaño de tu logo verde */
+  height: auto;
+  margin-bottom: 20px;
+}
+
+.splashLine {
+  height: 3px;
+  background: linear-gradient(to right, #135eab, #96c121); /* El azul y verde de tu marca */
+  border-radius: 10px;
+  margin-bottom: 15px;
+}
+
+.splashContent p {
+  font-family: 'Poppins', sans-serif; /* O la que uses */
+  font-size: 14px;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: #135eab;
+  font-weight: 500;
 }
 
 /* El botón de las 3 rayitas (oculto en PC) */
