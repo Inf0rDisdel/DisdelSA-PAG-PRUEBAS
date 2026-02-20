@@ -352,43 +352,41 @@
 
 @media (max-width: 468px) {
 
-  .cat-header-section{
-    margin-top: 5px !important;
+  .cat-container {
+    padding: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  .cat-header-section {
+    margin-top: 0 !important;
     margin-bottom: 15px !important;
+    border-radius: 0 !important; /* Sin bordes redondeados para look full-width */
+    width: 100% !important;
+    height: auto !important;
+    box-shadow: none !important;
   }
 
-  .cat-main-banner{
-    height: 140px !important;
+  .cat-main-banner {
+    width: 100% !important;
+    height: auto !important; /* Altura proporcional */
+    object-fit: contain !important;
+    display: block;
   }
 
-  .cat-header-overlay{
-    padding: 10px !important;
-    background: linear-gradient(to top, rgba(0,0,0,0,6), transparent 80%) !important;
-  }
-
-  .cat-segment-title{
-    font-size: 18px !important;
-    letter-spacing: 0;
-  }
-  /* 2 PRODUCTOS EN MÓVIL */
+  /* Para que el resto de elementos (grid, subcategorías) NO se peguen a la orilla, 
+     les devolvemos el padding que le quitamos al contenedor principal */
+  .cat-content-layout, 
+  .cat-subcategories-bar, 
   .cat-grid-products {
-    grid-template-columns: repeat(2, 1fr) !important;
-    gap: 10px !important;
+    padding-left: 15px !important;
+    padding-right: 15px !important;
   }
 
+  /* Ajuste de filtros flotantes para que no choquen */
   .cat-sidebar-left {
-    /* En celulares muy pequeños el header suele ser igual de alto */
-    top: 140px !important; 
+    top: 138px !important; 
   }
-
-  .cat-nav-item {
-    flex: 0 0 85px !important; 
-    height: 60px !important;
-  }
-
-  .cat-img-wrapper { height: 110px !important; }
-  
-  .cat-btn { padding: 10px !important; font-size: 11px !important; width: 80%; margin-left: 10%;}
 }
 /* Animación de carga */
 @keyframes shimmer {

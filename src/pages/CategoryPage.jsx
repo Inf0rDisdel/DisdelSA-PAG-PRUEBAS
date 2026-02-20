@@ -2,7 +2,6 @@ import { useLocation, Link, useParams } from 'react-router-dom';
 import React, { useState, useMemo, useEffect, useRef } from 'react'; 
 import { Helmet } from 'react-helmet-async';
 import { FiChevronLeft, FiChevronRight } from 'react-icons/fi'; 
-import { toast } from 'react-hot-toast'; // Notificación añadida
 import './CategoryPage.css';
 
 import { AppConfig } from 'config/AppConfig';
@@ -11,6 +10,7 @@ import { useMenu } from 'hooks/useMenu';
 import { useProducts } from 'hooks/useProducts';
 
 import bannerFijo from 'assets/images/banners/BANCategoria.jpg'; 
+import bannerMob from 'assets/images/banners/Adaptacion--banner-Disdel.png';
 import defaultImage from 'assets/images/categories/KCP.jpg'; 
 
 const CategoryPage = () => {
@@ -23,24 +23,28 @@ const CategoryPage = () => {
   const [activeCatId, setActiveCatId] = useState(null);
   const [activeSubCatId, setActiveSubCatId] = useState(null);
 
+  // Lógica para detectar móvil (Breakpoint 468px)
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 468);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth <= 468);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   const scrollRef = useRef(null);
 
-  const handleScroll = (direction) => {
-    if (scrollRef.current) {
-      const { scrollLeft } = scrollRef.current;
-      const scrollTo = direction === 'left' ? scrollLeft - 150 : scrollLeft + 150;
-      scrollRef.current.scrollTo({ left: scrollTo, behavior: 'smooth' });
-    }
-  };
-
   const norm = (id) => (id === null || id === undefined) ? '' : String(id).trim();
+  
   const createSlug = (text) => text?.toString().toLowerCase().trim()
         .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
         .replace(/ñ/g, 'n').replace(/\s+/g, '-') || '';
 
   const currentSegment = useMemo(() => {
       if (!menuData) return null;
-      return menuData.find(seg => createSlug(seg.NombreSegmento) === slug);
+
+      const cleanSlug = slug.replace(/\/$/, "");
+      return menuData.find(seg => createSlug(seg.NombreSegmento) === cleanSlug);
   }, [menuData, slug]);
 
   const activeCategoryData = useMemo(() => {
@@ -95,18 +99,26 @@ const CategoryPage = () => {
       setActiveSubCatId(cat.SubCategorias?.length > 0 ? cat.SubCategorias[0].IdSubCategoria : null);
   };
 
+  const handleScroll = (direction) => {
+    if (scrollRef.current) {
+      const { scrollLeft } = scrollRef.current;
+      const scrollTo = direction === 'left' ? scrollLeft - 150 : scrollLeft + 150;
+      scrollRef.current.scrollTo({ left: scrollTo, behavior: 'smooth' });
+    }
+  };
+
   if (loadingMenu || loadingProducts) {
     return (
       <div className="cat-master-wrapper">
         <div className="cat-container">
-          <div className="skeleton-shimmer" style={{width: '100%', height: '200px', borderRadius: '16px', marginBottom: '20px'}}></div>
+          <div className="skeleton-shimmer" style={{width: '100%', height: isMobile ? '140px' : '200px', borderRadius: '16px', marginBottom: '20px'}}></div>
           <div className="cat-content-layout">
             <aside className="cat-sidebar-left">
                <div className="skeleton-shimmer" style={{width: '100%', height: '300px'}}></div>
             </aside>
             <main className="cat-right-column">
                <div className="cat-grid-products">
-                  {[1,2,3,4,5,6].map(n => (
+                  {[1,2,3,4].map(n => (
                     <div key={n} className="skeleton-card">
                       <div className="skeleton-shimmer" style={{height: '130px'}}></div>
                       <div className="skeleton-shimmer" style={{height: '18px', width: '90%'}}></div>
@@ -120,21 +132,34 @@ const CategoryPage = () => {
       </div>
     );
   }
+
   if (!currentSegment) return <div className="no-products-msg">Categoría no encontrada</div>;
 
   return (
     <div className="cat-master-wrapper" style={{ '--cat-color': "#135eab" }}>
       <Helmet>
         <title>{`${currentSegment.NombreSegmento} | Disdel`}</title>
+        <meta name="description" content={`Encuentra los mejores productos de ${currentSegment.NombreSegmento} en Disdel S.A. Suministros de limpieza profesional en Guatemala.`} />
+        <link rel="canonical" href={`https://www.disdelsa.com/categoria/${slug}`} />
         <script type="application/ld+json">{JSON.stringify(itemListSchema)}</script>
       </Helmet>
       
       <div className="cat-container">
+        {/* SECCIÓN DEL BANNER DINÁMICO */}
         <div className="cat-header-section">
-            <img src={bannerFijo} alt="Banner" className="cat-main-banner" />
-            <div className="cat-header-overlay">
-                <h1 className="cat-segment-title" style={{color:'white'}}>{currentSegment.NombreSegmento}</h1>
-            </div>
+            <img 
+              src={isMobile ? bannerMob : bannerFijo} 
+              alt="Banner Principal Disdel" 
+              className="cat-main-banner" 
+            />
+            
+            {!isMobile && (
+              <div className="cat-header-overlay">
+                  <h1 className="cat-segment-title" style={{color:'white'}}>
+                    {currentSegment.NombreSegmento}
+                  </h1>
+              </div>
+            )}
         </div>
 
         <div className="cat-content-layout">
@@ -142,8 +167,8 @@ const CategoryPage = () => {
             <div className="cat-sidebar-header-mobile">
                 <div className="cat-sidebar-label">SUBCATEGORÍAS</div>
                 <div className="cat-nav-arrows">
-                    <button onClick={() => handleScroll('left')} className="scroll-arrow"><FiChevronLeft /></button>
-                    <button onClick={() => handleScroll('right')} className="scroll-arrow"><FiChevronRight /></button>
+                  <button onClick={() => handleScroll('left')} className="scroll-arrow"><FiChevronLeft /></button>
+                  <button onClick={() => handleScroll('right')} className="scroll-arrow"><FiChevronRight /></button>
                 </div>
             </div>
 

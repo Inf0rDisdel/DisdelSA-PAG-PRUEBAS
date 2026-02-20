@@ -19,10 +19,11 @@ import iconInicio from 'assets/icons/icon-inicio-removebg-preview.png';
 import bannerKimberlyMob from 'assets/images/banners/Adaptacion-banner-KC.png'; 
 import bannerSilverMob from 'assets/images/banners/banners_silver-movil.jpg'; 
 import banner3mMob from 'assets/images/banners/Adaptacion--banner-3M.png'; 
+import bannerWieseMob from 'assets/images/banners/Adaptacion--banner-wiese.png';
 
 const brandConfig = {
   "kimberly-clark-professional": { banner: bannerKimberly, bannerMob: bannerKimberlyMob, color: "#135eab" },
-  "wiese": { banner: bannerWiese, color: "#692C90" },
+  "wiese": { banner: bannerWiese,bannerMob:bannerWieseMob, color: "#692C90" },
   "3m": { banner: banner3m, bannerMob: banner3mMob, color: "#EE2737" },
   "silver": { banner: bannerSilver, bannerMob: bannerSilverMob, color: "#76BD1D" }
 };
@@ -52,7 +53,9 @@ const BrandPage = () => {
 
   const currentBrandSegment = useMemo(() => {
     if (!menuData) return null;
-    return menuData.find(seg => createSlug(seg.NombreSegmento).includes(slug) || slug.includes(createSlug(seg.NombreSegmento)));
+
+    const cleanSlug = slug.replace(/\/$/, "");
+    return menuData.find(seg => createSlug(seg.NombreSegmento).includes(cleanSlug) || cleanSlug.includes(createSlug(seg.NombreSegmento)));
   }, [menuData, slug]);
 
   const visualConfig = brandConfig[slug] || { banner: null, bannerMob: null, color: "#135eab" };
