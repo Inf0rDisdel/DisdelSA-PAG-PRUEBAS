@@ -1,19 +1,17 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
+import { toast } from 'react-hot-toast'; 
 
 import { AppConfig } from 'config/AppConfig';
 import useCartStore from 'store/useCartStore';
 import { useProductDetail } from 'hooks/useProductDetail';
 
 import { 
-  FiCheckCircle, FiShield, FiCreditCard, 
-  FiPackage, FiLayers, FiChevronLeft, FiBox, FiTarget 
+  FiCheckCircle, FiPackage, FiChevronLeft, FiTarget 
 } from 'react-icons/fi';
 import './ProductDetailPage.css';
 import defaultImage from 'assets/images/categories/KCP.jpg'; 
-
-// ... (resto de imports igual)
 
 const ProductDetailPage = () => {
   const { id } = useParams();
@@ -26,22 +24,12 @@ const ProductDetailPage = () => {
   const [selectedUnit, setSelectedUnit] = useState(''); 
   const [selectedType, setSelectedType] = useState('Y');
 
-  const hasDifferentOptions = useMemo(() => {
-    if (!product) return false;
-    if (!product.Unidad || !product.Empaque) return false;
-    return product.Unidad.trim().toLowerCase() !== product.Empaque.trim().toLowerCase();
-  }, [product]);
+  // --- 1. HELPERS PRIMERO (Definir antes de usar en useMemo) ---
+    const getImageUrl = (imgName) => (imgName && imgName.trim() !== "") 
+    ? `${AppConfig.baseImageUrl}productos/${imgName}` 
+    : defaultImage;
 
-  const seleccionarUnidad = () => {
-    setSelectedUnit(product.Unidad);
-    setSelectedType('Y');
-  };
-
-  const seleccionarEmpaque = () => {
-    setSelectedUnit(product.Empaque);
-    setSelectedType('N');
-  };
-
+  // --- 2. HOOKS DE LÓGICA (SIEMPRE ARRIBA) ---
   const productImages = useMemo(() => {
       if (!product) return [];
       if (product.Imagenes && product.Imagenes.length > 0) {
@@ -50,46 +38,108 @@ const ProductDetailPage = () => {
       return product.Imagen ? [product.Imagen] : [];
   }, [product]);
 
-  // 🔥 SOLUCIÓN IMAGEN: Inicializar al terminar la carga
-  useEffect(() => {
-    if (product) {
-        // Inicializar imágenes
-        if (productImages.length > 0) {
-            setSelectedImage(productImages[0]);
-        }
 
-        // Inicializar unidades (Lógica de Y/N)
-        if (product.Unidad) {
-            setSelectedUnit(product.Unidad);
-            setSelectedType('Y');
-        } else if (product.Empaque) {
-            setSelectedUnit(product.Empaque);
-            setSelectedType('N');
+  const productSchema = useMemo(() => {
+    if (!product) return null;
+    return {
+      "@context": "https://schema.org/",
+      "@type": "Product",
+      "name": product.Descripcion,
+      "image": [getImageUrl(product.Imagen)],
+      "description": `Compra ${product.Descripcion} en Disdel. Suministros profesionales con entrega en toda Guatemala.`,
+      "sku": product.IdProducto,
+      "brand": { "@type": "Brand", "name": product.Marca || "Disdel" },
+      "offers": {
+        "@type": "Offer",
+        "url": `https://www.disdelsa.com/producto/${product.IdProducto}`,
+        "priceCurrency": "GTQ",
+        "availability": "https://schema.org/InStock"
+      }
+    };
+  }, [product]);
+
+  const hasDifferentOptions = useMemo(() => {
+    if (!product || !product.Unidad || !product.Empaque) return false;
+    return product.Unidad.trim().toLowerCase() !== product.Empaque.trim().toLowerCase();
+  }, [product]);
+
+  // --- 3. EFECTOS (Manejo de Carga y Rescate) ---
+  useEffect(() => {
+    // Si el ID de Google no existe, rescatamos mandando a búsqueda
+    if (isError && id) {
+        console.warn("Producto no encontrado, redirigiendo a búsqueda...");
+        navigate(`/buscar?q=${id}`, { replace: true });
+        return;
+    }
+
+    if (product) {
+        if (!selectedImage) setSelectedImage(product.Imagen);
+        
+        if (!selectedUnit) {
+            setSelectedUnit(product.Unidad || product.Empaque || 'Unidad');
+            setSelectedType(product.Unidad ? 'Y' : 'N');
         }
     }
-  }, [product, productImages]);
+  }, [product, isError, id, navigate]);
 
-  const getImageUrl = (imgName) => imgName ? `${AppConfig.baseImageUrl}productos/${imgName}` : defaultImage;
-
+  // --- 4. FUNCIONES DE ACCIÓN ---
   const handleAddToCart = () => {
-    addItem({
-        ...product,
-        presentationSelected: selectedUnit,
-        unitType: selectedType
+    addItem({ 
+        ...product, 
+        presentationSelected: selectedUnit, 
+        unitType: selectedType 
     });
   };
 
+   useEffect(() => {
+    if (isError && id) {
+      navigate(`/buscar?q=${id}`, { replace: true });
+      return;
+    }
+
+    if(product) {
+      //Solo cambiamos si no hay una imagen seleccionada actualmente
+      if (!selectedImage) setSelectedImage(product.Imagen);
+
+      if (!selectedUnit) {
+        setSelectedUnit(product.Unidad || product.Empaque || 'Unidad');
+        setSelectedType(product.Unidad ? 'Y' : 'N');
+      }
+    }
+  }, [product, isError, id,navigate,selectedImage, selectedUnit]);
+
+
   if (isLoading) return <div className="pdp-loading"><div className="spinner"></div></div>;
-  if (isError || !product) return (
-      <div className="pdp-error">
-          <h2>Producto no encontrado</h2>
-          <button onClick={() => navigate(-1)} className="pdp-back-btn">Regresar</button>
-      </div>
-  );
+  if (isError || !product) return null;
 
   return (
     <div className="pdp-container">
-      <Helmet><title>{`${product.Descripcion} | Disdel`}</title></Helmet>
+    <Helmet>
+  {/* 1. Básico y SEO de Google */}
+  <title>{`${product.Descripcion} | Disdel`}</title>
+  <link rel="preload" as="image" href={getImageUrl(selectedImage || product.Imagen)} />
+  <meta name="description" content={`Compra ${product.Descripcion} al mejor precio en Disdel. Suministros de limpieza profesional en Guatemala.`} />
+  <link rel="canonical" href={`https://www.disdelsa.com/producto/${product.IdProducto}`} />
+
+  {/* 2. Open Graph / Facebook / WhatsApp (Para que se vea la foto al compartir el link) */}
+  <meta property="og:type" content="product" />
+  <meta property="og:title" content={`${product.Descripcion} | Disdel`} />
+  <meta property="og:description" content={`Adquiere ${product.Descripcion} en nuestra tienda en línea. Calidad profesional garantizada.`} />
+  <meta property="og:image" content={product.Imagen ? `${AppConfig.baseImageUrl}productos/${product.Imagen}` : 'URL_DE_TU_LOGO_POR_DEFECTO'} />
+  <meta property="og:url" content={`https://www.disdelsa.com/producto/${product.IdProducto}`} />
+  <meta property="og:site_name" content="Disdel" />
+
+  {/* 3. Twitter Card */}
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content={`${product.Descripcion} | Disdel`} />
+  <meta name="twitter:description" content={`Compra ${product.Descripcion} en Disdel.`} />
+  <meta name="twitter:image" content={product.Imagen ? `${AppConfig.baseImageUrl}productos/${product.Imagen}` : 'URL_DE_TU_LOGO_POR_DEFECTO'} />
+
+  {/* 4. Datos Estructurados (Lo que ya tenías, que está muy bien) */}
+  {productSchema && (
+    <script type="application/ld+json">{JSON.stringify(productSchema)}</script>
+  )}
+</Helmet>
 
       <button className="pdp-back-btn" onClick={() => navigate(-1)}>
         <FiChevronLeft /> Volver al catálogo
@@ -98,25 +148,25 @@ const ProductDetailPage = () => {
       <div className="pdp-main-grid">
         <div className="pdp-gallery-section">
             <div className="pdp-main-image-wrapper">
-                {/* 🔥 CAMBIO AQUÍ: Usamos un fallback directo para que cargue de inmediato */}
-                <img 
+              <img 
                     src={getImageUrl(selectedImage || product.Imagen)} 
                     alt={product.Descripcion} 
                     className="pdp-main-img" 
-                />
+                    fetchpriority="high" // 🔥 Le dice a Chrome: "Baja esta imagen YA"
+                    loading="eager" // 🔥 Desactiva el lazy loading solo para esta imagen
+                />  
             </div>
             {productImages.length > 1 && (
                 <div className="pdp-thumbnails">
                     {productImages.map((img, index) => (
                         <div key={index} className={`pdp-thumb ${selectedImage === img ? 'active' : ''}`} onClick={() => setSelectedImage(img)}>
-                            <img src={getImageUrl(img)} alt="thumb" />
+                            <img src={getImageUrl(img)} alt="thumb" loading='lazy'/>
                         </div>
                     ))}
                 </div>
             )}
         </div>
         
-        {/* ... Resto del código igual ... */}
         <div className="pdp-info-section">
           <div className="pdp-meta-top">
               <span className="pdp-brand">{product.Marca}</span>
@@ -124,7 +174,6 @@ const ProductDetailPage = () => {
           </div>
 
           <h1 className="pdp-title">{product.Descripcion}</h1>
-          
           <div className="pdp-sku-row">
             <span className="pdp-sku">CÓDIGO: {product.IdProducto}</span>
             <span className="pdp-stock in-stock"><span className="dot"></span> Disponible</span>
@@ -135,8 +184,8 @@ const ProductDetailPage = () => {
                   <label className="pdp-label">Seleccionar Presentación:</label>
                   <div className="pdp-unit-options">
                       <button 
-                          className={`unit-opt ${selectedType === 'Y' ? 'active' : ''}`}
-                          onClick={seleccionarUnidad}
+                        className={`unit-opt ${selectedType === 'Y' ? 'active' : ''}`} 
+                        onClick={() => { setSelectedUnit(product.Unidad); setSelectedType('Y'); }}
                       >
                           <FiTarget className="icon" />
                           <div className="unit-info">
@@ -145,8 +194,8 @@ const ProductDetailPage = () => {
                           </div>
                       </button>
                       <button 
-                          className={`unit-opt ${selectedType === 'N' ? 'active' : ''}`}
-                          onClick={seleccionarEmpaque}
+                        className={`unit-opt ${selectedType === 'N' ? 'active' : ''}`} 
+                        onClick={() => { setSelectedUnit(product.Empaque); setSelectedType('N'); }}
                       >
                           <FiPackage className="icon" />
                           <div className="unit-info">
@@ -164,15 +213,11 @@ const ProductDetailPage = () => {
           )}
 
           <div className="pdp-action-box">
-              <button className="pdp-add-btn" onClick={handleAddToCart}>
-                AGREGAR A COTIZACIÓN
-              </button>
+              <button className="pdp-add-btn" onClick={handleAddToCart}>AGREGAR A COTIZACIÓN</button>
               <p className="pdp-action-note">La unidad seleccionada aparecerá en su solicitud.</p>
           </div>
-          {/* ... resto del JSX ... */}
         </div>
       </div>
-      {/* ... descripción y specs ... */}
     </div>
   );
 };

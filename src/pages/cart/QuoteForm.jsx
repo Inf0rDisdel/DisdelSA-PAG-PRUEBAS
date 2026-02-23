@@ -3,7 +3,7 @@ import useCartStore from '../../store/useCartStore';
 import Swal from 'sweetalert2';
 import './QuoteForm.css';
 
-// 1. Configuración global del Toast con tus especificaciones visuales
+// 1. Configuración global del Toast
 const Toast = Swal.mixin({
   toast: true,
   position: 'top-end',
@@ -29,7 +29,7 @@ const QuoteForm = () => {
     phone: '',
     email: '',
     address: '',
-    nit: 'C/F' // Agregado para que SAP no falle
+    nit: 'C/F' 
   });
 
   const handleChange = (e) => {
@@ -106,7 +106,6 @@ const QuoteForm = () => {
           />
         </div>
 
-        {/* CAMPO NIT integrado en tu diseño */}
         <div className="input-group">
           <label htmlFor="nit">NIT</label>
           <input 

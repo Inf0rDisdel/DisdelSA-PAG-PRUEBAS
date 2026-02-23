@@ -6,8 +6,24 @@ import "slick-carousel/slick/slick-theme.css";
 import './ProductCarousel.css';
 import fondoImagen from 'assets/icons/FONDO-BLANCO.jpg';
 
-const ProductCarousel = ({ title, products = [], addToCart }) => {
-  ;
+const ProductCarousel = ({ title, products = [],isLoading, addToCart, variant = '' }) => {
+   if (isLoading) {
+    return (
+      <div className="product-carousel-container">
+        <div className="skeleton-box" style={{ width: '200px', height: '30px', borderRadius: '50px', marginBottom: '20px' }}></div>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+          {[1, 2].map((n) => (
+            <div key={n} className="product-card" style={{ border: '1px solid #eee' }}>
+              <div className="skeleton-box" style={{ width: '100%', height: '120px', borderRadius: '10px' }}></div>
+              <div className="skeleton-box" style={{ width: '80%', height: '15px', marginTop: '15px' }}></div>
+              <div className="skeleton-box" style={{ width: '60%', height: '12px', marginTop: '10px' }}></div>
+              <div className="skeleton-box" style={{ width: '90%', height: '40px', marginTop: 'auto', borderRadius: '8px' }}></div>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  };
 
   const settings = {
     dots: true,
@@ -19,11 +35,11 @@ const ProductCarousel = ({ title, products = [], addToCart }) => {
       {
         breakpoint: 1024,
         settings: {
-          slidesToShow: 4, 
+          slidesToShow: 3, 
           slidesToScroll: 1,
           dots: false,
           arrows: true,
-          infinite: products && products.length > 4
+          infinite: products && products.length > 3
         }
       },
       {
@@ -43,7 +59,7 @@ const ProductCarousel = ({ title, products = [], addToCart }) => {
   }
 
   return (
-    <div className="product-carousel-container"
+    <div className={`product-carousel-container ${variant}`}
       style={{ 
         backgroundImage: `url(${fondoImagen})`,
         backgroundColor: '#ffffff' 
@@ -58,10 +74,10 @@ const ProductCarousel = ({ title, products = [], addToCart }) => {
             <div key={product.id}>
               <div className="product-card">
                 
-                {/* ENLACE QUE SE COMPORTA COMO FLEX */}
                 <Link 
                   to={`/producto/${product.id}`} 
                   state={{ product: product }}
+                  className='product_link'
                   style={{ 
                     textDecoration: 'none', 
                     color: 'inherit', 

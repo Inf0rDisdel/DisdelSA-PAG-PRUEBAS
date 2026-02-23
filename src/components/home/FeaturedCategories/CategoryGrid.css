@@ -15,12 +15,12 @@
 /* Título de la sección */
 .cgs-title {
   display: inline-block; 
-  padding: 3px 20px;
+  padding: 5px 20px;
   background-color: white;
-  border: 1px solid #f0f0f0;
+  border: 1px solid #b4dbed;
   border-radius: 50px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-  margin-bottom: 3px; 
+  margin-bottom: 14px; 
   font-size: 1.2rem;   
   color: #135eab !important;
 }
@@ -130,7 +130,7 @@
 }
 
 /* =========================================
-   RESPONSIVE (MÓVIL)
+   RESPONSIVE (MÓVIL) - CORREGIDO
    ========================================= */
 @media (max-width: 768px) {
 
@@ -140,16 +140,17 @@
   }
   
   .cgs-slider {
-    margin: 0 -5px;
+    margin: 0 0;
   }
 
+  /* CAMBIO AQUÍ: Ahora el título ya no sobra hacia la derecha */
   .cgs-title {
-    font-size: 1.2rem;
-    width: 90%;
-    margin-left: auto;
-    margin-right: auto;
-    text-align: left; /* Corregido para que no de error en consola */
-    display: block;
+    font-size: 1.1rem;
+    width: auto;             /* Ajuste automático al texto */
+    margin-left: 8px;       /* Alineado a la izquierda con un margen */
+    margin-right: 0;
+    display: inline-block;   /* Volvemos a inline-block para que no ocupe todo el ancho */
+    text-align: left;
   }
 
   .cgs-item {
@@ -164,20 +165,6 @@
   .cgs-item p {
     font-size: 0.9rem;
     margin-top: 10px;
-  }
-
-  /* Ajustes específicos de Slick en móvil para ESTE archivo */
-  .cgs-section .slick-arrow {
-    width: 35px;
-    height: 35px;
-  }
-  
-  .cgs-section .slick-prev {
-    left: 10px; 
-  }
-
-  .cgs-section .slick-next {
-    right: 10px; 
   }
 
   .cgs-section .slick-dots {

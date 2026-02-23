@@ -4,13 +4,15 @@ import useCartStore from 'store/useCartStore';
 import styles from './Header.module.css';
 import MegaMenu from './MegaMenu';
 
+import { motion , AnimatePresence} from "framer-motion";
 import logo from 'assets/logo/LOGO-BLANCO.png';
 import iconUser from 'assets/icons/INICIAR-SESION-USUARIO.png';
 import iconBuilding from 'assets/icons/MY-BUSINESS.png';
 import iconCart from 'assets/icons/CARRITO-DE-COMPRAS.png';
+import LogoSplash from 'assets/logo/ICONO-DISDEL.png'
 
 import {
-  FaSearch, FaAngleDown, FaBars, FaTimes, FaMapMarkerAlt
+  FaSearch, FaAngleDown, FaBars, FaTimes
 } from 'react-icons/fa';
 
 const Header = () => {
@@ -24,6 +26,17 @@ const Header = () => {
   const [isMegaMenuOpen, setIsMegaMenuOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [btnIsHighlighted, setBtnIsHighlighted] = useState(false);
+  const [isTransitioning, setIsTransitioning] = useState(false);
+
+  const handleLogoClick = (e) => {
+    e.preventDefault();
+    setIsTransitioning(true);
+
+    setTimeout(() => {
+      navigate("/");
+        setTimeout(() => setIsTransitioning(false),600);
+    }, 600)
+  };
 
   const handleSearchSubmit = (e) => {
     e.preventDefault(); 
@@ -51,6 +64,47 @@ const Header = () => {
 
   return (
     <>
+
+    <AnimatePresence>
+        {isTransitioning && (
+          <motion.div 
+            className={styles.splashOverlay}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.4 }}
+          >
+            <div className={styles.splashContent}>
+              {/* Animación del Logo: Aparece desde abajo y se agranda un poco */}
+              <motion.img 
+                src={LogoSplash} 
+                alt="Disdel Cargando" 
+                initial={{ y: 20, opacity: 0, scale: 0.8 }}
+                animate={{ y: 0, opacity: 1, scale: 1 }}
+                transition={{ delay: 0.2, duration: 0.5, ease: "easeOut" }}
+              />
+              
+              {/* Línea de carga sutil */}
+              <motion.div 
+                className={styles.splashLine}
+                initial={{ width: 0 }}
+                animate={{ width: "150px" }}
+                transition={{ delay: 0.5, duration: 0.8 }}
+              />
+
+              {/* Texto Así de Limpio */}
+              <motion.p
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.7, duration: 0.5 }}
+              >
+                Así de Limpio
+              </motion.p>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       <header className={styles.header}>
         <div className={styles.headerContainer}>
 
@@ -59,7 +113,9 @@ const Header = () => {
             <button className={styles.hamburgerButton} onClick={() => setIsMobileMenuOpen(true)}>
               <FaBars />
             </button>
-            <Link to="/"><img src={logo} alt="Disdel Logo" className={styles.logo} /></Link>
+            <Link to="/" onClick={handleLogoClick}>
+               <img src={logo} alt="Disdel Logo" className={styles.logo} />
+            </Link>
           </div>
 
           {/* CENTRO: Buscador */}
@@ -94,7 +150,7 @@ const Header = () => {
               {/* LOGIN EXTERNO (asidelimpio.com) */}
               <a href="https://asidelimpio.com" target="_blank" rel="noopener noreferrer" className={styles.actionLink}>
                 <img src={iconUser} alt="Login" className={styles.actionIcon} />
-                <span className={styles.actionText}>Login</span>
+                <span className={styles.actionText}>Así de Limpio</span>
               </a>
 
               {/* MY BUSINESS EXTERNO (disdelsagt.com) */}
@@ -102,8 +158,6 @@ const Header = () => {
                 <img src={iconBuilding} alt="MyBusiness" className={styles.actionIcon} />
                 <span className={styles.actionText}>MyBusiness</span>
               </a>
-
-              <Link to="/sede-central" className={styles.secondaryLink}>Tienda Disdel</Link>
             </div>
             
             <Link to="/carrito" className={cartClasses}>
@@ -146,7 +200,7 @@ const Header = () => {
             >
               <img src={iconUser} alt="User" className={styles.sidebarIcon} />
               <div>
-                <span className={styles.sidebarTitle}>Iniciar Sesión / Regístrate</span>
+                <span className={styles.sidebarTitle}>Así de Limpio</span>
                 <span className={styles.sidebarSubtitle}>Mi Cuenta</span>
               </div>
             </a>
@@ -162,11 +216,6 @@ const Header = () => {
               <img src={iconBuilding} alt="Business" className={styles.sidebarIcon} />
               <span>MyBusiness</span>
             </a>
-
-            <Link to="/sede-central" onClick={() => setIsMobileMenuOpen(false)} className={styles.sidebarLink}>
-              <FaMapMarkerAlt className={styles.sidebarIcon} style={{color: '#135eab'}}/> 
-              <span>Recoge en tienda</span>
-            </Link>
 
             <hr className={styles.divider} />
 
