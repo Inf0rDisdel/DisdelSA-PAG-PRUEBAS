@@ -15,10 +15,11 @@ import defaultImage from 'assets/images/categories/KCP.jpg';
 
 const ProductDetailPage = () => {
   const { id } = useParams();
+  const cleanId = id.replace(/\/$/, "").trim(); 
   const navigate = useNavigate();
   const addItem = useCartStore((state) => state.addItem);
 
-  const { data: product, isLoading, isError } = useProductDetail(id);
+  const { data: product, isLoading, isError } = useProductDetail(cleanId);
 
   const [selectedImage, setSelectedImage] = useState(null);
   const [selectedUnit, setSelectedUnit] = useState(''); 
