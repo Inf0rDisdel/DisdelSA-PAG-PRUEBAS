@@ -1,0 +1,189 @@
+/* --- CONTENEDOR MAESTRO --- */
+.opiniones-page-wrapper {
+  background-color: #fcfcfc;
+  padding: 40px 0;
+  min-height: 100vh;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.opiniones-container-master {
+  max-width: 1230px; /* ALINEACIÓN EXACTA CON TU HEADER */
+  margin: 0 auto;
+  padding: 0 15px;
+  box-sizing: border-box;
+}
+
+/* --- ESTADÍSTICAS (HEADER) --- */
+.reviews-header {
+  background-color: white;
+  border-radius: 12px;
+  padding: 30px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 40px;
+  border: 1px solid #eee;
+}
+
+.big-rating {
+  font-size: 4rem;
+  font-weight: 800;
+  color: #005691; /* Azul Disdel */
+  margin: 0;
+}
+
+.total-reviews {
+  color: #777;
+  font-size: 0.9rem;
+  margin-top: 5px;
+}
+
+.btn-write-review {
+  background-color: #005691;
+  color: white;
+  border: none;
+  padding: 12px 25px;
+  border-radius: 6px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.btn-write-review:hover {
+  background-color: #003e69;
+  transform: translateY(-2px);
+}
+
+.btn-cancel {
+  background-color: #e53e3e !important;
+}
+
+/* --- FORMULARIO --- */
+.review-form {
+  background-color: white;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.07);
+  max-width: 600px;
+  margin: 0 auto 40px auto;
+  border: 1px solid #e0e0e0;
+}
+
+.review-form h4 {
+  color: #005691;
+  margin-bottom: 20px;
+  font-size: 1.2rem;
+}
+
+.star-rating-input {
+  display: flex;
+  gap: 5px;
+  margin: 15px 0;
+}
+
+.star-rating-input input { display: none; }
+
+.input-group {
+  margin-bottom: 15px;
+}
+
+.input-group input, 
+.input-group textarea {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 1rem;
+  outline: none;
+  transition: border-color 0.3s;
+}
+
+.input-group input:focus, 
+.input-group textarea:focus {
+  border-color: #005691;
+}
+
+.btn-submit-review {
+  width: 100%;
+  background-color: #8cc63f; /* Verde Disdel para el botón de enviar */
+  color: white;
+  border: none;
+  padding: 12px;
+  border-radius: 6px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.btn-submit-review:hover {
+  background-color: #79ac36;
+}
+
+/* --- GRID DE RESEÑAS (3 Columnas en 1200px) --- */
+.reviews-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); /* 3 Columnas fijas en desktop */
+  gap: 25px;
+}
+
+.review-card {
+  background-color: white;
+  border-radius: 10px;
+  padding: 20px;
+  border: 1px solid #eee;
+  transition: 0.3s;
+  display: flex;
+  flex-direction: column;
+}
+
+.review-card:hover {
+  box-shadow: 0 8px 20px rgba(0,0,0,0.06);
+  border-color: #005691;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 15px;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.user-avatar {
+  font-size: 35px;
+  color: #005691;
+}
+
+.user-name {
+  font-size: 0.95rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+.review-date {
+  font-size: 0.75rem;
+  color: #999;
+}
+
+.review-text {
+  font-size: 0.9rem;
+  line-height: 1.5;
+  color: #555;
+  font-style: italic;
+}
+
+/* --- RESPONSIVO --- */
+@media (max-width: 1024px) {
+  .reviews-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 768px) {
+  .reviews-header { flex-direction: column; text-align: center; }
+  .reviews-grid { grid-template-columns: 1fr; }
+  .rating-summary { flex-direction: column; }
+}

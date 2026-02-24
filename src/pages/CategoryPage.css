@@ -1,0 +1,416 @@
+/* --- CONTENEDOR PRINCIPAL --- */
+.cat-master-wrapper {
+  background-color: #f9fafb;
+  padding-bottom: 60px;
+  min-height: 100vh;
+  --cat-color: #135eab; /* Color por defecto */
+  font-family: 'Segoe UI', system-ui, sans-serif;
+}
+
+.cat-container {
+  max-width: 1300px; 
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+/* --- BANNER ESTIRADO (ENCABEZADO) --- */
+.cat-header-section {
+  margin-top: 20px;
+  margin-bottom: 30px;
+  border-radius: 16px;
+  overflow: hidden;
+  position: relative;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+}
+
+.cat-main-banner {
+  width: 100%;
+  height: 280px; /* Altura más imponente */
+  object-fit: cover;
+  display: block;
+}
+
+/* Título flotante sobre el banner (Opcional, se ve muy pro) */
+.cat-header-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);
+  padding: 30px;
+  color: white;
+}
+
+.cat-segment-title {
+  font-size: 32px;
+  font-weight: 800;
+  margin: 0;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+  letter-spacing: -0.5px;
+}
+
+/* --- LAYOUT DE 2 COLUMNAS --- */
+.cat-content-layout {
+  display: grid;
+  grid-template-columns: 260px 1fr; 
+  gap: 35px;
+  align-items: flex-start;
+}
+
+/* --- SIDEBAR IZQUIERDO --- */
+.cat-sidebar-left {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+  position: sticky;
+  top: 20px;
+}
+
+.cat-sidebar-label {
+  font-size: 12px;
+  color: #999;
+  font-weight: 700;
+  text-transform: uppercase;
+  margin-bottom: 15px;
+  letter-spacing: 1px;
+}
+
+.cat-nav-item {
+  display: flex;
+  align-items: center;
+  padding: 12px 15px;
+  margin-bottom: 5px;
+  border-radius: 8px;
+  cursor: pointer;
+  color: #555;
+  font-weight: 500;
+  font-size: 14px;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  border-left: 3px solid transparent;
+}
+
+.cat-nav-item:hover {
+  background-color: #f3f4f6;
+  color: var(--cat-color);
+  transform: translateX(4px);
+}
+
+.cat-nav-item.active-filter {
+  background-color: #f0f7ff; /* Fondo muy suave del color */
+  color: var(--cat-color);
+  font-weight: 700;
+  border-left-color: var(--cat-color);
+}
+
+.cat-nav-icon {
+  width: 24px;
+  height: 24px;
+  margin-right: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.cat-nav-icon img { width: 100%; height: 100%; object-fit: contain; }
+
+/* --- COLUMNA DERECHA --- */
+.cat-right-column { width: 100%; }
+
+/* --- PÍLDORAS DE SUBCATEGORÍAS --- */
+.cat-subcategories-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 30px;
+}
+
+.cat-sub-pill {
+  border: 1px solid #e5e7eb;
+  background: white;
+  color: #4b5563;
+  padding: 10px 20px;
+  border-radius: 50px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+}
+
+.cat-sub-pill:hover {
+  border-color: var(--cat-color);
+  color: var(--cat-color);
+  transform: translateY(-2px);
+}
+
+.cat-sub-pill.active {
+  background: var(--cat-color);
+  color: white;
+  border-color: var(--cat-color);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+}
+
+/* --- TARJETAS DE PRODUCTO --- */
+.cat-grid-products {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); 
+  gap: 25px;
+}
+
+.cat-product-card {
+  background: #fff;
+  border: 1px solid #eee;
+  border-radius: 12px;
+  padding: 8px;
+  position: relative;
+  transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.cat-product-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 30px rgba(0,0,0,0.08);
+  border-color: transparent;
+}
+
+/* Badge ID Discreto */
+.cat-id-badge {
+  position: absolute; top: 10px; right: 10px;
+  font-size: 10px; color: #aaa; 
+  background: #f9f9f9;
+  padding: 3px 6px; border-radius: 4px;
+  font-weight: 600;
+}
+
+.cat-img-wrapper {
+  height: 180px;
+  display: flex; align-items: center; justify-content: center;
+  margin: 15px 0;
+}
+.cat-img-wrapper img { 
+  max-width: 100%; max-height: 100%; object-fit: contain; 
+  transition: transform 0.3s;
+}
+.cat-product-card:hover .cat-img-wrapper img { transform: scale(1.05); }
+
+.cat-card-tag {
+  font-size: 11px; text-transform: uppercase;
+  color: var(--cat-color); font-weight: 700;
+  margin-bottom: 5px; display: block;
+}
+
+.cat-title {
+  font-size: 15px; color: #222; margin-bottom: 20px;
+  font-weight: 600; line-height: 1.4; flex-grow: 1;
+}
+
+.cat-btn {
+  width: 100%; padding: 12px;
+  background: white; border: 1.5px solid var(--cat-color);
+  color: var(--cat-color); border-radius: 8px;
+  font-weight: 700; cursor: pointer; transition: 0.2s;
+}
+.cat-btn:hover { background: var(--cat-color); color: white; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+
+/* --- SKELETON LOADING (Efecto de Carga Profesional) --- */
+.skeleton-banner { width: 100%; height: 280px; background: #e0e0e0; border-radius: 16px; margin-top: 20px; animation: shimmer 1.5s infinite linear; }
+.skeleton-layout { display: grid; grid-template-columns: 260px 1fr; gap: 35px; margin-top: 30px; }
+.skeleton-sidebar { height: 400px; background: white; border-radius: 12px; }
+.skeleton-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 25px; }
+.skeleton-card { height: 350px; background: white; border-radius: 12px; padding: 20px; border: 1px solid #eee; }
+.sk-img { width: 100%; height: 180px; background: #eee; border-radius: 8px; margin-bottom: 20px; animation: shimmer 1.5s infinite linear; }
+.sk-line { height: 15px; background: #eee; border-radius: 4px; margin-bottom: 10px; width: 80%; animation: shimmer 1.5s infinite linear; }
+
+@keyframes shimmer {
+  0% { background-color: #f0f0f0; }
+  50% { background-color: #e0e0e0; }
+  100% { background-color: #f0f0f0; }
+}
+
+/* Mensaje vacío */
+.no-products-msg {
+  text-align: center; padding: 60px; background: white; border-radius: 12px; color: #777;
+  border: 1px dashed #ddd; margin-top: 20px;
+}
+
+/* ======================================================= */
+/* 1. DISEÑO PARA TABLETS / MÓVILES (768px)                */
+/* ======================================================= */
+@media (max-width: 768px) {
+
+  .cat-header-section{
+    margin-top: 10px !important;
+    margin-bottom: 20px !important;
+    border-radius: 12px !important;
+  }
+
+
+  .cat-main-banner{
+    height: 180px !important;
+    object-position: center !important;
+  }
+
+  .cat-header-overlay {
+    padding: 15px !important;
+  }
+
+  .cat-segment-title{
+    font-size: 22px !important;
+    text-align: center !important;
+  }
+
+  .cat-content-layout { 
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 10px !important;
+  }
+
+  /* MENU FIJO DEBAJO DEL HEADER */
+  .cat-sidebar-left {
+    position: -webkit-sticky !important;
+    position: sticky !important; 
+    /* 🔥 Ajustado para quedar debajo del buscador */
+    top: 115px !important; 
+    width: 100% !important;
+    z-index: 1000 !important; 
+    background-color: white !important; 
+    padding: 8px 0 !important;
+    border-radius: 0;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.08) !important;
+    border-bottom: 1px solid #eee;
+  }
+
+  .cat-sidebar-label {
+    font-size: 10px;
+    color: #999;
+    font-weight: 700;
+    text-transform: uppercase;
+    margin-bottom: 2px;
+    letter-spacing: 0.5px;
+  }
+
+  .cat-sidebar-header-mobile {
+    display: flex !important;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 15px 5px 15px;
+  }
+
+  .cat-nav-arrows { display: flex !important; gap: 8px; }
+  .scroll-arrow { 
+    background: #f5f5f5; border: none; border-radius: 50%; 
+    width: 24px; height: 24px; display: flex; align-items: center; 
+    justify-content: center; color: var(--cat-color); font-size: 16px;
+  }
+
+  .cat-sidebar-nav {
+    display: flex !important;
+    flex-direction: row !important;
+    overflow-x: auto !important;
+    padding: 5px 15px !important;
+    gap: 10px !important;
+    scrollbar-width: none;
+  }
+  .cat-sidebar-nav::-webkit-scrollbar { display: none; }
+
+  /* CAJITAS PEQUEÑAS (Icono arriba, Texto abajo) */
+  .cat-nav-item {
+    flex: 0 0 95px !important; 
+    flex-direction: column !important; 
+    height: 65px !important; /* Más bajas para no ocupar tanto espacio */
+    background: white !important;
+    border: 1px solid #f0f0f0 !important;
+    border-radius: 10px !important;
+    text-align: center;
+    padding: 5px !important;
+    justify-content: center;
+  }
+
+  .cat-nav-icon { height: 24px !important; margin-bottom: 3px !important; width: 100% !important; }
+  .cat-nav-item span { font-size: 10px !important; line-height: 1.1; font-weight: 600; }
+
+  /* 3 PRODUCTOS PARA TABLET (768px) */
+  .cat-grid-products {
+    display: grid !important;
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 12px !important;
+    padding: 10px 15px !important;
+  }
+
+  .cat-product-card { padding: 2px !important; gap: 12px; }
+  .cat-img-wrapper { height: 110px !important; }
+  .cat-title { font-size: 12px !important; height: 32px; overflow: hidden; }
+}
+
+/* ======================================================= */
+/*    DISEÑO RESPONSIVO: MÓVILES (468px)                    */
+/* ======================================================= */
+
+
+
+@media (max-width: 468px) {
+
+  .cat-container {
+    padding: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  .cat-header-section {
+    margin-top: 0 !important;
+    margin-bottom: 15px !important;
+    border-radius: 0 !important; /* Sin bordes redondeados para look full-width */
+    width: 100% !important;
+    height: auto !important;
+    box-shadow: none !important;
+  }
+
+  .cat-main-banner {
+    width: 100% !important;
+    height: auto !important; /* Altura proporcional */
+    object-fit: contain !important;
+    display: block;
+  }
+
+  /* Para que el resto de elementos (grid, subcategorías) NO se peguen a la orilla, 
+     les devolvemos el padding que le quitamos al contenedor principal */
+  .cat-content-layout, 
+  .cat-subcategories-bar, 
+  .cat-grid-products {
+    padding-left: 15px !important;
+    padding-right: 15px !important;
+  }
+
+  /* Ajuste de filtros flotantes para que no choquen */
+  .cat-sidebar-left {
+    top: 138px !important; 
+  }
+}
+/* Animación de carga */
+@keyframes shimmer {
+  0% { background-position: -468px 0; }
+  100% { background-position: 468px 0; }
+}
+
+.skeleton-shimmer {
+  background: #f6f7f8;
+  background-image: linear-gradient(to right, #f6f7f8 0%, #edeef1 20%, #f6f7f8 40%, #f6f7f8 100%);
+  background-repeat: no-repeat;
+  background-size: 800px 104px;
+  animation: shimmer 1.2s linear infinite forwards;
+  border-radius: 8px;
+}
+
+/* Estilo para las tarjetas vacías */
+.skeleton-card {
+  background: white;
+  border: 1px solid #eee;
+  border-radius: 12px;
+  padding: 15px;
+  min-height: 380px; /* Igual a tus tarjetas reales */
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}

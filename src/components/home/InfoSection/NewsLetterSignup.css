@@ -1,0 +1,174 @@
+/* ======================================================= */
+/* 1. DISEÑO ESCRITORIO (> 1024px) - Horizontal perfecto   */
+/* ======================================================= */
+.newsletter-wrapper {
+    background-color: #f7f7f7; 
+    padding: 30px 20px;
+}
+
+.newsletter-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 30px;
+}
+
+.newsletter-info {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.newsletter-icon {
+    font-size: 50px; 
+    color: #8dc63f; 
+}
+
+.newsletter-text-content strong {
+    display: block;
+    font-size: 1.1rem;
+    color: #333;
+    font-weight: 800;
+}
+
+.newsletter-text-content p {
+    margin: 0;
+    font-size: 0.95rem;
+    color: #444;
+}
+
+.newsletter-action-column {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end; /* Alinea checkbox al final del botón */
+}
+
+.newsletter-form {
+    display: flex;
+    gap: 10px;
+}
+
+.newsletter-input {
+    width: 350px;
+    padding: 12px 20px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+}
+
+.newsletter-button {
+    background-color: #8dc63f; 
+    color: white;
+    font-weight: bold;
+    padding: 12px 25px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    text-transform: uppercase;
+}
+
+.newsletter-acceptance {
+    text-align: right;
+    font-size: 0.85rem;
+    margin-top: 8px;
+}
+
+/* ======================================================= */
+/* 2. DISEÑO TABLET (669px a 1024px) - Apilado centrado    */
+/* ======================================================= */
+@media (min-width: 669px) and (max-width: 1024px) {
+    .newsletter-container {
+        flex-direction: column; /* Apila info arriba y form abajo */
+        gap: 20px;
+        text-align: center;
+    }
+
+    .newsletter-info {
+        justify-content: center;
+    }
+
+    .newsletter-action-column {
+        align-items: center; /* Centra el formulario en tablets */
+        width: 100%;
+    }
+
+    .newsletter-acceptance {
+        text-align: center;
+        margin-top: 15px;
+    }
+}
+
+/* ======================================================= */
+/* 3. DISEÑO MÓVIL (≤ 668px) - Estilo Tarjeta Blanca       */
+/* ======================================================= */
+@media (max-width: 668px) {
+    .newsletter-wrapper {
+        padding: 40px 15px;
+        background-color: #ffffff; 
+    }
+
+    .newsletter-container {
+        flex-direction: column;
+        background: #ffffff;
+        padding: 30px 20px;
+        border-radius: 25px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
+        border: 1px solid #f0f0f0;
+        text-align: center;
+    }
+
+    .newsletter-info {
+        flex-direction: column;
+        gap: 12px;
+        margin-bottom: 5px;
+    }
+
+    .newsletter-icon-box {
+        background-color: #f0f9eb;
+        width: 70px;
+        height: 70px;
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .newsletter-icon {
+        font-size: 35px;
+    }
+
+    .newsletter-text-content strong {
+        font-size: 1.1rem;
+        color: #1e5f9e; 
+    }
+
+    .newsletter-form {
+        width: 100%;
+        flex-direction: column;
+        gap: 10px;
+        margin-top: 15px;
+    }
+
+    .newsletter-input {
+        width: 90%;
+        text-align: center;
+        padding: 15px;
+        font-size: 0.95rem;
+    }
+
+    .newsletter-button {
+        width: 100%;
+        padding: 15px;
+    }
+
+    .newsletter-action-column {
+        width: 100%;
+        align-items: center; 
+    }
+
+   .newsletter-acceptance {
+        text-align: center;
+        margin-top: 15px;
+    }
+}

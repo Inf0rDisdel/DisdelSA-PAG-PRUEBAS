@@ -1,0 +1,104 @@
+/* =========================================
+   ESTILOS ÚNICOS PARA PROMO LAYOUT
+   Prefijo usado: pl-
+   ========================================= */
+
+.pl-section {
+  padding: 20px 0;
+  width: 100%;
+}
+
+.pl-grid-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  
+  /* --- CONFIGURACIÓN POR DEFECTO (PC y TABLET) --- */
+  /* 4 columnas en una sola fila, como pediste anteriormente */
+  display: grid; 
+  grid-template-columns: repeat(4, 1fr); 
+  gap: 20px;
+  
+  padding: 0 15px;
+  box-sizing: border-box;
+}
+
+.pl-card {
+  position: relative; 
+  border-radius: 12px; 
+  overflow: hidden; 
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  height: 220px; /* Altura fija para PC/Tablet */
+  width: 100%;
+}
+
+.pl-card:hover {
+  transform: translateY(-5px); 
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+.pl-card img {
+  width: 100%;
+  height: 100%;
+  display: block; 
+  object-fit: cover; 
+  transition: transform 0.5s ease;
+}
+
+.pl-card:hover img {
+  transform: scale(1.05); 
+}
+
+/* Etiqueta del texto */
+.pl-card-label {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(to top, rgba(0, 51, 102, 0.9), rgba(0, 51, 102, 0.6));
+  color: white;
+  text-align: center;
+  padding: 10px;
+  font-size: 15px;
+  font-weight: 700;
+  font-family: 'Poppins', sans-serif;
+}
+
+/* =========================================
+   DISEÑO RESPONSIVO
+   ========================================= */
+
+/* Para TABLETS (mantenemos las 4 columnas en fila) */
+@media (max-width: 800px) {
+    .pl-grid-container {
+        grid-template-columns: repeat(4, 1fr); 
+        gap: 10px; /* Menos espacio para que quepan */
+    }
+    .pl-card {
+        height: 180px; /* Un poco más bajitas */
+    }
+    .pl-card-label {
+        font-size: 12px; /* Texto un poco más pequeño para que quepa */
+        padding: 8px;
+    }
+}
+
+/* Para MÓVILES (Aquí aplicamos el diseño de la imagen 2) */
+@media (max-width: 500px) {
+    .pl-grid-container {
+        /* ✅ CAMBIO CLAVE: 2 columnas */
+        /* Esto hará que se vean 2 arriba y 2 abajo (2x2) */
+        grid-template-columns: repeat(2, 1fr); 
+        gap: 15px;
+    }
+
+    .pl-card {
+        height: 160px; /* Altura ideal para cuadros en celular */
+    }
+    
+    .pl-card-label {
+        font-size: 13px;
+        line-height: 1.2;
+    }
+}

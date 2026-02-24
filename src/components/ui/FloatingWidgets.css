@@ -1,0 +1,81 @@
+.footer-floating-widgets {
+  position: fixed;
+  bottom: 10px;
+  right: 3px;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.widget-item {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  text-decoration: none;
+  transition: transform 0.2s ease-in-out;
+  cursor: pointer;
+  border-radius: 16px;
+}
+
+.widget-item:hover {
+  transform: translateY(-4px);
+}
+
+.widget-opinions {
+  background-color: #1e60aa;
+  color: white;
+  width: 88px;
+  height: 100px;
+  flex-direction: column;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.widget-opinions img {
+  width: 40px;
+  height: 40px;
+  margin-bottom: 5px;
+}
+
+.widget-whatsapp { /* Cambiado de :last-child para mayor claridad */
+  background-color: white;
+  width: 90px;
+  height: 70px;
+}
+
+.widget-whatsapp img {
+  width: 32px;
+  height: 32px;
+}
+
+@media (max-width: 768px) {
+
+  .footer-floating-widgets {
+    bottom: 10px;
+    right: 0;
+    gap: 10px; /* Reducimos el espacio entre botones */
+  }
+
+  .widget-opinions {
+    width: 70px;  /* Hacemos el botón más pequeño */
+    height: 70px;
+    font-size: 12px; /* Reducimos el tamaño del texto */
+  }
+
+  .widget-opinions img {
+    width: 24px;  /* Hacemos el icono más pequeño */
+    height: 24px;
+  }
+  
+  .widget-whatsapp {
+    width: 20px;  /* Hacemos el botón más pequeño */
+    height: 20px;
+  }
+  
+  .widget-whatsapp img {
+    width: 28px;  /* Hacemos el icono más pequeño */
+    height: 28px;
+  }
+}

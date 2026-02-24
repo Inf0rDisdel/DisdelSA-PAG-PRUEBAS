@@ -1,0 +1,25 @@
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /
+
+  # --- 1. QUITAR EL WWW (Evita el logo viejo y conflictos) ---
+  RewriteCond %{HTTP_HOST} ^www\.disdelsa\.com [NC]
+  RewriteRule ^(.*)$ https://disdelsa.com/$1 [R=301,L]
+
+  # --- 2. REDIRIGIR LINKS VIEJOS DE SUBCATEGORÍAS AL HOME ---
+  # Cualquier link que empiece con /subcategoria/ irá a la página principal
+  RewriteRule ^subcategoria/.*$ https://disdelsa.com/ [L,R=301,NC]
+  RewriteRule ^subcategorias/.*$ https://disdelsa.com/ [L,R=301,NC]
+
+  # --- 3. QUITAR LA BARRA DIAGONAL DEL FINAL (Trailing Slash) ---
+  # Redirige /producto/ptq4002/ a /producto/ptq4002 para que React lo entienda
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteRule ^(.*)/$ /$1 [L,R=301]
+
+  # --- 4. REGLA ESTÁNDAR PARA REACT (SPA) ---
+  RewriteRule ^index\.html$ - [L]
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteCond %{REQUEST_FILENAME} !-l
+  RewriteRule . /index.html [L]
+</IfModule>

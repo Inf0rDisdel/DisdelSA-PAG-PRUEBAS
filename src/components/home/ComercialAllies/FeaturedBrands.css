@@ -1,0 +1,96 @@
+/* --- ESTILOS PROTEGIDOS (Solo afectan a este componente) --- */
+
+.featured-brands-section {
+  max-width: 1200px;
+  margin: 8px auto;
+  padding: 5px 8px;
+  text-align: left;
+}
+
+.featured-brands-section .section-title {
+  display: inline-block; /* Se ajusta solo al ancho del texto */
+  padding: 3px 20px;
+  background-color: white;
+  border: 1px solid #b4dbed;
+  border-radius: 50px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+  margin-bottom: 5px; 
+  font-size: 1.2rem;   
+  color: #135eab !important;
+  white-space: nowrap; 
+}
+
+.featured-brands-section .brands-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+}
+
+.featured-brands-section .brand-item {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex: 1 1 200px;
+  max-width: 300px;
+  padding: 0px;
+  box-sizing: border-box;
+
+  border:2px solid transparent;
+  border-radius: 30px;
+
+  transition: all 0.3s ease;
+  cursor:pointer;
+  background-color: transparent;
+}
+
+/* --- EFECTO LEVANTAR (HOVER) --- */
+.featured-brands-section .brand-item:hover {
+  transform: translateY(-8px); /* Se eleva 8 píxeles */
+  border-color: #476f96;
+  background-color: #ffffff;
+  box-shadow: 0 10px 20px rgba(13, 94, 171, 0.1);
+}
+
+
+.featured-brands-section .brand-item img {
+  max-width: 100%;
+  height: auto;
+  /* Mantenemos el suavizado también en la imagen */
+  transition: transform 0.3s ease; 
+  object-fit: contain;
+}
+
+/* Tablet (Solo afecta a brand-item dentro de esta sección) */
+@media (max-width: 1024px) {
+  .featured-brands-section .brand-item {
+    flex-basis: calc(25% - 12px);
+    max-width: calc(25% - 12px);
+  }
+}
+
+/* --- SOLO PARA MOVILES (≤ 480px) --- */
+@media (max-width: 480px) {
+  /* En móvil solemos quitar el borde hover porque no hay puntero, 
+     pero si quieres que se vea al tocarlo, se mantiene igual */
+  .featured-brands-section .phone-brand-link {
+    display: flex !important;
+    justify-content: center;
+    align-items: center;
+    height: 140px; 
+    border: 2px solid transparent;
+    border-radius: 20px;
+    transition: all 0.3s ease;
+  }
+
+  .featured-brands-section .phone-brand-link:active {
+    border-color: #135eab;
+    transform: scale(0.95);
+  }
+
+  .featured-brands-section .phone-brand-img {
+    max-width: 140px; 
+    max-height: 140px;
+    object-fit: contain;
+  }
+}

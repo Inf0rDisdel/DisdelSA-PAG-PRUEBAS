@@ -1,0 +1,147 @@
+.main-container {
+  max-width: 1200px;
+  margin: 10px auto;
+  display: flex;
+  gap: 20px;
+  height: 320px; 
+}
+
+.banners-container {
+  width: 55%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px; 
+}
+
+.banner-item {
+  flex: 1;
+  border-radius: 8px;
+  overflow: hidden;
+  height: 50%;
+}
+
+.banner-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.slider-container {
+  width: 45%; 
+  display: flex;
+  flex-direction: column;
+  gap: 10px; 
+}
+
+.carousel-wrapper {
+  flex: 2;
+  border-radius: 8px;
+  overflow: hidden;
+  position: relative;
+}
+
+.whatsapp-banner {
+  flex: 1;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.whatsapp-banner img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.carousel-wrapper .carousel-slider,
+.carousel-wrapper .carousel,
+.carousel-wrapper .carousel .slider-wrapper,
+.carousel-wrapper .carousel .slider,
+.carousel-wrapper .carousel .slide,
+.carousel-wrapper .carousel .slide > div {
+  height: 100%; 
+}
+
+.carousel-wrapper .carousel .slide img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.carousel .slide .legend {
+  display: none;
+}
+
+.carousel .control-dots {
+  position: absolute;
+  bottom: 15px;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  list-style: none;
+  z-index: 1;
+}
+
+.carousel .control-dots .dot {
+  background: #ccc !important;
+  box-shadow: none !important;
+  width: 10px !important;
+  height: 10px !important;
+  border-radius: 50%;
+  margin: 0 5px !important;
+}
+
+.carousel .control-dots .dot.selected {
+  background: #333 !important;
+}
+
+
+@media (max-width: 800px) {
+  
+  /* 1. Aseguramos que el contenedor principal ocupe todo el ancho */
+  .main-container {
+    height: auto;       
+    display: flex;      /* Cambiamos a flex para controlar mejor el ancho */
+    flex-direction: column;
+    width: 100%;
+    max-width: 100%;
+    padding: 0;         /* Quitamos el padding lateral para que el banner toque los bordes */
+    margin: 10px 0;     /* Margen arriba y abajo solamente */
+    gap: 15px;
+  }
+
+  /* 2. Forzamos a que el contenedor de banners sea del 100% */
+  .banners-container {
+    width: 100% !important;
+    padding: 0 10px;    /* Si quieres un pequeño espacio a los lados, déjalo aquí */
+    box-sizing: border-box;
+  }
+
+  /* 3. Ajustamos cada item de banner */
+  .banner-item {
+    width: 100%;
+    height: auto;       /* Dejamos que la altura sea automática según la imagen */
+    min-height: 120px;  /* Altura mínima para que no se vea vacío */
+    border-radius: 12px;
+  }
+
+  .banner-item img {
+    width: 100%;        /* 🔥 IMPORTANTE: Fuerza a la imagen a llenar el ancho */
+    height: auto;
+    display: block;
+    object-fit: cover;  /* Mantiene la proporción sin deformar */
+  }
+
+  /* 4. Ocultamos el slider principal en móvil si así lo deseas */
+  .slider-container {
+    display: none;
+  }
+
+  /* Si decides mostrarlo, usa esta configuración: */
+  .carousel-wrapper {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 16 / 9;
+  }
+}

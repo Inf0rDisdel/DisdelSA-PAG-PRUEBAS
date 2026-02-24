@@ -1,0 +1,178 @@
+.cart-item-wrapper {
+  display: grid;
+  /* Ajustamos las columnas para que se vean mejor distribuidas en PC */
+  grid-template-columns: auto 2fr 1fr auto auto; 
+  align-items: center;
+  gap: 2rem;
+  padding: 1.5rem;
+  background-color: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.07);
+  transition: all 0.3s ease;
+  position: relative; /* Necesario para posicionar el botón de borrar en móvil */
+}
+
+.cart-item-wrapper:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.1);
+}
+
+.item-image {
+  width: 90px;
+  height: 90px;
+  object-fit: contain;
+  border-radius: 12px;
+  background-color: #f8f9fa;
+  padding: 5px;
+}
+
+.item-info { 
+  text-align: left; 
+}
+
+.info-label { 
+  font-size: 0.8rem; 
+  color: #6c757d; 
+  margin-bottom: 0.25rem; 
+  display: block; 
+}
+
+.item-name { 
+  font-size: 1.1rem; 
+  font-weight: 600; 
+  color: #2d3748; 
+  margin: 0; 
+  line-height: 1.2;
+}
+
+.item-id, .item-packaging { 
+  font-size: 0.9rem; 
+  color: #718096; 
+  margin: 0; 
+}
+
+/* Controles de Cantidad */
+.quantity-control { 
+  display: flex; 
+  align-items: center; 
+  justify-content: center; 
+  gap: 0.8rem; 
+  background-color: #f8f9fa;
+  padding: 5px 10px;
+  border-radius: 20px;
+}
+
+.quantity-btn { 
+  background: white; 
+  border: 1px solid #e2e8f0; 
+  border-radius: 50%; 
+  width: 28px; 
+  height: 28px; 
+  display: flex; 
+  align-items: center; 
+  justify-content: center; 
+  cursor: pointer; 
+  color: #495057; 
+  transition: all 0.2s ease; 
+}
+
+.quantity-btn:hover:not(:disabled) { 
+  background: #0071dc; 
+  color: white;
+  border-color: #0071dc;
+}
+
+.quantity-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.quantity-display { 
+  font-size: 1rem; 
+  font-weight: 600; 
+  min-width: 20px;
+  text-align: center;
+}
+
+/* Botón de borrar */
+.delete-btn { 
+  background: transparent; 
+  border: none; 
+  color: #adb5bd; 
+  cursor: pointer; 
+  padding: 0.5rem; 
+  border-radius: 50%; 
+  transition: all 0.2s ease; 
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.delete-btn:hover { 
+  color: #e03131; 
+  background: #fff5f5; 
+}
+
+
+/* =========================================
+   DISEÑO RESPONSIVO (MÓVIL Y TABLET)
+   ========================================= */
+
+@media (max-width: 768px) {
+  .cart-item-wrapper {
+    /* Cambiamos a solo 2 columnas: Imagen a la izquierda, Info a la derecha */
+    grid-template-columns: auto 1fr;
+    grid-template-rows: auto;
+    gap: 10px;
+    padding: 1rem;
+    align-items: start; /* Alineamos todo arriba */
+  }
+
+  /* 1. La imagen se queda a la izquierda */
+  .item-image {
+    width: 70px;
+    height: 70px;
+    grid-row: 1 / span 3; /* Ocupa espacio verticalmente */
+  }
+
+  /* 2. Ocultamos etiquetas como "Descripción" y "Empaque" para ahorrar espacio */
+  .info-label {
+    display: none;
+  }
+
+  /* 3. Ajustamos el título y descripción */
+  .item-info {
+    padding-right: 25px; /* Espacio para que no choque con el botón borrar */
+  }
+  
+  .item-name {
+    font-size: 1rem;
+    margin-bottom: 4px;
+  }
+
+  /* 4. El Empaque lo ponemos más pequeño debajo del nombre */
+  .item-info:nth-child(3) {
+    /* El div del empaque */
+    grid-column: 2;
+    margin-top: -5px;
+  }
+
+  /* 5. Los controles de cantidad abajo a la derecha */
+  .quantity-control {
+    grid-column: 2;
+    width: fit-content; /* Que no ocupe todo el ancho */
+    margin-top: 5px;
+    justify-content: flex-start; /* Alineado a la izquierda */
+    background: transparent;
+    padding: 0;
+  }
+
+  /* 6. El botón de borrar: Posición Absoluta arriba a la derecha */
+  .delete-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    padding: 5px;
+    color: #ff6b6b; /* Un poco más rojo en móvil para que se vea */
+  }
+}

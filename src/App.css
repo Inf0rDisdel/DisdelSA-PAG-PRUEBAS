@@ -1,0 +1,26 @@
+/* src/App.css */
+
+/* --- Contenedor Global de la Aplicación --- */
+.App {
+  display: flex;
+  flex-direction: column; /* Apila Header, Main, Footer, etc., uno encima del otro */
+  min-height: 100vh;      /* Asegura que la app ocupe al menos toda la altura de la pantalla */
+}
+
+/* --- Contenedor del Contenido Principal --- */
+/* Esta regla es para cualquier <main> que tengas dentro de tu App.js,
+   lo que ayuda a que el footer se mantenga abajo. */
+.App main {
+  flex: 1 0 auto;  /* Permite que esta sección CREZCA para empujar el footer hacia abajo */
+  width: 100%;
+}
+
+/* --- Estilo para el "Escudo" del Carrusel --- */
+/* (Este lo tenías antes, es específico de tu app y está bien que esté aquí) */
+.carousel-wrapper {
+  width: 100%;
+  padding: 0 10px;
+  box-sizing: border-box;
+}
+
+/* ... (Aquí pueden ir tus otros estilos de .App-header, etc.) ... */
