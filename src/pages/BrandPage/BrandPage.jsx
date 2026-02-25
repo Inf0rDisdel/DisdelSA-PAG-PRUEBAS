@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react'; 
 import { useParams, Link, useLocation } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import { FiChevronLeft, FiChevronRight } from 'react-icons/fi';
 import './BrandPage.css';
 
@@ -32,6 +33,7 @@ const BrandPage = () => {
   const { slug } = useParams();
 
   const cleanSlug = slug ? slug.replace(/\/$/, "").trim() : '';
+  const canonicalSlug = cleanSlug.toLowerCase(); // Para SEO
 
   const location = useLocation();
   const addItem = useCartStore((state) => state.addItem);
@@ -60,6 +62,8 @@ const BrandPage = () => {
   }, [menuData, cleanSlug]);
   
   const visualConfig = brandConfig[cleanSlug.toLowerCase()] || brandConfig[slug] || { banner: null, bannerMob: null, color: "#135eab" };
+  const brandNameOfficial = visualConfig.name || currentBrandSegment?.NombreSegmento || slug;
+
 
   useEffect(() => {
     if (currentBrandSegment && currentBrandSegment.Categorias?.length > 0) {
@@ -80,6 +84,7 @@ const BrandPage = () => {
       if (activeCatId && norm(prod.IdCategoria) !== norm(activeCatId)) return false;
       return true;
     });
+    
     const uniqueProducts = [];
     const seenIds = new Set();
     filtered.forEach(prod => {
@@ -91,6 +96,36 @@ const BrandPage = () => {
     return uniqueProducts;
   }, [productsData, currentBrandSegment, activeCatId]);
 
+  // --- SCHEMA DINÁMICO ---
+  const brandSchema = useMemo(() => {
+    return {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "BreadcrumbList",
+          "itemListElement": [
+            { "@type": "ListItem", "position": 1, "name": "Inicio", "item": "https://www.disdelsa.com/" },
+            { "@type": "ListItem", "position": 2, "name": brandNameOfficial, "item": `https://www.disdelsa.com/marca/${canonicalSlug}` }
+          ]
+        },
+        {
+          "@type": "CollectionPage",
+          "name": `Catálogo de productos ${brandNameOfficial}`,
+          "description": `Distribuidor autorizado de ${brandNameOfficial} en Guatemala. Cotiza en línea.`,
+          "url": `https://www.disdelsa.com/marca/${canonicalSlug}`,
+          "mainEntity": {
+            "@type": "ItemList",
+            "itemListElement": filteredProducts.slice(0, 20).map((prod, index) => ({
+              "@type": "ListItem",
+              "position": index + 1,
+              "url": `https://www.disdelsa.com/producto/${prod.IdProducto}`
+            }))
+          }
+        }
+      ]
+    };
+  }, [filteredProducts, brandNameOfficial, canonicalSlug]);
+
   const handleScroll = (direction) => {
     if (scrollRef.current) {
       const { scrollLeft } = scrollRef.current;
@@ -100,6 +135,7 @@ const BrandPage = () => {
   };
 
   if (loadingMenu || loadingProducts) {
+    
     return (
       <div className="brand-container">
         <div className="skeleton-shimmer" style={{width: '100%', height: isMobile ? '180px' : '280px', marginBottom: '30px'}}></div>
@@ -146,14 +182,26 @@ const BrandPage = () => {
  
   return (
     <div className="brand-container" style={{ '--brand-color': visualConfig.color }}>
+
+      <Helmet>
+        <title>{`Productos ${brandNameOfficial} Guatemala | Distribuidor Disdel`}</title>
+        <meta name="description" content={`Catálogo completo de ${brandNameOfficial} en Guatemala. Encuentra los mejores precios y suministros para tu empresa en Disdel.`} />
+        <link rel="canonical" href={`https://www.disdelsa.com/marca/${canonicalSlug}`} />
+        <script type="application/ld+json">{JSON.stringify(brandSchema)}</script>
+        {/* Open Graph */}
+        <meta property="og:title" content={`Catálogo ${brandNameOfficial} - Disdel`} />
+        <meta property="og:image" content={visualConfig.banner ? visualConfig.banner : defaultImage} />
+        <meta property="og:url" content={`https://www.disdelsa.com/marca/${canonicalSlug}`} />
+      </Helmet>
+
       <div className="brand-hero">
         {isMobile && visualConfig.bannerMob ? (
-          <img src={visualConfig.bannerMob} alt={currentBrandSegment.NombreSegmento} className='banner-fade-in' />
+          <img src={visualConfig.bannerMob} alt={brandNameOfficial} className='banner-fade-in' />
         ) : visualConfig.banner ? (
-          <img src={visualConfig.banner} alt={currentBrandSegment.NombreSegmento} className='banner-fade-in' />
+          <img src={visualConfig.banner} alt={brandNameOfficial} className='banner-fade-in' />
         ) : (
            <div className="brand-hero-fallback" style={{ background: visualConfig.color }}>
-            <h1>{currentBrandSegment.NombreSegmento}</h1>
+            <h1>{brandNameOfficial}</h1>
           </div>
         )}
       </div>
@@ -187,16 +235,28 @@ const BrandPage = () => {
 
         <main className="products-area">
           <div className="grid-container">
-            {filteredProducts.map((prod) => (
+            {filteredProducts.map((prod, index) => (
                 <div className="product-card" key={prod.IdProducto}>
                   <div className="cat-id-badge">ID: {prod.IdProducto}</div>
+
                   <Link to={`/producto/${prod.IdProducto}`} className="prod-link-wrapper">
                       <div className="prod-img-container">
-                        <img src={prod.Imagen ? `${AppConfig.baseImageUrl}productos/${prod.Imagen}` : defaultImage} alt={prod.Descripcion} loading="lazy" />
+                        <img src={prod.Imagen ? `${AppConfig.baseImageUrl}productos/${prod.Imagen}` : defaultImage} 
+                        alt={prod.Descripcion} 
+                        // 🔥 TRUCOS DE VELOCIDAD MÓVIL (OPCIÓN B):
+                        // Si es uno de los primeros 4, carga de inmediato, si no, que espere.
+                        loading={index < 4 ? "eager" : "lazy"} 
+                        // Prioridad alta para los que el usuario ve primero
+                        fetchpriority={index < 4 ? "high" : "auto"}
+                        // Dimensiones fijas para que la página no "brinque" (CLS)
+                        width="200"
+                        height="200"
+                      />
                       </div>
                       <div className="prod-category-label">{prod.Categoria}</div>
                       <div className="prod-title-text">{prod.Descripcion}</div>
                   </Link>
+
                   <button className="btn-details-brand" onClick={() => {
                       const defaultPresentation = prod.Unidad || prod.Empaque || 'Unidad';
                       addItem({

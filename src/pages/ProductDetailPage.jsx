@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Helmet } from 'react-helmet-async';
-import { toast } from 'react-hot-toast'; 
+import { Helmet } from 'react-helmet-async'; 
 
 import { AppConfig } from 'config/AppConfig';
 import useCartStore from 'store/useCartStore';
@@ -15,12 +14,14 @@ import defaultImage from 'assets/images/categories/KCP.jpg';
 
 const ProductDetailPage = () => {
   const { id } = useParams();
-  
-  const cleanId = id.replace(/\/$/, "").trim().toUpperCase();
-
   const navigate = useNavigate();
   const addItem = useCartStore((state) => state.addItem);
 
+  // 1. LIMPIEZA DE ID (Para la API usamos Mayúsculas, para SEO Minúsculas)
+  const cleanId = id ? id.replace(/\/$/, "").trim().toUpperCase() : "";
+  const canonicalId = id ? id.replace(/\/$/, "").trim().toLowerCase() : "";
+
+   // Hook personalizado para traer datos
   const { data: product, isLoading, isError } = useProductDetail(cleanId);
 
   const [selectedImage, setSelectedImage] = useState(null);
@@ -50,81 +51,86 @@ const ProductDetailPage = () => {
       "name": product.Descripcion,
       "image": [getImageUrl(product.Imagen)],
       "description": `Cotiza ${product.Descripcion} en Disdel. Suministros profesionales con entrega en toda Guatemala.`,
-      "sku": product.IdProducto,
+      "sku": product.IdProducto, // El SKU puede ir en mayúsculas, no hay problema
       "brand": { "@type": "Brand", "name": product.Marca || "Disdel" },
+      "offers": {
+        "@type": "Offer",
+        "url": `https://www.disdelsa.com/producto/${canonicalId}`,
+        "availability": "https://schema.org/InStock",
+        "priceCurrency": "GTQ",
+        "price": "0.00" // Ojo: Google pide precio, si es cotización pon 0 o gestiona "AggregateOffer"
+      }
     };
-  }, [product]);
+  }, [product, canonicalId]);
 
   const hasDifferentOptions = useMemo(() => {
     if (!product || !product.Unidad || !product.Empaque) return false;
     return product.Unidad.trim().toLowerCase() !== product.Empaque.trim().toLowerCase();
   }, [product]);
 
-  // --- 3. EFECTOS (Manejo de Carga y Rescate) ---
+  // 1. Normalización de URL (UX/SEO): Si la URL tiene mayúsculas, la cambiamos visualmente a minúsculas
   useEffect(() => {
-    // Si el ID de Google no existe, rescatamos mandando a búsqueda
-    if (isError && id) {
-        console.warn("Producto no encontrado, redirigiendo a búsqueda...");
-        navigate(`/buscar?q=${id}`, { replace: true });
-        return;
+    if (id && id !== id.toLowerCase()) {
+      const newPath = `/producto/${id.toLowerCase()}`;
+      // Reemplaza la entrada en el historial para no romper el botón "Atrás"
+      navigate(newPath, { replace: true });
     }
+  }, [id, navigate]);
 
+  // 2. Manejo de Errores y Redirección de Rescate
+  useEffect(() => {
+    if (isError && cleanId) {
+        console.warn("Producto no encontrado, redirigiendo a búsqueda...");
+        navigate(`/buscar?q=${cleanId}`, { replace: true });
+    }
+  }, [isError, cleanId, navigate]);
+
+  // 3. Selección inicial de opciones
+  useEffect(() => {
     if (product) {
         if (!selectedImage) setSelectedImage(product.Imagen);
-        
         if (!selectedUnit) {
             setSelectedUnit(product.Unidad || product.Empaque || 'Unidad');
             setSelectedType(product.Unidad ? 'Y' : 'N');
         }
     }
-  }, [product, isError, id, navigate, selectedImage, selectedUnit]);
+  }, [product, selectedImage, selectedUnit]);
 
   // --- 4. FUNCIONES DE ACCIÓN ---
   const handleAddToCart = () => {
+    if (!product) return;
     addItem({ 
         ...product, 
         presentationSelected: selectedUnit, 
         unitType: selectedType 
     });
-    toast.success("Agregado a la cotización");
+    /*toast.success("Agregado a la cotización");*/
   };
 
-   useEffect(() => {
-    if (isError && id) {
-      navigate(`/buscar?q=${id}`, { replace: true });
-      return;
-    }
-
-    if(product) {
-      //Solo cambiamos si no hay una imagen seleccionada actualmente
-      if (!selectedImage) setSelectedImage(product.Imagen);
-
-      if (!selectedUnit) {
-        setSelectedUnit(product.Unidad || product.Empaque || 'Unidad');
-        setSelectedType(product.Unidad ? 'Y' : 'N');
-      }
-    }
-  }, [product, isError, id,navigate,selectedImage, selectedUnit]);
-
-
+    // --- RENDERIZADO ---
   if (isLoading) return <div className="pdp-loading"><div className="spinner"></div></div>;
-  if (isError || !product) return null;
+  
+  // Evitamos pantalla blanca total retornando un div vacío mientras redirige el useEffect
+  if (isError || !product) return <div className="pdp-container" style={{minHeight: '50vh'}}></div>;
 
   return (
     <div className="pdp-container">
     <Helmet>
   {/* 1. Básico y SEO de Google */}
   <title>{`${product.Descripcion} | Disdel`}</title>
-  <link rel="preload" as="image" href={getImageUrl(selectedImage || product.Imagen)} />
+  {/* 🔥 FIX: Canonical SIEMPRE en minúsculas y HTTPS explícito */}
+  <link rel="canonical" href={`https://www.disdelsa.com/producto/${canonicalId}`} />
   <meta name="description" content={`Compra ${product.Descripcion} al mejor precio en Disdel. Suministros de limpieza profesional en Guatemala.`} />
- <link rel="canonical" href={`https://www.disdelsa.com/producto/${product.IdProducto}`} />
+  <link rel="preload" as="image" href={getImageUrl(selectedImage || product.Imagen)} />
+  
+
 
   {/* 2. Open Graph / Facebook / WhatsApp (Para que se vea la foto al compartir el link) */}
   <meta property="og:type" content="product" />
   <meta property="og:title" content={`${product.Descripcion} | Disdel`} />
   <meta property="og:description" content={`Adquiere ${product.Descripcion} en nuestra tienda en línea. Calidad profesional garantizada.`} />
   <meta property="og:image" content={product.Imagen ? `${AppConfig.baseImageUrl}productos/${product.Imagen}` : 'URL_DE_TU_LOGO_POR_DEFECTO'} />
-  <meta property="og:url" content={`https://www.disdelsa.com/producto/${product.IdProducto}`} />
+  <meta property="og:url" content={`https://www.disdelsa.com/producto/${canonicalId}`} />
   <meta property="og:site_name" content="Disdel" />
 
   {/* 3. Twitter Card */}
@@ -150,15 +156,16 @@ const ProductDetailPage = () => {
                     src={getImageUrl(selectedImage || product.Imagen)} 
                     alt={product.Descripcion} 
                     className="pdp-main-img" 
-                    fetchpriority="high" // 🔥 Le dice a Chrome: "Baja esta imagen YA"
-                    loading="eager" // 🔥 Desactiva el lazy loading solo para esta imagen
+                    width="500" height="500" // Ayuda al CLS
+                    fetchpriority="high"
+                    loading="eager"
                 />  
             </div>
             {productImages.length > 1 && (
                 <div className="pdp-thumbnails">
                     {productImages.map((img, index) => (
                         <div key={index} className={`pdp-thumb ${selectedImage === img ? 'active' : ''}`} onClick={() => setSelectedImage(img)}>
-                            <img src={getImageUrl(img)} alt="thumb" loading='lazy'/>
+                            <img src={getImageUrl(img)} alt={`Vista ${index + 1}`} loading='lazy'/>
                         </div>
                     ))}
                 </div>

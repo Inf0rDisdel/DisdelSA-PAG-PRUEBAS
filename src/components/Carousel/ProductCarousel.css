@@ -1,317 +1,91 @@
-
-.product-carousel-container {
+/* --- CONTENEDOR DEL CARRUSEL --- */
+.product-carousel-container {/*-------PARA COREJIR--------*/
   width: 100%;
-  /* ANTES TENÍAS: height: 370px;  <-- ESTO ES LO QUE BLOQUEA */
-  /* CÁMBIALO POR ESTO: */
-  min-height: 400px; 
-  height: auto;      /* Deja que crezca si el contenido es grande */
-  
+  min-height: 500px; /* Aumentamos para PC */
+  height: auto;
   max-width: 1200px;
-  margin: 5px auto;
-  padding: 10px 50px;
+  margin: 20px auto;
+  padding: 10px 40px 40px 40px; 
   box-sizing: border-box;
   position: relative;
-  background-color: #ffffff; 
-  background-size: cover; 
-  background-position: center; 
-  background-repeat: no-repeat; 
+  background-color: #ffffff;
   border-radius: 10px;
+  /* Permitimos que se vea lo que sobresale (sombras y botones) */
 }
 
-.carousel-title {
-   display: inline-block;
-  padding: 3px 20px;
+/* 🔥 FIX MAESTRO: Evita que el carrusel corte los botones abajo */
+.product-carousel-container .slick-list {/*-------PARA COREJIR------*/
+  padding-bottom: 30px !important; 
+}
+
+.carousel-title {/*-----PARA CORREJIR-----*/
+  display: inline-block;
+  padding: 6px 24px;
   background-color: white;
   border: 1px solid #b4dbed;
   border-radius: 50px;
-  box-shadow: 0 4px 10px rgba(49, 48, 48, 0.05);
-  margin-bottom: 10px;
-  font-size: 1.3rem;
-  /*font-weight: bold;*/
-  /* font-family: Arial Black, sans-serif;*/
+  margin-bottom: 25px;
+  font-size: 1.1rem;
+  font-weight: 700;
   color: #135eab;
 }
-.slick-slide > div {
-  padding: 0 12px;
-  box-sizing: border-box;
-  height: 100%;
+
+/* --- FLECHAS VERDES (Z-INDEX ALTO) ---COREJIR */
+.slick-prev, .slick-next {
+  width: 45px;
+  height: 45px;
+  z-index: 100 !important; /* 🔥 Súper alto para que las tarjetas no la tapen */
+  top: 45%;
 }
-.slick-list {
-  margin: 0 -12px;
+
+.slick-prev:before, .slick-next:before {
+  font-family: 'slick';
+  font-size: 35px; /* Flechas más imponentes */
+  color: #96c121 !important;
+  opacity: 1;
+}
+
+.slick-track {
+display: flex !important;
+align-items: stretch;
 }
 .slick-slide {
-  height: auto;
-  display: flex;
+height: inherit !important;
+display: flex !important;
+justify-content: center;
 }
-.product-card {
-  border: 0.5px solid #ffffff;
-  border-radius: 20px;
-  background-color: #ffffff;
-  padding:5px;
-  height: 300px;
-  width: 100%;
-  position: relative;
-  display: flex !important;
-  flex-direction: column;
-  box-shadow: 0 4px 12px rgba(255, 255, 255, 0.05);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-.product-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
-}
-.product-image {
-  width: 100%;
-  height: 130px;
-  object-fit: contain;
-  margin-bottom: 20px;
-}
-.product-name, .product-disdel-id, .add-cart-button {
-  display: flex;
-  visibility: visible;
-}
-.product-name {
-  flex-grow: 1;
-  font-size: 14px;
-  /*font-weight: 600;*/
-  color: #333;
-  line-height: 1.4;
-  text-align: center;
-  margin: 0 auto 10px auto;
-  min-height: 40px;
-  align-items: center;
-  justify-content: center;
-}
-.product-disdel-id {
-  font-size: 13px;
-  color: #4e5665;
-  /*font-weight: bold;*/
-  margin: 0 0 12px 0;
-  padding: 0;
-  text-align: center;
-  justify-content: center;
-}
-.add-cart-button {
-  background-color: #0056b3;
-  color: white;
-  margin-left: 60px;
-  border: none;
-  border-radius: 8px;
-  padding: 10px 0;
-  width: 50%;
-  font-size: 1rem;
-  /*font-weight: bold;*/
-  cursor: pointer;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  margin-top: auto;
+.slick-slide > div {
+width: 100%;
+display: flex;
+padding: 10px 8px;
 }
 
 
-.slick-arrow, .slick-dots { display: block !important; }
-.slick-arrow { width: 40px; height: 40px; border-radius: 50%; background-color: rgb(255, 255, 255) !important; z-index: 20; }
-.slick-arrow:before { font-size: 20px; color: #135eab !important; }
-.slick-prev { left: -50px; }
-.slick-next { right:-50px; }
-.slick-dots { bottom: -40px; }
-.slick-dots li button:before { font-size: 12px; color: #ffffff;  }
-.slick-dots li.slick-active button:before { color: #96c121 !important; }
+/* --- RESPONSIVO --- */
 
-@media (max-width: 780px) {
-
-.slick-track{
-  display: flex;
+@media (max-width: 800px) {
+  .product-carousel-container {
+    padding: 10px 20px;
+    min-height: 460px; /* 👈 Subimos de 380 a 460 para que quepa todo */
+  }
+  .slick-prev { left: -10px; }
+  .slick-next { right: -10px; }
 }
 
+@media (max-width: 480px) {
 .product-carousel-container {
-  width: 100%;
-  min-height: auto;
-  height: auto;
-  margin: 10px auto;
-  padding: 10px 10px; /* MENOS padding */
-  box-sizing: border-box;
-  position: relative;
-  background-color: #ffffff;
-  border-radius: 10px;
+padding: 10px 10px 50px 10px; /* Casi nada de espacio lateral en móvil */
+min-height: 380px;
+overflow: visible !important; 
+}
+.carousel-title {
+font-size: 0.95rem;
+margin-left: 5px;
 }
 
-/* SLIDE */
-.slick-slide {
-  height: auto !important;
+.slick-track {
   display: flex !important;
-  align-items: stretch !important;
-  padding: 0 5px;
-}
-.slick-slide > div {
-  display: flex;
-  flex: 1;
-  width: 100%;
+  align-items: stretch; /* Obliga a que todas midan lo mismo */
 }
 
-  .product-card {
-    display: flex !important;
-    flex-direction: column !important;
-    
-    /* 🔥 CAMBIO CLAVE: Altura al 100% para llenar el hueco del slide */
-    height: 100% !important; 
-    width: 100% !important;
-
-    padding: 10px 10px !important; /* Un poco más de aire interno */
-    margin-bottom: 10px !important;
-    
-    /* 🔥 CAMBIO: Usamos flex-start, pero el botón lo empujaremos luego */
-    justify-content: flex-start !important; 
-    gap: 8px !important;
-
-    /* Opcional: Una sombra suave hace que se vea más pro */
-    box-shadow: 0 2px 8px rgba(0,0,0,0.05); 
-    border-radius: 10px; /* Bordes redondeados en la tarjeta */
-    border: 1px solid #f0f0f0; /* Borde sutil */
-  }
-/* IMAGEN – Más grande, pero sin dejar huecos */
-.product-image {
-  height: 120px !important; 
-  width: 100% !important;
-  object-fit: contain !important;
-  margin-bottom: 5px !important;
-
-}
-
-/* NOMBRE DEL PRODUCTO – Ajustado */
-.product-name {
-  color: #000 !important;
-  font-size: 12px !important;
-  font-weight: 600 !important;
-  text-align: center !important;
-
-  margin: 0 !important;
-  min-height: auto !important; /* ❗ Quitamos el espacio forzado */
-  line-height: 1.2 !important;
-  white-space: normal !important;
-  overflow: visible !important;
-}
-
-/* ID PRODUCTO */
-.product-disdel-id {
-  color: #135eab !important;
-  font-size: 11px !important;
-  margin: 0 !important;
-  text-align: center !important;
-}
-
- .add-cart-button {
-  width: 80%;
-  padding: 12px 0;
-  background-color: #0056b3;
-  margin-left: 15px;
-  color: #fff;
-  font-weight: bold;
-  border-radius: 8px;
-  border: none;
-
-  /* 🔥 Arreglo principal */
-  display: block;            /* Evita deformaciones */
-  margin-top: auto;          /* Lo empuja hacia abajo sin romper */
-  flex-shrink: 0;            /* No permite que se achique raro */
-}
-
-/* FLECHAS */
-.slick-arrow {
-  width: 24px !important;
-  height: 24px !important;
-  top: 50% !important; /* 🔼 un poco más arriba */
-  background-color: #f3f3f3 !important;
-  display: flex !important;
-  align-items: center;
-  justify-content: center;
-}
-.slick-prev { left: 2px !important; }
-.slick-next { right: 2px !important; }
-
-/* PUNTOS */
-.slick-dots { bottom: -25px !important; }
-.slick-dots li button:before { font-size: 10px !important; }
-}
-
-@media (max-width: 468px) {
-  /* Slick base */
-  .slick-track {
-    display: flex !important;
-  }
-
-  .slick-slide {
-    padding-bottom: 8px;
-  }
-
-  .slick-slide > div {
-    display: flex !important;
-    height: auto !important;
-  }
-
-  .slick-list {
-    overflow: visible !important;
-  }
-
-  /* CARD */
-  .product-carousel-container .product-card {
-
-    min-height: 360px !important;
-
-    display: flex !important;
-    flex-direction: column !important;
-
-    padding: 0 !important;
-    gap: 8px !important;
-
-    overflow: visible !important;
-  }
-
-  /* LINK CONTENEDOR REAL */
-  .product-carousel-container .product_link {
-    display: flex !important;
-    flex-direction: column !important;
-    align-items: center !important;
-
-    flex-grow: 0 !important;   /* 🔥 NO estirar */
-    text-decoration: none;
-  }
-
-  /* IMAGEN */
-  .product-image {
-    height: 95px !important;
-    width: 100% !important;
-    object-fit: contain !important;
-    margin-bottom: 0 !important;
-  }
-
-  /* TEXTO */
-  .product-name {
-    font-size: 12px !important;
-    text-align: center !important;
-    white-space: normal !important;
-  }
-
-  .product-disdel-id {
-    display: block !important;
-    font-size: 11px !important;
-    color: #135eab !important;
-    text-align: center !important;
-  }
-
-  /* BOTÓN */
-  .product-carousel-container .add-cart-button {
-    margin-top: auto !important;  /* 🔥 siempre abajo */
-    align-self: center !important;
-
-    width: 75% !important;
-    padding: 10px 0 !important;
-
-    display: flex !important;
-    justify-content: center !important;
-    align-items: center !important;
-  }
-  .carousel-title{
-    font-size: 16px;
-  }
 }

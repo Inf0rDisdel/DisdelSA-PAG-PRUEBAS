@@ -7,7 +7,6 @@ import LoginPage from '../pages/login/LoginPage';
 import MyBusinessPage from '../pages/my-business/MyBusinessPage';
 import CartPage from 'pages/cart/CartPages'; 
 import ProductDetailPage from 'pages/ProductDetailPage';
-import CategoryDetail from '../pages/CategoryDetail/CategoryDetail';
 import SearchResultsPage from 'pages/SearchResults/SearchResultsPage';
 
 import CategoryPage from '../pages/CategoryPage'; 
@@ -27,7 +26,6 @@ const AppRouter = () => {
     <Routes>
       <Route path="/" element={<HomePage />} />
       <Route path="/producto/:id" element={<ProductDetailPage />} />
-       <Route path="/producto/:id/" element={<ProductDetailPage />} /> {/* <--- ACEPTA CON BARRA */}
       <Route path="/buscar" element={<SearchResultsPage />} />
 
        {/* 🔥 NUEVO: Rescate de Soft 404 de Categorías */}
@@ -66,7 +64,6 @@ const AppRouter = () => {
 
       {/* --- RUTAS ACTUALES --- */}
       <Route path="/categoria/:slug" element={<CategoryPage />} />
-      <Route path="/seccion/:categorySlug" element={<CategoryDetail />} />
       <Route path="/marca/:slug" element={<BrandPage />} />
       <Route path="/carrito" element={<CartPage />} />
       <Route path="/login" element={<LoginPage />} />
