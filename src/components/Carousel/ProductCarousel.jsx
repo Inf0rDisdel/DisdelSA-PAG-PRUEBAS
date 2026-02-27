@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom'; 
 import Slider from 'react-slick';
 import "slick-carousel/slick/slick.css"; 
 import "slick-carousel/slick/slick-theme.css";
 import './ProductCarousel.css';
+import ProductCard from 'components/ui/ProductCard/ProductCard';
 import fondoImagen from 'assets/icons/FONDO-BLANCO.jpg';
 
 const ProductCarousel = ({ title, products = [],isLoading, addToCart, variant = '' }) => {
@@ -26,10 +27,10 @@ const ProductCarousel = ({ title, products = [],isLoading, addToCart, variant = 
   };
 
   const settings = {
-    dots: true,
-    infinite: products && products.length > 4, 
+    dots: false,
+    infinite: products && products.length > 5, 
     speed: 500,
-    slidesToShow: 4, 
+    slidesToShow: 5, 
     slidesToScroll: 1,
     responsive: [
       {
@@ -43,14 +44,17 @@ const ProductCarousel = ({ title, products = [],isLoading, addToCart, variant = 
         }
       },
       {
-        breakpoint: 600, 
+        breakpoint: 480, 
         settings: {
           slidesToShow: 2, 
-          slidesToScroll: 2,
+          slidesToScroll: 1,
           dots: false,
-          arrows: false
+          arrows: false,
+          infinite:products && products.length>2,
+          adaptiveHeight: false
         }
-      }
+      },
+      
     ]
   };
 
@@ -58,47 +62,19 @@ const ProductCarousel = ({ title, products = [],isLoading, addToCart, variant = 
     return null; 
   }
 
-  return (
+   return (
     <div className={`product-carousel-container ${variant}`}
-      style={{ 
-        backgroundImage: `url(${fondoImagen})`,
-        backgroundColor: '#ffffff' 
-      }} 
+      style={{ backgroundImage: `url(${fondoImagen})` }} 
     >
       <h2 className="carousel-title">{title}</h2>
       <Slider {...settings}>
-        {products.map((product) => {
-          if (!product || !product.id) return null; 
-          
+        {products.map((product, index) => {
+          // Validamos con IdProducto (que es el que viene de tu API)
+          if (!product || (!product.IdProducto && !product.id)) return null;
+
           return (
-            <div key={product.id}>
-              <div className="product-card">
-                
-                <Link 
-                  to={`/producto/${product.id}`} 
-                  state={{ product: product }}
-                  className='product_link'
-                  style={{ 
-                    textDecoration: 'none', 
-                    color: 'inherit', 
-                    display: 'flex',           
-                    flexDirection: 'column',   
-                    flexGrow: 1,               
-                    justifyContent: 'flex-start' 
-                  }}
-                >
-                  <img src={product.image} alt={product.name} className="product-image" />
-                  <h3 className="product-name">{product.name}</h3>
-                  <p className="product-disdel-id">{product.disdelId}</p>
-                </Link>
-                
-                <button 
-                  className="add-cart-button"
-                  onClick={() => addToCart(product)}
-                >
-                  Cotizar
-                </button>
-              </div>
+            <div key={product.IdProducto || product.id} className="carousel-item-padding">
+              <ProductCard product={product} index={index} />
             </div>
           );
         })}

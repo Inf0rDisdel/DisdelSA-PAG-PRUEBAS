@@ -1,6 +1,9 @@
 # https://www.robotstxt.org/robotstxt.html
 User-agent: *
 Allow: /
+Allow: /producto/
+Allow: /categoria/
+Allow: /marca/
 
 # No queremos que Google indexe páginas privadas o de proceso
 Disallow: /carrito

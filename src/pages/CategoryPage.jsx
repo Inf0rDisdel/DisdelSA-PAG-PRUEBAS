@@ -17,6 +17,7 @@ const CategoryPage = () => {
   const { slug } = useParams();
 
   const cleanSlug = slug ? slug.replace(/\/$/, "").trim() : '';
+  const canonicalSlug = cleanSlug.toLowerCase();
 
   const addItem = useCartStore((state) => state.addItem);
   const location = useLocation(); 
@@ -36,9 +37,7 @@ const CategoryPage = () => {
   }, []);
 
   const scrollRef = useRef(null);
-
   const norm = (id) => (id === null || id === undefined) ? '' : String(id).trim();
-  
   const createSlug = (text) => text?.toString().toLowerCase().trim()
         .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
         .replace(/ñ/g, 'n').replace(/\s+/g, '-') || '';
@@ -71,18 +70,33 @@ const CategoryPage = () => {
       });
   }, [productsData, currentSegment, activeCatId, activeSubCatId]);
 
-  const itemListSchema = useMemo(() => {
+  // --- SCHEMA AVANZADO ---
+  const categorySchema = useMemo(() => {
+    if (!currentSegment) return null;
     return {
         "@context": "https://schema.org",
-        "@type": "ItemList",
-        "numberOfItems": filteredProducts.length,
-        "itemListElement": filteredProducts.slice(0, 15).map((prod, index) => ({
-            "@type": "ListItem",
-            "position": index + 1,
-            "url": `https://www.disdelsa.com/producto/${prod.IdProducto}`
-        }))
+        "@graph": [
+            {
+                "@type": "BreadcrumbList",
+                "itemListElement": [
+                    { "@type": "ListItem", "position": 1, "name": "Inicio", "item": "https://www.disdelsa.com/" },
+                    { "@type": "ListItem", "position": 2, "name": currentSegment.NombreSegmento, "item": `https://www.disdelsa.com/categoria/${canonicalSlug}` }
+                ]
+            },
+            {
+                "@type": "ItemList",
+                "name": `Productos de ${currentSegment.NombreSegmento}`,
+                "numberOfItems": filteredProducts.length,
+                "itemListElement": filteredProducts.slice(0, 15).map((prod, index) => ({
+                    "@type": "ListItem",
+                    "position": index + 1,
+                    "url": `https://www.disdelsa.com/producto/${String(prod.IdProducto).toLowerCase()}`
+                }))
+            }
+        ]
     };
-  }, [filteredProducts]);
+  }, [filteredProducts, currentSegment, canonicalSlug]);
+
 
   useEffect(() => {
     if (currentSegment && currentSegment.Categorias?.length > 0) {
@@ -113,6 +127,10 @@ const CategoryPage = () => {
   if (loadingMenu || loadingProducts) {
     return (
       <div className="cat-master-wrapper">
+        <Helmet>
+           <title>Cargando productos... | Disdel</title>
+        </Helmet>
+
         <div className="cat-container">
           <div className="skeleton-shimmer" style={{width: '100%', height: isMobile ? '140px' : '200px', borderRadius: '16px', marginBottom: '20px'}}></div>
           <div className="cat-content-layout">
@@ -141,10 +159,11 @@ const CategoryPage = () => {
   return (
     <div className="cat-master-wrapper" style={{ '--cat-color': "#135eab" }}>
       <Helmet>
-        <title>{`${currentSegment.NombreSegmento} | Disdel`}</title>
+        <title>{`${currentSegment.NombreSegmento} | Disdel Guatemala`}</title>
         <meta name="description" content={`Encuentra los mejores productos de ${currentSegment.NombreSegmento} en Disdel S.A. Suministros de limpieza profesional en Guatemala.`} />
-        <link rel="canonical" href={`https://www.disdelsa.com/categoria/${cleanSlug}`} />
-        <script type="application/ld+json">{JSON.stringify(itemListSchema)}</script>
+        <link rel="canonical" href={`https://www.disdelsa.com/categoria/${canonicalSlug}`} />
+        {/* CORREGIDO: Usamos categorySchema, no itemListSchema */}
+        <script type="application/ld+json">{JSON.stringify(categorySchema)}</script>
       </Helmet>
       
       <div className="cat-container">
@@ -199,12 +218,19 @@ const CategoryPage = () => {
             )}
 
             <div className="cat-grid-products"> 
-              {filteredProducts.map((prod) => (
+              {filteredProducts.map((prod, index) => (
                   <div key={prod.IdProducto} className="cat-product-card">
                     <div className="cat-id-badge">ID: {prod.IdProducto}</div>
-                    <Link to={`/producto/${prod.IdProducto}`} style={{textDecoration:'none', color:'inherit'}}>
+                    <Link to={`/producto/${prod.IdProducto.toLowerCase()}`} style={{textDecoration:'none', color:'inherit'}}>
                       <div className="cat-img-wrapper">
-                        <img src={prod.Imagen ? `${AppConfig.baseImageUrl}productos/${prod.Imagen}` : defaultImage} alt={prod.Descripcion} loading="lazy" />
+                        <img src={prod.Imagen ? `${AppConfig.baseImageUrl}productos/${prod.Imagen}` : defaultImage} 
+                        alt={prod.Descripcion} 
+                        // 🔥 TRUCOS MÓVIL AQUÍ:
+                        loading={index < 4 ? "eager" : "lazy"} 
+                        fetchpriority={index < 4 ? "high" : "auto"}
+                        width="200"
+                        height="200"
+                        />
                       </div>
                       <span className="cat-card-tag">{prod.Categoria}</span>
                       <h3 className="cat-title">{prod.Descripcion}</h3>

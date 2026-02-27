@@ -1,112 +1,236 @@
 .product-card {
   background: #fff;
-  border-radius: 12px;
+  border-radius: 15px;
   border: 1px solid #f0f0f0;
-  padding: 18px;
-  position: relative;
-  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  padding: 12px;
   display: flex;
   flex-direction: column;
-  height: 100%; /* Para que todas midan lo mismo en el grid */
+  height: 100%; /* IMPORTANTE: Que use el alto del track de Slick */
+  width: 100%; 
   box-sizing: border-box;
+  transition: transform 0.3s ease;
 }
+/* --- 1. EL BADGE DEL LOGO (Aseguramos visibilidad) --- */
+.product-brand-badge {/*---PARA COREJIR----*/
+position: absolute;
+top: 5px;
+right: 5px;
+width: 38px;         /* Un poquito más grande para que se vea */
+height: 38px;
+background: transparent;
+border: none;
+display: flex;
+align-items: center;
+justify-content: center;
+z-index: 10;         /* Forzamos que esté al frente */
+pointer-events: none;
+}
+.badge-logo-img {
+width: 48%; /* Ajusta según cómo se vea tu logo */
+height: auto;
+object-fit: contain;
+filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+}
+/* --- ESTILO DE LAS FLECHAS DEL CARRUSEL --- /
+/ (Aplica estas clases si usas botones personalizados o librerías como Slick/Swiper) */
+.slick-prev:before, .slick-next:before {
+color: #96c121 !important; /* El color verde de tu imagen */
+font-size: 25px;
 
+}
+/* Si usas iconos de react-icons para las flechas */
+.carousel-arrow-icon {
+color: #96c121;
+font-size: 2rem;
+transition: transform 0.2s;
+}
 .product-card:hover {
-  transform: translateY(-8px);
-  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
-  border-color: #135eab;
+transform: translateY(-5px);
+box-shadow: 0 12px 24px rgba(0, 0, 0, 0.8);
+border-color: #135eab;
+}
+.product-status-indicator {
+position: absolute;
+top: 15px;
+right: 15px;
+z-index: 3;
 }
 
 .product-id-badge {
-  position: absolute;
-  top: 10px;
-  right: 12px;
-  font-size: 10px;
-  color: #bbb;
-  z-index: 2;
+position: absolute;
+top: 10px;
+right: 12px;
+font-size: 10px;
+color: #135eab;
+z-index: 2;
+display: none;
 }
-
-.product-link {
+.product-link {/*--------PARA COREEJIR------*/
   text-decoration: none;
   color: inherit;
   display: flex;
   flex-direction: column;
-  flex-grow: 1; /* Empuja el botón hacia abajo */
-}
-
-.product-image-container {
+  flex-grow: 1; /* 🔥 Esto empuja el botón al fondo */
   width: 100%;
-  height: 200px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 15px;
-  background: #fff;
-  aspect-ratio:1/1 ;
 }
 
-.product-image {
-  max-width: 100%;
-  max-height: 100%;
-  object-fit: contain;
+.product-image-container {/*-----PRARA COREJIR---------*/
+width: 100%;
+height: 140px;
+display: flex;
+align-items: center;
+justify-content: center;
+margin-bottom:10px;
 }
-
-.brand-tag {
-  font-size: 11px;
-  text-transform: uppercase;
-  color: #135eab;
-  font-weight: 700;
-  margin-bottom: 5px;
-  display: block;
+.product-image {/*----PRARA COREJIR-------*/
+max-width: 90%;
+max-height: 90%;
+object-fit: contain;
 }
-
+.brand-tag {/*-----PARA ACOREJIR*/
+font-size: 10px;
+color: #135eab;
+font-weight: 800;
+margin-bottom: 5px;
+display: block;
+}
 .product-title {
-  font-size: 14px;
-  font-weight: 600;
-  color: #333;
-  margin: 0;
-  line-height: 1.4;
-  /* Cortar texto a 3 líneas máximo */
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
+font-size: 13px;
+font-weight: 600;
+color: #333;
+margin: 0 0 5px 0;
+line-height: 1.3;
+/* Altura fija para que los botones se alineen */
+min-height: 34px;
+display: -webkit-box;
+-webkit-line-clamp: 2; /* Bajamos a 2 líneas para que sea más compacto */
+-webkit-box-orient: vertical;
+overflow: hidden;
 }
-
+.product-detail-id {/*--------PARA COREJIR------*/
+font-size: 11px;
+color: #135eab;
+font-weight: 600;
+margin-bottom: 10px;
+}
 .product-card-footer {
-  margin-top: 15px;
+margin-top: auto;
+padding-top: 10px;
+width: 100%;
 }
-
 .sold-by {
-  font-size: 12px;
-  color: #666;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  margin-bottom: 12px;
+display: none;
 }
-
 .checkmark-icon {
-  color: #96c121;
-  font-size: 14px;
+color: #96c121;
+font-size: 14px;
 }
-
-.quote-button {
+.quote-button, .add-cart-button {/*------PARA COREJIR---------*/
   background-color: #135eab;
   color: white;
   border: none;
+  border-radius: 10px;
+  padding: 10px 0;
   width: 100%;
-  padding: 12px;
-  border-radius: 6px;
+  font-size: 12px;
   font-weight: 700;
-  font-size: 13px;
   cursor: pointer;
-  transition: all 0.2s;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.3s ease;
+}
+.cart-icon-btn {
+font-size: 16px;
+color: white;
+}
+.quote-button:hover {
+background-color: #0d4a86;
+transform: scale(1.03); /* Efecto de crecimiento pro al pasar el mouse */
+box-shadow: 0 5px 15px rgba(19, 94, 171, 0.4);
+}
+.product-status-indicator { display: none; }
+/* --- IMAGEN --- */
+.product-image-container {
+width: 100%;
+height: 140px;
+display: flex;
+align-items: center;
+justify-content: center;
+margin-bottom: 10px;
+z-index: 1;
 }
 
-.quote-button:hover {
-  background-color: #0d4a86;
-  box-shadow: 0 4px 10px rgba(19, 94, 171, 0.3);
+
+.product-card-footer {
+margin-top: auto;
+}
+/* --- AJUSTES RESPONSIVOS MODO PRO --- */
+@media (max-width: 768px) {
+  .product-card { padding: 12px 10px; }
+  .product-image-container { height: 110px; } /* Imagen más pequeña */
+  .product-title { font-size: 11px; min-height: 30px; }
+  .quote-button { padding: 8px 0; font-size: 11px; }
+}
+
+@media (max-width: 480px) {
+  .product-card { 
+    padding: 8px; 
+    /* 🔥 Aumentamos el min-height. 250px era muy poco, pongamos 320px */
+    min-height: 320px !important; 
+    height: auto !important;
+    display: flex !important;
+    flex-direction: column !important;
+  }
+
+  .product-image-container { 
+    height: 100px !important; 
+    margin-bottom: 8px; 
+  }
+
+  .product-link {
+    flex: 1; /* 🔥 Esto obliga a la parte de arriba a ocupar el espacio y empujar el botón */
+    display: flex;
+    flex-direction: column;
+  }
+
+  .product-title { 
+    font-size: 11px; 
+    min-height: 40px; /* Espacio para 2-3 líneas */
+    line-height: 1.2;
+    margin-bottom: 5px;
+    display: -webkit-box;
+    -webkit-line-clamp: 3; /* Permitimos hasta 3 líneas en móvil */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .product-detail-id { 
+    font-size: 9px; 
+    margin-bottom: 10px !important; 
+    display: flexbox !important; /* Forzamos visibilidad */
+    color: #135eab;
+  }
+
+  .product-card-footer {
+    margin-top: auto !important; /* 🔥 El botón siempre se va al piso de la tarjeta */
+    width: 100%;
+  }
+
+  /* El botón de cotizar */
+  .quote-button { 
+    padding: 8px 4px !important; 
+    font-size: 10px; 
+    border-radius: 8px;
+    margin-top: auto; /* Esto lo empuja siempre al fondo */
+  }
+   .brand-tag {
+    font-size: 9px;
+  }
+  
+  .product-detail-id {
+    font-size: 9px;
+    margin-bottom: 5px !important;
+  }
 }
