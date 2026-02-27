@@ -90,7 +90,7 @@ const CategoryPage = () => {
                 "itemListElement": filteredProducts.slice(0, 15).map((prod, index) => ({
                     "@type": "ListItem",
                     "position": index + 1,
-                    "url": `https://www.disdelsa.com/producto/${prod.IdProducto}`
+                    "url": `https://www.disdelsa.com/producto/${String(prod.IdProducto).toLowerCase()}`
                 }))
             }
         ]
@@ -221,7 +221,7 @@ const CategoryPage = () => {
               {filteredProducts.map((prod, index) => (
                   <div key={prod.IdProducto} className="cat-product-card">
                     <div className="cat-id-badge">ID: {prod.IdProducto}</div>
-                    <Link to={`/producto/${prod.IdProducto}`} style={{textDecoration:'none', color:'inherit'}}>
+                    <Link to={`/producto/${prod.IdProducto.toLowerCase()}`} style={{textDecoration:'none', color:'inherit'}}>
                       <div className="cat-img-wrapper">
                         <img src={prod.Imagen ? `${AppConfig.baseImageUrl}productos/${prod.Imagen}` : defaultImage} 
                         alt={prod.Descripcion} 

@@ -118,7 +118,7 @@ const BrandPage = () => {
             "itemListElement": filteredProducts.slice(0, 20).map((prod, index) => ({
               "@type": "ListItem",
               "position": index + 1,
-              "url": `https://www.disdelsa.com/producto/${prod.IdProducto}`
+              "url": `https://www.disdelsa.com/producto/${String(prod.IdProducto).toLowerCase()}`
             }))
           }
         }
@@ -239,7 +239,7 @@ const BrandPage = () => {
                 <div className="product-card" key={prod.IdProducto}>
                   <div className="cat-id-badge">ID: {prod.IdProducto}</div>
 
-                  <Link to={`/producto/${prod.IdProducto}`} className="prod-link-wrapper">
+                  <Link to={`/producto/${prod.IdProducto.toLowerCase()}`} className="prod-link-wrapper">
                       <div className="prod-img-container">
                         <img src={prod.Imagen ? `${AppConfig.baseImageUrl}productos/${prod.Imagen}` : defaultImage} 
                         alt={prod.Descripcion} 

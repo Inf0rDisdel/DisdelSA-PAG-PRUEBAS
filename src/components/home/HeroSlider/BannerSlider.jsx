@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css"; 
 import "slick-carousel/slick/slick-theme.css";
@@ -8,9 +8,21 @@ import "./BannerSlider.css";
 import { AppConfig } from '../../../config/AppConfig';
 import { useBanners } from '../../../hooks/useBanners';
 
+import bannerMovil1 from 'assets/images/banners/Adaptacion-banner-KC.png';
+import bannerMovil2 from 'assets/images/banners/Adaptacion--banner-3M.png';
+import bannerMovil3 from 'assets/images/banners/Adaptacion--banner-wiese-copia.png';
+
 const BannerSlider = () => {
   // 2. Traemos los datos
   const { data: banners, isLoading, isError } = useBanners();
+
+  const [isPhone, setIsPhone] = useState(window.innerWidth <= 480);
+
+  useEffect(() => {
+    const handleResize = () => setIsPhone(window.innerWidth <= 480);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const settings = {
     dots: false,
@@ -19,28 +31,37 @@ const BannerSlider = () => {
     slidesToShow: 1,
     slidesToScroll: 1,
     autoplay: true,
-    autoplaySpeed: 3000,
+    autoplaySpeed: 3500,
     arrows: false
   };
 
-  // Si carga, falla o no hay banners tipo 4, no mostramos nada
-  if (isLoading || isError || !banners.sliderMarcas?.length) return null;
+  const bannersLocales = [
+    { EntityID: 'm-local-1', ImagenLocal: bannerMovil1, Titulo: 'Promo 1' },
+    { EntityID: 'm-local-2', ImagenLocal: bannerMovil2, Titulo: 'Promo 2' },
+    { EntityID: 'm-local-3', ImagenLocal: bannerMovil3, Titulo: 'Promo 3' },
+  ];
+
+// Si es phone, usa SOLO los locales. Si no, usa SOLO los de la API.
+  const displayBanners = isPhone ? bannersLocales : (banners?.sliderMarcas || []);
+
+  // Modificamos el condicional: Si es móvil y tenemos banners locales, mostramos.
+  // Si es escritorio, esperamos a que cargue la API.
+  if (!isPhone && (isLoading || isError || !banners?.sliderMarcas?.length)) return null;
+  if (isPhone && displayBanners.length === 0) return null;
 
   return (
     <div className="banner-slider-container">
       <Slider {...settings}>
-        
-        {/* 3. GENERAMOS LOS SLIDES DINÁMICAMENTE */}
-        {banners.sliderMarcas.map((ban) => (
+        {displayBanners.map((ban) => (
             <div key={ban.EntityID}>
                 <img 
-                    src={`${AppConfig.baseImageUrl}${ban.Imagen}`} 
+                    // 🔥 Si tiene ImagenLocal la usa directamente, si no usa la URL de la API
+                    src={ban.ImagenLocal ? ban.ImagenLocal : `${AppConfig.baseImageUrl}${ban.Imagen}`} 
                     alt={ban.Titulo || "Promoción Disdelsa"} 
-                    style={{ width: '100%', height: 'auto', display: 'block' }} // Estilos básicos para evitar saltos
+                    className="banner-img"
                 />
             </div>
         ))}
-
       </Slider>
     </div>
   );

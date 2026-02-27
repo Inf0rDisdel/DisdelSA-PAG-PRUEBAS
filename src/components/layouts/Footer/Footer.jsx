@@ -24,18 +24,40 @@ const Footer = () => {
                                     <li><a href="mailto:cmdisdel@disdelsa.com">cmdisdel@disdelsa.com</a></li>
                                 </ul>
                             </div>
-                            <div className="footer-column">
-                                <h3>SOBRE NOSOTROS</h3>
-                                <ul>
-                                    <Link to="/quienes-somos" className="footer-link">
-                                        Quiénes Somos
-                                        </Link>
-                                    <li><a href="https://disdelsagt.com/MyBusiness/Empleo/SolicitudEmpleo" target="_blank" rel="noopener noreferrer"> Empleos Disdel </a></li>
-                                     <Link to="/ayuda" className="footer-link">
-                                        Ayuda
-                                        </Link>
-                                </ul>
-                            </div>
+
+                            <div className="seo-hidden-links">
+                                <div className="footer-column">
+                                    <h3>CATEGORÍAS</h3>
+                                    <ul>
+                                        <li><Link to="/categoria/botiquin">Botiquín</Link></li>
+                                        <li><Link to="/categoria/papeleria">Papelería</Link></li>
+                                        <li><Link to="/categoria/herramientas-para-limpieza">Limpieza</Link></li>
+                                    </ul>
+                                </div>
+
+                                    {/* Columna 3: SEO Marcas */}
+                                    <div className="footer-column">
+                                        <h3>MARCAS</h3>
+                                        <ul>
+                                            <li><Link to="/marca/3m">3M</Link></li>
+                                            <li><Link to="/marca/kimberly-clark-professional">Kimberly Clark</Link></li>
+                                            <li><Link to="/marca/wiese">Wiese</Link></li>
+                                        </ul>
+                                    </div>
+                                </div>
+
+                                <div className="footer-column">
+                                    <h3>SOBRE NOSOTROS</h3>
+                                    <ul>
+                                        <Link to="/quienes-somos" className="footer-link">
+                                            Quiénes Somos
+                                            </Link>
+                                        <li><a href="https://disdelsagt.com/MyBusiness/Empleo/SolicitudEmpleo" target="_blank" rel="noopener noreferrer"> Empleos Disdel </a></li>
+                                        <Link to="/ayuda" className="footer-link">
+                                            Ayuda
+                                            </Link>
+                                    </ul>
+                                </div>
                             <div className="footer-column">
                                 <h3>TIENDAS Y SUCURSALES</h3>
                                 <ul>

@@ -1,23 +1,14 @@
 .product-card {
-  /* ... tu codigo ... */
-  width: 100%; 
-  margin: 0 auto; /* Centra la tarjeta en su espacio asignado */
-}
-
-.product-card {/*---PARA COREJIR----*/
   background: #fff;
   border-radius: 15px;
   border: 1px solid #f0f0f0;
-  padding: 15px;
-  position: relative;
-  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  padding: 12px;
   display: flex;
   flex-direction: column;
-  align-items: center; 
-  text-align: center;
-  height: 100%; 
+  height: 100%; /* IMPORTANTE: Que use el alto del track de Slick */
+  width: 100%; 
   box-sizing: border-box;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+  transition: transform 0.3s ease;
 }
 /* --- 1. EL BADGE DEL LOGO (Aseguramos visibilidad) --- */
 .product-brand-badge {/*---PARA COREJIR----*/
@@ -31,7 +22,6 @@ border: none;
 display: flex;
 align-items: center;
 justify-content: center;
-box-shadow: none;
 z-index: 10;         /* Forzamos que esté al frente */
 pointer-events: none;
 }
@@ -45,7 +35,7 @@ filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
 / (Aplica estas clases si usas botones personalizados o librerías como Slick/Swiper) */
 .slick-prev:before, .slick-next:before {
 color: #96c121 !important; /* El color verde de tu imagen */
-font-size: 22px;
+font-size: 25px;
 
 }
 /* Si usas iconos de react-icons para las flechas */
@@ -81,6 +71,7 @@ display: none;
   display: flex;
   flex-direction: column;
   flex-grow: 1; /* 🔥 Esto empuja el botón al fondo */
+  width: 100%;
 }
 
 .product-image-container {/*-----PRARA COREJIR---------*/
@@ -89,7 +80,7 @@ height: 140px;
 display: flex;
 align-items: center;
 justify-content: center;
-margin-bottom:15px;
+margin-bottom:10px;
 }
 .product-image {/*----PRARA COREJIR-------*/
 max-width: 90%;
@@ -184,12 +175,62 @@ margin-top: auto;
 }
 
 @media (max-width: 480px) {
-  .product-card { padding: 8px; }
+  .product-card { 
+    padding: 8px; 
+    /* 🔥 Aumentamos el min-height. 250px era muy poco, pongamos 320px */
+    min-height: 320px !important; 
+    height: auto !important;
+    display: flex !important;
+    flex-direction: column !important;
+  }
+
   .product-image-container { 
-    height: 85px; /* 🔥 Imagen más pequeña en móvil para salvar el botón */
+    height: 100px !important; 
     margin-bottom: 8px; 
   }
-  .product-title { font-size: 10px; min-height: 26px; }
-  .product-detail-id { font-size: 9px; margin-bottom: 5px; }
-  .quote-button { padding: 8px 0; font-size: 10px; }
+
+  .product-link {
+    flex: 1; /* 🔥 Esto obliga a la parte de arriba a ocupar el espacio y empujar el botón */
+    display: flex;
+    flex-direction: column;
+  }
+
+  .product-title { 
+    font-size: 11px; 
+    min-height: 40px; /* Espacio para 2-3 líneas */
+    line-height: 1.2;
+    margin-bottom: 5px;
+    display: -webkit-box;
+    -webkit-line-clamp: 3; /* Permitimos hasta 3 líneas en móvil */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .product-detail-id { 
+    font-size: 9px; 
+    margin-bottom: 10px !important; 
+    display: flexbox !important; /* Forzamos visibilidad */
+    color: #135eab;
+  }
+
+  .product-card-footer {
+    margin-top: auto !important; /* 🔥 El botón siempre se va al piso de la tarjeta */
+    width: 100%;
+  }
+
+  /* El botón de cotizar */
+  .quote-button { 
+    padding: 8px 4px !important; 
+    font-size: 10px; 
+    border-radius: 8px;
+    margin-top: auto; /* Esto lo empuja siempre al fondo */
+  }
+   .brand-tag {
+    font-size: 9px;
+  }
+  
+  .product-detail-id {
+    font-size: 9px;
+    margin-bottom: 5px !important;
+  }
 }

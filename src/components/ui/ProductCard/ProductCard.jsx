@@ -35,7 +35,7 @@ const ProductCard =memo (({ product, index }) => {
       <div className="product-id-badge">ID: {IdProducto}</div>
 
       {/* Todo lo de arriba es un Link al detalle */}
-      <Link to={`/producto/${IdProducto}`} className="product-link">
+      <Link to={`/producto/${IdProducto.toLowerCase()}`} className="product-link">
         <div className="product-image-container">
           <img 
             src={imageUrl} 

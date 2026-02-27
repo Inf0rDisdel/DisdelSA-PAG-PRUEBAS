@@ -47,10 +47,11 @@ const ProductCarousel = ({ title, products = [],isLoading, addToCart, variant = 
         breakpoint: 480, 
         settings: {
           slidesToShow: 2, 
-          slidesToScroll: 2,
+          slidesToScroll: 1,
           dots: false,
           arrows: false,
-          infinite:products && products.length>1
+          infinite:products && products.length>2,
+          adaptiveHeight: false
         }
       },
       

@@ -28,18 +28,10 @@ const AppRouter = () => {
       <Route path="/producto/:id" element={<ProductDetailPage />} />
       <Route path="/buscar" element={<SearchResultsPage />} />
 
-       {/* 🔥 NUEVO: Rescate de Soft 404 de Categorías */}
-      <Route path="/botiquin" element={<Navigate to="/categoria/botiquin" replace />} />
-      <Route path="/botiquin/" element={<Navigate to="/categoria/botiquin" replace />} />
-      
-      <Route path="/papeleria" element={<Navigate to="/categoria/papeleria" replace />} />
-      <Route path="/papeleria/" element={<Navigate to="/categoria/papeleria" replace />} />
-      
-      <Route path="/ferreteria" element={<Navigate to="/categoria/ferreteria" replace />} />
-      <Route path="/ferreteria/" element={<Navigate to="/categoria/ferreteria" replace />} />
-      
-      <Route path="/pisos-y-superficies" element={<Navigate to="/categoria/pisos-y-superficies" replace />} />
-      <Route path="/pisos-y-superficies/" element={<Navigate to="/categoria/pisos-y-superficies" replace />} />
+       {/* Agrupamos para que el código sea legible */}
+      {['botiquin', 'papeleria', 'ferreteria', 'pisos-y-superficies'].map(cat => (
+        <Route key={cat} path={`/${cat}`} element={<Navigate to={`/categoria/${cat}`} replace />} />
+         ))}
 
       <Route path="/politicas" element={<Navigate to="/politicas-de-privacidad" replace />} />
 
@@ -74,20 +66,24 @@ const AppRouter = () => {
       <Route path="/ayuda" element={<Ayuda/>} />
       <Route path="/ubicaciones" element={<Locations/>} />
 
-      <Route path="*" element={
-        <div style={{textAlign: 'center', padding: '100px 20px'}}>
-            <h1>Página no encontrada (404)</h1>
-            <p>Lo sentimos, el enlace que seguiste podría estar roto.</p>
-            <Link to="/" style={{color: '#135eab', fontWeight: 'bold', textDecoration: 'none'}}>Volver al inicio</Link>
-        </div>
-      } />
+      <Route path="*" element={<NotFoundPage />} />
     </Routes>
   );
 };
 
+// Componente para manejar subcategorías que ya no existen mandándolas al buscador
 const LegacyRedirect = () => {
     const { slug } = useParams();
-    return <Navigate to={`/buscar?q=${slug}`} replace />;
+    return <Navigate to={`/buscar?q=${slug.replace(/-/g, ' ')}`} replace />;
 };
+
+const NotFoundPage = () => (
+    <div style={{textAlign: 'center', padding: '100px 20px'}}>
+        <h1 style={{fontSize: '3rem', color: '#135eab'}}>404</h1>
+        <h2>¡Uy! No encontramos lo que buscabas</h2>
+        <p>El producto o categoría podría haber cambiado de nombre.</p>
+        <Link to="/" style={{color: '#135eab', fontWeight: 'bold'}}>Ir a la página principal</Link>
+    </div>
+);
 
 export default AppRouter;

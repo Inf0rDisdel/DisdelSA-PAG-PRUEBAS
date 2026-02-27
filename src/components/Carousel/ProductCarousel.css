@@ -1,16 +1,16 @@
-/* --- CONTENEDOR DEL CARRUSEL --- */
-.product-carousel-container {/*-------PARA COREJIR--------*/
+.product-carousel-container {
   width: 100%;
-  min-height: 500px; /* Aumentamos para PC */
-  height: auto;
   max-width: 1200px;
   margin: 20px auto;
-  padding: 10px 40px 40px 40px; 
+  padding: 10px 15px; /* Bajamos el padding lateral de 40px a 15px */
   box-sizing: border-box;
-  position: relative;
   background-color: #ffffff;
   border-radius: 10px;
-  /* Permitimos que se vea lo que sobresale (sombras y botones) */
+  overflow: hidden; /* Evita que el carrusel cause scroll horizontal en toda la página */
+}
+
+.carousel-item-padding {
+  padding: 5px; /* Espacio entre tarjetas */
 }
 
 /* 🔥 FIX MAESTRO: Evita que el carrusel corte los botones abajo */
@@ -57,7 +57,7 @@ justify-content: center;
 .slick-slide > div {
 width: 100%;
 display: flex;
-padding: 10px 8px;
+padding: 0 8px;
 }
 
 
@@ -73,19 +73,35 @@ padding: 10px 8px;
 }
 
 @media (max-width: 480px) {
-.product-carousel-container {
-padding: 10px 10px 50px 10px; /* Casi nada de espacio lateral en móvil */
-min-height: 380px;
-overflow: visible !important; 
-}
-.carousel-title {
-font-size: 0.95rem;
-margin-left: 5px;
-}
+  /* 🔥 ANULAMOS LA GUILLOTINA DE SLICK */
+  .product-carousel-container .slick-list {
+    height: auto !important;
+    overflow: visible !important; /* Permite que el botón "se asome" si hace falta */
+    padding-bottom: 25px !important; /* Espacio para que respire la sombra */
+  }
+  .product-carousel-container {
+    padding: 10px 5px; /* Aún menos padding en móviles muy pequeños */
+  }
 
-.slick-track {
-  display: flex !important;
-  align-items: stretch; /* Obliga a que todas midan lo mismo */
-}
+  .slick-track {
+    display: flex !important;
+    align-items: stretch !important; /* 🔥 Hace que todas las tarjetas de la fila midan lo mismo */
+  }
 
+  .slick-slide {
+    height: auto !important;
+    display: flex !important;
+  }
+
+  .carousel-item-padding {
+    height: 100%;
+    display: flex;
+    width: 100%;
+  }
+  .carousel-title {
+    font-size: 0.9rem; /* Título un poco más pequeño para que no se corte */
+    padding: 6px 15px;
+    margin-bottom: 15px;
+  }
+  
 }
