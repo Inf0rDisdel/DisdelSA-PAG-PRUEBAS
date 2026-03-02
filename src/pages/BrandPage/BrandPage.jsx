@@ -98,33 +98,33 @@ const BrandPage = () => {
 
   // --- SCHEMA DINÁMICO ---
   const brandSchema = useMemo(() => {
-    return {
-      "@context": "https://schema.org",
-      "@graph": [
-        {
-          "@type": "BreadcrumbList",
-          "itemListElement": [
-            { "@type": "ListItem", "position": 1, "name": "Inicio", "item": "https://www.disdelsa.com/" },
-            { "@type": "ListItem", "position": 2, "name": brandNameOfficial, "item": `https://www.disdelsa.com/marca/${canonicalSlug}` }
-          ]
-        },
-        {
-          "@type": "CollectionPage",
-          "name": `Catálogo de productos ${brandNameOfficial}`,
-          "description": `Distribuidor autorizado de ${brandNameOfficial} en Guatemala. Cotiza en línea.`,
-          "url": `https://www.disdelsa.com/marca/${canonicalSlug}`,
-          "mainEntity": {
-            "@type": "ItemList",
-            "itemListElement": filteredProducts.slice(0, 20).map((prod, index) => ({
-              "@type": "ListItem",
-              "position": index + 1,
-              "url": `https://www.disdelsa.com/producto/${String(prod.IdProducto).toLowerCase()}`
-            }))
-          }
+  return {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          { "@type": "ListItem", "position": 1, "name": "Inicio", "item": "https://www.disdelsa.com/" },
+          { "@type": "ListItem", "position": 2, "name": brandNameOfficial, "item": `https://www.disdelsa.com/marca/${canonicalSlug}` }
+        ]
+      },
+      {
+        "@type": "CollectionPage",
+        "name": `Distribuidor Autorizado ${brandNameOfficial} en Guatemala`,
+        "description": `Línea completa de productos ${brandNameOfficial} para uso profesional e industrial. Suministros originales con garantía Disdel.`,
+        "mainEntity": {
+          "@type": "ItemList",
+          "itemListElement": filteredProducts.slice(0, 30).map((prod, index) => ({
+            "@type": "ListItem",
+            "position": index + 1,
+            "name": prod.Descripcion,
+            "url": `https://www.disdelsa.com/producto/${String(prod.IdProducto).toLowerCase()}`
+          }))
         }
-      ]
-    };
-  }, [filteredProducts, brandNameOfficial, canonicalSlug]);
+      }
+    ]
+  };
+}, [filteredProducts, brandNameOfficial, canonicalSlug]);
 
   const handleScroll = (direction) => {
     if (scrollRef.current) {
@@ -184,15 +184,34 @@ const BrandPage = () => {
     <div className="brand-container" style={{ '--brand-color': visualConfig.color }}>
 
       <Helmet>
-        <title>{`Productos ${brandNameOfficial} Guatemala | Distribuidor Disdel`}</title>
-        <meta name="description" content={`Catálogo completo de ${brandNameOfficial} en Guatemala. Encuentra los mejores precios y suministros para tu empresa en Disdel.`} />
-        <link rel="canonical" href={`https://www.disdelsa.com/marca/${canonicalSlug}`} />
-        <script type="application/ld+json">{JSON.stringify(brandSchema)}</script>
-        {/* Open Graph */}
-        <meta property="og:title" content={`Catálogo ${brandNameOfficial} - Disdel`} />
-        <meta property="og:image" content={visualConfig.banner ? visualConfig.banner : defaultImage} />
-        <meta property="og:url" content={`https://www.disdelsa.com/marca/${canonicalSlug}`} />
-      </Helmet>
+      {/* 1. SEO DE BÚSQUEDA - AUTORIDAD DE DISTRIBUIDOR */}
+      {/* El título ahora incluye "Distribuidor Autorizado" y "Suministros", palabras clave para jefes de compras */}
+      <title>{`Distribuidor Autorizado ${brandNameOfficial} en Guatemala | Suministros Disdel`}</title>
+      
+      {/* La descripción ataca el sector empresarial e institucional directamente */}
+      <meta name="description" content={`Catálogo institucional de ${brandNameOfficial} para empresas en Guatemala. Venta por mayor de suministros de limpieza, higiene y mantenimiento industrial. Distribuidor oficial con asesoría técnica y entrega en todo el país.`} />
+      
+      <link rel="canonical" href={`https://www.disdelsa.com/marca/${canonicalSlug}`} />
+
+      {/* 2. DATOS ESTRUCTURADOS (Tu brandSchema profesional) */}
+      <script type="application/ld+json">{JSON.stringify(brandSchema)}</script>
+
+      {/* 3. OPEN GRAPH (Optimizado para que los links en WhatsApp/Facebook se vean corporativos) */}
+      <meta property="og:type" content="website" />
+      <meta property="og:title" content={`Catálogo Mayorista ${brandNameOfficial} - Distribución Disdel`} />
+      <meta property="og:description" content={`Adquiere productos originales ${brandNameOfficial} con respaldo institucional. Soluciones integrales para hoteles, hospitales y oficinas en Guatemala.`} />
+      <meta property="og:image" content={visualConfig.banner ? visualConfig.banner : defaultImage} />
+      <meta property="og:url" content={`https://www.disdelsa.com/marca/${canonicalSlug}`} />
+      <meta property="og:site_name" content="Disdel" />
+
+      {/* 4. TWITTER CARD */}
+      <meta name="twitter:card" content="summary_large_image" />
+      <meta name="twitter:title" content={`${brandNameOfficial} Guatemala - Suministros Industriales`} />
+      <meta name="twitter:description" content={`Cotiza por volumen productos ${brandNameOfficial}. Entrega rápida y garantía de fábrica en toda la república.`} />
+      <meta name="twitter:image" content={visualConfig.banner ? visualConfig.banner : defaultImage} />
+
+      <script type="application/ld+json">{JSON.stringify(brandSchema)}</script>
+    </Helmet>
 
       <div className="brand-hero">
         {isMobile && visualConfig.bannerMob ? (

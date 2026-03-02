@@ -33,22 +33,18 @@ const AppRouter = () => {
         <Route key={cat} path={`/${cat}`} element={<Navigate to={`/categoria/${cat}`} replace />} />
          ))}
 
-      <Route path="/politicas" element={<Navigate to="/politicas-de-privacidad" replace />} />
 
       {/* --- 🚀 RESCATE DE GOOGLE (Legacy Redirects) --- */}
       
-      {/* 1. Mopas y accesorios -> Categoria Herramientas */}
       <Route path="/subcategoria/mopas-y-accesorios" element={<Navigate to="/categoria/herramientas-para-limpieza/mopa-y-mecha" replace />} />
-      
-      {/* 2. Detergente para ropa -> Categoria Químicos */}
       <Route path="/subcategoria/detergente-para-ropa" element={<Navigate to="/categoria/quimicos-para-limpieza" replace />} />
-      
-      {/* 3. Plataformas y accesorios -> Papelería */}
       <Route path="/subcategoria/plataformas-y-accesorios" element={<Navigate to="/categoria/papeleria" replace />} />
       
       {/* 4. Contactos y Conocenos */}
       <Route path="/Contactanos" element={<Navigate to="/ayuda" replace />} />
+      <Route path="/contacto" element={<Navigate to="/ayuda" replace />} />
       <Route path="/Conocenos" element={<Navigate to="/quienes-somos" replace />} />
+      <Route path="/politicas" element={<Navigate to="/politicas-de-privacidad" replace />} />
       <Route path="/limpieza" element={<Navigate to="/categoria/herramientas-para-limpieza" replace />} />
 
       {/* Rescate genérico para cualquier otra subcategoría vieja */}

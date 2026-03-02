@@ -16,7 +16,7 @@ const ProductDetailPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const addItem = useCartStore((state) => state.addItem);
-
+ 
   // 1. LIMPIEZA DE ID (Para la API usamos Mayúsculas, para SEO Minúsculas)
   const cleanId = id ? id.replace(/\/$/, "").trim().toUpperCase() : "";
   const canonicalId = id ? id.replace(/\/$/, "").trim().toLowerCase() : "";
@@ -43,23 +43,55 @@ const ProductDetailPage = () => {
   }, [product]);
 
 
+  // --- ESTRATEGIA SEO B2B: Datos Estructurados ---
   const productSchema = useMemo(() => {
     if (!product) return null;
     return {
       "@context": "https://schema.org/",
       "@type": "Product",
-      "name": product.Descripcion,
+      "name": `${product.Descripcion} | Suministro Profesional Disdel`,
       "image": [getImageUrl(product.Imagen)],
-      "description": `Cotiza ${product.Descripcion} en Disdel. Suministros profesionales con entrega en toda Guatemala.`,
-      "sku": product.IdProducto, // El SKU puede ir en mayúsculas, no hay problema
+      "description": `Cotización de ${product.Descripcion} para empresas. Ideal para ${product.Categoria}, lavandería y limpieza industrial en Guatemala. Venta por mayor y distribución institucional.`,
+      "sku": product.IdProducto,
       "brand": { "@type": "Brand", "name": product.Marca || "Disdel" },
       "offers": {
         "@type": "Offer",
         "url": `https://www.disdelsa.com/producto/${canonicalId}`,
         "availability": "https://schema.org/InStock",
         "priceCurrency": "GTQ",
-        "price": "0.00" // Ojo: Google pide precio, si es cotización pon 0 o gestiona "AggregateOffer"
+        "price": "0.00",
+        "priceValidUntil": "2025-12-31",
+        "description": "Precio sujeto a cotización mayorista B2B"
       }
+    };
+  }, [product, canonicalId]);
+
+  const breadcrumbSchema = useMemo(() => {
+    if (!product) return null;
+
+    // Helper para crear el link de la categoría igual que en el ruteo
+    const createSlug = (text) => text?.toString().toLowerCase().trim()
+        .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+        .replace(/ñ/g, 'n').replace(/\s+/g, '-') || '';
+
+    return {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Inicio", "item": "https://www.disdelsa.com/" },
+        { 
+          "@type": "ListItem", 
+          "position": 2, 
+          "name": product.Categoria, 
+          "item": `https://www.disdelsa.com/categoria/${createSlug(product.Categoria)}` 
+        },
+        { 
+          "@type": "ListItem", 
+          "position": 3, 
+          "name": product.Descripcion, 
+          "item": `https://www.disdelsa.com/producto/${canonicalId}` 
+        }
+      ]
     };
   }, [product, canonicalId]);
 
@@ -71,12 +103,9 @@ const ProductDetailPage = () => {
   // 1. Normalización de URL (UX/SEO): Si la URL tiene mayúsculas, la cambiamos visualmente a minúsculas
   useEffect(() => {
     if (id && id !== id.toLowerCase()) {
-      const newPath = `/producto/${id.toLowerCase()}`;
-      // Reemplaza la entrada en el historial para no romper el botón "Atrás"
-      navigate(newPath, { replace: true });
+      navigate(`/producto/${id.toLowerCase()}`, { replace: true });
     }
   }, [id, navigate]);
-
   // 2. Manejo de Errores y Redirección de Rescate
   useEffect(() => {
     if (isError && cleanId) {
@@ -113,37 +142,51 @@ const ProductDetailPage = () => {
   // Evitamos pantalla blanca total retornando un div vacío mientras redirige el useEffect
   if (isError || !product) return <div className="pdp-container" style={{minHeight: '50vh'}}></div>;
 
+  // --- VARIABLES DE TEXTO PARA SEO SEMÁNTICO ---
+  const seoTitle = `${product.Descripcion} ${product.Marca ? '- ' + product.Marca : ''} | Cotización B2B Disdel Guatemala`;
+  const seoDescription = `Solicita cotización de ${product.Descripcion}. Especialistas en suministros de ${product.Categoria.toLowerCase()}, lavandería profesional y limpieza industrial en Guatemala. Calidad Disdelsa institucional.`;
+
   return (
     <div className="pdp-container">
     <Helmet>
-  {/* 1. Básico y SEO de Google */}
-  <title>{`${product.Descripcion} | Disdel`}</title>
-  {/* 🔥 FIX: Canonical SIEMPRE en minúsculas y HTTPS explícito */}
-  <link rel="canonical" href={`https://www.disdelsa.com/producto/${canonicalId}`} />
-  <meta name="description" content={`Compra ${product.Descripcion} al mejor precio en Disdel. Suministros de limpieza profesional en Guatemala.`} />
-  <link rel="preload" as="image" href={getImageUrl(selectedImage || product.Imagen)} />
-  
+        {/* Keywords "Ocultas" (Enriquecimiento semántico vía etiquetas OG) */}
+        <meta property="og:title" content={seoTitle} />
+        <meta property="og:description" content={`Distribución de ${product.Descripcion} en Guatemala. Ideal para empresas, hoteles y lavanderías.`} />
+        <meta property="og:image" content={getImageUrl(product.Imagen)} />
+        <meta property="og:url" content={`https://www.disdelsa.com/producto/${canonicalId}`} />
+        <meta property="og:type" content="product" />
 
+        {/* 1. Básico y SEO de Google */}
+        <title>{`${product.Descripcion} | Disdel`}</title>
+        {/* 🔥 FIX: Canonical SIEMPRE en minúsculas y HTTPS explícito */}
+        <link rel="canonical" href={`https://www.disdelsa.com/producto/${canonicalId}`} />
+        <meta name="description" content={`Compra ${product.Descripcion} al mejor precio en Disdel. Suministros de limpieza profesional en Guatemala.`} />
+        <link rel="preload" as="image" href={getImageUrl(selectedImage || product.Imagen)} />
 
-  {/* 2. Open Graph / Facebook / WhatsApp (Para que se vea la foto al compartir el link) */}
-  <meta property="og:type" content="product" />
-  <meta property="og:title" content={`${product.Descripcion} | Disdel`} />
-  <meta property="og:description" content={`Adquiere ${product.Descripcion} en nuestra tienda en línea. Calidad profesional garantizada.`} />
-  <meta property="og:image" content={product.Imagen ? `${AppConfig.baseImageUrl}productos/${product.Imagen}` : 'URL_DE_TU_LOGO_POR_DEFECTO'} />
-  <meta property="og:url" content={`https://www.disdelsa.com/producto/${canonicalId}`} />
-  <meta property="og:site_name" content="Disdel" />
+        {/* 2. Open Graph / Facebook / WhatsApp (Para que se vea la foto al compartir el link) */}
+        <meta property="og:type" content="product" />
+        <meta property="og:title" content={`${product.Descripcion} | Disdel`} />
+        <meta property="og:description" content={`Adquiere ${product.Descripcion} en nuestra tienda en línea. Calidad profesional garantizada.`} />
+        <meta property="og:image" content={product.Imagen ? `${AppConfig.baseImageUrl}productos/${product.Imagen}` : 'URL_DE_TU_LOGO_POR_DEFECTO'} />
+        <meta property="og:url" content={`https://www.disdelsa.com/producto/${canonicalId}`} />
+        <meta property="og:site_name" content="Disdel" />
 
-  {/* 3. Twitter Card */}
-  <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content={`${product.Descripcion} | Disdel`} />
-  <meta name="twitter:description" content={`Compra ${product.Descripcion} en Disdel.`} />
-  <meta name="twitter:image" content={product.Imagen ? `${AppConfig.baseImageUrl}productos/${product.Imagen}` : 'URL_DE_TU_LOGO_POR_DEFECTO'} />
+        {/* 3. Twitter Card */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={`${product.Descripcion} | Disdel`} />
+        <meta name="twitter:description" content={`Compra ${product.Descripcion} en Disdel.`} />
+        <meta name="twitter:image" content={product.Imagen ? `${AppConfig.baseImageUrl}productos/${product.Imagen}` : 'URL_DE_TU_LOGO_POR_DEFECTO'} />
 
-  {/* 4. Datos Estructurados (Lo que ya tenías, que está muy bien) */}
-  {productSchema && (
-    <script type="application/ld+json">{JSON.stringify(productSchema)}</script>
-  )}
-</Helmet>
+        {/* 4. Datos Estructurados (Esquema de Producto) */}
+        {productSchema && (
+          <script type="application/ld+json">{JSON.stringify(productSchema)}</script>
+        )}
+
+        {/* 5. Datos Estructurados (Breadcrumbs) - Agregado al final */}
+        {breadcrumbSchema && (
+          <script type="application/ld+json">{JSON.stringify(breadcrumbSchema)}</script>
+        )}
+      </Helmet>
 
       <button className="pdp-back-btn" onClick={() => navigate(-1)}>
         <FiChevronLeft /> Volver al catálogo
@@ -154,7 +197,7 @@ const ProductDetailPage = () => {
             <div className="pdp-main-image-wrapper">
               <img 
                     src={getImageUrl(selectedImage || product.Imagen)} 
-                    alt={product.Descripcion} 
+                    alt={`${product.Descripcion} Disdel Guatemala - Suministro Institucional`} 
                     className="pdp-main-img" 
                     width="500" height="500" // Ayuda al CLS
                     fetchpriority="high"
@@ -182,6 +225,12 @@ const ProductDetailPage = () => {
           <div className="pdp-sku-row">
             <span className="pdp-sku">CÓDIGO: {product.IdProducto}</span>
             <span className="pdp-stock in-stock"><span className="dot"></span> Disponible</span>
+          </div>
+
+
+          {/* Bloque de texto para SEO Semántico (Visible para el usuario) */}
+          <div className="pdp-seo-text">
+            <p>Suministro profesional de <strong>{product.Descripcion}</strong> para industrias y comercios en Guatemala. Este producto pertenece a la línea de <strong>{product.Categoria}</strong> de Disdel, diseñado para alto rendimiento en lavanderías y mantenimiento institucional.</p>
           </div>
 
           {hasDifferentOptions ? (
