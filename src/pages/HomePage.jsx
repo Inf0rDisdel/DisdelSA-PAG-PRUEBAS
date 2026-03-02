@@ -21,17 +21,32 @@ const HomePage = () => {
   const { data: allProducts, isLoading } = useProducts();
 
   const orgSchema = {
-    "@context": "https://schema.org",
-    "@type": "Organization",
-    "name": "Disdel, S.A.",
-    "url": "https://www.disdelsa.com/",
-    "logo": "https://www.disdelsa.com/logo.png",
-    "contactPoint": {
-      "@type": "ContactPoint",
-      "telephone": "+502-2422-6100",
-      "contactType": "customer service"
-    }
-  };
+  "@context": "https://schema.org",
+  "@type": "WholesaleStore", // Cambiamos de Organization a WholesaleStore (más específico para B2B)
+  "name": "Disdel, S.A.",
+  "alternateName": "Disdelsa",
+  "url": "https://www.disdelsa.com/",
+  "logo": "https://www.disdelsa.com/logo.png",
+  "description": "Distribuidor líder en Guatemala de suministros de limpieza, higiene, cafetería y mantenimiento institucional para empresas.",
+  "address": {
+    "@type": "PostalAddress",
+    "streetAddress": "15 Calle 16-30, Zona 1, Ciudad de Guatemala",
+    "addressLocality": "Ciudad de Guatemala",
+    "addressCountry": "GT"
+  },
+  "contactPoint": {
+    "@type": "ContactPoint",
+    "telephone": "+502-2422-6120",
+    "contactType": "ventas y servicio al cliente",
+    "areaServed": "GT",
+    "availableLanguage": "Spanish"
+  },
+  "sameAs": [
+    "https://www.facebook.com/tupagina",
+    "https://www.instagram.com/tupagina",
+    "https://www.linkedin.com/company/tupagina"
+  ]
+};
 
   const handleAddToCart = (product) => {
     // Definimos la unidad por defecto al agregar desde el inicio

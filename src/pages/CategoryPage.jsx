@@ -47,7 +47,7 @@ const CategoryPage = () => {
 
       const cleanSlug = slug.replace(/\/$/, "");
       return menuData.find(seg => createSlug(seg.NombreSegmento) === cleanSlug);
-  }, [menuData, cleanSlug]);
+  }, [menuData, slug]);
 
   const activeCategoryData = useMemo(() => {
       if (!currentSegment || !activeCatId) return null;
@@ -72,30 +72,36 @@ const CategoryPage = () => {
 
   // --- SCHEMA AVANZADO ---
   const categorySchema = useMemo(() => {
-    if (!currentSegment) return null;
-    return {
-        "@context": "https://schema.org",
-        "@graph": [
-            {
-                "@type": "BreadcrumbList",
-                "itemListElement": [
-                    { "@type": "ListItem", "position": 1, "name": "Inicio", "item": "https://www.disdelsa.com/" },
-                    { "@type": "ListItem", "position": 2, "name": currentSegment.NombreSegmento, "item": `https://www.disdelsa.com/categoria/${canonicalSlug}` }
-                ]
-            },
-            {
-                "@type": "ItemList",
-                "name": `Productos de ${currentSegment.NombreSegmento}`,
-                "numberOfItems": filteredProducts.length,
-                "itemListElement": filteredProducts.slice(0, 15).map((prod, index) => ({
-                    "@type": "ListItem",
-                    "position": index + 1,
-                    "url": `https://www.disdelsa.com/producto/${String(prod.IdProducto).toLowerCase()}`
-                }))
-            }
+  if (!currentSegment) return null;
+  return {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          { "@type": "ListItem", "position": 1, "name": "Inicio", "item": "https://www.disdelsa.com/" },
+          { "@type": "ListItem", "position": 2, "name": currentSegment.NombreSegmento, "item": `https://www.disdelsa.com/categoria/${canonicalSlug}` }
         ]
-    };
-  }, [filteredProducts, currentSegment, canonicalSlug]);
+      },
+      {
+        "@type": "CollectionPage", // Cambiado a CollectionPage para mayor peso en categorías
+        "name": `${currentSegment.NombreSegmento} al por Mayor en Guatemala`,
+        "description": `Catálogo institucional de ${currentSegment.NombreSegmento}. Suministros profesionales para empresas, hoteles e industria.`,
+        "publisher": { "@type": "Organization", "name": "Disdel" },
+        "mainEntity": {
+          "@type": "ItemList",
+          "numberOfItems": filteredProducts.length,
+          "itemListElement": filteredProducts.slice(0, 30).map((prod, index) => ({
+            "@type": "ListItem",
+            "position": index + 1,
+            "url": `https://www.disdelsa.com/producto/${String(prod.IdProducto).toLowerCase()}`,
+            "name": prod.Descripcion
+          }))
+        }
+      }
+    ]
+  };
+}, [filteredProducts, currentSegment, canonicalSlug]);
 
 
   useEffect(() => {
@@ -127,9 +133,27 @@ const CategoryPage = () => {
   if (loadingMenu || loadingProducts) {
     return (
       <div className="cat-master-wrapper">
-        <Helmet>
-           <title>Cargando productos... | Disdel</title>
-        </Helmet>
+      <Helmet>
+      {/* SEO TÉCNICO B2B */}
+      <title>{`${currentSegment.NombreSegmento} Mayorista | Suministros para Empresas en Guatemala`}</title>
+      <meta name="description" content={`Distribución institucional de ${currentSegment.NombreSegmento} en Guatemala. Contamos con marcas líderes y precios especiales para compras por volumen. Soluciones integrales para mantenimiento, industria y limpieza profesional en Disdel.`} />
+      <link rel="canonical" href={`https://www.disdelsa.com/categoria/${canonicalSlug}`} />
+      
+      {/* Open Graph / Redes Sociales */}
+      <meta property="og:type" content="website" />
+      <meta property="og:title" content={`Catálogo de ${currentSegment.NombreSegmento} para Industrias | Disdel GT`} />
+      <meta property="og:description" content={`Suministros de ${currentSegment.NombreSegmento} de alta calidad con entrega en toda Guatemala. Cotiza hoy mismo para tu empresa o institución.`} />
+      <meta property="og:image" content={bannerFijo || defaultImage} />
+      <meta property="og:url" content={`https://www.disdelsa.com/categoria/${canonicalSlug}`} />
+      <meta property="og:site_name" content="Disdel" />
+
+      {/* Twitter Card */}
+      <meta name="twitter:card" content="summary_large_image" />
+      <meta name="twitter:title" content={`${currentSegment.NombreSegmento} Institucional Guatemala`} />
+
+      {/* Schema Estructurado (Tu lógica) */}
+      <script type="application/ld+json">{JSON.stringify(categorySchema)}</script>
+    </Helmet>
 
         <div className="cat-container">
           <div className="skeleton-shimmer" style={{width: '100%', height: isMobile ? '140px' : '200px', borderRadius: '16px', marginBottom: '20px'}}></div>
