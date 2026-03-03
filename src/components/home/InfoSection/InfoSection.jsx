@@ -1,11 +1,11 @@
 import React from 'react';
 import './InfoSection.css';
 
-import Banner1Icon from 'assets/icons/ATENCION-PERSONALIZADA.png';
-import Banner2Icon from 'assets/icons/OPCIONES-DE-PAGO.png';
-import Banner3Icon from 'assets/icons/RECOGER-EN-TIENDA.png'; 
-import Banner4Icon from 'assets/icons/PRUEBA-DE-PRODUCTO.png';
-import Banner5Icon from 'assets/icons/RECOGER-EN-TIENDA-NBENEFICIOS.png';
+import Banner1Icon from 'assets/icons/IconoInformacion/ATENCION-PERSONALIZADA.webp';
+import Banner2Icon from 'assets/icons/IconoInformacion/OPCIONES-DE-PAGO.webp';
+import Banner3Icon from 'assets/icons/IconoInformacion/RECOGER-EN-TIENDA.webp'; 
+import Banner4Icon from 'assets/icons/IconoInformacion/PRUEBA-DE-PRODUCTO.webp';
+import Banner5Icon from 'assets/icons/IconoInformacion/RECOGER-EN-TIENDA-NBENEFICIOS.webp';
 
 const InfoSection = () => {
     const infoItems = [

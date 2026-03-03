@@ -3,7 +3,7 @@ import { FiMinus, FiPlus, FiTrash2 } from 'react-icons/fi';
 import useCartStore from 'store/useCartStore';
 import { AppConfig } from 'config/AppConfig';
 import './CarItem.css';
-import defaultImage from 'assets/images/categories/KCP.jpg';
+import defaultImage from 'assets/images/KCP.webp';
 
 const CartItem = ({ product }) => {
   const { removeFromCart, updateQuantity } = useCartStore();

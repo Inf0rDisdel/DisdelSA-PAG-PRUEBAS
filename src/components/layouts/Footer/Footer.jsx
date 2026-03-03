@@ -4,8 +4,8 @@ import { Link } from 'react-router-dom';
 
 import { FaFacebookF, FaInstagram, FaLinkedinIn } from 'react-icons/fa';
 
-import mascotImage from 'assets/icons/PERSONAJE.png'; 
-import paymentCardsImage from 'assets/icons/VISA.jpg';
+import mascotImage from 'assets/icons/IconosFooter/PERSONAJE.webp'; 
+import paymentCardsImage from 'assets/icons/IconosFooter/VISA.webp';
 
 const Footer = () => {
     return (
@@ -61,7 +61,7 @@ const Footer = () => {
                             <div className="footer-column">
                                 <h3>TIENDAS Y SUCURSALES</h3>
                                 <ul>
-                                    <Link to="/ubicaciones" className="...">Ubicaciones</Link>
+                                    <Link to="/ubicaciones" className="...">Ubicaciones Y Teléfonos</Link>
                                 </ul>
                             </div>
                         </div>

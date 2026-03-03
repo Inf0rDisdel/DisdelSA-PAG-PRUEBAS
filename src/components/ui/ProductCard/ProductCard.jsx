@@ -6,7 +6,7 @@ import { FaCheckCircle } from 'react-icons/fa';
 import { FiShoppingCart } from 'react-icons/fi';
 import './ProductCard.css';
 
-import defaultImg from 'assets/images/categories/KCP.jpg'
+import defaultImg from 'assets/images/KCP.webp';
 
 const ProductCard =memo (({ product, index }) => {
   const { IdProducto, Descripcion, Imagen, Marca, Categoria } = product;

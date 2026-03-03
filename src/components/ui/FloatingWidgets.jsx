@@ -3,8 +3,8 @@ import { Link } from 'react-router-dom';
 
 import './FloatingWidgets.css'; 
 
-import opinionsButtonImage from 'assets/icons/OPINIONES.png';
-import whatsappButtonImage from 'assets/icons/CONTACTANOS-WA.png';
+import opinionsButtonImage from 'assets/icons/IconosFooter/OPINIONES.webp';
+import whatsappButtonImage from 'assets/icons/IconosFooter/CONTACTANOS-WA.webp';
 
 const FloatingWidgets = () => {
     return (

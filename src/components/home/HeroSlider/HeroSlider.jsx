@@ -8,9 +8,9 @@ import { AppConfig } from '../../../config/AppConfig';
 import { useBanners } from '../../../hooks/useBanners';
 import './HeroSlider.css';
 
-import bannerMovil1 from 'assets/images/banners/Adaptacion--banner-disdel-movil.png';
-import bannerMovil2 from 'assets/images/banners/Adaptacion--banner-Disdel.png';
-import bannerMovil3 from 'assets/images/banners/BANNER-PROMOCIONAL-NESCAFE-PROPUEST2.jpg';
+import bannerMovil1 from 'assets/images/BannersPrincipalMovil/Adaptacion--banner-disdel-movil.webp';
+import bannerMovil2 from 'assets/images/BannersPrincipalMovil/Adaptacion--banner-Disdel.webp';
+import bannerMovil3 from 'assets/images/BannersPrincipalMovil/BANNER-PROMOCIONAL-NESCAFE-PROPUEST2.webp';
 
 
 const HeroSlider = () => {

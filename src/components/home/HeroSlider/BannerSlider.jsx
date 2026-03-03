@@ -8,9 +8,9 @@ import "./BannerSlider.css";
 import { AppConfig } from '../../../config/AppConfig';
 import { useBanners } from '../../../hooks/useBanners';
 
-import bannerMovil1 from 'assets/images/banners/Adaptacion-banner-KC.png';
-import bannerMovil2 from 'assets/images/banners/Adaptacion--banner-3M.png';
-import bannerMovil3 from 'assets/images/banners/Adaptacion--banner-wiese-copia.png';
+import bannerMovil1 from 'assets/images/BannersMarcasMovil/Adaptacion-banner-KC.webp';
+import bannerMovil2 from 'assets/images/BannersMarcasMovil/Adaptacion--banner-3M.webp';
+import bannerMovil3 from 'assets/images/BannersMarcasMovil/Adaptacion--banner-wiese-copia.webp';
 
 const BannerSlider = () => {
   // 2. Traemos los datos

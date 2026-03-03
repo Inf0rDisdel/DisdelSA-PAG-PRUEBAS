@@ -17,7 +17,7 @@ import Ayuda from 'pages/info/Ayuda';
 import Locations from 'pages/info/Locations';
 
 import PrivacyPolicy from 'pages/info/PrivacyPolicy';
-import ReviewStats from 'components/reviews/ReviewStats';
+//import ReviewStats from 'components/reviews/ReviewStats';
 import ReviewsSection from 'components/reviews/ReviewsSection';
 
 
