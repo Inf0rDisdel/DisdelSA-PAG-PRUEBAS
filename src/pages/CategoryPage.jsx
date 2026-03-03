@@ -9,9 +9,9 @@ import useCartStore from 'store/useCartStore';
 import { useMenu } from 'hooks/useMenu';
 import { useProducts } from 'hooks/useProducts';
 
-import bannerFijo from 'assets/images/banners/BANCategoria.jpg'; 
-import bannerMob from 'assets/images/banners/Adaptacion--banner-Disdel.png';
-import defaultImage from 'assets/images/categories/KCP.jpg'; 
+import bannerFijo from 'assets/images/BannersMarcas/BANCategoria.webp'; 
+import bannerMob from 'assets/images/BannersPrincipalMovil/Adaptacion--banner-Disdel.webp';
+import defaultImage from 'assets/images/KCP.webp'; 
 
 const CategoryPage = () => {
   const { slug } = useParams();

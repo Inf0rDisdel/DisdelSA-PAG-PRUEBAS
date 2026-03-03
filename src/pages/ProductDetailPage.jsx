@@ -10,7 +10,7 @@ import {
   FiCheckCircle, FiPackage, FiChevronLeft, FiTarget 
 } from 'react-icons/fi';
 import './ProductDetailPage.css';
-import defaultImage from 'assets/images/categories/KCP.jpg'; 
+import defaultImage from 'assets/images/KCP.webp'; 
 
 const ProductDetailPage = () => {
   const { id } = useParams();

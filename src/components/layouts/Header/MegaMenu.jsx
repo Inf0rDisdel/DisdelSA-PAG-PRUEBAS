@@ -4,7 +4,7 @@ import styles from './MegaMenu.module.css';
 
 import { AppConfig } from '../../../config/AppConfig';
 import { useMenu } from '../../../hooks/useMenu';
-import defaultIcon from 'assets/images/categories/KCP.jpg'; 
+import defaultIcon from 'assets/images/KCP.webp'; 
 
 const MegaMenu = () => {
     const { data: menuData, isLoading, isError } = useMenu();

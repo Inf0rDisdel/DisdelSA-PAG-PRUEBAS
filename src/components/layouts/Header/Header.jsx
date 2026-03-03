@@ -6,9 +6,9 @@ import MegaMenu from './MegaMenu';
 
 import { motion , AnimatePresence} from "framer-motion";
 import logo from 'assets/logo/LOGO-BLANCO.png';
-import iconUser from 'assets/icons/INICIAR-SESION-USUARIO.png';
-import iconBuilding from 'assets/icons/MY-BUSINESS.png';
-import iconCart from 'assets/icons/CARRITO-DE-COMPRAS.png';
+import iconUser from 'assets/icons/IconoEncabezado/INICIAR-SESION-USUARIO.webp';
+import iconBuilding from 'assets/icons/IconoEncabezado/MY-BUSINESS.webp';
+import iconCart from 'assets/icons/IconoEncabezado/CARRITO-DE-COMPRAS.webp';
 import LogoSplash from 'assets/logo/ICONO-DISDEL.png'
 
 import {

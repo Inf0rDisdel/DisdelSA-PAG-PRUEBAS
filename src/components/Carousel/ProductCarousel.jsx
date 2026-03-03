@@ -1,11 +1,11 @@
 import React from 'react';
-import { Link } from 'react-router-dom'; 
+//import { Link } from 'react-router-dom'; 
 import Slider from 'react-slick';
 import "slick-carousel/slick/slick.css"; 
 import "slick-carousel/slick/slick-theme.css";
 import './ProductCarousel.css';
 import ProductCard from 'components/ui/ProductCard/ProductCard';
-import fondoImagen from 'assets/icons/FONDO-BLANCO.jpg';
+import fondoImagen from 'assets/images/FONDO-BLANCO.webp';
 
 const ProductCarousel = ({ title, products = [],isLoading, addToCart, variant = '' }) => {
    if (isLoading) {

@@ -10,17 +10,17 @@ import { useMenu } from 'hooks/useMenu';
 import { useProducts } from 'hooks/useProducts';
 
 // Banners e iconos
-import bannerKimberly from 'assets/images/banners/BANNER-KCP.png';
-import bannerSilver from 'assets/images/banners/banners_silver-2.jpg';
-import banner3m from 'assets/images/banners/BANNERS-3M.png';
-import bannerWiese from 'assets/images/banners/BANNERS-WIESE.jpg';
-import defaultImage from 'assets/images/categories/KCP.jpg';
-import iconInicio from 'assets/icons/icon-inicio-removebg-preview.png';
+import bannerKimberly from 'assets/images/BannersMarcas/BANNER-KCP.webp';
+import bannerSilver from 'assets/images/BannersMarcas/banners_silver-2.webp';
+import banner3m from 'assets/images/BannersMarcas/BANNERS-3M.webp';
+import bannerWiese from 'assets/images/BannersMarcas/BANNERS-WIESE.webp';
+import defaultImage from 'assets/images/KCP.webp';
+import iconInicio from 'assets/icons/IconoMarca/icon-inicio.webp';
 
-import bannerKimberlyMob from 'assets/images/banners/Adaptacion-banner-KC.png'; 
-import bannerSilverMob from 'assets/images/banners/banners_silver-movil.jpg'; 
-import banner3mMob from 'assets/images/banners/Adaptacion--banner-3M.png'; 
-import bannerWieseMob from 'assets/images/banners/Adaptacion--banner-wiese.png';
+import bannerKimberlyMob from 'assets/images/BannersMarcasMovil/Adaptacion-banner-KC.webp'; 
+import bannerSilverMob from 'assets/images/BannersMarcasMovil/banners_silver-movil.webp'; 
+import banner3mMob from 'assets/images/BannersMarcasMovil/Adaptacion--banner-3M.webp'; 
+import bannerWieseMob from 'assets/images/BannersMarcasMovil/Adaptacion--banner-wiese.webp';
 
 const brandConfig = {
   "kimberly-clark-professional": { banner: bannerKimberly, bannerMob: bannerKimberlyMob, color: "#135eab" },

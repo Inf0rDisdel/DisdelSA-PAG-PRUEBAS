@@ -2,12 +2,12 @@ import React from 'react';
 import {FiClock, FiMapPin, FiNavigation, FiCheckCircle, FiPhone} from 'react-icons/fi';
 import './Locations.css'; 
 
-import imgOficina from 'assets/images/banners/Disdel-Central.jpg'; 
-import imgTienda from 'assets/images/banners/Z3-TIENDA.jpg'; 
-import imgLaboratorio from 'assets/images/banners/Disdel-Plsnts.jpg'; 
-import imgTienda3 from 'assets/images/banners/tienda-Z3.jpg'
-import iconWaze from 'assets/icons/waze.png';
-import iconMaps from 'assets/icons/google-maps.png';
+import imgOficina from 'assets/images/BannersUbicaciones/Disdel-Central.webp'; 
+import imgTienda from 'assets/images/BannersUbicaciones/Z3-TIENDA.webp'; 
+import imgLaboratorio from 'assets/images/BannersUbicaciones/Disdel-Plsnts.webp'; 
+import imgTienda3 from 'assets/images/BannersUbicaciones/tienda-Disdel-Z3.webp'
+import iconWaze from 'assets/icons/IconoUbicacion/waze.webp';
+import iconMaps from 'assets/icons/IconoUbicacion/google-maps.webp';
 
 const Locations = () => {
   const storesData = [

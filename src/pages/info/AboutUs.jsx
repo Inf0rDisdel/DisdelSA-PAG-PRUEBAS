@@ -1,11 +1,11 @@
 import React from 'react';
 import './AboutUs.css'; 
 
-import imgDisdel from '../../assets/images/banners/BANNER-ASI-DE-LIMPIO.jpeg'; 
-import imgVision from 'assets/images/banners/Visión.jpg'
-import imgMision from 'assets/images/banners/Misión.jpg'
-import imgPlanta from '../../assets/images/banners/Disdel-Plsnts.jpg'; 
-import imgCentral from '../../assets/images/banners/Disdel-Central.jpg';
+import imgDisdel from '../../assets/images/BannerHistoria/BANNER-ASI-DE-LIMPIO.webp'; 
+import imgVision from 'assets/icons/IconoHistoria/Visión.webp'
+import imgMision from 'assets/icons/IconoHistoria/Misión.webp'
+import imgPlanta from '../../assets/images/BannersUbicaciones/Disdel-Plsnts.webp'; 
+import imgCentral from '../../assets/images/BannersUbicaciones/Disdel-Central.webp';
 
 const AboutUs = () => {
   return (

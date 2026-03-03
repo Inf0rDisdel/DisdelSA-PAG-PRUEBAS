@@ -8,7 +8,7 @@ import './CategoryGrid.css';
 
 import { AppConfig } from '../../../config/AppConfig';
 import { useMenu } from '../../../hooks/useMenu';
-import defaultIcon from 'assets/images/categories/KCP.jpg'; 
+import defaultIcon from 'assets/images/KCP.webp'; 
 
 const CategoryGrid = ({isLoading}) => {
   // --- 1. TODOS LOS HOOKS ARRIBA ---
