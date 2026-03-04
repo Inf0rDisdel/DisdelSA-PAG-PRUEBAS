@@ -20,7 +20,7 @@ import iconInicio from 'assets/icons/IconoMarca/icon-inicio.webp';
 import bannerKimberlyMob from 'assets/images/BannersMarcasMovil/Adaptacion-banner-KC.webp'; 
 import bannerSilverMob from 'assets/images/BannersMarcasMovil/banners_silver-movil.webp'; 
 import banner3mMob from 'assets/images/BannersMarcasMovil/Adaptacion--banner-3M.webp'; 
-import bannerWieseMob from 'assets/images/BannersMarcasMovil/Adaptacion--banner-wiese.webp';
+import bannerWieseMob from 'assets/images/BannersMarcasMovil/Adaptacion--banner-wiese-copia.webp';
 
 const brandConfig = {
   "kimberly-clark-professional": { banner: bannerKimberly, bannerMob: bannerKimberlyMob, color: "#135eab" },

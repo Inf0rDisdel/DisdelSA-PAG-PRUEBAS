@@ -5,7 +5,7 @@ import './Locations.css';
 import imgOficina from 'assets/images/BannersUbicaciones/Disdel-Central.webp'; 
 import imgTienda from 'assets/images/BannersUbicaciones/Z3-TIENDA.webp'; 
 import imgLaboratorio from 'assets/images/BannersUbicaciones/Disdel-Plsnts.webp'; 
-import imgTienda3 from 'assets/images/BannersUbicaciones/tienda-Disdel-Z3.webp'
+import imgTienda3 from 'assets/images/BannersUbicaciones/VistaTienda.webp'
 import iconWaze from 'assets/icons/IconoUbicacion/waze.webp';
 import iconMaps from 'assets/icons/IconoUbicacion/google-maps.webp';
 
