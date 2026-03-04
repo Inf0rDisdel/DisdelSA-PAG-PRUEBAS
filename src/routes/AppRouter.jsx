@@ -24,7 +24,9 @@ import ReviewsSection from 'components/reviews/ReviewsSection';
 const AppRouter = () => {
   return (
     <Routes>
-       <Route path="/" element={<HomePage />} />
+      <Route path="/index.html" element={<Navigate to="/" replace />} />
+
+      <Route path="/" element={<HomePage />} />
 
       {/* 2. RUTAS DINÁMICAS PRINCIPALES */}
       <Route path="/producto/:id" element={<ProductDetailPage />} />
