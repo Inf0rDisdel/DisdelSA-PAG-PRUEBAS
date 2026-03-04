@@ -24,6 +24,8 @@ export const useBanners = () => {
                 sliderMarcas: data.filter(b => b.IdTipoBanner === 4),
                 aliados: data.filter(b => b.IdTipoBanner === 14), 
                 promoGrid: data.filter(b => b.IdTipoBanner === 15)
+
+                //NUEVOS BANNERS
             };
         }
     });

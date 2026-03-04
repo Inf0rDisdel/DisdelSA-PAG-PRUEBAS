@@ -58,7 +58,13 @@ const HomePage = () => {
       presentationSelected: defaultPresentation,
       unitType: defaultType
     });
+
+    toast.success(`${product.Descripcion.substring(0, 20)}... añadido al carrito`, {
+      position: 'bottom-right',
+      style: { background: '#135eab', color: '#fff' }
+    });
   };
+  
 
   const carruseles = useMemo(() => {
     if (!allProducts || !Array.isArray(allProducts)) {

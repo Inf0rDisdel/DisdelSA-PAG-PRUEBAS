@@ -24,35 +24,36 @@ import ReviewsSection from 'components/reviews/ReviewsSection';
 const AppRouter = () => {
   return (
     <Routes>
-      <Route path="/" element={<HomePage />} />
+       <Route path="/" element={<HomePage />} />
+
+      {/* 2. RUTAS DINÁMICAS PRINCIPALES */}
       <Route path="/producto/:id" element={<ProductDetailPage />} />
+      <Route path="/categoria/:slug" element={<CategoryPage />} />
+      <Route path="/marca/:slug" element={<BrandPage />} />
       <Route path="/buscar" element={<SearchResultsPage />} />
 
-       {/* Agrupamos para que el código sea legible */}
+      {/* 3. REDIRECCIONES DE CATEGORÍAS (SEO) */}
       {['botiquin', 'papeleria', 'ferreteria', 'pisos-y-superficies'].map(cat => (
         <Route key={cat} path={`/${cat}`} element={<Navigate to={`/categoria/${cat}`} replace />} />
-         ))}
+      ))}
 
 
       {/* --- 🚀 RESCATE DE GOOGLE (Legacy Redirects) --- */}
-      
       <Route path="/subcategoria/mopas-y-accesorios" element={<Navigate to="/categoria/herramientas-para-limpieza/mopa-y-mecha" replace />} />
       <Route path="/subcategoria/detergente-para-ropa" element={<Navigate to="/categoria/quimicos-para-limpieza" replace />} />
       <Route path="/subcategoria/plataformas-y-accesorios" element={<Navigate to="/categoria/papeleria" replace />} />
       
-      {/* 4. Contactos y Conocenos */}
-      <Route path="/Contactanos" element={<Navigate to="/ayuda" replace />} />
+      {/* Redirecciones de contacto/info (Case insensitive fallback) */}
+      <Route path="/contactanos" element={<Navigate to="/ayuda" replace />} />
       <Route path="/contacto" element={<Navigate to="/ayuda" replace />} />
-      <Route path="/Conocenos" element={<Navigate to="/quienes-somos" replace />} />
+      <Route path="/conocenos" element={<Navigate to="/quienes-somos" replace />} />
       <Route path="/politicas" element={<Navigate to="/politicas-de-privacidad" replace />} />
       <Route path="/limpieza" element={<Navigate to="/categoria/herramientas-para-limpieza" replace />} />
-
+      
       {/* Rescate genérico para cualquier otra subcategoría vieja */}
       <Route path="/subcategoria/:slug" element={<LegacyRedirect />} />
 
-      {/* --- RUTAS ACTUALES --- */}
-      <Route path="/categoria/:slug" element={<CategoryPage />} />
-      <Route path="/marca/:slug" element={<BrandPage />} />
+      {/* --- RUTAS ESTÁTICAS ACTUALES --- */}
       <Route path="/carrito" element={<CartPage />} />
       <Route path="/login" element={<LoginPage />} />
       <Route path="/my-business" element={<MyBusinessPage />} />
@@ -62,6 +63,7 @@ const AppRouter = () => {
       <Route path="/ayuda" element={<Ayuda/>} />
       <Route path="/ubicaciones" element={<Locations/>} />
 
+      {/* 4. EL 404 - SIEMPRE DE ÚLTIMO */}
       <Route path="*" element={<NotFoundPage />} />
     </Routes>
   );
@@ -75,11 +77,20 @@ const LegacyRedirect = () => {
 
 const NotFoundPage = () => (
     <div style={{textAlign: 'center', padding: '100px 20px'}}>
-        <h1 style={{fontSize: '3rem', color: '#135eab'}}>404</h1>
-        <h2>¡Uy! No encontramos lo que buscabas</h2>
-        <p>El producto o categoría podría haber cambiado de nombre.</p>
-        <Link to="/" style={{color: '#135eab', fontWeight: 'bold'}}>Ir a la página principal</Link>
+        <h1 style={{fontSize: '5rem', color: '#135eab', margin: 0}}>404</h1>
+        <h2 style={{color: '#333'}}>¡Uy! No encontramos lo que buscabas</h2>
+        <p style={{color: '#666', marginBottom: '30px'}}>La página que intentas visitar no existe o ha cambiado de lugar.</p>
+        <Link to="/" style={{
+          backgroundColor: '#135eab', 
+          color: 'white', 
+          padding: '12px 25px', 
+          borderRadius: '8px', 
+          textDecoration: 'none',
+          fontWeight: 'bold'
+        }}>Volver al inicio</Link>
     </div>
 );
+
+
 
 export default AppRouter;
