@@ -65,8 +65,6 @@ const AppRouter = () => {
       <Route path="/ayuda" element={<Ayuda/>} />
       <Route path="/ubicaciones" element={<Locations/>} />
 
-      {/* 4. EL 404 - SIEMPRE DE ÚLTIMO */}
-      <Route path="*" element={<NotFoundPage />} />
     </Routes>
   );
 };
@@ -76,23 +74,5 @@ const LegacyRedirect = () => {
     const { slug } = useParams();
     return <Navigate to={`/buscar?q=${slug.replace(/-/g, ' ')}`} replace />;
 };
-
-const NotFoundPage = () => (
-    <div style={{textAlign: 'center', padding: '100px 20px'}}>
-        <h1 style={{fontSize: '5rem', color: '#135eab', margin: 0}}>404</h1>
-        <h2 style={{color: '#333'}}>¡Uy! No encontramos lo que buscabas</h2>
-        <p style={{color: '#666', marginBottom: '30px'}}>La página que intentas visitar no existe o ha cambiado de lugar.</p>
-        <Link to="/" style={{
-          backgroundColor: '#135eab', 
-          color: 'white', 
-          padding: '12px 25px', 
-          borderRadius: '8px', 
-          textDecoration: 'none',
-          fontWeight: 'bold'
-        }}>Volver al inicio</Link>
-    </div>
-);
-
-
 
 export default AppRouter;

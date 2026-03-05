@@ -1,13 +1,25 @@
-import React from 'react';
+import React, {useMemo} from 'react';
 import './Footer.css'; 
 import { Link } from 'react-router-dom';
 
 import { FaFacebookF, FaInstagram, FaLinkedinIn } from 'react-icons/fa';
 
-import mascotImage from 'assets/icons/IconosFooter/PERSONAJE.webp'; 
-import paymentCardsImage from 'assets/icons/IconosFooter/VISA.webp';
+import { AppConfig } from 'config/AppConfig';
+import { useBanners } from 'hooks/useBanners';
 
 const Footer = () => {
+
+    const { data: bannerData } = useBanners();
+
+    const getUrl = (dbTitle) => {
+        const found = bannerData?.Iconos?.find(i => i.Titulo?.trim() === dbTitle);
+
+        return found ? `${AppConfig.baseImageUrl}${found.Imagen}` : '';
+    };
+
+    const imgMascota = getUrl("IconoPersonaje");
+    const imgVisa = getUrl("IconoVISA");
+
     return (
         <footer className="footer-wrapper">
             <div className="footer-content-area">
@@ -97,10 +109,10 @@ const Footer = () => {
                         <span>+1000</span> productos
                     </div>
                     <div className="mascot">
-                        <img src={mascotImage} alt="Mascota Disdel" />
+                       {imgMascota && <img src={imgMascota} alt="Mascota Disdel" />}
                     </div>
                         <div className="payment-logos">
-                            <img src={paymentCardsImage} alt="Visa y Mastercard" />
+                            {imgVisa && <img src={imgVisa} alt="Metodos de pago" />}
                         </div>
                         <div className="footer-copyright">
                             <p>© 2026 Copyright Disdel S.A</p>

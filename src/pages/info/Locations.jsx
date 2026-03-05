@@ -8,8 +8,18 @@ import imgLaboratorio from 'assets/images/BannersUbicaciones/Disdel-Plsnts.webp'
 import imgTienda3 from 'assets/images/BannersUbicaciones/VistaTienda.webp'
 import iconWaze from 'assets/icons/IconoUbicacion/waze.webp';
 import iconMaps from 'assets/icons/IconoUbicacion/google-maps.webp';
+import { AppConfig } from 'config/AppConfig';
+import { useBanners } from 'hooks/useBanners';
+
+
+
 
 const Locations = () => {
+  
+  //Retornar los datos 
+  const {data: banners, isLoading, isError} = useBanners();
+
+
   const storesData = [
     {
       id: 1,
@@ -22,9 +32,9 @@ const Locations = () => {
       hours: "7:00 AM - 5:00 PM",
       imgMain: imgOficina,
       imgSec: imgOficina,
-      lat: 14.634915, 
-      lng: -90.506882,
-      maps: "https://www.google.com/maps/place/Disdel,+S.A./@14.634915,-90.506882,15z",
+      lat: 14.6319306, 
+      lng: -90.5036954,
+      maps: "https://www.google.com/maps/search/?api=1&query=Disdel+SA+Zona+1",
       features: ["Atención Mayorista", "Carga Segura"]
     },
     {
@@ -40,7 +50,7 @@ const Locations = () => {
       imgSec: imgTienda,
       lat: 14.6243644,
       lng: -90.5255417,
-      maps: "https://www.google.com/maps/place/Disdel,+S.+A./@14.6243644,-90.5255417,15z",
+      maps: "https://www.google.com/maps/search/?api=1&query=Disdel+SA+Zona+3",
       features: ["Parqueo Disponible", "Retiro Inmediato"]
     },
     {
@@ -56,7 +66,7 @@ const Locations = () => {
       imgSec: imgLaboratorio,
       lat: 14.6317623, 
       lng: -90.5021374,
-      maps: "https://www.google.com/maps/place/L%26G+Representaciones+S.A./@14.6317623,-90.5021374,17z",
+      maps: "https://www.google.com/maps/search/?api=1&query=L%26G+Representaciones+SA",
       features: ["Control de Calidad", "Despacho Logístico"]
     }
   ];

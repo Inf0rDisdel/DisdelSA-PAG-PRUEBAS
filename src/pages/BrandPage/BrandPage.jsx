@@ -8,29 +8,11 @@ import { AppConfig } from 'config/AppConfig';
 import useCartStore from 'store/useCartStore';
 import { useMenu } from 'hooks/useMenu';
 import { useProducts } from 'hooks/useProducts';
-
-// Banners e iconos
-import bannerKimberly from 'assets/images/BannersMarcas/BANNER-KCP.webp';
-import bannerSilver from 'assets/images/BannersMarcas/banners_silver-2.webp';
-import banner3m from 'assets/images/BannersMarcas/BANNERS-3M.webp';
-import bannerWiese from 'assets/images/BannersMarcas/BANNERS-WIESE.webp';
-import defaultImage from 'assets/images/KCP.webp';
-import iconInicio from 'assets/icons/IconoMarca/icon-inicio.webp';
-
-import bannerKimberlyMob from 'assets/images/BannersMarcasMovil/Adaptacion-banner-KC.webp'; 
-import bannerSilverMob from 'assets/images/BannersMarcasMovil/banners_silver-movil.webp'; 
-import banner3mMob from 'assets/images/BannersMarcasMovil/Adaptacion--banner-3M.webp'; 
-import bannerWieseMob from 'assets/images/BannersMarcasMovil/Adaptacion--banner-wiese-copia.webp';
-
-const brandConfig = {
-  "kimberly-clark-professional": { banner: bannerKimberly, bannerMob: bannerKimberlyMob, color: "#135eab" },
-  "wiese": { banner: bannerWiese,bannerMob:bannerWieseMob, color: "#692C90" },
-  "3m": { banner: banner3m, bannerMob: banner3mMob, color: "#EE2737" },
-  "silver": { banner: bannerSilver, bannerMob: bannerSilverMob, color: "#76BD1D" }
-};
+import { useBanners } from 'hooks/useBanners';
 
 const BrandPage = () => {
   const { slug } = useParams();
+  const { data: bannerData } = useBanners();
 
   const cleanSlug = slug ? slug.replace(/\/$/, "").trim() : '';
   const canonicalSlug = cleanSlug.toLowerCase(); // Para SEO
@@ -39,9 +21,9 @@ const BrandPage = () => {
   const addItem = useCartStore((state) => state.addItem);
   const { data: menuData, isLoading: loadingMenu } = useMenu();
   const { data: productsData, isLoading: loadingProducts } = useProducts();
+
   const [activeCatId, setActiveCatId] = useState(null);
   const scrollRef = useRef(null);
-
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 468);
 
   useEffect(() => {
@@ -49,6 +31,40 @@ const BrandPage = () => {
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
+
+  const defaultImage = useMemo (() => {
+    const imgDb = bannerData?.ImagenPredeterminado?.find(b => b.Titulo === "ImagenDefault");
+
+    return imgDb ? `${AppConfig.baseImageUrl}${imgDb.Imagen}` : ''; 
+  }, [bannerData]);
+
+
+  const iconoInicio = useMemo (() => {
+    const iconDb = bannerData?.Iconos?.find(b => b.Titulo === "IconoInicio");
+    return iconDb ? `${AppConfig.baseImageUrl}${iconDb.Imagen}` : '';
+  }, [bannerData]);
+
+  // --- 3. LÓGICA DE BANNERS POR MARCA (ID 29, 28, 27) ---
+  const visualConfig = useMemo(() => {
+    const mapping = {
+      "kimberly-clark-professional": { title: "Banner KCP", idGroup: bannerData?.BannersMarcasInternos, color: "#135eab" },
+      "silver": { title: "Banner Silver", idGroup: bannerData?.BannersMarcasInternos, color: "#76BD1D" },
+      "3m": { title: "3m", idGroup: bannerData?.BannersMarcasInternos, color: "#EE2737" },
+      "wiese": { title: "Banner Wiese ", idGroup: bannerData?.BannersMarcasInternos, color: "#692C90" }
+    };
+
+    const currentConf = mapping[cleanSlug.toLowerCase()] || { color: "#135eab" };
+    const apiBanner = currentConf.idGroup?.find(b => b.Titulo === currentConf.title);
+
+    const desktopFile = apiBanner?.Imagen; 
+    const mobileFile = apiBanner?.BannerImagenMovil || apiBanner?.ImagenMovil;
+
+    return {
+      color: currentConf.color,
+      banner: desktopFile ? `${AppConfig.baseImageUrl}${desktopFile}` : null,
+      bannerMob: mobileFile ? `${AppConfig.baseImageUrl}${mobileFile}` : null
+    };
+  }, [bannerData, cleanSlug]);
 
   const norm = (id) => (id === null || id === undefined) ? '' : String(id).trim();
   const createSlug = (text) => text?.toString().toLowerCase().trim()
@@ -61,7 +77,6 @@ const BrandPage = () => {
     return menuData.find(seg => createSlug(seg.NombreSegmento).includes(cleanSlug) || cleanSlug.includes(createSlug(seg.NombreSegmento)));
   }, [menuData, cleanSlug]);
   
-  const visualConfig = brandConfig[cleanSlug.toLowerCase()] || brandConfig[slug] || { banner: null, bannerMob: null, color: "#135eab" };
   const brandNameOfficial = visualConfig.name || currentBrandSegment?.NombreSegmento || slug;
 
 
@@ -200,7 +215,7 @@ const BrandPage = () => {
       <meta property="og:type" content="website" />
       <meta property="og:title" content={`Catálogo Mayorista ${brandNameOfficial} - Distribución Disdel`} />
       <meta property="og:description" content={`Adquiere productos originales ${brandNameOfficial} con respaldo institucional. Soluciones integrales para hoteles, hospitales y oficinas en Guatemala.`} />
-      <meta property="og:image" content={visualConfig.banner ? visualConfig.banner : defaultImage} />
+      <meta property="og:image" content={visualConfig.banner || defaultImage} />
       <meta property="og:url" content={`https://www.disdelsa.com/marca/${canonicalSlug}`} />
       <meta property="og:site_name" content="Disdel" />
 
@@ -237,7 +252,7 @@ const BrandPage = () => {
           
           <div className="categories-stack" ref={scrollRef}>
             <div className={`category-card-btn ${!activeCatId ? 'active-filter' : ''}`} onClick={() => setActiveCatId(null)}>
-              <div className="cat-img-box"><img src={iconInicio} alt="Inicio" /></div>
+              <div className="cat-img-box"><img src={iconoInicio} alt="Inicio" /></div>
               <span className="cat-text">Ver Todo</span>
             </div>
           
@@ -268,8 +283,10 @@ const BrandPage = () => {
                         // Prioridad alta para los que el usuario ve primero
                         fetchpriority={index < 4 ? "high" : "auto"}
                         // Dimensiones fijas para que la página no "brinque" (CLS)
+                        decoding='async'
                         width="200"
                         height="200"
+                        style={{aspectRatio: "1/1"}}
                       />
                       </div>
                       <div className="prod-category-label">{prod.Categoria}</div>

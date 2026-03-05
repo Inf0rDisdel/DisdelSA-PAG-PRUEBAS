@@ -8,12 +8,19 @@ import './CategoryGrid.css';
 
 import { AppConfig } from '../../../config/AppConfig';
 import { useMenu } from '../../../hooks/useMenu';
-import defaultIcon from 'assets/images/KCP.webp'; 
+import { useBanners } from 'hooks/useBanners';
 
 const CategoryGrid = ({isLoading}) => {
   // --- 1. TODOS LOS HOOKS ARRIBA ---
   const { data: menuData } = useMenu();
+  const {data: bannerData } = useBanners();
+
   const [sliderKey, setSliderKey] = useState(Date.now());
+
+  const defaultImage = useMemo(() => {
+    const imgDb = bannerData?.ImagenPredeterminado?.find (b=> b.Titulo === "ImagenDefault");
+    return imgDb ? `${AppConfig.baseImageUrl}${imgDb.Imagen}` : ''; 
+  }, [bannerData]);
 
   // Renombramos la variable interna para que no choque con las props
   const filteredCategories = useMemo(() => {
@@ -96,7 +103,7 @@ const CategoryGrid = ({isLoading}) => {
               >
                 <div className="cgs-image-wrapper">
                   <img 
-                    src={category.Imagen ? `${AppConfig.baseImageUrl}${category.Imagen}` : defaultIcon} 
+                    src={category.Imagen ? `${AppConfig.baseImageUrl}${category.Imagen}` : defaultImage} 
                     alt={category.NombreSegmento} 
                     className="cgs-image" 
                   />
