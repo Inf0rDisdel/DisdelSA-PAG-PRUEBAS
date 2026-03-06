@@ -2,16 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { Carousel } from 'react-responsive-carousel';
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 
-// 1. Importamos tu Configuración Global
+
 import { AppConfig } from '../../../config/AppConfig';
-// 2. Importamos Hooks y Estilos
 import { useBanners } from '../../../hooks/useBanners';
 import './HeroSlider.css';
-
-import bannerMovil1 from 'assets/images/BannersPrincipalMovil/Adaptacion--banner-disdel-movil.webp';
-import bannerMovil2 from 'assets/images/BannersPrincipalMovil/Adaptacion--banner-Disdel.webp';
-import bannerMovil3 from 'assets/images/BannersPrincipalMovil/BANNER-PROMOCIONAL-NESCAFE-PROPUEST2.webp';
-
 
 const HeroSlider = () => {
   const { data: banners, isLoading, isError } = useBanners();
@@ -23,9 +17,7 @@ const HeroSlider = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  if (isLoading || isError) return null;
-
-  const bannersLocales = [bannerMovil1, bannerMovil2, bannerMovil3];
+  if (isLoading || isError || !banners) return null;
 
   return (
     <div className="main-container">
@@ -42,9 +34,12 @@ const HeroSlider = () => {
               autoPlay={true}
               interval={3000}
             >
-              {bannersLocales.map((img, index) => (
-                <div key={index}>
-                  <img src={img} alt={`Banner promocional ${index + 1}`} />
+              {banners.sliderPrincipal.map((slide) => (
+                <div key={slide.EntityID}>
+                  <img 
+                    src={`${AppConfig.baseImageUrl}${slide.BannerImagenMovil || slide.Imagen}`} 
+                    alt={slide.Titulo || "Banner promocional"} 
+                  />
                 </div>
               ))}
             </Carousel>
@@ -52,7 +47,6 @@ const HeroSlider = () => {
 
       {/* --- BANNERS LATERALES EN MÓVIL --- */}
           <div className="banners-container">
-            {/* 🔥 CAMBIO AQUÍ: .slice(0, 1) para que SOLO salga el de Glade/Wiese */}
             {banners.lateralesPrincipal?.slice(0, 1).map((ban) => (
               <div className="banner-item" key={ban.EntityID}>
                 <img 

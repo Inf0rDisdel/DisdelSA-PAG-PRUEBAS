@@ -149,9 +149,6 @@
 
 /* --- RESPONSIVE PRO (MÓVIL 480px) --- */
 @media (max-width: 480px) {
-  img[src*="NESCAFE"], 
-  div[class*="nescafe"],
-  div[class*="promo"]
 
   .main-container {
     height: auto;

@@ -51,16 +51,27 @@
 
 /* 🔥 4 PRODUCTOS EN PC */
 .grid-container {
-  display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 20px;
 }
 
 .product-card {
-  background: white; border-radius: 12px; padding: 20px; border: 1px solid #eee;
+  background: white; border-radius: 12px; border: 1px solid #eee;
   display: flex; flex-direction: column; height: 100%; position: relative; transition: 0.3s;
 }
 .product-card:hover { transform: translateY(-5px); box-shadow: 0 15px 30px rgba(0,0,0,0.08); }
 .cat-id-badge { position: absolute; top: 10px; right: 10px; font-size: 10px; color: #bbb; }
-.prod-img-container { height: 160px; display: flex; align-items: center; justify-content: center; margin: 15px 0; }
+
+.prod-img-container {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  max-height: 160px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .prod-img-container img { max-width: 100%; max-height: 100%; object-fit: contain; }
 .prod-category-label { font-size: 11px; color: var(--brand-color); font-weight: 700; text-transform: uppercase; margin-bottom: 5px; }
 .prod-title-text { font-size: 14px; font-weight: 600; color: #222; flex-grow: 1; line-height: 1.4; }
@@ -183,7 +194,18 @@
 
   .grid-container { grid-template-columns: repeat(2, 1fr) !important; gap: 12px !important; }
   .product-card { padding: 12px !important; }
-  .prod-img-container { height: 120px !important; }
+
+  .prod-img-container {
+  aspect-ratio: 1 / 1;
+  max-height: 110px !important;
+  } 
+
+  .prod-img-container img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
   .prod-title-text { font-size: 12px !important; height: 32px; overflow: hidden; }
 }
 
