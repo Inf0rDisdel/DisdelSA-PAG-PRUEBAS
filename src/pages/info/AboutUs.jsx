@@ -1,13 +1,35 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import './AboutUs.css'; 
 
-import imgDisdel from '../../assets/images/BannerHistoria/BANNER-ASI-DE-LIMPIO.webp'; 
-import imgVision from 'assets/icons/IconoHistoria/Visión.webp'
-import imgMision from 'assets/icons/IconoHistoria/Misión.webp'
-import imgPlanta from '../../assets/images/BannersUbicaciones/Disdel-Plsnts.webp'; 
-import imgCentral from '../../assets/images/BannersUbicaciones/Disdel-Central.webp';
+// 1. Importamos Configuración y Hook
+import { AppConfig } from 'config/AppConfig';
+import { useBanners } from 'hooks/useBanners';
 
 const AboutUs = () => {
+  const { data: bannerData } = useBanners();
+
+  const images = useMemo(() => {
+    // Helper para armar la URL
+    const getUrl = (imgName) => imgName ? `${AppConfig.baseImageUrl}${imgName}` : '';
+
+    const bannerHistoria = bannerData?.QuienesSomos?.[0]?.Imagen;
+
+    const IconoVisión = bannerData?.Iconos?.find(i => i.Titulo?.trim() === "IconoVisión")?.Imagen;
+    const IconoMisión = bannerData?.Iconos?.find(i => i.Titulo?.trim() === "IconoMisión")?.Imagen;
+
+    const laboratorio = bannerData?.Ubicaciones?.[0]?.Imagen;
+    const imgCentral = bannerData?.Ubicaciones?.find(i => i.Titulo?.trim() === "laboratorio")?.Imagen;
+
+    return {
+      historia: getUrl(bannerHistoria),
+      visión: getUrl(IconoMisión),
+      misión: getUrl(IconoVisión),
+      central: getUrl(imgCentral),
+      laboratorio: getUrl(laboratorio),
+    };
+  }, [bannerData]);
+
+
   return (
     <div className="about-page-container">
       <div className="main-layout-container">
@@ -42,7 +64,7 @@ const AboutUs = () => {
         {/* 3. BANNER GRANDE (Tamaño Original) */}
         {/* Ya no está en la grid pequeña, ahora ocupa todo el ancho real */}
         <div className="full-banner-container">
-            <img src={imgDisdel} alt="Banner Historia" />
+            {images.historia && <img src={images.historia} alt="Banner Historia Disdel" />}
         </div>
 
         {/* 4. POR QUÉ COMPRAR EN DISDEL */}
@@ -60,7 +82,7 @@ const AboutUs = () => {
         <div className="vm-flex-row">
             {/* Imagen Pequeña a la izquierda */}
             <div className="vm-small-img">
-                <img src={imgVision} alt="Visión Icono" /> {/* Cambia esta imagen por tu icono */}
+                <img src={images.misión} alt="Visión Icono" />
             </div>
             {/* Texto a la derecha */}
             <div className="vm-text-side">
@@ -76,7 +98,7 @@ const AboutUs = () => {
         <div className="vm-flex-row">
              {/* Imagen Pequeña a la izquierda */}
              <div className="vm-small-img">
-                <img src={imgMision} alt="Misión Icono" /> {/* Cambia esta imagen por tu icono */}
+                <img src={images.visión} alt="Misión Icono" />
             </div>
             {/* Texto a la derecha */}
             <div className="vm-text-side">
@@ -92,8 +114,8 @@ const AboutUs = () => {
         <div className="gallery-section" style={{marginTop: '60px'}}>
             <h3 className="gallery-title">Nuestro Equipo e Instalaciones Hoy</h3>
             <div className="images-grid-3">
-                <img src={imgPlanta} alt="Equipo Actual" />
-                <img src={imgCentral} alt="Equipo Actual" />
+                <img src={images.central} alt="Planta Disdel" />
+                <img src={images.laboratorio} alt="Instalaciones Centrales" />
             </div>
         </div>
 

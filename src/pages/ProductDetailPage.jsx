@@ -3,19 +3,21 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async'; 
 
 import { AppConfig } from 'config/AppConfig';
+import { useBanners } from 'hooks/useBanners';
 import useCartStore from 'store/useCartStore';
 import { useProductDetail } from 'hooks/useProductDetail';
 
 import { 
   FiCheckCircle, FiPackage, FiChevronLeft, FiTarget 
 } from 'react-icons/fi';
-import './ProductDetailPage.css';
-import defaultImage from 'assets/images/KCP.webp'; 
+import './ProductDetailPage.css'; 
 
 const ProductDetailPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const addItem = useCartStore((state) => state.addItem);
+
+  const { data: bannerData } = useBanners();
  
   // 1. LIMPIEZA DE ID (Para la API usamos Mayúsculas, para SEO Minúsculas)
   const cleanId = id ? id.replace(/\/$/, "").trim().toUpperCase() : "";
@@ -27,6 +29,13 @@ const ProductDetailPage = () => {
   const [selectedImage, setSelectedImage] = useState(null);
   const [selectedUnit, setSelectedUnit] = useState(''); 
   const [selectedType, setSelectedType] = useState('Y');
+
+  const defaultImage = useMemo(() => {
+    const found = bannerData?.ImagenPredeterminado?.find(i => i.Titulo?.trim() === "ImagenDefault");
+    // Usamos BannerImagenMovil o Imagen como respaldo
+    const fileName = found?.BannerImagenMovil || found?.Imagen;
+    return fileName ? `${AppConfig.baseImageUrl}${fileName}` : '';
+  }, [bannerData]);
 
   // --- 1. HELPERS PRIMERO (Definir antes de usar en useMemo) ---
     const getImageUrl = (imgName) => (imgName && imgName.trim() !== "") 
@@ -51,7 +60,7 @@ const ProductDetailPage = () => {
       "@type": "Product",
       "name": `${product.Descripcion} | Suministro Profesional Disdel`,
       "image": [getImageUrl(product.Imagen)],
-      "description": `Cotización de ${product.Descripcion} para empresas. Ideal para ${product.Categoria}, lavandería y limpieza industrial en Guatemala. Venta por mayor y distribución institucional.`,
+      "description": `Cotización de ${product.Descripcion} para empresas. Ideal para ${product.Categoria}, limpieza industrial en Guatemala. Venta por mayor y distribución institucional.`,
       "sku": product.IdProducto,
       "brand": { "@type": "Brand", "name": product.Marca || "Disdel" },
       "offers": {
@@ -144,14 +153,13 @@ const ProductDetailPage = () => {
 
   // --- VARIABLES DE TEXTO PARA SEO SEMÁNTICO ---
   const seoTitle = `${product.Descripcion} ${product.Marca ? '- ' + product.Marca : ''} | Cotización B2B Disdel Guatemala`;
-  const seoDescription = `Solicita cotización de ${product.Descripcion}. Especialistas en suministros de ${product.Categoria.toLowerCase()}, lavandería profesional y limpieza industrial en Guatemala. Calidad Disdelsa institucional.`;
 
   return (
     <div className="pdp-container">
     <Helmet>
         {/* Keywords "Ocultas" (Enriquecimiento semántico vía etiquetas OG) */}
         <meta property="og:title" content={seoTitle} />
-        <meta property="og:description" content={`Distribución de ${product.Descripcion} en Guatemala. Ideal para empresas, hoteles y lavanderías.`} />
+        <meta property="og:description" content={`Distribución de ${product.Descripcion} en Guatemala. Ideal para todo tipo de empresas.`} />
         <meta property="og:image" content={getImageUrl(product.Imagen)} />
         <meta property="og:url" content={`https://www.disdelsa.com/producto/${canonicalId}`} />
         <meta property="og:type" content="product" />
@@ -230,7 +238,7 @@ const ProductDetailPage = () => {
 
           {/* Bloque de texto para SEO Semántico (Visible para el usuario) */}
           <div className="pdp-seo-text">
-            <p>Suministro profesional de <strong>{product.Descripcion}</strong> para industrias y comercios en Guatemala. Este producto pertenece a la línea de <strong>{product.Categoria}</strong> de Disdel, diseñado para alto rendimiento en lavanderías y mantenimiento institucional.</p>
+            <p>Suministro profesional de <strong>{product.Descripcion}</strong> para industrias y comercios en Guatemala. Este producto pertenece a la línea de <strong>{product.Categoria}</strong> de Disdel, diseñado para alto rendimiento y mantenimiento institucional.</p>
           </div>
 
           {hasDifferentOptions ? (

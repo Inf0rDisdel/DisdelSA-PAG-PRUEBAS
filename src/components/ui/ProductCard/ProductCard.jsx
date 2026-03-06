@@ -1,4 +1,4 @@
-import React, { memo } from 'react';
+import React, { memo, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import useCartStore from 'store/useCartStore';
 import { AppConfig } from 'config/AppConfig';
@@ -6,30 +6,37 @@ import { FaCheckCircle } from 'react-icons/fa';
 import { FiShoppingCart } from 'react-icons/fi';
 import './ProductCard.css';
 
-import defaultImg from 'assets/images/KCP.webp';
+import { useBanners } from 'hooks/useBanners';
 
 const ProductCard =memo (({ product, index }) => {
   const { IdProducto, Descripcion, Imagen, Marca, Categoria } = product;
   const addItem = useCartStore((state) => state.addItem);
 
+  const {data: bannerData} = useBanners();
+
+  const defaultImage = useMemo(() => {
+    const found = bannerData?.ImagenPredeterminado?.find(i=> i.Titulo?.trim() === "ImagenDefault");
+
+    const fileName = found?.BannerImagenMovil;
+    return fileName ? `${AppConfig.baseImageUrl}${fileName}` : '';
+  }, [bannerData]);
+
+  const badgeLogo = useMemo(() => {
+    const found = bannerData?.Logo?.find(i=> i.Titulo?.trim() === "LogoDisdel");
+    return found ? `${AppConfig.baseImageUrl}${found.Imagen}` : '';
+  }, [bannerData]);
+
   const imageUrl = (Imagen && Imagen.trim() !== "") 
     ? `${AppConfig.baseImageUrl}productos/${Imagen}` 
-    : defaultImg;
+    : defaultImage;
 
     const isPriority = index< 4;
-
-    const handlePrefetch = () => {
-      if (Imagen) {
-        const img = new Image();
-        img.src = imageUrl;
-      }
-    };
 
   return (
     <div 
       className="product-card">
       <div className="product-brand-badge">
-        <img src="disdel-logo.png" alt="Logo" className="badge-logo-img" />
+        {badgeLogo && <img src={badgeLogo} alt="Disdel" className="badge-logo-img" />}<img src="disdel-logo.png" alt="Logo" className="badge-logo-img" />
       </div>
       {/* Badge de ID discreto */}
       <div className="product-id-badge">ID: {IdProducto}</div>

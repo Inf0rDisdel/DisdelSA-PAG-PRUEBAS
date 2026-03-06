@@ -1,13 +1,27 @@
-import React from 'react';
+import React,{useMemo} from 'react';
 //import { Link } from 'react-router-dom'; 
 import Slider from 'react-slick';
 import "slick-carousel/slick/slick.css"; 
 import "slick-carousel/slick/slick-theme.css";
 import './ProductCarousel.css';
+import { AppConfig } from 'config/AppConfig';
+import { useBanners } from 'hooks/useBanners';
 import ProductCard from 'components/ui/ProductCard/ProductCard';
-import fondoImagen from 'assets/images/FONDO-BLANCO.webp';
 
 const ProductCarousel = ({ title, products = [],isLoading, addToCart, variant = '' }) => {
+
+  const{data: bannerData} = useBanners();
+
+  const images = useMemo(() => {
+    const getUrl = (imgName) => imgName? `${AppConfig.baseImageUrl}${imgName}` : '';
+
+    const fondoImagen = bannerData?.ImagenPredeterminado?.find(i=> i.Titulo?.trim() === "FondoCarousel")?.Imagen;
+
+    return {
+      fondoImagen: getUrl(fondoImagen)
+    };
+  }, [bannerData]);
+
    if (isLoading) {
     return (
       <div className="product-carousel-container">
@@ -64,7 +78,7 @@ const ProductCarousel = ({ title, products = [],isLoading, addToCart, variant = 
 
    return (
     <div className={`product-carousel-container ${variant}`}
-      style={{ backgroundImage: `url(${fondoImagen})` }} 
+      style={{ backgroundImage: `url(${images.fondoImagen})` }} 
     >
       <h2 className="carousel-title">{title}</h2>
       <Slider {...settings}>
