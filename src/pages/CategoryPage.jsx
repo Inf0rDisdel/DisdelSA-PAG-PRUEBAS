@@ -1,7 +1,7 @@
 import { useLocation, Link, useParams } from 'react-router-dom';
 import React, { useState, useMemo, useEffect, useRef } from 'react'; 
 import { Helmet } from 'react-helmet-async';
-import { FiChevronLeft, FiChevronRight, FiInfo } from 'react-icons/fi'; 
+import { FiChevronLeft, FiChevronRight, FiCheckCircle } from 'react-icons/fi'; 
 import './CategoryPage.css';
 
 import { AppConfig } from 'config/AppConfig';
@@ -33,7 +33,6 @@ const CategoryPage = () => {
 
   const scrollRef = useRef(null);
 
-  // --- 1. LÓGICA DE DATOS ---
   const norm = (id) => (id === null || id === undefined) ? '' : String(id).trim();
   const createSlug = (text) => text?.toString().toLowerCase().trim()
         .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
@@ -98,6 +97,7 @@ const CategoryPage = () => {
       "@graph": [
         {
           "@type": "BreadcrumbList",
+          "@id": `${seoData.url}/#breadcrumb`,
           "itemListElement": [
             { "@type": "ListItem", "position": 1, "name": "Inicio", "item": "https://www.disdelsa.com/" },
             { "@type": "ListItem", "position": 2, "name": currentSegment.NombreSegmento, "item": seoData.url }
@@ -110,10 +110,16 @@ const CategoryPage = () => {
           "name": seoData.title,
           "description": seoData.description,
           "isPartOf": { "@id": "https://www.disdelsa.com/#website" },
+          "publisher": {
+            "@type": "WholesaleStore",
+            "name": "Disdel, S.A.",
+            "url": "https://www.disdelsa.com/"
+          },
+
           "mainEntity": {
             "@type": "ItemList",
             "numberOfItems": filteredProducts.length,
-            "itemListElement": filteredProducts.slice(0, 30).map((prod, index) => ({
+            "itemListElement": filteredProducts.slice(0, 50).map((prod, index) => ({
               "@type": "ListItem",
               "position": index + 1,
               "url": `https://www.disdelsa.com/producto/${String(prod.IdProducto).toLowerCase()}`,
@@ -164,11 +170,18 @@ const CategoryPage = () => {
         <link rel="canonical" href={seoData.url} />
         
         {/* Open Graph / Social */}
+        <meta property="og:site_name" content="Disdel" />
         <meta property="og:title" content={seoData.title} />
         <meta property="og:description" content={seoData.description} />
         <meta property="og:image" content={seoData.image} />
         <meta property="og:url" content={seoData.url} />
         <meta property="og:type" content="website" />
+
+        {/* Twitter Card */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={seoData.title} />
+        <meta name="twitter:description" content={seoData.description} />
+        <meta name="twitter:image" content={seoData.image} />
         
         {/* Schema Potente */}
         <script type="application/ld+json">{JSON.stringify(fullSchema)}</script>
@@ -179,12 +192,16 @@ const CategoryPage = () => {
         <div className="cat-header-section">
             <img 
               src={isMobile ? (catBanner.mobile || catBanner.desktop) : catBanner.desktop} 
-              alt={`Banner ${currentSegment.NombreSegmento} Disdel`} 
+              alt={`Catálogo mayorista de ${currentSegment.NombreSegmento} en Guatemala`} 
               className="cat-main-banner" 
+              fetchpriority="high"
+              loading="eager"
             />
             {!isMobile && (
               <div className="cat-header-overlay">
-                  <h1 className="cat-segment-title">{currentSegment.NombreSegmento}</h1>
+                  <h1 className="cat-segment-title">
+                    {currentSegment.NombreSegmento} al por Mayor
+                  </h1>
               </div>
             )}
         </div>
@@ -192,7 +209,7 @@ const CategoryPage = () => {
         <div className="cat-content-layout">
           <aside className="cat-sidebar-left">
             <div className="cat-sidebar-header-mobile">
-                <div className="cat-sidebar-label">FILTRAR POR CATEGORÍA</div>
+                <div className="cat-sidebar-label">CATEGORÍAS</div>
                 <div className="cat-nav-arrows">
                   <button onClick={() => handleScroll('left')} className="scroll-arrow"><FiChevronLeft /></button>
                   <button onClick={() => handleScroll('right')} className="scroll-arrow"><FiChevronRight /></button>
