@@ -20,7 +20,7 @@ const ProductCard =memo (({ product, index }) => {
 
 
   const badgeLogo = useMemo(() => {
-    const found = bannerData?.Logo?.find(i=> i.Titulo?.trim() === "LogoDisdel");
+    const found = bannerData?.Iconos?.find(i => i.Titulo?.trim() === "IconoDisdel");
     return found ? `${AppConfig.baseImageUrl}${found.Imagen}` : '';
   }, [bannerData]);
 

@@ -23,16 +23,16 @@ const HomePage = () => {
     "@context": "https://schema.org",
     "@graph": [
       {
-        "@type": "WholesaleStore",
-        "@id": "https://www.disdelsa.com/#organization",
+        "@type": "Organization",
+        "@id": "https://disdelsa.com/#organization",
         "name": "Disdel, S.A.",
         "alternateName": "Disdelsa",
-        "url": "https://www.disdelsa.com/",
+        "url": "https://disdelsa.com/",
         "logo": {
           "@type": "ImageObject",
-          "url": "https://www.disdelsa.com/logo.png"
+          "url": "https://disdelsa.com/logo.png"
         },
-        "image": "https://www.disdelsa.com/og-image.jpg",
+        "image": "https://disdelsa.com/og-image.jpg",
         "description": "Distribuidor mayorista líder en Guatemala de suministros de limpieza, higiene, cafetería y equipo de protección personal para empresas e instituciones.",
         "address": {
           "@type": "PostalAddress",
@@ -56,13 +56,13 @@ const HomePage = () => {
       },
       {
         "@type": "WebSite",
-        "@id": "https://www.disdelsa.com/#website",
-        "url": "https://www.disdelsa.com/",
+        "@id": "https://disdelsa.com/#website",
+        "url": "https://disdelsa.com/",
         "name": "Disdel Suministros Institucionales",
-        "publisher": { "@id": "https://www.disdelsa.com/#organization" },
+        "publisher": { "@id": "https://disdelsa.com/#organization" },
         "potentialAction": {
           "@type": "SearchAction",
-          "target": "https://www.disdelsa.com/buscar?q={search_term_string}",
+          "target": "https://disdelsa.com/buscar?q={search_term_string}",
           "query-input": "required name=search_term_string"
         }
       }
@@ -118,16 +118,16 @@ const HomePage = () => {
     <main>
       <Helmet>
         {/* --- 🚀 SEO TÉCNICO B2B --- */}
-        <title>Disdel | Suministros de Limpieza, Higiene y Cafetería Mayorista en Guatemala</title>
+        <title>Disdel | Suministros de Limpieza, Higiene , Protección corporal, cafetería Mayorista en Guatemala</title>
         <meta name="description" content="Distribuidor institucional líder en Guatemala. Proveemos suministros de limpieza profesional, equipo de protección personal (EPP) y cafetería para hoteles, hospitales y empresas." />
-        <link rel="canonical" href="https://www.disdelsa.com/" />
+        <link rel="canonical" href="https://disdelsa.com/" />
 
         {/* --- OPEN GRAPH (Facebook, WhatsApp, LinkedIn) --- */}
         <meta property="og:type" content="website" />
         <meta property="og:title" content="Disdel | Soluciones Integrales para Empresas en Guatemala" />
         <meta property="og:description" content="Encuentra marcas líderes como Kimberly Clark, 3M y Wiese. Cotización inmediata para suministros institucionales." />
-        <meta property="og:image" content="https://www.disdelsa.com/og-image.jpg" />
-        <meta property="og:url" content="https://www.disdelsa.com/" />
+        <meta property="og:image" content="https://disdelsa.com/og-image.jpg" />
+        <meta property="og:url" content="https://disdelsa.com/" />
         <meta property="og:site_name" content="Disdel, S.A." />
 
         {/* --- TWITTER CARD --- */}
