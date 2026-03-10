@@ -230,7 +230,12 @@ const ProductDetailPage = () => {
 
           {/* Bloque de texto para SEO Semántico (Visible para el usuario) */}
           <div className="pdp-seo-text">
-            <p>Suministro profesional de <strong>{product.Descripcion}</strong> para industrias y comercios en Guatemala. Este producto pertenece a la línea de <strong>{product.Categoria}</strong> de Disdel, diseñado para alto rendimiento en lavanderías y mantenimiento institucional.</p>
+            <p>
+              <strong>{product.Descripcion}</strong> es un producto de la categoría 
+              <strong> {product.Categoria}</strong>, disponible para distribución y abastecimiento 
+              empresarial en Guatemala. Ideal para negocios, industrias y comercios que buscan 
+              soluciones confiables, calidad constante y disponibilidad inmediata.
+            </p>
           </div>
 
           {hasDifferentOptions ? (
