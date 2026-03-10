@@ -13,10 +13,6 @@ import { useBanners } from 'hooks/useBanners';
 const BrandPage = () => {
   const { slug } = useParams();
   const { data: bannerData } = useBanners();
-
-  const cleanSlug = slug ? slug.replace(/\/$/, "").trim() : '';
-  const canonicalSlug = cleanSlug.toLowerCase(); // Para SEO
-
   const location = useLocation();
   const addItem = useCartStore((state) => state.addItem);
   const { data: menuData, isLoading: loadingMenu } = useMenu();
@@ -26,16 +22,24 @@ const BrandPage = () => {
   const scrollRef = useRef(null);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 468);
 
+  const cleanSlug = slug ? slug.replace(/\/$/, "").trim() : '';
+  const canonicalSlug = cleanSlug.toLowerCase(); 
+
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth <= 468);
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  const defaultImage = useMemo (() => {
-    const imgDb = bannerData?.ImagenPredeterminado?.find(b => b.Titulo === "ImagenDefault");
+  const norm = (id) => (id === null || id === undefined) ? '' : String(id).trim();
+  const createSlug = (text) => text?.toString().toLowerCase().trim()
+      .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+      .replace(/ñ/g, 'n').replace(/\s+/g, '-') || '';
 
-    return imgDb ? `${AppConfig.baseImageUrl}${imgDb.Imagen}` : ''; 
+  // --- 2. DATOS DINÁMICOS DE LA DB ---
+  const defaultImage = useMemo(() => {
+    const found = bannerData?.ImagenPredeterminado?.find(b => b.Titulo?.trim() === "ImagenDefault");
+    return found ? `${AppConfig.baseImageUrl}${found.BannerImagenMovil || found.Imagen}` : ''; 
   }, [bannerData]);
 
 
@@ -66,31 +70,15 @@ const BrandPage = () => {
     };
   }, [bannerData, cleanSlug]);
 
-  const norm = (id) => (id === null || id === undefined) ? '' : String(id).trim();
-  const createSlug = (text) => text?.toString().toLowerCase().trim()
-        .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
-        .replace(/ñ/g, 'n').replace(/\s+/g, '-') || '';
-
   const currentBrandSegment = useMemo(() => {
     if (!menuData) return null;
 
     return menuData.find(seg => createSlug(seg.NombreSegmento).includes(cleanSlug) || cleanSlug.includes(createSlug(seg.NombreSegmento)));
   }, [menuData, cleanSlug]);
   
-  const brandNameOfficial = visualConfig.name || currentBrandSegment?.NombreSegmento || slug;
-
-
-  useEffect(() => {
-    if (currentBrandSegment && currentBrandSegment.Categorias?.length > 0) {
-      const preId = location.state?.preSelectedCatId;
-      if (preId) {
-        const exists = currentBrandSegment.Categorias.some(c => String(c.IdCategoria) === String(preId));
-        setActiveCatId(exists ? preId : null);
-      } else {
-        setActiveCatId(null);
-      }
-    }
-  }, [currentBrandSegment, location.state, slug]);
+  const brandNameOfficial = useMemo(() => {
+    return currentBrandSegment?.NombreSegmento || slug.replace(/-/g, ' ');
+  }, [currentBrandSegment, slug]);
 
   const filteredProducts = useMemo(() => {
     if (!productsData || !currentBrandSegment) return [];
@@ -112,34 +100,55 @@ const BrandPage = () => {
   }, [productsData, currentBrandSegment, activeCatId]);
 
   // --- SCHEMA DINÁMICO ---
-  const brandSchema = useMemo(() => {
-  return {
-    "@context": "https://schema.org",
-    "@graph": [
-      {
-        "@type": "BreadcrumbList",
-        "itemListElement": [
-          { "@type": "ListItem", "position": 1, "name": "Inicio", "item": "https://www.disdelsa.com/" },
-          { "@type": "ListItem", "position": 2, "name": brandNameOfficial, "item": `https://www.disdelsa.com/marca/${canonicalSlug}` }
-        ]
-      },
-      {
-        "@type": "CollectionPage",
-        "name": `Distribuidor Autorizado ${brandNameOfficial} en Guatemala`,
-        "description": `Línea completa de productos ${brandNameOfficial} para uso profesional e industrial. Suministros originales con garantía Disdel.`,
-        "mainEntity": {
-          "@type": "ItemList",
-          "itemListElement": filteredProducts.slice(0, 30).map((prod, index) => ({
-            "@type": "ListItem",
-            "position": index + 1,
-            "name": prod.Descripcion,
-            "url": `https://www.disdelsa.com/producto/${String(prod.IdProducto).toLowerCase()}`
-          }))
+  const fullSchema = useMemo(() => {
+    if (!currentBrandSegment) return null;
+    const url = `https://www.disdelsa.com/marca/${canonicalSlug}`;
+
+    return {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "BreadcrumbList",
+          "@id": `${url}#breadcrumb`,
+          "itemListElement": [
+            { "@type": "ListItem", "position": 1, "name": "Inicio", "item": "https://www.disdelsa.com/" },
+            { "@type": "ListItem", "position": 2, "name": brandNameOfficial, "item": url }
+          ]
+        },
+        {
+          "@type": "CollectionPage",
+          "@id": `${url}#collection`,
+          "url": url,
+          "name": `Distribuidor Autorizado ${brandNameOfficial} en Guatemala | Disdel`,
+          "description": `Catálogo institucional completo de ${brandNameOfficial}. Suministros profesionales para empresas con garantía oficial y entrega en toda la república.`,
+          "publisher": { "@type": "WholesaleStore", "name": "Disdel, S.A." },
+          "mainEntity": {
+            "@type": "ItemList",
+            "numberOfItems": filteredProducts.length,
+            "itemListElement": filteredProducts.slice(0, 30).map((prod, index) => ({
+              "@type": "ListItem",
+              "position": index + 1,
+              "url": `https://www.disdelsa.com/producto/${String(prod.IdProducto).toLowerCase()}`,
+              "name": prod.Descripcion,
+              "image": prod.Imagen ? `${AppConfig.baseImageUrl}productos/${prod.Imagen}` : defaultImage
+            }))
+          }
         }
+      ]
+    };
+  }, [currentBrandSegment, brandNameOfficial, filteredProducts, canonicalSlug, defaultImage]);
+
+  useEffect(() => {
+    if (currentBrandSegment?.Categorias?.length > 0) {
+      const preId = location.state?.preSelectedCatId;
+      if (preId) {
+        const exists = currentBrandSegment.Categorias.some(c => String(c.IdCategoria) === String(preId));
+        setActiveCatId(exists ? preId : null);
+      } else {
+        setActiveCatId(null);
       }
-    ]
-  };
-}, [filteredProducts, brandNameOfficial, canonicalSlug]);
+    }
+  }, [currentBrandSegment, location.state, slug]);
 
   const handleScroll = (direction) => {
     if (scrollRef.current) {
@@ -203,20 +212,16 @@ const BrandPage = () => {
       {/* El título ahora incluye "Distribuidor Autorizado" y "Suministros", palabras clave para jefes de compras */}
       <title>{`Distribuidor Autorizado ${brandNameOfficial} en Guatemala | Suministros Disdel`}</title>
       
-      {/* La descripción ataca el sector empresarial e institucional directamente */}
-      <meta name="description" content={`Catálogo institucional de ${brandNameOfficial} para empresas en Guatemala. Venta por mayor de suministros de limpieza, higiene y mantenimiento industrial. Distribuidor oficial con asesoría técnica y entrega en todo el país.`} />
-      
+      <meta name="description" content={`Adquiere suministros originales ${brandNameOfficial} al por mayor. Distribución institucional con asesoría técnica y entrega rápida en Guatemala. Calidad garantizada para su empresa.`} />
       <link rel="canonical" href={`https://www.disdelsa.com/marca/${canonicalSlug}`} />
 
-      {/* 2. DATOS ESTRUCTURADOS (Tu brandSchema profesional) */}
-      <script type="application/ld+json">{JSON.stringify(brandSchema)}</script>
-
-      {/* 3. OPEN GRAPH (Optimizado para que los links en WhatsApp/Facebook se vean corporativos) */}
-      <meta property="og:type" content="website" />
       <meta property="og:title" content={`Catálogo Mayorista ${brandNameOfficial} - Distribución Disdel`} />
       <meta property="og:description" content={`Adquiere productos originales ${brandNameOfficial} con respaldo institucional. Soluciones integrales para hoteles, hospitales y oficinas en Guatemala.`} />
       <meta property="og:image" content={visualConfig.banner || defaultImage} />
       <meta property="og:url" content={`https://www.disdelsa.com/marca/${canonicalSlug}`} />
+
+      <meta property="og:type" content="website" />
+
       <meta property="og:site_name" content="Disdel" />
 
       {/* 4. TWITTER CARD */}
@@ -225,20 +230,20 @@ const BrandPage = () => {
       <meta name="twitter:description" content={`Cotiza por volumen productos ${brandNameOfficial}. Entrega rápida y garantía de fábrica en toda la república.`} />
       <meta name="twitter:image" content={visualConfig.banner ? visualConfig.banner : defaultImage} />
 
-      <script type="application/ld+json">{JSON.stringify(brandSchema)}</script>
+      <script type="application/ld+json">{JSON.stringify(fullSchema)}</script>
     </Helmet>
 
-      <div className="brand-hero">
+      <section className="brand-hero">
         {isMobile && visualConfig.bannerMob ? (
-          <img src={visualConfig.bannerMob} alt={brandNameOfficial} className='banner-fade-in' />
+          <img src={visualConfig.bannerMob} alt={brandNameOfficial} className='banner-fade-in' fetchpriority="high" />
         ) : visualConfig.banner ? (
-          <img src={visualConfig.banner} alt={brandNameOfficial} className='banner-fade-in' />
+          <img src={visualConfig.banner} alt={brandNameOfficial} className='banner-fade-in' fetchpriority="high" />
         ) : (
            <div className="brand-hero-fallback" style={{ background: visualConfig.color }}>
             <h1>{brandNameOfficial}</h1>
           </div>
         )}
-      </div>
+      </section>
 
       <div className="brand-layout">
         <aside className="sidebar-filters">
@@ -250,21 +255,25 @@ const BrandPage = () => {
             </div>
           </div>
           
-          <div className="categories-stack" ref={scrollRef}>
+          <nav className="categories-stack" ref={scrollRef}>
             <div className={`category-card-btn ${!activeCatId ? 'active-filter' : ''}`} onClick={() => setActiveCatId(null)}>
               <div className="cat-img-box"><img src={iconoInicio} alt="Inicio" /></div>
               <span className="cat-text">Ver Todo</span>
             </div>
           
-            {currentBrandSegment.Categorias?.map((cat) => (
-                <div key={cat.IdCategoria} className={`category-card-btn ${norm(activeCatId) === norm(cat.IdCategoria) ? 'active-filter' : ''}`} onClick={() => setActiveCatId(cat.IdCategoria)}>
+            {currentBrandSegment?.Categorias?.map((cat) => (
+                <div 
+                  key={cat.IdCategoria} 
+                  className={`category-card-btn ${norm(activeCatId) === norm(cat.IdCategoria) ? 'active-filter' : ''}`} 
+                  onClick={() => setActiveCatId(cat.IdCategoria)}
+                >
                   <div className="cat-img-box">
-                    <img src={cat.Imagen ? `${AppConfig.baseImageUrl}${cat.Imagen}` : defaultImage} alt={cat.NombreCategoria} />
+                    <img src={cat.Imagen ? `${AppConfig.baseImageUrl}${cat.Imagen}` : defaultImage} alt={cat.NombreCategoria} loading="lazy" />
                   </div>
                   <span className="cat-text">{cat.NombreCategoria}</span>
                 </div>
             ))}
-          </div>
+          </nav>
         </aside>
 
         <main className="products-area">

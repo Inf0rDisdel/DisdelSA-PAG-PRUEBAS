@@ -9,6 +9,8 @@
   width: 100%; 
   box-sizing: border-box;
   transition: transform 0.3s ease;
+  position: relative;
+  contain: layout;
 }
 /* --- 1. EL BADGE DEL LOGO (Aseguramos visibilidad) --- */
 .product-brand-badge {/*---PARA COREJIR----*/
@@ -44,11 +46,13 @@ color: #96c121;
 font-size: 2rem;
 transition: transform 0.2s;
 }
+
 .product-card:hover {
-transform: translateY(-5px);
-box-shadow: 0 12px 24px rgba(0, 0, 0, 0.8);
-border-color: #135eab;
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  border-color: #135eab;
 }
+
 .product-status-indicator {
 position: absolute;
 top: 15px;
@@ -76,23 +80,26 @@ display: none;
 
 .product-image-container {/*-----PRARA COREJIR---------*/
 width: 100%;
-height: 140px;
+aspect-ratio: 1 / 1;
 display: flex;
 align-items: center;
 justify-content: center;
-margin-bottom:10px;
+margin-bottom:12px;
+overflow: hidden;
+
+aspect-ratio: 1 /1 ;
+background-color: #fcfcfc;
 }
 .product-image {/*----PRARA COREJIR-------*/
-max-width: 90%;
-max-height: 90%;
+max-width: 100%;
+max-height: 100%;
 object-fit: contain;
 }
 .brand-tag {/*-----PARA ACOREJIR*/
 font-size: 10px;
 color: #135eab;
 font-weight: 800;
-margin-bottom: 5px;
-display: block;
+margin-bottom: 4px;
 }
 .product-title {
 font-size: 13px;
@@ -101,7 +108,7 @@ color: #333;
 margin: 0 0 5px 0;
 line-height: 1.3;
 /* Altura fija para que los botones se alineen */
-min-height: 34px;
+min-height: 36px;
 display: -webkit-box;
 -webkit-line-clamp: 2; /* Bajamos a 2 líneas para que sea más compacto */
 -webkit-box-orient: vertical;
@@ -168,7 +175,7 @@ margin-top: auto;
 }
 /* --- AJUSTES RESPONSIVOS MODO PRO --- */
 @media (max-width: 768px) {
-  .product-card { padding: 12px 10px; }
+  .product-card { padding: 10px; }
   .product-image-container { height: 110px; } /* Imagen más pequeña */
   .product-title { font-size: 11px; min-height: 30px; }
   .quote-button { padding: 8px 0; font-size: 11px; }

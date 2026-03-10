@@ -1,21 +1,34 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { FiMinus, FiPlus, FiTrash2 } from 'react-icons/fi';
 import useCartStore from 'store/useCartStore';
 import { AppConfig } from 'config/AppConfig';
 import './CarItem.css';
-import defaultImage from 'assets/images/KCP.webp';
+import { useBanners } from 'hooks/useBanners';
 
 const CartItem = ({ product }) => {
+
+  const {data:bannerData} = useBanners ();
+
+ const defaultImage = useMemo(() => {
+    const found = bannerData?.ImagenPredeterminado?.find(i => i.Titulo?.trim() === "ImagenDefault");
+    const fileName = found?.BannerImagenMovil;
+    return fileName ? `${AppConfig.baseImageUrl}${fileName}` : '';
+  }, [bannerData]);
+
   const { removeFromCart, updateQuantity } = useCartStore();
   const quantity = product.quantity || 1;
 
   return (
     <div className="cart-item-wrapper">
-      <img
-        src={product.Imagen ? `${AppConfig.baseImageUrl}productos/${product.Imagen}` : defaultImage}
-        alt={product.Descripcion}
-        className="item-image"
-      />
+      <div className="item-image-container">
+        <img
+          src={product.Imagen ? `${AppConfig.baseImageUrl}productos/${product.Imagen}` : defaultImage}
+          alt={product.Descripcion}
+          className="item-image"
+          // Evitamos que la imagen se vea estirada
+          style={{ objectFit: 'contain' }}
+        />
+      </div>
 
       <div className="item-info">
         <span className="info-label">Producto</span>

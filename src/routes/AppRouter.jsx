@@ -1,4 +1,3 @@
-// src/routes/AppRouter.jsxapprouter
 import React from 'react';
 import { Routes, Route, Navigate, useParams, Link } from 'react-router-dom';
 
@@ -6,9 +5,9 @@ import HomePage from '../pages/HomePage';
 import LoginPage from '../pages/login/LoginPage';
 import MyBusinessPage from '../pages/my-business/MyBusinessPage';
 import CartPage from 'pages/cart/CartPages'; 
+
 import ProductDetailPage from 'pages/ProductDetailPage';
 import SearchResultsPage from 'pages/SearchResults/SearchResultsPage';
-
 import CategoryPage from '../pages/CategoryPage'; 
 import BrandPage from '../pages/BrandPage/BrandPage';
 
