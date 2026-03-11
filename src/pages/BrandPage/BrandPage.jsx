@@ -10,6 +10,9 @@ import { useMenu } from 'hooks/useMenu';
 import { useProducts } from 'hooks/useProducts';
 import { useBanners } from 'hooks/useBanners';
 
+import Skeleton from 'components/ui/Skeleton/Skeleton';
+import ProductCardSkeleton from 'components/ui/ProductCard/ProductCardSkeleton';
+
 const BrandPage = () => {
   const { slug } = useParams();
   const { data: bannerData } = useBanners();
@@ -97,6 +100,7 @@ const BrandPage = () => {
     });
   }, [productsData, currentBrandSegment, activeCatId]);
 
+
   // --- SCHEMA DINÁMICO ---
   const fullSchema = useMemo(() => {
     if (!currentBrandSegment) return null;
@@ -161,19 +165,17 @@ const BrandPage = () => {
   };
 
   if (loadingMenu || loadingProducts) {
-    
     return (
       <div className="brand-container">
-        <div className="skeleton-shimmer" style={{width: '100%', height: isMobile ? '180px' : '280px', marginBottom: '30px'}}></div>
+        <Skeleton width="100%" height={isMobile ? "180px" : "280px"} style={{ marginBottom: '30px' }} />
         <div className="brand-layout">
-          <aside className="sidebar-filters"><div className="skeleton-shimmer" style={{width: '100%', height: '200px'}}></div></aside>
+          <aside className="sidebar-filters">
+            <Skeleton width="100%" height="250px" />
+          </aside>
           <main className="products-area">
              <div className="grid-container">
-                {[1,2,3,4].map(n => (
-                  <div key={n} className="skeleton-card">
-                    <div className="skeleton-shimmer" style={{height: '150px'}}></div>
-                    <div className="skeleton-shimmer" style={{height: '20px', width: '80%'}}></div>
-                  </div>
+                {[1, 2, 3, 4].map(n => (
+                  <ProductCardSkeleton key={n} />
                 ))}
              </div>
           </main>

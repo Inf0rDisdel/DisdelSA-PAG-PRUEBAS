@@ -1,7 +1,7 @@
 import { useLocation, Link, useParams } from 'react-router-dom';
 import React, { useState, useMemo, useEffect, useRef } from 'react'; 
 import { Helmet } from 'react-helmet-async';
-import { FiCheckCircle, FiShoppingCart } from 'react-icons/fi'; 
+import {  FiShoppingCart } from 'react-icons/fi'; 
 import './CategoryPage.css';
 
 import { AppConfig } from 'config/AppConfig';
@@ -9,6 +9,9 @@ import { useBanners } from 'hooks/useBanners';
 import useCartStore from 'store/useCartStore';
 import { useMenu } from 'hooks/useMenu';
 import { useProducts } from 'hooks/useProducts';
+
+import Skeleton from 'components/ui/Skeleton/Skeleton';
+import ProductCardSkeleton from 'components/ui/ProductCard/ProductCardSkeleton';
 
 const CategoryPage = () => {
   const { slug } = useParams();
@@ -146,25 +149,23 @@ const CategoryPage = () => {
   }, [currentSegment, location.state]);
 
   const handleCategoryClick = (cat) => {
-      setActiveCatId(cat.IdCategoria);
-      setActiveSubCatId(cat.SubCategorias?.length > 0 ? cat.SubCategorias[0].IdSubCategoria : null);
+    setActiveCatId(cat.IdCategoria);
+    setActiveSubCatId(cat.SubCategorias?.length > 0 ? cat.SubCategorias[0].IdSubCategoria : null);
   };
 
    if (loadingMenu || loadingProducts) {
     return (
       <div className="cat-master-wrapper">
         <div className="cat-container">
-          <div className="skeleton-banner skeleton-shimmer"></div>
+          <Skeleton width="100%" height={isMobile ? "150px" : "300px"} style={{ marginBottom: '20px' }} />
           <div className="cat-content-layout">
-             <aside className="skeleton-sidebar skeleton-shimmer"></aside>
+             <aside className="cat-sidebar-left">
+                <Skeleton width="100%" height="400px" />
+             </aside>
              <main className="cat-right-column">
                 <div className="cat-grid-products">
-                  {[1,2,3,4,5,6].map(n => (
-                    <div key={n} className="skeleton-card">
-                      <div className="sk-img skeleton-shimmer"></div>
-                      <div className="sk-line skeleton-shimmer"></div>
-                      <div className="sk-line skeleton-shimmer" style={{width: '60%'}}></div>
-                    </div>
+                  {[1, 2, 3, 4, 5, 6].map(n => (
+                    <ProductCardSkeleton key={n} />
                   ))}
                 </div>
              </main>
@@ -277,7 +278,6 @@ const CategoryPage = () => {
                     </Link>
 
                     <div className="cat-card-footer">
-                        {/* --- BOTÓN CON ICONO Y AZUL --- */}
                         <button 
                           className="cat-quote-btn" 
                           onClick={() => addItem({...prod, presentationSelected: prod.Unidad || prod.Empaque, unitType: prod.Unidad ? 'Y' : 'N'})}

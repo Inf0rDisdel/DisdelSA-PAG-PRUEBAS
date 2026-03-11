@@ -1,5 +1,4 @@
 import React,{useMemo} from 'react';
-//import { Link } from 'react-router-dom'; 
 import Slider from 'react-slick';
 import "slick-carousel/slick/slick.css"; 
 import "slick-carousel/slick/slick-theme.css";
@@ -7,8 +6,10 @@ import './ProductCarousel.css';
 import { AppConfig } from 'config/AppConfig';
 import { useBanners } from 'hooks/useBanners';
 import ProductCard from 'components/ui/ProductCard/ProductCard';
+import ProductCardSkeleton from 'components/ui/ProductCard/ProductCardSkeleton';
+import Skeleton from 'components/ui/Skeleton/Skeleton';
 
-const ProductCarousel = ({ title, products = [],isLoading, addToCart, variant = '' }) => {
+const ProductCarousel = ({ title, products = [], isLoading, variant = '' }) => {
 
   const{data: bannerData} = useBanners();
 
@@ -22,23 +23,25 @@ const ProductCarousel = ({ title, products = [],isLoading, addToCart, variant = 
     };
   }, [bannerData]);
 
-   if (isLoading) {
+  if (isLoading) {
     return (
       <div className="product-carousel-container">
-        <div className="skeleton-box" style={{ width: '200px', height: '30px', borderRadius: '50px', marginBottom: '20px' }}></div>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
-          {[1, 2].map((n) => (
-            <div key={n} className="product-card" style={{ border: '1px solid #eee' }}>
-              <div className="skeleton-box" style={{ width: '100%', height: '120px', borderRadius: '10px' }}></div>
-              <div className="skeleton-box" style={{ width: '80%', height: '15px', marginTop: '15px' }}></div>
-              <div className="skeleton-box" style={{ width: '60%', height: '12px', marginTop: '10px' }}></div>
-              <div className="skeleton-box" style={{ width: '90%', height: '40px', marginTop: 'auto', borderRadius: '8px' }}></div>
-            </div>
+        <div style={{ padding: '0 20px' }}>
+          <Skeleton width="250px" height="30px" style={{ marginBottom: '20px' }} />
+        </div>
+        <div style={{ 
+          display: 'grid', 
+          gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', 
+          gap: '20px',
+          padding: '0 20px'
+        }}>
+          {[1, 2, 3, 4, 5].map((n) => (
+            <ProductCardSkeleton key={n} />
           ))}
         </div>
       </div>
     );
-  };
+  }
 
   const settings = {
     dots: false,

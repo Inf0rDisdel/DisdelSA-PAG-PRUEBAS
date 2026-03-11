@@ -13,25 +13,26 @@
   contain: layout;
 }
 /* --- 1. EL BADGE DEL LOGO (Aseguramos visibilidad) --- */
-.product-brand-badge {/*---PARA COREJIR----*/
-position: absolute;
-top: 5px;
-right: 5px;
-width: 38px;         /* Un poquito más grande para que se vea */
-height: 38px;
-background: transparent;
-border: none;
-display: flex;
-align-items: center;
-justify-content: center;
-z-index: 10;         /* Forzamos que esté al frente */
-pointer-events: none;
+.product-brand-badge {
+  position: absolute;
+  top: 12px;      /* Unificamos a 12px */
+  right: 12px;    /* Unificamos a 12px */
+  width: auto;    /* Quitamos el fixed width para que el logo respire */
+  height: auto;
+  background: transparent;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  pointer-events: none;
 }
+
 .badge-logo-img {
-width: 48%; /* Ajusta según cómo se vea tu logo */
-height: auto;
-object-fit: contain;
-filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+  height: 18px;   /* Unificamos altura */
+  width: auto;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
 }
 /* --- ESTILO DE LAS FLECHAS DEL CARRUSEL --- /
 / (Aplica estas clases si usas botones personalizados o librerías como Slick/Swiper) */

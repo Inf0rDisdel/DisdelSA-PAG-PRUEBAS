@@ -37,13 +37,34 @@
 .categories-stack { display: flex; flex-direction: column; gap: 5px; }
 
 .category-card-btn {
-  display: flex; align-items: center; padding: 12px 15px; border-radius: 8px;
-  cursor: pointer; color: #555; font-size: 13px; transition: all 0.2s;
-  border-left: 3px solid transparent; background: white;
+  display: flex; 
+  align-items: center; 
+  padding: 12px 15px; 
+  border-radius: 8px;
+  cursor: pointer; 
+  color: #555; 
+  font-size: 13px; 
+  transition: all 0.2s;
+  background: white;
+  
+  /* 🔥 SOLUCIÓN: Quitamos bordes por defecto del botón */
+  border: none; 
+  outline: none;
+  
+  /* Mantenemos solo el borde izquierdo para el indicador de color */
+  border-left: 3px solid transparent; 
 }
+
 .category-card-btn.active-filter {
   background-color: white !important; 
-  color: var(--brand-color); font-weight: 700; border-left-color: var(--brand-color);
+  color: var(--brand-color); 
+  font-weight: 700; 
+  border-left-color: var(--brand-color);
+  
+  /* Aseguramos que al estar activo no aparezca sombra o borde extra */
+  border-top: none;
+  border-right: none;
+  border-bottom: none;
 }
 
 .cat-img-box { width: 24px; height: 24px; margin-right: 12px; }
@@ -70,8 +91,17 @@
   text-decoration: none !important;
 }
 
-.product-brand-badge { position: absolute; top: 12px; left: 12px; z-index: 2; }
-.badge-logo-img { height: 16px; object-fit: contain; }
+.product-brand-badge { 
+  position: absolute; 
+  top: 12px;      /* Misma distancia que CategoryPage */
+  right: 12px;    /* 🔥 CORREGIDO: de left a right */
+  z-index: 2; 
+}
+
+.badge-logo-img { 
+  height: 16px; 
+  object-fit: contain; 
+}
 
 .prod-link-wrapper { display: flex; flex-direction: column; flex: 1; text-decoration: none !important; }
 
@@ -183,10 +213,22 @@
 
   /* CAJITAS MÁS BAJAS (Ajuste de altura solicitado) */
   .category-card-btn {
-    flex: 0 0 105px !important; flex-direction: column !important; 
-    height: 75px !important; /* Altura reducida para nitidez */
-    justify-content: center !important; text-align: center !important; padding: 5px !important;
-    margin-bottom: 0 !important; border: 1px solid #eee !important;
+    flex: 0 0 105px !important; 
+    flex-direction: column !important; 
+    height: 75px !important; 
+    justify-content: center !important; 
+    text-align: center !important; 
+    padding: 5px !important;
+    margin-bottom: 0 !important; 
+    
+    /* Cambiamos el 1px solid #eee por none si quieres quitarlo del todo en móvil */
+    border: none !important; 
+    border-bottom: 2px solid transparent !important; /* Si quieres el indicador abajo */
+  }
+
+  .category-card-btn.active-filter {
+    border-bottom-color: var(--brand-color) !important;
+    border-left-color: transparent !important; /* Quitamos el de la izquierda en móvil */
   }
   .cat-img-box { margin-right: 0 !important; margin-bottom: 5px !important; height: 32px !important; width: 100% !important; }
   .cat-text { font-size: 10px !important; line-height: 1.1 !important; display: block !important; }
