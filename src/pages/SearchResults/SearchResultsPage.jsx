@@ -11,23 +11,35 @@ const SearchResultsPage = () => {
   
   const queryParams = new URLSearchParams(location.search);
   const query = queryParams.get('q') || '';
+  const decodedQuery = decodeURIComponent(query);
 
-  const searchSchema = {
+  const fullSchema = useMemo(() => ({
     "@context": "https://schema.org",
-    "@type": "WebSite",
-    "url": "https://www.disdelsa.com/",
-    "potentialAction": {
-      "@type": "SearchAction",
-      "target": "https://www.disdelsa.com/buscar?q={search_term_string}",
-      "query-input": "required name=search_term_string"
-    }
-  };
+    "@graph": [
+      {
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          { "@type": "ListItem", "position": 1, "name": "Inicio", "item": "https://www.disdelsa.com/" },
+          { "@type": "ListItem", "position": 2, "name": "Búsqueda", "item": `https://www.disdelsa.com/buscar?q=${encodeURIComponent(query)}` }
+        ]
+      },
+      {
+        "@type": "SearchResultsPage",
+        "mainEntity": {
+          "@type": "ItemList",
+          "name": `Resultados para ${decodedQuery}`,
+          "numberOfItems": 0 // Se actualiza abajo
+        }
+      }
+    ]
+  }), [query, decodedQuery]);
 
   // LÓGICA DE FILTRADO + ELIMINACIÓN DE DUPLICADOS
   const resultados = useMemo(() => {
     if (!productos || !Array.isArray(productos)) return [];
     
     const searchLower = query.toLowerCase().trim();
+    if (!searchLower) return productos;
     
     // 1. Primero filtramos por coincidencia de texto
     const matched = productos.filter(p => {
@@ -47,56 +59,97 @@ const SearchResultsPage = () => {
     // 2. Luego eliminamos duplicados por ID usando un Set
     const seenIds = new Set();
     return matched.filter(p => {
-      if (seenIds.has(p.IdProducto)) return false;
+      if (!p.IdProducto || seenIds.has(p.IdProducto)) return false;
       seenIds.add(p.IdProducto);
       return true;
     });
 
-  }, [productos, query]);
+  }, [productos, decodedQuery]);
 
-  if (isLoading) return <div className={styles.loading}>Buscando productos...</div>;
+  if (fullSchema && fullSchema["@graph"][1].mainEntity) {
+    fullSchema["@graph"][1].mainEntity.numberOfItems = resultados.length;
+  }
 
+  if (isLoading) return <div className={styles.loading}>Buscando suministros en Disdel...</div>;
+  
   return (
-    <div className={styles.searchPageWrapper}>
+    <main className={styles.searchPageWrapper}>
       <Helmet>
-        <title>{`Resultados para "${query}" | Disdel`}</title>
+        {/* --- 1. SEO ESTÁNDAR --- */}
+        <title>{`Comprar ${decodedQuery} en Guatemala | Disdel`}</title>
+        <meta name="description" content={`Resultados de búsqueda para ${decodedQuery}. Encuentra suministros institucionales de alta calidad con entrega en toda Guatemala.`} />
+        <link rel="canonical" href={`https://www.disdelsa.com/buscar?q=${query}`} />
+        <meta name="robots" content="index, follow" /> {/* Indica a Google que indexe esta página */}
+
+        {/* --- 2. OPTIMIZACIÓN DE CARGA (Core Web Vitals) --- */}
+        {/* Preconecta al servidor de imágenes para ganar velocidad (LCP) */}
+        <link rel="preconnect" href="https://disdelsa.com" />
+        <link rel="dns-prefetch" href="https://disdelsa.com" />
+
+        {/* --- 3. SEO LOCAL (Guatemala) --- */}
+        <meta name="geo.region" content="GT-GU" /> {/* Guatemala, Ciudad */}
+        <meta name="geo.placename" content="Guatemala" />
+        <meta name="geo.position" content="14.6349;-90.5069" />
+        <meta name="ICBM" content="14.6349, -90.5069" />
+
+        {/* --- 4. REDES SOCIALES (Open Graph) --- */}
+        <meta property="og:type" content="website" />
+        <meta property="og:title" content={`Resultados para "${decodedQuery}" en Disdel`} />
+        <meta property="og:description" content="Encuentra los mejores suministros industriales y de limpieza profesional en nuestra tienda online." />
+        <meta property="og:image" content="https://www.disdelsa.com/logo-social.jpg" /> {/* URL de una imagen de marca */}
+        <meta property="og:url" content={`https://www.disdelsa.com/buscar?q=${query}`} />
+        <meta property="og:site_name" content="Disdel" />
+
+        {/* --- 5. TWITTER CARD --- */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={`Catálogo Disdel: ${decodedQuery}`} />
+        <meta name="twitter:image" content="https://www.disdelsa.com/logo-social.jpg" />
+
+        {/* --- 6. ESTILO DEL NAVEGADOR (Mobile) --- */}
+        <meta name="theme-color" content="#135eab" /> {/* Color azul Disdel para la barra del navegador en Android */}
+
+        {/* --- 7. SCHEMA (JSON-LD) --- */}
         <script type="application/ld+json">
-          {JSON.stringify(searchSchema)}
+          {JSON.stringify(fullSchema)}
         </script>
       </Helmet>
+
       <div className={styles.container}>
         <header className={styles.searchHeader}>
           <p>Se encontraron {resultados.length} coincidencias</p>
         </header>
 
-        {resultados.length > 0 ? (
-          <div className={styles.productGrid}>
-            {resultados.map(p => (
-              <ProductCard 
-                key={p.IdProducto} 
-                product={{
-                  id: p.IdProducto,
-                  name: p.Descripcion,
-                  price: p.PrecioIVA,
-                  image: p.Imagen,
-                  brand: p.Marca,
-                  ...p 
-                }} 
-              />
-            ))}
-          </div>
-        ) : (
-          <div className={styles.noResults}>
-            <div className={styles.icon}>🔍</div>
-            <h2>No hay resultados exactos para tu búsqueda</h2>
-            <p>Prueba buscando por una palabra más general (ej. "Aceite" o "Silver")</p>
-            <button onClick={() => window.history.back()} className={styles.btnBack}>
-              Volver atrás
-            </button>
-          </div>
-        )}
+        <div className={styles.resultsContent} style={{ minHeight: '60vh' }}>
+          {resultados.length > 0 ? (
+            <div className={styles.productGrid}>
+              {resultados.map((p, index) => (
+                <ProductCard 
+                  key={p.IdProducto} 
+                  index={index} // Importante para el SEO/LCP que añadimos antes
+                  product={{
+                    id: p.IdProducto,
+                    name: p.Descripcion,
+                    price: p.PrecioIVA,
+                    image: p.Imagen,
+                    brand: p.Marca,
+                    ...p 
+                  }} 
+                />
+              ))}
+            </div>
+          ) : (
+            <div className={styles.noResults}>
+              <div className={styles.icon}>🔍</div>
+              <h2>No hay resultados para tu búsqueda</h2>
+              <p>Intenta con palabras más generales o revisa la ortografía.</p>
+              <button onClick={() => window.history.back()} className={styles.btnBack}>
+                Volver atrás
+              </button>
+            </div>
+          )}
+        </div>
       </div>
-    </div>
+    </main>
   );
 };
 

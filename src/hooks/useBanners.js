@@ -22,6 +22,7 @@ export const useBanners = () => {
                 lateralesPrincipal: data.filter(b => b.IdTipoBanner === 26),
                 promoNescafe: data.filter(b => b.IdTipoBanner === 1),
                 sliderMarcas: data.filter(b => b.IdTipoBanner === 4),
+                promoExtra: data.filter(b=> b.IdTipoBanner === 9),
                 aliados: data.filter(b => b.IdTipoBanner === 14), 
                 promoGrid: data.filter(b => b.IdTipoBanner === 15),
 
