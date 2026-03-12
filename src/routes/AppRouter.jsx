@@ -1,29 +1,29 @@
-import React from 'react';
-import { Routes, Route, Navigate, useParams, Link } from 'react-router-dom';
+import React, { Suspense, lazy } from 'react';
+import { Routes, Route, Navigate, useParams } from 'react-router-dom';
 
-import HomePage from '../pages/HomePage';
-import LoginPage from '../pages/login/LoginPage';
-import MyBusinessPage from '../pages/my-business/MyBusinessPage';
-import CartPage from 'pages/cart/CartPages'; 
+const HomePage = lazy(() => import('../pages/HomePage'));
+const ProductDetailPage = lazy(() => import('pages/ProductDetailPage'));
+const SearchResultsPage = lazy(() => import('pages/SearchResults/SearchResultsPage'));
+const CategoryPage = lazy(() => import('../pages/CategoryPage'));
+const BrandPage = lazy(() => import('../pages/BrandPage/BrandPage'));
 
-import ProductDetailPage from 'pages/ProductDetailPage';
-import SearchResultsPage from 'pages/SearchResults/SearchResultsPage';
-import CategoryPage from '../pages/CategoryPage'; 
-import BrandPage from '../pages/BrandPage/BrandPage';
+const LoginPage = lazy(() => import('../pages/login/LoginPage'));
+const MyBusinessPage = lazy(() => import('../pages/my-business/MyBusinessPage'));
+const CartPage = lazy(() => import('pages/cart/CartPages')); 
 
-import AboutUs from 'pages/info/AboutUs';
-import Ayuda from 'pages/info/Ayuda';
-import Locations from 'pages/info/Locations';
+const AboutUs = lazy(() => import('pages/info/AboutUs'));
+const Ayuda = lazy(() => import('pages/info/Ayuda'));
+const Locations = lazy(() => import('pages/info/Locations'));
 
-import PrivacyPolicy from 'pages/info/PrivacyPolicy';
+const PrivacyPolicy = lazy(() => import('pages/info/PrivacyPolicy'));
 //import ReviewStats from 'components/reviews/ReviewStats';
-import ReviewsSection from 'components/reviews/ReviewsSection';
+//const ReviewsSection = lazy(() => import('components/reviews/ReviewsSection'));
 
 
 const AppRouter = () => {
   return (
-    <Routes>
-      <Route path="/index.html" element={<Navigate to="/" replace />} />
+    <Suspense fallback={<div className="loading-screen">Cargando...</div>}>
+      <Routes>
 
       <Route path="/" element={<HomePage />} />
 
@@ -59,12 +59,13 @@ const AppRouter = () => {
       <Route path="/login" element={<LoginPage />} />
       <Route path="/my-business" element={<MyBusinessPage />} />
       <Route path="/politicas-de-privacidad" element={<PrivacyPolicy /> } />
-      <Route path="/opiniones" element={<ReviewsSection/>} />
       <Route path="/quienes-somos" element={<AboutUs/>} />
       <Route path="/ayuda" element={<Ayuda/>} />
       <Route path="/ubicaciones" element={<Locations/>} />
 
-    </Routes>
+    <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+    </Suspense>
   );
 };
 

@@ -18,9 +18,8 @@ const ProductCard =memo (({ product, index }) => {
     return found?.BannerImagenMovil ? `${AppConfig.baseImageUrl}${found.BannerImagenMovil}` : '';
   }, [bannerData]);
 
-
   const badgeLogo = useMemo(() => {
-    const found = bannerData?.Logo?.find(i=> i.Titulo?.trim() === "LogoDisdel");
+    const found = bannerData?.Iconos?.find(i => i.Titulo?.trim() === "IconoDisdel");
     return found ? `${AppConfig.baseImageUrl}${found.Imagen}` : '';
   }, [bannerData]);
 
@@ -30,7 +29,7 @@ const ProductCard =memo (({ product, index }) => {
       : defaultImage;
   }, [Imagen, defaultImage]);
 
-    const isPriority = index< 4;
+  const isPriority = index < 4;
 
   return (
     <article 
@@ -43,7 +42,7 @@ const ProductCard =memo (({ product, index }) => {
       <meta itemProp="brand" content={Marca || "Disdel"} />
 
       <div className="product-brand-badge">
-        {badgeLogo && <img src={badgeLogo} alt="Disdel" className="badge-logo-img" />}<img src="disdel-logo.png" alt="Logo" className="badge-logo-img" />
+        {badgeLogo && <img src={badgeLogo} alt="Disdel" className="badge-logo-img" />}
       </div>
       <div className="product-id-badge">ID: {IdProducto}</div>
 
@@ -66,7 +65,7 @@ const ProductCard =memo (({ product, index }) => {
         
         <div className="product-info-top">
           <span className="brand-tag">{Marca || Categoria || 'Disdel'}</span>
-          <h3 className="product-title">{Descripcion}</h3>
+          <h3 className="product-title" itemProp="name">{Descripcion}</h3>
           <span className="product-detail-id">Disdel # {IdProducto}</span>
         </div>
       </Link>
@@ -89,8 +88,9 @@ const ProductCard =memo (({ product, index }) => {
         <button 
           className="quote-button" 
           onClick={(e) => {
-            e.preventDefault(); // Evita navegar si haces clic en el botón
-            addItem(product);
+            e.preventDefault();
+            const defaultPresentation = product.Unidad || product.Empaque || 'Unidad';
+            addItem({ ...product, presentationSelected: defaultPresentation, unitType: product.Unidad ? 'Y' : 'N' });
           }}
         >
           <FiShoppingCart className="cart-icon-btn" /> 

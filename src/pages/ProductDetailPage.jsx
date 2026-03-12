@@ -58,41 +58,31 @@ const ProductDetailPage = () => {
 
     return {
       "@context": "https://schema.org/",
-      "@graph": [
-        {
-          "@type": "Product",
-          "@id": `${fullUrl}#product`,
-          "name": `${product.Descripcion} | Distribución Institucional`,
-          "image": productImages.map(img => getImageUrl(img)),
-          "description": `Solicite cotización de ${product.Descripcion} en Guatemala. Suministro profesional para empresas. Distribuidor autorizado de ${brandName}.`,
-          "sku": product.IdProducto,
-          "mpn": product.IdProducto,
-          "brand": { "@type": "Brand", "name": brandName },
-          "offers": {
-            "@type": "Offer",
-            "url": fullUrl,
-            "priceCurrency": "GTQ",
-            "price": "0.00",
-            "priceValidUntil": "2026-12-31",
-            "availability": "https://schema.org/InStock",
-            "itemCondition": "https://schema.org/NewCondition",
-            "seller": {
-              "@type": "WholesaleStore",
-              "name": "Disdel, S.A.",
-              "url": "https://www.disdelsa.com/",
-              "logo": "https://www.disdelsa.com/logo.png"
-            }
-          }
-        },
-        {
-          "@type": "BreadcrumbList",
-          "itemListElement": [
-            { "@type": "ListItem", "position": 1, "name": "Inicio", "item": "https://www.disdelsa.com/" },
-            { "@type": "ListItem", "position": 2, "name": product.Categoria, "item": `https://www.disdelsa.com/categoria/${product.Categoria.toLowerCase().replace(/\s+/g, '-')}` },
-            { "@type": "ListItem", "position": 3, "name": product.Descripcion, "item": fullUrl }
-          ]
+      "@type": "Product",
+      "@id": `${fullUrl}#product`,
+      "name": product.Descripcion,
+      "image": productImages.map(img => getImageUrl(img)),
+      "description": `Solicite cotización de ${product.Descripcion} en Guatemala. Suministro profesional para empresas y oficinas.`,
+      "sku": product.IdProducto,
+      "mpn": product.IdProducto,
+      "brand": { 
+        "@type": "Brand", 
+        "name": brandName 
+      },
+      "offers": {
+        "@type": "Offer",
+        "url": fullUrl,
+        "priceCurrency": "GTQ",
+        "price": "0.00", // Al ser cotización, mantenemos 0.00 pero con estructura válida
+        "availability": "https://schema.org/InStock",
+        "itemCondition": "https://schema.org/NewCondition",
+        "priceValidUntil": "2026-12-31",
+        "seller": {
+          "@type": "Organization", // "Organization" es más aceptado por Google que WholesaleStore
+          "name": "Disdel, S.A.",
+          "url": "https://disdelsa.com/"
         }
-      ]
+      }
     };
   }, [product, canonicalId, productImages, defaultImage]);
 
@@ -123,12 +113,16 @@ const ProductDetailPage = () => {
     addItem({ ...product, presentationSelected: selectedUnit, unitType: selectedType });
   };
 
-  if (isLoading) return <div className="pdp-loading"><div className="spinner"></div></div>;
-  // Evitamos pantalla blanca total retornando un div vacío mientras redirige el useEffect
-  if (isError || !product) return <div className="pdp-container" style={{minHeight: '50vh'}}></div>;
+  if (isLoading) return <div className="pdp-loading"><div className="spinner"></div><p>Cargando producto...</p></div>;
+  if (isError || !product) return (
+    <div className="pdp-container" style={{minHeight: '60vh', display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+        <p>Redirigiendo a búsqueda...</p>
+    </div>
+  );
 
   const seoTitle = `${product.Descripcion} ${product.Marca ? '| ' + product.Marca : ''} | Disdel Guatemala`;
   const mainImg = getImageUrl(selectedImage || product.Imagen);
+  const currentUrl = `https://disdelsa.com/producto/${canonicalId}`;
 
   return (
     <div className="pdp-container">
@@ -136,28 +130,29 @@ const ProductDetailPage = () => {
     {/* --- 1. SEO DE BÚSQUEDA Y GOOGLE --- */}
     <title>{seoTitle}</title>
     <meta name="description" content={`Solicite cotización de ${product.Descripcion} en Guatemala. Suministro profesional para empresas, oficinas y sector hostelero. Producto garantizado de la línea ${product.Categoria}. Calidad y respaldo institucional por Disdel, S.A.`} />
-    <link rel="canonical" href={`https://www.disdelsa.com/producto/${canonicalId}`} />
+    <link rel="canonical" href={currentUrl} />
     
     {/* Precarga de imagen crítica para mejorar el LCP (Core Web Vitals) */}
     <link rel="preload" as="image" href={mainImg} />
 
     {/* --- 2. OPEN GRAPH (Facebook, WhatsApp, LinkedIn) --- */}
-    <meta property="og:type" content="product" />
-    <meta property="og:site_name" content="Disdel" />
     <meta property="og:title" content={seoTitle} />
     <meta property="og:description" content={`Distribución líder de ${product.Descripcion} en Guatemala. ¡Cotiza ahora para tu empresa con Disdelsa!`} />
-    <meta property="og:url" content={`https://www.disdelsa.com/producto/${canonicalId}`} />
-
     <meta property="og:image" content={mainImg} />
+    <meta property="og:url" content={`https://www.disdelsa.com/producto/${canonicalId}`} />
+    <meta property="og:type" content="product" />
+    <meta property="og:site_name" content="Disdel" />
+
     <meta property="og:image:secure_url" content={mainImg} />
 
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
-    <meta property="product:brand" content={product.Marca || "Disdel"} />
-    <meta property="product:availability" content="instock" />
+    
     <meta property="product:condition" content="new" />
     <meta property="product:price:amount" content="0.00" />
     <meta property="product:price:currency" content="GTQ" />
+    <meta property="product:availability" content="instock" />
+    <meta property="product:brand" content={product.Marca || "Disdel"} />
 
     {/* --- 3. TWITTER CARD --- */}
     <meta name="twitter:card" content="summary_large_image" />
@@ -184,7 +179,7 @@ const ProductDetailPage = () => {
                     alt={`${product.Descripcion} - Suministro Institucional Guatemala`} 
                     className="pdp-main-img" 
                     width="600" height="600"
-                    fetchpriority="high" // 🔥 Prioridad máxima de renderizado
+                    fetchpriority="high" 
                     loading="eager"
                 />  
             </div>
@@ -197,7 +192,7 @@ const ProductDetailPage = () => {
                           onClick={() => setSelectedImage(img)}
                           aria-label={`Ver imagen ${index + 1}`}
                         >
-                            <img src={getImageUrl(img)} alt={`Miniatura ${index + 1}`} loading="lazy" />
+                            <img src={getImageUrl(img)} alt={`Vista ${index + 1}`} loading="lazy" width="80" height="80" />
                         </button>
                     ))}
                 </div>
@@ -243,7 +238,7 @@ const ProductDetailPage = () => {
                       <button className={`unit-opt ${selectedType === 'N' ? 'active' : ''}`} onClick={() => { setSelectedUnit(product.Empaque); setSelectedType('N'); }}>
                           <FiPackage className="icon" />
                           <div className="unit-info">
-                              <span className="unit-title">Mayoreo / Empaque</span>
+                              <span className="unit-title">Empaque / Mayoreo</span>
                               <span className="unit-desc">{product.Empaque}</span>
                           </div>
                       </button>

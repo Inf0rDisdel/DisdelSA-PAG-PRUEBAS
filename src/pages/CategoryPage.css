@@ -1,10 +1,9 @@
-/* --- CONTENEDOR PRINCIPAL --- */
 .cat-master-wrapper {
   background-color: #f9fafb;
   padding-bottom: 60px;
   min-height: 100vh;
-  --cat-color: #135eab; /* Color por defecto */
-  font-family: 'Segoe UI', system-ui, sans-serif;
+  --cat-color: #135eab;
+  font-family: 'Poppins', sans-serif;
 }
 
 .cat-container {
@@ -25,24 +24,23 @@
 
 .cat-main-banner {
   width: 100%;
-  height: 280px; /* Altura más imponente */
+  height: 280px; 
   object-fit: cover;
   display: block;
 }
 
-/* Título flotante sobre el banner (Opcional, se ve muy pro) */
 .cat-header-overlay {
   position: absolute;
   bottom: 0;
   left: 0;
   width: 100%;
   background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);
-  padding: 30px;
+  padding: 40px;
   color: white;
 }
 
 .cat-segment-title {
-  font-size: 32px;
+  font-size: 36px;
   font-weight: 800;
   margin: 0;
   text-shadow: 0 2px 4px rgba(0,0,0,0.3);
@@ -53,7 +51,7 @@
 .cat-content-layout {
   display: grid;
   grid-template-columns: 260px 1fr; 
-  gap: 35px;
+  gap: 40px;
   align-items: flex-start;
 }
 
@@ -65,15 +63,16 @@
   box-shadow: 0 2px 10px rgba(0,0,0,0.03);
   position: sticky;
   top: 20px;
+  border: 1px solid #eee;
 }
 
 .cat-sidebar-label {
-  font-size: 12px;
+  font-size: 11px;
   color: #999;
   font-weight: 700;
   text-transform: uppercase;
-  margin-bottom: 15px;
-  letter-spacing: 1px;
+  margin-bottom: 20px;
+  letter-spacing: 1.5px;
 }
 
 .cat-nav-item {
@@ -86,31 +85,21 @@
   color: #555;
   font-weight: 500;
   font-size: 14px;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  border-left: 3px solid transparent;
+  transition: all 0.2s ease;
+  border-left: 3px solid transparent; 
+  background: white;
 }
 
-.cat-nav-item:hover {
-  background-color: #f3f4f6;
-  color: var(--cat-color);
-  transform: translateX(4px);
-}
+.cat-nav-item:hover { background-color: #f8f9fa; transform: translateX(5px); }
 
 .cat-nav-item.active-filter {
-  background-color: #f0f7ff; /* Fondo muy suave del color */
+  background-color: white !important;
   color: var(--cat-color);
   font-weight: 700;
   border-left-color: var(--cat-color);
 }
 
-.cat-nav-icon {
-  width: 24px;
-  height: 24px;
-  margin-right: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
+.cat-nav-icon { width: 24px; height: 24px; margin-right: 12px; }
 .cat-nav-icon img { width: 100%; height: 100%; object-fit: contain; }
 
 /* --- COLUMNA DERECHA --- */
@@ -120,8 +109,8 @@
 .cat-subcategories-bar {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
-  margin-bottom: 30px;
+  gap: 12px;
+  margin-bottom: 35px;
 }
 
 .cat-sub-pill {
@@ -134,85 +123,157 @@
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
-  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
 }
 
 .cat-sub-pill:hover {
   border-color: var(--cat-color);
   color: var(--cat-color);
-  transform: translateY(-2px);
 }
 
 .cat-sub-pill.active {
   background: var(--cat-color);
   color: white;
   border-color: var(--cat-color);
-  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+  box-shadow: 0 4px 12px rgba(19, 94, 171, 0.2);
 }
 
 /* --- TARJETAS DE PRODUCTO --- */
 .cat-grid-products {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); 
-  gap: 25px;
+  /* Ajustado para que el espacio sea más equilibrado */
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); 
+  gap: 25px; /* 🔥 Espacio PRO aumentado entre tarjetas */
 }
 
 .cat-product-card {
   background: #fff;
   border: 1px solid #eee;
-  border-radius: 12px;
-  padding: 8px;
+  border-radius: 14px;
+  padding: 20px; /* Espacio interno PRO */
   position: relative;
-  transition: all 0.3s ease;
+  transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
   display: flex;
   flex-direction: column;
-  height: 100%;
+  height: auto;
+  overflow: hidden;
 }
 
+
 .cat-product-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 15px 30px rgba(0,0,0,0.08);
+  transform: translateY(-8px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
   border-color: transparent;
 }
 
-/* Badge ID Discreto */
-.cat-id-badge {
-  position: absolute; top: 10px; right: 10px;
-  font-size: 10px; color: #aaa; 
-  background: #f9f9f9;
-  padding: 3px 6px; border-radius: 4px;
-  font-weight: 600;
+.cat-brand-badge { 
+  position: absolute; 
+  top: 12px;      /* Distancia desde arriba */
+  right: 12px;    /* Cambiamos a la derecha para unificar */
+  z-index: 2; 
 }
+
+.cat-badge-logo-img { 
+  height: 18px; 
+  object-fit: contain; 
+}
+
+/* Contenido de la Card */
+.cat-card-link { display: flex; flex-direction: column; flex: 1; text-decoration: none !important; }
 
 .cat-img-wrapper {
-  height: 180px;
-  display: flex; align-items: center; justify-content: center;
-  margin: 15px 0;
+  height: 170px;
+  display: flex; 
+  align-items: center; 
+  justify-content: center;
+  margin-bottom: 20px;
 }
 .cat-img-wrapper img { 
-  max-width: 100%; max-height: 100%; object-fit: contain; 
-  transition: transform 0.3s;
+  max-width: 100%; 
+  max-height: 100%; 
+  object-fit: contain; 
 }
-.cat-product-card:hover .cat-img-wrapper img { transform: scale(1.05); }
+
+/*.cat-product-card:hover .cat-img-wrapper img { transform: scale(1.05); }*/
 
 .cat-card-tag {
-  font-size: 11px; text-transform: uppercase;
-  color: var(--cat-color); font-weight: 700;
-  margin-bottom: 5px; display: block;
+  font-size: 10px;
+  text-transform: uppercase;
+  color: #999;
+  font-weight: 700;
+  margin-bottom: 6px;
+  letter-spacing: 0.5px;
 }
 
 .cat-title {
-  font-size: 15px; color: #222; margin-bottom: 20px;
-  font-weight: 600; line-height: 1.4; flex-grow: 1;
+  font-size: 15px;
+  color: #222;
+  margin-bottom: 8px;
+  font-weight: 600;
+  line-height: 1.5;
+  flex-grow: 1;
 }
 
-.cat-btn {
+.cat-detail-id {
+  font-size: 11px;
+  color: var(--cat-color);
+  margin-bottom: 15px;
+  font-weight: 600;
+}
+
+.cat-card-footer { margin-top: auto; }
+
+.cat-availability {
+  font-size: 11px;
+  color: #28a745;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 12px;
+  font-weight: 500;
+}
+
+.cat-quote-btn {
+  width: 100%;
+  padding: 13px;
+  background-color: var(--cat-color);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 13px;
+}
+
+.cat-quote-btn:hover {
+  background-color: #0d4a86;
+  box-shadow: 0 4px 12px rgba(13, 74, 134, 0.2);
+}
+
+/*.cat-btn {
   width: 100%; padding: 12px;
   background: white; border: 1.5px solid var(--cat-color);
   color: var(--cat-color); border-radius: 8px;
   font-weight: 700; cursor: pointer; transition: 0.2s;
 }
 .cat-btn:hover { background: var(--cat-color); color: white; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+
+.cat-brand-badge { position: absolute; top: 12px; left: 12px; z-index: 2; }
+
+
+.cat-badge-logo-img { height: 18px; object-fit: contain; }
+
+.cat-card-link { display: flex; flex-direction: column; flex: 1; }
+
+
+.cat-check-icon { font-size: 12px; }
+
+.cat-quote-btn:hover { background-color: #0d4a86; }*/
+.cat-cart-icon { font-size: 16px; }
 
 /* --- SKELETON LOADING (Efecto de Carga Profesional) --- */
 .skeleton-banner { width: 100%; height: 280px; background: #e0e0e0; border-radius: 16px; margin-top: 20px; animation: shimmer 1.5s infinite linear; }
@@ -227,12 +288,6 @@
   0% { background-color: #f0f0f0; }
   50% { background-color: #e0e0e0; }
   100% { background-color: #f0f0f0; }
-}
-
-/* Mensaje vacío */
-.no-products-msg {
-  text-align: center; padding: 60px; background: white; border-radius: 12px; color: #777;
-  border: 1px dashed #ddd; margin-top: 20px;
 }
 
 /* ======================================================= */
@@ -267,18 +322,14 @@
     gap: 10px !important;
   }
 
-  /* MENU FIJO DEBAJO DEL HEADER */
   .cat-sidebar-left {
-    position: -webkit-sticky !important;
-    position: sticky !important; 
-    /* 🔥 Ajustado para quedar debajo del buscador */
-    top: 115px !important; 
-    width: 100% !important;
-    z-index: 1000 !important; 
-    background-color: white !important; 
-    padding: 8px 0 !important;
+    position: sticky;
+    top: 115px;
+    width: 100%;
+    z-index: 1000;
+    padding: 10px 0;
     border-radius: 0;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.08) !important;
+    border: none;
     border-bottom: 1px solid #eee;
   }
 
@@ -315,75 +366,105 @@
   }
   .cat-sidebar-nav::-webkit-scrollbar { display: none; }
 
-  /* CAJITAS PEQUEÑAS (Icono arriba, Texto abajo) */
-  .cat-nav-item {
-    flex: 0 0 95px !important; 
-    flex-direction: column !important; 
-    height: 65px !important; /* Más bajas para no ocupar tanto espacio */
-    background: white !important;
-    border: 1px solid #f0f0f0 !important;
-    border-radius: 10px !important;
+   .cat-nav-item {
+    flex: 0 0 100px;
+    flex-direction: column;
+    height: 75px;
+    padding: 8px;
     text-align: center;
-    padding: 5px !important;
-    justify-content: center;
+    border: 1px solid #f0f0f0;
+    margin-bottom: 0;
   }
+  .cat-nav-icon { margin-right: 0; margin-bottom: 5px; }
+  .cat-nav-item span { font-size: 10px; }
 
-  .cat-nav-icon { height: 24px !important; margin-bottom: 3px !important; width: 100% !important; }
-  .cat-nav-item span { font-size: 10px !important; line-height: 1.1; font-weight: 600; }
-
-  /* 3 PRODUCTOS PARA TABLET (768px) */
   .cat-grid-products {
-    display: grid !important;
-    grid-template-columns: repeat(3, 1fr) !important;
-    gap: 12px !important;
-    padding: 10px 15px !important;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+    padding: 15px;
   }
-
   .cat-product-card { padding: 2px !important; gap: 12px; }
   .cat-img-wrapper { height: 110px !important; }
   .cat-title { font-size: 12px !important; height: 32px; overflow: hidden; }
 }
-
 /* ======================================================= */
-/*    DISEÑO RESPONSIVO: MÓVILES (468px)                    */
+/*    DISEÑO RESPONSIVO: MÓVILES (468px) - TOQUE PRO       */
 /* ======================================================= */
-
-
-
 @media (max-width: 468px) {
-
   .cat-container {
     padding: 0 !important;
     width: 100% !important;
-    max-width: 100% !important;
   }
 
   .cat-header-section {
     margin-top: 0 !important;
     margin-bottom: 15px !important;
-    border-radius: 0 !important; /* Sin bordes redondeados para look full-width */
+    border-radius: 0 !important;
     width: 100% !important;
-    height: auto !important;
     box-shadow: none !important;
   }
 
   .cat-main-banner {
     width: 100% !important;
-    height: auto !important; /* Altura proporcional */
+    height: auto !important;
     object-fit: contain !important;
-    display: block;
   }
 
-  /* Para que el resto de elementos (grid, subcategorías) NO se peguen a la orilla, 
-     les devolvemos el padding que le quitamos al contenedor principal */
+  /* Padding lateral para que el contenido no pegue al borde del cel */
   .cat-content-layout, 
   .cat-subcategories-bar, 
   .cat-grid-products {
-    padding-left: 15px !important;
-    padding-right: 15px !important;
+    padding-left: 12px !important;
+    padding-right: 12px !important;
   }
 
-  /* Ajuste de filtros flotantes para que no choquen */
+  .cat-grid-products {
+    grid-template-columns: repeat(2, 1fr) !important; /* 2 productos por fila */
+    gap: 12px !important;
+  }
+
+  .cat-product-card {
+    padding: 12px !important; /* Más compacto en móvil */
+  }
+
+  .cat-img-wrapper {
+    height: 120px !important; /* Altura ajustada para pantallas pequeñas */
+    margin-bottom: 10px !important;
+  }
+
+  .cat-title {
+    font-size: 12px !important;
+    height: 36px; /* Limita a 2-3 líneas para mantener simetría */
+    overflow: hidden;
+  }
+
+  /* --- CENTRADO PRO DEL BOTÓN --- */
+  .cat-card-footer {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* 🔥 Centra todo el contenido del footer */
+    width: 100%;
+  }
+
+  .cat-availability {
+    justify-content: center; /* Centra el texto de disponibilidad */
+    width: 100%;
+    font-size: 10px !important;
+  }
+
+  .cat-quote-btn {
+    width: 90% !important; /* No choca con los bordes de la card */
+    max-width: 140px; /* Evita que se vea gigante en cels anchos */
+    padding: 8px 10px !important; /* Más delgado y elegante */
+    font-size: 10px !important; /* Texto más fino */
+    border-radius: 8px !important;
+    margin: 0 auto; /* Asegura el centrado */
+  }
+
+  .cat-cart-icon {
+    font-size: 13px !important; /* Icono proporcional al texto */
+  }
+
   .cat-sidebar-left {
     top: 138px !important; 
   }
