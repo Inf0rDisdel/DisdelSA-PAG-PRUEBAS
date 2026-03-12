@@ -41,7 +41,7 @@ const BrandPage = () => {
 
 
   const defaultImage = useMemo(() => {
-    const found = bannerData?.ImagenPredeterminado?.find(b => b.Titulo?.trim() === "ImagenDefault");
+    const found = bannerData?.ImagenPredeterminado?.find(b => b.Titulo?.trim() === "ImagenDefault3");
     return found ? `${AppConfig.baseImageUrl}${found.BannerImagenMovil || found.Imagen}` : ''; 
   }, [bannerData]);
 

@@ -14,8 +14,10 @@ const ProductCard =memo (({ product, index }) => {
   const {data: bannerData} = useBanners();
 
   const defaultImage = useMemo(() => {
-    const found = bannerData?.ImagenPredeterminado?.find(i=> i.Titulo?.trim() === "ImagenDefault");
-    return found?.BannerImagenMovil ? `${AppConfig.baseImageUrl}${found.BannerImagenMovil}` : '';
+    const found = bannerData?.ImagenPredeterminado?.find(i=> i.Titulo?.trim() === "ImagenDefault3");
+    return found?.BannerImagenMovil || found?.Imagen 
+      ? `${AppConfig.baseImageUrl}${found.BannerImagenMovil || found.Imagen}` 
+      : '';
   }, [bannerData]);
 
   const badgeLogo = useMemo(() => {

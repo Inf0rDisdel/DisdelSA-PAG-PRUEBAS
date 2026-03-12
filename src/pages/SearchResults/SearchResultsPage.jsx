@@ -19,8 +19,8 @@ const SearchResultsPage = () => {
       {
         "@type": "BreadcrumbList",
         "itemListElement": [
-          { "@type": "ListItem", "position": 1, "name": "Inicio", "item": "https://www.disdelsa.com/" },
-          { "@type": "ListItem", "position": 2, "name": "Búsqueda", "item": `https://www.disdelsa.com/buscar?q=${encodeURIComponent(query)}` }
+          { "@type": "ListItem", "position": 1, "name": "Inicio", "item": "https://disdelsa.com/" },
+          { "@type": "ListItem", "position": 2, "name": "Búsqueda", "item": `https://disdelsa.com/buscar?q=${encodeURIComponent(query)}` }
         ]
       },
       {
@@ -28,7 +28,7 @@ const SearchResultsPage = () => {
         "mainEntity": {
           "@type": "ItemList",
           "name": `Resultados para ${decodedQuery}`,
-          "numberOfItems": 0 // Se actualiza abajo
+          "numberOfItems": 0 
         }
       }
     ]
@@ -64,22 +64,21 @@ const SearchResultsPage = () => {
       return true;
     });
 
-  }, [productos, decodedQuery]);
+  }, [productos, query]); 
 
   if (fullSchema && fullSchema["@graph"][1].mainEntity) {
     fullSchema["@graph"][1].mainEntity.numberOfItems = resultados.length;
   }
 
   if (isLoading) return <div className={styles.loading}>Buscando suministros en Disdel...</div>;
-  
   return (
     <main className={styles.searchPageWrapper}>
       <Helmet>
         {/* --- 1. SEO ESTÁNDAR --- */}
         <title>{`Comprar ${decodedQuery} en Guatemala | Disdel`}</title>
         <meta name="description" content={`Resultados de búsqueda para ${decodedQuery}. Encuentra suministros institucionales de alta calidad con entrega en toda Guatemala.`} />
-        <link rel="canonical" href={`https://www.disdelsa.com/buscar?q=${query}`} />
-        <meta name="robots" content="index, follow" /> {/* Indica a Google que indexe esta página */}
+        <link rel="canonical" href={`https://disdelsa.com/buscar?q=${query}`} />
+        <meta name="robots" content="index, follow" />
 
         {/* --- 2. OPTIMIZACIÓN DE CARGA (Core Web Vitals) --- */}
         {/* Preconecta al servidor de imágenes para ganar velocidad (LCP) */}
@@ -96,14 +95,14 @@ const SearchResultsPage = () => {
         <meta property="og:type" content="website" />
         <meta property="og:title" content={`Resultados para "${decodedQuery}" en Disdel`} />
         <meta property="og:description" content="Encuentra los mejores suministros industriales y de limpieza profesional en nuestra tienda online." />
-        <meta property="og:image" content="https://www.disdelsa.com/logo-social.jpg" /> {/* URL de una imagen de marca */}
-        <meta property="og:url" content={`https://www.disdelsa.com/buscar?q=${query}`} />
+        <meta property="og:image" content="https://disdelsa.com/logo-social.jpg" /> {/* URL de una imagen de marca */}
+        <meta property="og:url" content={`https://disdelsa.com/buscar?q=${query}`} />
         <meta property="og:site_name" content="Disdel" />
 
         {/* --- 5. TWITTER CARD --- */}
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content={`Catálogo Disdel: ${decodedQuery}`} />
-        <meta name="twitter:image" content="https://www.disdelsa.com/logo-social.jpg" />
+        <meta name="twitter:image" content="https://disdelsa.com/logo-social.jpg" />
 
         {/* --- 6. ESTILO DEL NAVEGADOR (Mobile) --- */}
         <meta name="theme-color" content="#135eab" /> {/* Color azul Disdel para la barra del navegador en Android */}

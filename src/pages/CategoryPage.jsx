@@ -73,8 +73,10 @@ const CategoryPage = () => {
   }, [productsData, currentSegment, activeCatId, activeSubCatId]);
 
   const defaultImage = useMemo(() => {
-    const found = bannerData?.ImagenPredeterminado?.find(i => i.Titulo?.trim() === "ImagenDefault");
-    return found?.BannerImagenMovil ? `${AppConfig.baseImageUrl}${found.BannerImagenMovil}` : '';
+    const found = bannerData?.ImagenPredeterminado?.find(i => i.Titulo?.trim() === "ImagenDefault3");
+    return found?.BannerImagenMovil || found?.Imagen 
+      ? `${AppConfig.baseImageUrl}${found.BannerImagenMovil || found.Imagen}` 
+      : '';
   }, [bannerData]);
 
   const catBanner = useMemo(() => {
@@ -265,10 +267,13 @@ const CategoryPage = () => {
                         <img 
                           src={prod.Imagen ? `${AppConfig.baseImageUrl}productos/${prod.Imagen}` : defaultImage} 
                           alt={prod.Descripcion} 
+                          // 🔥 MEJORA Core Web Vitals:
+                          width="200" 
+                          height="200"
                           loading={index < 6 ? "eager" : "lazy"} 
                           fetchpriority={index < 6 ? "high" : "auto"}
                           decoding="async"
-                          width="200" height="200"
+                          style={{ aspectRatio: '1/1', objectFit: 'contain' }} // Reserva el espacio exacto
                         />
                       </div>
                       <span className="cat-card-tag">{prod.Categoria}</span>

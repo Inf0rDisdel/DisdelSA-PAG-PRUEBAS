@@ -182,11 +182,15 @@
 
 .cat-img-wrapper {
   height: 170px;
+  width: 100%;
+  aspect-ratio: 1 / 1; /* 🔥 Reserva el espacio */
   display: flex; 
   align-items: center; 
   justify-content: center;
+  background-color: #fcfcfc; /* Un color leve para que el skeleton se vea natural */
   margin-bottom: 20px;
 }
+
 .cat-img-wrapper img { 
   max-width: 100%; 
   max-height: 100%; 
