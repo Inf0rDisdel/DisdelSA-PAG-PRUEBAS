@@ -4,10 +4,22 @@ import styles from './MegaMenu.module.css';
 
 import { AppConfig } from '../../../config/AppConfig';
 import { useMenu } from '../../../hooks/useMenu';
-import defaultIcon from 'assets/images/categories/KCP.jpg'; 
+import { useBanners } from 'hooks/useBanners';
 
 const MegaMenu = () => {
+
+    const { data: bannerData } = useBanners();
     const { data: menuData, isLoading, isError } = useMenu();
+
+    const defaultIcon = useMemo(() => {
+        
+        const found = bannerData?.ImagenPredeterminado?.find(i=> i.Titulo?.trim() === "ImagenDefault");
+
+        const fileName = found?.BannerImagenMovil;
+        
+        return fileName ? `${AppConfig.baseImageUrl}${fileName}` : '';
+    }, [bannerData]);
+
     const [activeCategory, setActiveCategory] = useState('Todos los Departamentos');
     const [activeSubItem, setActiveSubItem] = useState(null);
 
@@ -81,7 +93,7 @@ const MegaMenu = () => {
         }));
 
         return [allDepartments, ...mappedBrands];
-    }, [menuData]);
+    }, [menuData, defaultIcon]);
 
     const currentCategoryData = menuStructure.find(cat => cat.name === activeCategory);
 
@@ -164,7 +176,7 @@ const MegaMenu = () => {
             <div className={`${styles.megaMenuColumn} ${styles.promotionColumn}`}>
                 <div className={styles.promotionCard}>
                     <div className={styles.promoImageContainer}>
-                        {promoImage && <img src={promoImage} alt={promoTitle} />}
+                        <img src={promoImage || defaultIcon} alt={promoTitle} />
                     </div>
                     <h3>{promoTitle}</h3>
                     <p>{activeSubItem ? 'Ver productos de esta categoría' : currentCategoryData?.promotion?.text}</p>

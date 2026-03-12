@@ -3,6 +3,7 @@
   RewriteBase /
 
   # --- 1. QUITAR EL WWW (Evita el logo viejo y conflictos) ---
+  RewriteCond %{HTTPS} off [OR]
   RewriteCond %{HTTP_HOST} ^www\.disdelsa\.com [NC]
   RewriteRule ^(.*)$ https://disdelsa.com/$1 [R=301,L]
 

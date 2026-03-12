@@ -1,13 +1,25 @@
-import React from 'react';
+import React, {useMemo} from 'react';
 import './Footer.css'; 
 import { Link } from 'react-router-dom';
 
 import { FaFacebookF, FaInstagram, FaLinkedinIn } from 'react-icons/fa';
 
-import mascotImage from 'assets/icons/PERSONAJE.png'; 
-import paymentCardsImage from 'assets/icons/VISA.jpg';
+import { AppConfig } from 'config/AppConfig';
+import { useBanners } from 'hooks/useBanners';
 
 const Footer = () => {
+
+    const { data: bannerData } = useBanners();
+
+    const getUrl = (dbTitle) => {
+        const found = bannerData?.Iconos?.find(i => i.Titulo?.trim() === dbTitle);
+
+        return found ? `${AppConfig.baseImageUrl}${found.Imagen}` : '';
+    };
+
+    const imgMascota = getUrl("IconoPersonaje");
+    const imgVisa = getUrl("IconoVISA");
+
     return (
         <footer className="footer-wrapper">
             <div className="footer-content-area">
@@ -24,22 +36,44 @@ const Footer = () => {
                                     <li><a href="mailto:cmdisdel@disdelsa.com">cmdisdel@disdelsa.com</a></li>
                                 </ul>
                             </div>
-                            <div className="footer-column">
-                                <h3>SOBRE NOSOTROS</h3>
-                                <ul>
-                                    <Link to="/quienes-somos" className="footer-link">
-                                        Quiénes Somos
-                                        </Link>
-                                    <li><a href="https://disdelsagt.com/MyBusiness/Empleo/SolicitudEmpleo" target="_blank" rel="noopener noreferrer"> Empleos Disdel </a></li>
-                                     <Link to="/ayuda" className="footer-link">
-                                        Ayuda
-                                        </Link>
-                                </ul>
-                            </div>
+
+                            <div className="seo-hidden-links">
+                                <div className="footer-column">
+                                    <h3>CATEGORÍAS</h3>
+                                    <ul>
+                                        <li><Link to="/categoria/botiquin">Botiquín</Link></li>
+                                        <li><Link to="/categoria/papeleria">Papelería</Link></li>
+                                        <li><Link to="/categoria/herramientas-para-limpieza">Limpieza</Link></li>
+                                    </ul>
+                                </div>
+
+                                    {/* Columna 3: SEO Marcas */}
+                                    <div className="footer-column">
+                                        <h3>MARCAS</h3>
+                                        <ul>
+                                            <li><Link to="/marca/3m">3M</Link></li>
+                                            <li><Link to="/marca/kimberly-clark-professional">Kimberly Clark</Link></li>
+                                            <li><Link to="/marca/wiese">Wiese</Link></li>
+                                        </ul>
+                                    </div>
+                                </div>
+
+                                <div className="footer-column">
+                                    <h3>SOBRE NOSOTROS</h3>
+                                    <ul>
+                                        <Link to="/quienes-somos" className="footer-link">
+                                            Quiénes Somos
+                                            </Link>
+                                        <li><a href="https://disdelsagt.com/MyBusiness/Empleo/SolicitudEmpleo" target="_blank" rel="noopener noreferrer"> Empleos Disdel </a></li>
+                                        <Link to="/ayuda" className="footer-link">
+                                            Ayuda
+                                            </Link>
+                                    </ul>
+                                </div>
                             <div className="footer-column">
                                 <h3>TIENDAS Y SUCURSALES</h3>
                                 <ul>
-                                    <Link to="/ubicaciones" className="...">Ubicaciones</Link>
+                                    <Link to="/ubicaciones" className="...">Ubicaciones Y Teléfonos</Link>
                                 </ul>
                             </div>
                         </div>
@@ -75,10 +109,10 @@ const Footer = () => {
                         <span>+1000</span> productos
                     </div>
                     <div className="mascot">
-                        <img src={mascotImage} alt="Mascota Disdel" />
+                       {imgMascota && <img src={imgMascota} alt="Mascota Disdel" />}
                     </div>
                         <div className="payment-logos">
-                            <img src={paymentCardsImage} alt="Visa y Mastercard" />
+                            {imgVisa && <img src={imgVisa} alt="Metodos de pago" />}
                         </div>
                         <div className="footer-copyright">
                             <p>© 2026 Copyright Disdel S.A</p>

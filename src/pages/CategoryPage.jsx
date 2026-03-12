@@ -1,35 +1,34 @@
 import { useLocation, Link, useParams } from 'react-router-dom';
 import React, { useState, useMemo, useEffect, useRef } from 'react'; 
 import { Helmet } from 'react-helmet-async';
-import { FiChevronLeft, FiChevronRight } from 'react-icons/fi'; 
+import {  FiShoppingCart } from 'react-icons/fi'; 
 import './CategoryPage.css';
 
 import { AppConfig } from 'config/AppConfig';
+import { useBanners } from 'hooks/useBanners';
 import useCartStore from 'store/useCartStore';
 import { useMenu } from 'hooks/useMenu';
 import { useProducts } from 'hooks/useProducts';
 
-import bannerFijo from 'assets/images/banners/BANCategoria.jpg'; 
-import bannerMob from 'assets/images/banners/Adaptacion--banner-Disdel.png';
-import defaultImage from 'assets/images/categories/KCP.jpg'; 
+import Skeleton from 'components/ui/Skeleton/Skeleton';
+import ProductCardSkeleton from 'components/ui/ProductCard/ProductCardSkeleton';
 
 const CategoryPage = () => {
   const { slug } = useParams();
-
-  const cleanSlug = slug ? slug.replace(/\/$/, "").trim() : '';
-
+  const { data: bannerData } = useBanners();
   const addItem = useCartStore((state) => state.addItem);
   const location = useLocation(); 
   const { data: menuData, isLoading: loadingMenu } = useMenu();
   const { data: productsData, isLoading: loadingProducts } = useProducts();
 
+  const cleanSlug = slug ? slug.replace(/\/$/, "").trim() : '';
+  const canonicalSlug = cleanSlug.toLowerCase();
+
   const [activeCatId, setActiveCatId] = useState(null);
   const [activeSubCatId, setActiveSubCatId] = useState(null);
-
-  // Lógica para detectar móvil (Breakpoint 468px)
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 468);
 
-  useEffect(() => {
+   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth <= 468);
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
@@ -38,17 +37,19 @@ const CategoryPage = () => {
   const scrollRef = useRef(null);
 
   const norm = (id) => (id === null || id === undefined) ? '' : String(id).trim();
-  
   const createSlug = (text) => text?.toString().toLowerCase().trim()
         .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
         .replace(/ñ/g, 'n').replace(/\s+/g, '-') || '';
 
   const currentSegment = useMemo(() => {
       if (!menuData) return null;
-
-      const cleanSlug = slug.replace(/\/$/, "");
-      return menuData.find(seg => createSlug(seg.NombreSegmento) === cleanSlug);
+      return menuData.find(seg => createSlug(seg.NombreSegmento) === cleanSlug) || null;
   }, [menuData, cleanSlug]);
+
+  const badgeLogo = useMemo (() => {
+      const found = bannerData?.Iconos?.find(b=> b.Titulo === "IconoDisdel");
+      return found ? `${AppConfig.baseImageUrl}${found.Imagen}` : '';
+    }, [bannerData]);
 
   const activeCategoryData = useMemo(() => {
       if (!currentSegment || !activeCatId) return null;
@@ -71,18 +72,68 @@ const CategoryPage = () => {
       });
   }, [productsData, currentSegment, activeCatId, activeSubCatId]);
 
-  const itemListSchema = useMemo(() => {
+  const defaultImage = useMemo(() => {
+    const found = bannerData?.ImagenPredeterminado?.find(i => i.Titulo?.trim() === "ImagenDefault");
+    return found?.BannerImagenMovil ? `${AppConfig.baseImageUrl}${found.BannerImagenMovil}` : '';
+  }, [bannerData]);
+
+  const catBanner = useMemo(() => {
+    const bannerObj = bannerData?.sliderPrincipal?.[1]; 
     return {
-        "@context": "https://schema.org",
-        "@type": "ItemList",
-        "numberOfItems": filteredProducts.length,
-        "itemListElement": filteredProducts.slice(0, 15).map((prod, index) => ({
-            "@type": "ListItem",
-            "position": index + 1,
-            "url": `https://www.disdelsa.com/producto/${prod.IdProducto}`
-        }))
+      desktop: bannerObj?.Imagen ? `${AppConfig.baseImageUrl}${bannerObj.Imagen}` : '',
+      mobile: bannerObj?.BannerImagenMovil ? `${AppConfig.baseImageUrl}${bannerObj.BannerImagenMovil}` : ''
     };
-  }, [filteredProducts]);
+  }, [bannerData]);
+
+  const seoData = useMemo(() => {
+    const name = currentSegment?.NombreSegmento || "Categoría";
+    return {
+      title: `${name} Mayorista en Guatemala | Suministros Disdel`,
+      description: `Distribución institucional de ${name}. Suministros profesionales para empresas y sector Horeca en Guatemala.`,
+      url: `https://disdelsa.com/categoria/${canonicalSlug}`,
+      image: catBanner.desktop || defaultImage
+    };
+  }, [currentSegment, canonicalSlug, catBanner, defaultImage]);
+
+  const fullSchema = useMemo(() => {
+    if (!currentSegment) return null;
+    return {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "BreadcrumbList",
+          "@id": `${seoData.url}/#breadcrumb`,
+          "itemListElement": [
+            { "@type": "ListItem", "position": 1, "name": "Inicio", "item": "https://disdelsa.com/" },
+            { "@type": "ListItem", "position": 2, "name": currentSegment.NombreSegmento, "item": seoData.url }
+          ]
+        },
+        {
+          "@type": "CollectionPage",
+          "@id": `${seoData.url}/#collection`,
+          "url": seoData.url,
+          "name": seoData.title,
+          "description": seoData.description,
+          "publisher": {
+            "@type": "Organization",
+            "name": "Disdel, S.A.",
+            "url": "https://disdelsa.com/"
+          },
+          "mainEntity": {
+            "@type": "ItemList",
+            "numberOfItems": filteredProducts.length,
+            "itemListElement": filteredProducts.slice(0, 40).map((prod, index) => ({
+              "@type": "ListItem",
+              "position": index + 1,
+              "url": `https://disdelsa.com/producto/${String(prod.IdProducto).toLowerCase()}`,
+              "name": prod.Descripcion,
+              "image": prod.Imagen ? `${AppConfig.baseImageUrl}productos/${prod.Imagen}` : defaultImage
+            }))
+          }
+        }
+      ]
+    };
+  }, [currentSegment, filteredProducts, seoData, defaultImage]);
 
   useEffect(() => {
     if (currentSegment && currentSegment.Categorias?.length > 0) {
@@ -98,38 +149,26 @@ const CategoryPage = () => {
   }, [currentSegment, location.state]);
 
   const handleCategoryClick = (cat) => {
-      setActiveCatId(cat.IdCategoria);
-      setActiveSubCatId(cat.SubCategorias?.length > 0 ? cat.SubCategorias[0].IdSubCategoria : null);
+    setActiveCatId(cat.IdCategoria);
+    setActiveSubCatId(cat.SubCategorias?.length > 0 ? cat.SubCategorias[0].IdSubCategoria : null);
   };
 
-  const handleScroll = (direction) => {
-    if (scrollRef.current) {
-      const { scrollLeft } = scrollRef.current;
-      const scrollTo = direction === 'left' ? scrollLeft - 150 : scrollLeft + 150;
-      scrollRef.current.scrollTo({ left: scrollTo, behavior: 'smooth' });
-    }
-  };
-
-  if (loadingMenu || loadingProducts) {
+   if (loadingMenu || loadingProducts) {
     return (
       <div className="cat-master-wrapper">
         <div className="cat-container">
-          <div className="skeleton-shimmer" style={{width: '100%', height: isMobile ? '140px' : '200px', borderRadius: '16px', marginBottom: '20px'}}></div>
+          <Skeleton width="100%" height={isMobile ? "150px" : "300px"} style={{ marginBottom: '20px' }} />
           <div className="cat-content-layout">
-            <aside className="cat-sidebar-left">
-               <div className="skeleton-shimmer" style={{width: '100%', height: '300px'}}></div>
-            </aside>
-            <main className="cat-right-column">
-               <div className="cat-grid-products">
-                  {[1,2,3,4].map(n => (
-                    <div key={n} className="skeleton-card">
-                      <div className="skeleton-shimmer" style={{height: '130px'}}></div>
-                      <div className="skeleton-shimmer" style={{height: '18px', width: '90%'}}></div>
-                      <div className="skeleton-shimmer" style={{height: '40px', marginTop: 'auto'}}></div>
-                    </div>
+             <aside className="cat-sidebar-left">
+                <Skeleton width="100%" height="400px" />
+             </aside>
+             <main className="cat-right-column">
+                <div className="cat-grid-products">
+                  {[1, 2, 3, 4, 5, 6].map(n => (
+                    <ProductCardSkeleton key={n} />
                   ))}
-               </div>
-            </main>
+                </div>
+             </main>
           </div>
         </div>
       </div>
@@ -139,27 +178,36 @@ const CategoryPage = () => {
   if (!currentSegment) return <div className="no-products-msg">Categoría no encontrada</div>;
 
   return (
-    <div className="cat-master-wrapper" style={{ '--cat-color': "#135eab" }}>
+    <div className="cat-master-wrapper">
       <Helmet>
-        <title>{`${currentSegment.NombreSegmento} | Disdel`}</title>
-        <meta name="description" content={`Encuentra los mejores productos de ${currentSegment.NombreSegmento} en Disdel S.A. Suministros de limpieza profesional en Guatemala.`} />
-        <link rel="canonical" href={`https://www.disdelsa.com/categoria/${cleanSlug}`} />
-        <script type="application/ld+json">{JSON.stringify(itemListSchema)}</script>
+        <title>{seoData.title}</title>
+        <meta name="description" content={seoData.description} />
+        <link rel="canonical" href={seoData.url} />
+        
+        <meta property="og:title" content={seoData.title} />
+        <meta property="og:description" content={seoData.description} />
+        <meta property="og:image" content={seoData.image} />
+        <meta property="og:url" content={seoData.url} />
+        <meta property="og:type" content="website" />
+        <meta property="og:site_name" content="Disdel" />
+
+        <meta name="twitter:card" content="summary_large_image" />
+        <script type="application/ld+json">{JSON.stringify(fullSchema)}</script>
       </Helmet>
       
       <div className="cat-container">
-        {/* SECCIÓN DEL BANNER DINÁMICO */}
         <div className="cat-header-section">
             <img 
-              src={isMobile ? bannerMob : bannerFijo} 
-              alt="Banner Principal Disdel" 
+              src={isMobile ? (catBanner.mobile || catBanner.desktop) : catBanner.desktop} 
+              alt={currentSegment.NombreSegmento} 
               className="cat-main-banner" 
+              fetchpriority="high"
+              loading="eager"
             />
-            
             {!isMobile && (
               <div className="cat-header-overlay">
-                  <h1 className="cat-segment-title" style={{color:'white'}}>
-                    {currentSegment.NombreSegmento}
+                  <h1 className="cat-segment-title">
+                    {currentSegment.NombreSegmento} 
                   </h1>
               </div>
             )}
@@ -167,17 +215,20 @@ const CategoryPage = () => {
 
         <div className="cat-content-layout">
           <aside className="cat-sidebar-left">
+            {/* Restaurado el label simple sin flechas */}
             <div className="cat-sidebar-header-mobile">
-                <div className="cat-sidebar-label">SUBCATEGORÍAS</div>
-                <div className="cat-nav-arrows">
-                  <button onClick={() => handleScroll('left')} className="scroll-arrow"><FiChevronLeft /></button>
-                  <button onClick={() => handleScroll('right')} className="scroll-arrow"><FiChevronRight /></button>
-                </div>
+                <div className="cat-sidebar-label">CATEGORÍAS</div>
             </div>
 
-            <div className="cat-sidebar-nav" ref={scrollRef}>
+             <div className="cat-sidebar-nav" ref={scrollRef}>
               {currentSegment.Categorias?.map((cat) => (
-                <div key={cat.IdCategoria} className={`cat-nav-item ${norm(activeCatId) === norm(cat.IdCategoria) ? 'active-filter' : ''}`} onClick={() => handleCategoryClick(cat)}>
+                <div 
+                  key={cat.IdCategoria} 
+                  className={`cat-nav-item ${norm(activeCatId) === norm(cat.IdCategoria) ? 'active-filter' : ''}`} 
+                  onClick={() => handleCategoryClick(cat)}
+                  role="button"
+                  tabIndex="0"
+                >
                   <div className="cat-nav-icon">
                     <img src={cat.Imagen ? `${AppConfig.baseImageUrl}${cat.Imagen}` : defaultImage} alt={cat.NombreCategoria} />
                   </div>
@@ -191,7 +242,11 @@ const CategoryPage = () => {
             {activeCategoryData?.SubCategorias?.length > 0 && (
                 <div className="cat-subcategories-bar">
                     {activeCategoryData.SubCategorias.map(sub => (
-                        <button key={sub.IdSubCategoria} className={`cat-sub-pill ${norm(activeSubCatId) === norm(sub.IdSubCategoria) ? 'active' : ''}`} onClick={() => setActiveSubCatId(sub.IdSubCategoria)}>
+                        <button 
+                          key={sub.IdSubCategoria} 
+                          className={`cat-sub-pill ${norm(activeSubCatId) === norm(sub.IdSubCategoria) ? 'active' : ''}`} 
+                          onClick={() => setActiveSubCatId(sub.IdSubCategoria)}
+                        >
                             {sub.NombreSubCategoria}
                         </button>
                     ))}
@@ -199,26 +254,38 @@ const CategoryPage = () => {
             )}
 
             <div className="cat-grid-products"> 
-              {filteredProducts.map((prod) => (
-                  <div key={prod.IdProducto} className="cat-product-card">
-                    <div className="cat-id-badge">ID: {prod.IdProducto}</div>
-                    <Link to={`/producto/${prod.IdProducto}`} style={{textDecoration:'none', color:'inherit'}}>
+              {filteredProducts.map((prod, index) => (
+                  <article key={prod.IdProducto} className="cat-product-card">
+                    <div className="cat-brand-badge">
+                      {badgeLogo && <img src={badgeLogo} alt="Disdel" className="cat-badge-logo-img" />}
+                    </div>
+
+                    <Link to={`/producto/${prod.IdProducto.toLowerCase()}`} className="cat-card-link" style={{ textDecoration: 'none' }}>
                       <div className="cat-img-wrapper">
-                        <img src={prod.Imagen ? `${AppConfig.baseImageUrl}productos/${prod.Imagen}` : defaultImage} alt={prod.Descripcion} loading="lazy" />
+                        <img 
+                          src={prod.Imagen ? `${AppConfig.baseImageUrl}productos/${prod.Imagen}` : defaultImage} 
+                          alt={prod.Descripcion} 
+                          loading={index < 6 ? "eager" : "lazy"} 
+                          fetchpriority={index < 6 ? "high" : "auto"}
+                          decoding="async"
+                          width="200" height="200"
+                        />
                       </div>
                       <span className="cat-card-tag">{prod.Categoria}</span>
-                      <h3 className="cat-title">{prod.Descripcion}</h3>
+                      <h2 className="cat-title">{prod.Descripcion}</h2>
+                      {/* --- ID ABAJO DEL TÍTULO --- */}
+                      <span className="cat-detail-id">Disdel # {prod.IdProducto}</span>
                     </Link>
-                    <button className="cat-btn" onClick={() => {
-                        addItem({
-                            ...prod,
-                            presentationSelected: prod.Unidad || prod.Empaque,
-                            unitType: prod.Unidad ? 'Y' : 'N'
-                        });
-                    }}>
-                        Cotizar
-                    </button>
-                  </div>
+
+                    <div className="cat-card-footer">
+                        <button 
+                          className="cat-quote-btn" 
+                          onClick={() => addItem({...prod, presentationSelected: prod.Unidad || prod.Empaque, unitType: prod.Unidad ? 'Y' : 'N'})}
+                        >
+                            <FiShoppingCart className="cat-cart-icon" /> COTIZAR 
+                        </button>
+                    </div>
+                  </article>
               ))}
             </div>
           </main>

@@ -1,56 +1,86 @@
-import React, { memo } from 'react';
+import React, { memo, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import useCartStore from 'store/useCartStore';
 import { AppConfig } from 'config/AppConfig';
 import { FaCheckCircle } from 'react-icons/fa';
+import { FiShoppingCart } from 'react-icons/fi';
 import './ProductCard.css';
 
-import defaultImg from 'assets/images/categories/KCP.jpg'
+import { useBanners } from 'hooks/useBanners';
 
-const ProductCard =memo (({ product }) => {
+const ProductCard =memo (({ product, index }) => {
   const { IdProducto, Descripcion, Imagen, Marca, Categoria } = product;
   const addItem = useCartStore((state) => state.addItem);
+  const {data: bannerData} = useBanners();
 
-  const imageUrl = (Imagen && Imagen.trim() !== "") 
-    ? `${AppConfig.baseImageUrl}productos/${Imagen}` 
-    : defaultImg;
-    
-    const handlePrefetch = () => {
-      if (Imagen) {
-        const img = new Image();
-        img.src = imageUrl;
-      }
-    };
+  const defaultImage = useMemo(() => {
+    const found = bannerData?.ImagenPredeterminado?.find(i=> i.Titulo?.trim() === "ImagenDefault");
+    return found?.BannerImagenMovil ? `${AppConfig.baseImageUrl}${found.BannerImagenMovil}` : '';
+  }, [bannerData]);
+
+  const badgeLogo = useMemo(() => {
+    const found = bannerData?.Iconos?.find(i => i.Titulo?.trim() === "IconoDisdel");
+    return found ? `${AppConfig.baseImageUrl}${found.Imagen}` : '';
+  }, [bannerData]);
+
+  const imageUrl = useMemo(() => {
+    return (Imagen && Imagen.trim() !== "") 
+      ? `${AppConfig.baseImageUrl}productos/${Imagen}` 
+      : defaultImage;
+  }, [Imagen, defaultImage]);
+
+  const isPriority = index < 4;
 
   return (
-    <div 
+    <article 
       className="product-card"
-      onMouseEnter={handlePrefetch}
-      onTouchStart={handlePrefetch}
-      >
-      {/* Badge de ID discreto */}
+      itemScope 
+      itemType="https://schema.org/Product"
+    >
+
+      <meta itemProp="sku" content={IdProducto} />
+      <meta itemProp="brand" content={Marca || "Disdel"} />
+
+      <div className="product-brand-badge">
+        {badgeLogo && <img src={badgeLogo} alt="Disdel" className="badge-logo-img" />}
+      </div>
       <div className="product-id-badge">ID: {IdProducto}</div>
 
-      {/* Todo lo de arriba es un Link al detalle */}
-      <Link to={`/producto/${IdProducto}`} className="product-link">
+      <Link 
+        to={`/producto/${IdProducto.toLowerCase()}`} 
+        className="product-link"
+        itemProp="url"
+      >
         <div className="product-image-container">
           <img 
             src={imageUrl} 
             alt={Descripcion} 
             className="product-image" 
-            loading="lazy" 
+            loading={isPriority ? "eager" : "lazy"} 
             decoding='async'
+            fetchpriority={isPriority ? "high" : "auto"}
+            itemProp="image"
           />
         </div>
         
         <div className="product-info-top">
           <span className="brand-tag">{Marca || Categoria || 'Disdel'}</span>
-          <h3 className="product-title">{Descripcion}</h3>
+          <h3 className="product-title" itemProp="name">{Descripcion}</h3>
+          <span className="product-detail-id">Disdel # {IdProducto}</span>
         </div>
       </Link>
 
       {/* Footer del card con botón de acción */}
-      <div className="product-card-footer">
+      <div 
+        className="product-card-footer"
+        itemProp="offers" 
+        itemScope 
+        itemType="https://schema.org/Offer"
+      >
+        <meta itemProp="priceCurrency" content="GTQ" />
+        <meta itemProp="price" content="0.00" />
+        <link itemProp="availability" href="https://schema.org/InStock" />
+
         <div className="sold-by">
           <FaCheckCircle className="checkmark-icon" /> Disponible para cotizar
         </div>
@@ -58,14 +88,16 @@ const ProductCard =memo (({ product }) => {
         <button 
           className="quote-button" 
           onClick={(e) => {
-            e.preventDefault(); // Evita navegar si haces clic en el botón
-            addItem(product);
+            e.preventDefault();
+            const defaultPresentation = product.Unidad || product.Empaque || 'Unidad';
+            addItem({ ...product, presentationSelected: defaultPresentation, unitType: product.Unidad ? 'Y' : 'N' });
           }}
         >
+          <FiShoppingCart className="cart-icon-btn" /> 
           COTIZAR
         </button>
       </div>
-    </div>
+    </article>
   );
 });
 

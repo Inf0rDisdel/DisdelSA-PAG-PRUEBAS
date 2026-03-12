@@ -8,12 +8,19 @@ import './CategoryGrid.css';
 
 import { AppConfig } from '../../../config/AppConfig';
 import { useMenu } from '../../../hooks/useMenu';
-import defaultIcon from 'assets/images/categories/KCP.jpg'; 
+import { useBanners } from 'hooks/useBanners';
+import Skeleton from 'components/ui/Skeleton/Skeleton';
 
-const CategoryGrid = ({isLoading}) => {
-  // --- 1. TODOS LOS HOOKS ARRIBA ---
+const CategoryGrid = ({ isLoading }) => {
   const { data: menuData } = useMenu();
+  const { data: bannerData } = useBanners();
+
   const [sliderKey, setSliderKey] = useState(Date.now());
+
+  const defaultImage = useMemo(() => {
+    const imgDb = bannerData?.ImagenPredeterminado?.find (b=> b.Titulo === "ImagenDefault");
+    return imgDb ? `${AppConfig.baseImageUrl}${imgDb.Imagen}` : ''; 
+  }, [bannerData]);
 
   // Renombramos la variable interna para que no choque con las props
   const filteredCategories = useMemo(() => {
@@ -64,23 +71,27 @@ const CategoryGrid = ({isLoading}) => {
   // Skeleton Loader
   if (isLoading) {
     return (
-      <div className="category-grid" style={{ 
-        display: 'grid', 
-        gridTemplateColumns: 'repeat(2, 1fr)', 
-        gap: '15px', 
-        padding: '20px' 
-      }}>
-        {[1, 2, 3, 4].map((i) => (
-          <div key={i} style={{ background: 'white', padding: '10px', borderRadius: '12px' }}>
-            <div className="skeleton-shimmer" style={{ width: '100%', height: '100px', borderRadius: '8px' }}></div>
-            <div className="skeleton-shimmer" style={{ width: '70%', height: '14px', marginTop: '10px', borderRadius: '4px' }}></div>
-          </div>
-        ))}
-      </div>
+      <section className="cgs-section">
+        <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '30px' }}>
+          <Skeleton width="300px" height="35px" />
+        </div>
+        <div style={{ 
+          display: 'grid', 
+          gridTemplateColumns: 'repeat(4, 1fr)', 
+          gap: '20px', 
+          padding: '0 40px' 
+        }}>
+          {[1, 2, 3, 4].map((i) => (
+            <div key={i} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+              <Skeleton variant="circle" width="120px" height="120px" />
+              <Skeleton width="100px" height="15px" style={{ marginTop: '15px' }} />
+            </div>
+          ))}
+        </div>
+      </section>
     );
   }
 
-  // Si no hay datos después de cargar
   if (!filteredCategories.length) return null;
 
   return (
@@ -96,7 +107,7 @@ const CategoryGrid = ({isLoading}) => {
               >
                 <div className="cgs-image-wrapper">
                   <img 
-                    src={category.Imagen ? `${AppConfig.baseImageUrl}${category.Imagen}` : defaultIcon} 
+                    src={category.Imagen ? `${AppConfig.baseImageUrl}${category.Imagen}` : defaultImage} 
                     alt={category.NombreSegmento} 
                     className="cgs-image" 
                   />

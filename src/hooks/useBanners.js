@@ -22,8 +22,17 @@ export const useBanners = () => {
                 lateralesPrincipal: data.filter(b => b.IdTipoBanner === 26),
                 promoNescafe: data.filter(b => b.IdTipoBanner === 1),
                 sliderMarcas: data.filter(b => b.IdTipoBanner === 4),
+                promoExtra: data.filter(b=> b.IdTipoBanner === 9),
                 aliados: data.filter(b => b.IdTipoBanner === 14), 
-                promoGrid: data.filter(b => b.IdTipoBanner === 15)
+                promoGrid: data.filter(b => b.IdTipoBanner === 15),
+
+                //NUEVOS BANNERS
+                BannersMarcasInternos: data.filter(b => b.IdTipoBanner === 27),
+                QuienesSomos: data.filter(b => b.IdTipoBanner === 28),
+                Ubicaciones: data.filter(b => b.IdTipoBanner === 29),
+                ImagenPredeterminado:data.filter(b => b.IdTipoBanner === 30),
+                Logo:data.filter(b => b.IdTipoBanner === 31),
+                Iconos:data.filter(b=> b.IdTipoBanner === 32)
             };
         }
     });

@@ -1,11 +1,20 @@
-import React, { useState } from "react";
-// Ruta corregida según tu código
-import logoDisdel from 'assets/logo/disdel-logo.png'; 
+import React, { useState, useMemo } from "react"; 
 import { FiShield, FiLock, FiMail, FiCheckCircle, FiChevronDown, FiChevronUp, FiTrash2 } from "react-icons/fi";
 import './PrivacyPolicy.css';
 
+import { AppConfig } from "config/AppConfig";
+import { useBanners } from "hooks/useBanners";
+
 const PrivacyPolicy = () => {
     const [openStep, setOpenStep] = useState(1);
+
+    const{data: bannerData} = useBanners();
+    
+    const logoAsiDeLimpio = useMemo(() => {
+        const found = bannerData?.Iconos?.find(i => i.Titulo?.trim() === "IconoDisdel");
+       
+        return found ? `${AppConfig.baseImageUrl}${found.Imagen}` : '';
+    }, [bannerData]);
 
     const toggleStep = (step) => {
         setOpenStep(openStep === step ? null : step);
@@ -19,7 +28,13 @@ const PrivacyPolicy = () => {
                 <header className="privacy-header">
                     <div className="header-brand-row">
                         <FiShield className="main-shield-icon" />
-                        <img src={logoDisdel} alt="Disdel Logo" className="header-logo-img" />
+                        {logoAsiDeLimpio && (
+                            <img 
+                                src={logoAsiDeLimpio} 
+                                alt="Así de Limpio Logo" 
+                                className="header-logo-img" 
+                            />
+                        )}
                     </div>
                     <h1>Políticas de Privacidad</h1>
                     <span className="update-badge">Actualizado 2026</span>

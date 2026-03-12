@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css"; 
 import "slick-carousel/slick/slick-theme.css";
@@ -12,6 +12,24 @@ const BannerSlider = () => {
   // 2. Traemos los datos
   const { data: banners, isLoading, isError } = useBanners();
 
+  const [isPhone, setIsPhone] = useState(window.innerWidth <= 480);
+
+  useEffect(() => {
+    const handleResize = () => setIsPhone(window.innerWidth <= 480);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+   const displayBanners = useMemo(() => {
+    if (!banners?.Ubicaciones) return [];
+
+    return banners.Ubicaciones.filter(ban =>
+      ban.Titulo === "BannerKCP" ||
+      ban.Titulo === "3m" ||
+      ban.Titulo === "BannerWiese"
+    );
+  }, [banners]);
+
   const settings = {
     dots: false,
     infinite: true,
@@ -19,28 +37,29 @@ const BannerSlider = () => {
     slidesToShow: 1,
     slidesToScroll: 1,
     autoplay: true,
-    autoplaySpeed: 3000,
+    autoplaySpeed: 3500,
     arrows: false
   };
 
-  // Si carga, falla o no hay banners tipo 4, no mostramos nada
-  if (isLoading || isError || !banners.sliderMarcas?.length) return null;
+  if (isLoading || isError || displayBanners.length === 0) {
+    return null; 
+  }
 
   return (
     <div className="banner-slider-container">
       <Slider {...settings}>
-        
-        {/* 3. GENERAMOS LOS SLIDES DINÁMICAMENTE */}
-        {banners.sliderMarcas.map((ban) => (
-            <div key={ban.EntityID}>
+        {displayBanners.map((ban) => (
+            <div key={ban.EntityID || ban.IdBanner}>
                 <img 
-                    src={`${AppConfig.baseImageUrl}${ban.Imagen}`} 
+                    // Si es móvil, intentamos usar ImagenMovil, si no existe usamos Imagen
+                    src={`${AppConfig.baseImageUrl}${isPhone && ban.ImagenMovil ? ban.ImagenMovil : ban.Imagen}`} 
                     alt={ban.Titulo || "Promoción Disdelsa"} 
-                    style={{ width: '100%', height: 'auto', display: 'block' }} // Estilos básicos para evitar saltos
+                    className="banner-img"
+                    // Cargamos con prioridad los banners del slider principal
+                    fetchpriority="high"
                 />
             </div>
         ))}
-
       </Slider>
     </div>
   );

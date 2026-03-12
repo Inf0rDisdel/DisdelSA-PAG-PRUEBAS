@@ -11,15 +11,13 @@
   transition: height 0.3s ease;
 }
 
-.banner-fade-in {
-  animation: fadeIn 0.5s ease-in;
-}
-
+.banner-fade-in { animation: fadeIn 0.5s ease-in; }
 .brand-hero img { width: 100%; height: 100%; object-fit: cover; }
+
 
 .brand-layout {
   max-width: 1300px; margin: 0 auto; padding: 0 20px;
-  display: grid; grid-template-columns: 280px 1fr; gap: 30px;
+  display: grid; grid-template-columns: 300px 1fr; gap: 30px;
 }
 
 .sidebar-filters {
@@ -39,47 +37,110 @@
 .categories-stack { display: flex; flex-direction: column; gap: 5px; }
 
 .category-card-btn {
-  display: flex; align-items: center; padding: 12px 15px; border-radius: 8px;
-  cursor: pointer; color: #555; font-size: 13px; transition: all 0.2s;
-  border-left: 3px solid transparent;
+  display: flex; 
+  align-items: center; 
+  padding: 12px 15px; 
+  border-radius: 8px;
+  cursor: pointer; 
+  color: #555; 
+  font-size: 13px; 
+  transition: all 0.2s;
+  background: white;
+  
+  /* 🔥 SOLUCIÓN: Quitamos bordes por defecto del botón */
+  border: none; 
+  outline: none;
+  
+  /* Mantenemos solo el borde izquierdo para el indicador de color */
+  border-left: 3px solid transparent; 
 }
+
 .category-card-btn.active-filter {
-  background-color: #f0f7ff; color: var(--brand-color); font-weight: 700; border-left-color: var(--brand-color);
+  background-color: white !important; 
+  color: var(--brand-color); 
+  font-weight: 700; 
+  border-left-color: var(--brand-color);
+  
+  /* Aseguramos que al estar activo no aparezca sombra o borde extra */
+  border-top: none;
+  border-right: none;
+  border-bottom: none;
 }
+
 .cat-img-box { width: 24px; height: 24px; margin-right: 12px; }
 .cat-img-box img { width: 100%; height: 100%; object-fit: contain; }
 
 /* 🔥 4 PRODUCTOS EN PC */
 .grid-container {
-  display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 30px;
 }
 
 .product-card {
-  background: white; border-radius: 12px; padding: 20px; border: 1px solid #eee;
+  background: white; border-radius: 12px; border: 1px solid #eee;
   display: flex; flex-direction: column; height: 100%; position: relative; transition: 0.3s;
+  padding: 15px; /* Espaciado interno consistente */
 }
 .product-card:hover { transform: translateY(-5px); box-shadow: 0 15px 30px rgba(0,0,0,0.08); }
+
+.prod-link-wrapper {
+  display: flex;
+  flex-direction: column;
+  flex: 1; /* Esto hace que el link ocupe todo el espacio disponible */
+  text-decoration: none !important;
+}
+
+.product-brand-badge { 
+  position: absolute; 
+  top: 12px;      /* Misma distancia que CategoryPage */
+  right: 12px;    /* 🔥 CORREGIDO: de left a right */
+  z-index: 2; 
+}
+
+.badge-logo-img { 
+  height: 16px; 
+  object-fit: contain; 
+}
+
+.prod-link-wrapper { display: flex; flex-direction: column; flex: 1; text-decoration: none !important; }
+
+
 .cat-id-badge { position: absolute; top: 10px; right: 10px; font-size: 10px; color: #bbb; }
-.prod-img-container { height: 160px; display: flex; align-items: center; justify-content: center; margin: 15px 0; }
+
+.prod-img-container {
+  width: 100%; aspect-ratio: 1 / 1; max-height: 160px;
+  display: flex; align-items: center; justify-content: center; margin-bottom: 15px;
+}
 .prod-img-container img { max-width: 100%; max-height: 100%; object-fit: contain; }
+
 .prod-category-label { font-size: 11px; color: var(--brand-color); font-weight: 700; text-transform: uppercase; margin-bottom: 5px; }
-.prod-title-text { font-size: 14px; font-weight: 600; color: #222; flex-grow: 1; line-height: 1.4; }
+
+.prod-title-text { 
+  font-size: 14px; 
+  font-weight: 600; 
+  color: #222; 
+  line-height: 1.4;
+  flex-grow: 1; /* El título crece para empujar el botón al fondo */
+  margin-bottom: 5px;
+  text-decoration: none !important;
+}
+
+.product-detail-id { font-size: 11px; color: #135eab; margin-bottom: 12px; font-weight: 700; display: block; }
+
+.product-card-footer {
+  margin-top: auto; display: flex; flex-direction: column;
+}
+
+
 .btn-details-brand {
   width: 100%; padding: 12px; background: white; border: 1.5px solid var(--brand-color);
-  color: var(--brand-color); border-radius: 8px; font-weight: 700; cursor: pointer; margin-top: 15px;
+  color: var(--brand-color); border-radius: 8px; font-weight: 700; cursor: pointer;
+  margin-top: auto; /* Se ancla al final de la tarjeta */
 }
 .brand-container a, 
 .brand-container .prod-link-wrapper,
-.brand-container .category-card-btn {
-    text-decoration: none !important; /* Quita el subrayado */
-    outline: none;
-}
 
-/* 2. Aseguramos que el título del producto no se subraye ni cambie de color */
-.prod-title-text {
-    text-decoration: none !important;
-    color: #222; /* Mantiene el color oscuro */
-}
 
 /* 3. Evitamos que al pasar el mouse (hover) aparezca el subrayado */
 .product-card:hover .prod-title-text,
@@ -92,6 +153,15 @@
     text-decoration: none !important;
     font-weight: bold;
 }
+
+.quote-button {
+  width: 100%; padding: 12px; background-color: #135eab;
+  color: white; border: none; border-radius: 10px; font-weight: 700;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  cursor: pointer; transition: background 0.2s; font-size: 12px;
+}
+.quote-button:hover { background-color: #0d4a86; }
+.cart-icon-btn { font-size: 15px; }
 
 @keyframes fadeIn {
   from { opacity: 0; }
@@ -143,10 +213,22 @@
 
   /* CAJITAS MÁS BAJAS (Ajuste de altura solicitado) */
   .category-card-btn {
-    flex: 0 0 105px !important; flex-direction: column !important; 
-    height: 75px !important; /* Altura reducida para nitidez */
-    justify-content: center !important; text-align: center !important; padding: 5px !important;
-    margin-bottom: 0 !important; border: 1px solid #eee !important;
+    flex: 0 0 105px !important; 
+    flex-direction: column !important; 
+    height: 75px !important; 
+    justify-content: center !important; 
+    text-align: center !important; 
+    padding: 5px !important;
+    margin-bottom: 0 !important; 
+    
+    /* Cambiamos el 1px solid #eee por none si quieres quitarlo del todo en móvil */
+    border: none !important; 
+    border-bottom: 2px solid transparent !important; /* Si quieres el indicador abajo */
+  }
+
+  .category-card-btn.active-filter {
+    border-bottom-color: var(--brand-color) !important;
+    border-left-color: transparent !important; /* Quitamos el de la izquierda en móvil */
   }
   .cat-img-box { margin-right: 0 !important; margin-bottom: 5px !important; height: 32px !important; width: 100% !important; }
   .cat-text { font-size: 10px !important; line-height: 1.1 !important; display: block !important; }
@@ -183,7 +265,18 @@
 
   .grid-container { grid-template-columns: repeat(2, 1fr) !important; gap: 12px !important; }
   .product-card { padding: 12px !important; }
-  .prod-img-container { height: 120px !important; }
+
+  .prod-img-container {
+  aspect-ratio: 1 / 1;
+  max-height: 110px !important;
+  } 
+
+  .prod-img-container img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
   .prod-title-text { font-size: 12px !important; height: 32px; overflow: hidden; }
 }
 

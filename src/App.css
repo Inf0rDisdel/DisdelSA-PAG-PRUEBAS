@@ -19,7 +19,8 @@
 /* (Este lo tenías antes, es específico de tu app y está bien que esté aquí) */
 .carousel-wrapper {
   width: 100%;
-  padding: 0 10px;
+  height: 440px !important;
+  padding: 0 8px;
   box-sizing: border-box;
 }
 
