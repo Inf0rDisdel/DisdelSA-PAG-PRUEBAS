@@ -14,7 +14,6 @@ import Skeleton from 'components/ui/Skeleton/Skeleton';
 const CategoryGrid = ({ isLoading }) => {
   const { data: menuData } = useMenu();
   const { data: bannerData } = useBanners();
-
   const [sliderKey, setSliderKey] = useState(Date.now());
 
   const defaultImage = useMemo(() => {
@@ -32,24 +31,14 @@ const CategoryGrid = ({ isLoading }) => {
   }, [menuData]);
 
   useEffect(() => {
-    const handleResize = () => {
-      setTimeout(() => {
-        setSliderKey(Date.now());
-      }, 100);
-    };
+    const handleResize = () => setSliderKey(Date.now());
     window.addEventListener('resize', handleResize);
-    handleResize();
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
   // --- 2. HELPERS ---
   const createSlug = (text) => {
-      return text
-        .toString()
-        .toLowerCase()
-        .trim()
-        .normalize("NFD").replace(/[\u0300-\u036f]/g, "") 
-        .replace(/\s+/g, '-'); 
+      return text.toString().toLowerCase().trim().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, '-'); 
   };
 
   const settings = {
@@ -95,28 +84,38 @@ const CategoryGrid = ({ isLoading }) => {
   if (!filteredCategories.length) return null;
 
   return (
-    <section className="cgs-section">
+    <section className="cgs-section" style={{ minHeight: '400px' }}>
       <h2 className="cgs-title">Categorías Destacadas</h2>
       <div className="cgs-slider">
-        <Slider key={sliderKey} {...settings}>
-          {filteredCategories.map((category) => (
-            <div key={category.IdSegmento}>
-              <Link 
-                className="cgs-item" 
-                to={`/categoria/${createSlug(category.NombreSegmento)}`}
-              >
-                <div className="cgs-image-wrapper">
-                  <img 
-                    src={category.Imagen ? `${AppConfig.baseImageUrl}${category.Imagen}` : defaultImage} 
-                    alt={category.NombreSegmento} 
-                    className="cgs-image" 
-                  />
-                </div>
-                <p>{category.NombreSegmento}</p>
-              </Link>
-            </div>
-          ))}
-        </Slider>
+        {isLoading ? (
+          /* 🔥 MEJORA CLS: Skeleton que coincide con el tamaño real (260x240) */
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '20px' }}>
+            {[1, 2, 3, 4].map((i) => (
+              <div key={i} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                <Skeleton width="100%" height="240px" style={{ borderRadius: '20px' }} />
+                <Skeleton width="80%" height="20px" style={{ marginTop: '15px' }} />
+              </div>
+            ))}
+          </div>
+        ) : filteredCategories.length > 0 ? (
+          <Slider key={sliderKey} {...settings}>
+            {filteredCategories.map((category) => (
+              <div key={category.IdSegmento}>
+                <Link className="cgs-item" to={`/categoria/${createSlug(category.NombreSegmento)}`}>
+                  <div className="cgs-image-wrapper">
+                    <img 
+                      src={category.Imagen ? `${AppConfig.baseImageUrl}${category.Imagen}` : defaultImage} 
+                      alt={category.NombreSegmento} 
+                      className="cgs-image" 
+                      loading="lazy"
+                    />
+                  </div>
+                  <p>{category.NombreSegmento}</p>
+                </Link>
+              </div>
+            ))}
+          </Slider>
+        ) : null}
       </div>
     </section>
   );

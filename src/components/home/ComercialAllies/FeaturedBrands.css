@@ -5,6 +5,8 @@
   margin: 8px auto;
   padding: 5px 8px;
   text-align: left;
+  display: block;
+  min-height: 380px; 
 }
 
 .featured-brands-section .section-title {
@@ -25,6 +27,7 @@
   flex-wrap: wrap;
   justify-content: center;
   gap: 15px;
+  min-height: 250px; 
 }
 
 .featured-brands-section .brand-item {

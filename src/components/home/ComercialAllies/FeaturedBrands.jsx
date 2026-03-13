@@ -55,11 +55,20 @@ const FeaturedBrands = ({brands, isLoading}) => {
   if (isError || !banners?.aliados?.length) return null;
 
   return (
-    <section className="featured-brands-section">
+    <section className="featured-brands-section" style={{ minHeight: isPhone ? '200px' : '350px' }}>
       <h2 className="section-title">Aliados Comerciales</h2>
       
-      <div className="brands-content-wrapper">
-        {isPhone ? (
+       <div className="brands-content-wrapper" style={{ minHeight: isPhone ? '140px' : '250px' }}>
+        {isLoading ? (
+          /* 🔥 MEJORA CLS: El esqueleto ahora coincide con el tamaño real de los items */
+          <div className='brands-container' style={{display :'flex', gap:'15px', overflow:'hidden'}}>
+            {[1,2,3,4,5].map((i) => (
+              <div key={i} className="brand-item" style={{ background: '#f5f5f5', border: 'none' }}>
+                <div className='skeleton-shimmer' style={{ width: '100%', height: '100%' }}></div>
+              </div>
+            ))}
+          </div>
+        ) : isPhone ? (
           <Slider {...settings} className="brands-phone-slider">
             {banners.aliados.map((ban) => (
               <div key={ban.EntityID} className="phone-slide-item">
@@ -68,6 +77,7 @@ const FeaturedBrands = ({brands, isLoading}) => {
                     src={`${AppConfig.baseImageUrl}${ban.Imagen}`} 
                     alt={ban.Titulo || "Marca Aliada"} 
                     className="phone-brand-img"
+                    loading="lazy" 
                   />
                 </Link>
               </div>
@@ -76,15 +86,8 @@ const FeaturedBrands = ({brands, isLoading}) => {
         ) : (
           <div className="brands-container">
             {banners.aliados.map((ban) => (
-                <Link 
-                    key={ban.EntityID} 
-                    to={`/marca/${crearSlug(ban.Titulo)}`} 
-                    className="brand-item"
-                >
-                    <img 
-                        src={`${AppConfig.baseImageUrl}${ban.Imagen}`} 
-                        alt={ban.Titulo || "Marca Aliada"} 
-                    />
+                <Link key={ban.EntityID} to={`/marca/${crearSlug(ban.Titulo)}`} className="brand-item">
+                    <img src={`${AppConfig.baseImageUrl}${ban.Imagen}`} alt={ban.Titulo || "Marca Aliada"} loading="lazy" />
                 </Link>
             ))}
           </div>

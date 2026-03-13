@@ -3,7 +3,8 @@
   margin: 10px auto;
   display: flex;
   gap: 20px;
-  height: 320px; 
+  min-height: 320px; 
+  contain: paint;
 }
 
 .banners-container {
@@ -18,6 +19,7 @@
   border-radius: 8px;
   overflow: hidden;
   height: 50%;
+  aspect-ratio: 660 / 155; 
 }
 
 .banner-item img {
@@ -39,6 +41,7 @@
   overflow: hidden;
   position: relative;
   height: 100%;
+  aspect-ratio: 540 / 320;
 }
 
 .whatsapp-banner {
@@ -167,6 +170,7 @@
     border-radius: 0;
     overflow: hidden;
     box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    aspect-ratio: 16 / 9;
   }
 
   .mobile-hero-carousel .carousel .slide img {
@@ -189,6 +193,7 @@
     height: auto;
     min-height: 110px;
     border-radius: 10px; /* Bordes más curvos como en la imagen 2 */
+    aspect-ratio: 16 / 5;
   }
 
   .banner-item img {

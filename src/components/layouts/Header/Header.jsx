@@ -108,7 +108,13 @@ const Header = () => {
         {/* 1. LOGO (headerLeft) */}
         <div className={styles.headerLeft}>
           <Link to="/" onClick={handleLogoClick}>
-            <img src={logoMain} alt="Disdel S.A. - Expertos en Limpieza y Mantenimiento Institucional" className={styles.logo} fetchpriority="high" />
+            <img 
+              src={logoMain} 
+              alt="Disdel S.A. - Expertos en Limpieza y Mantenimiento Institucional" 
+              className={styles.logo} 
+              // 🔥 Prioridad máxima de carga sin afectar el tamaño
+              fetchpriority="high" 
+            />
           </Link>
         </div>
 
