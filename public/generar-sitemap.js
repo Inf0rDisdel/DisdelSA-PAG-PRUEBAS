@@ -23,7 +23,16 @@ const createSlug = (text) => {
         .replace(/[^a-z0-9 -]/g, '') // Quita símbolos raros
         .replace(/\s+/g, '-') // Espacios por guiones
         .replace(/-+/g, '-'); // Evita guiones dobles
-    }   ;
+    };
+
+    const escapeXml = (str) =>
+    str.replace(/[<>&'"]/g, c => ({
+        '<': '&lt;',
+        '>': '&gt;',
+        '&': '&amp;',
+        "'": '&apos;',
+        '"': '&quot;'
+    }[c]));
 
     async function generateSitemap() {
     console.log('🚀 Generando Sitemap Nivel Master...');
@@ -36,7 +45,9 @@ const createSlug = (text) => {
         { loc: `${BASE_URL}/ayuda`, priority: '0.7', changefreq: 'monthly' }
     ];
 
-    const config = { headers: { 'Content-Type': 'application/json' } };
+    const config = { 
+    headers: { 'Content-Type': 'application/json' },
+    timeout: 15000};
     const payload = { IdCompania: 1007, Division: "1" };
 
     try {
@@ -66,13 +77,15 @@ const createSlug = (text) => {
             const marcasUnicas = new Set();
 
             productos.forEach(prod => {
-                const cleanId = prod.IdProducto.trim().toLowerCase();
-                const slugName = createSlug(prod.Descripcion);
-                
-                // URL AMIGABLE: ID + NOMBRE (Oro puro para Google)
+
+                const cleanId = (prod.IdProducto || '').trim().toLowerCase();
+                const slugName = createSlug(prod.Descripcion || '');
+
+                if(!cleanId || !slugName) return;
+
                 urls.push({
                     loc: `${BASE_URL}/producto/${cleanId}/${slugName}`,
-                    priority: '0.7', // Los productos individuales tienen prioridad base
+                    priority: '0.7',
                     changefreq: 'weekly'
                 });
 
@@ -99,14 +112,16 @@ const createSlug = (text) => {
         let xml = `<?xml version="1.0" encoding="UTF-8"?>
             <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
                 ${urls.map(u => `  <url>
-                <loc>${u.loc}</loc>
+                <loc>${escapeXml(u.loc)}</loc>
                 <lastmod>${hoy}</lastmod>
                 <changefreq>${u.changefreq}</changefreq>
                 <priority>${u.priority}</priority>
             </url>`).join('\n')}
         </urlset>`;
 
+        fs.mkdirSync(path.dirname(OUTPUT_FILE), { recursive: true });
         fs.writeFileSync(OUTPUT_FILE, xml);
+
         console.log(`\n✅ ¡Sitemap MASTER completado!`);
         console.log(`📊 URLs Totales: ${urls.length}`);
         console.log(`📍 Guardado en: public/sitemap.xml`);
