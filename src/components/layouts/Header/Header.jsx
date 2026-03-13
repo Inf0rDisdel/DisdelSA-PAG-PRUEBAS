@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useEffect } from 'react'; 
+import React, {  useState, useEffect } from 'react'; 
 import { Link, useNavigate } from 'react-router-dom'; 
 import useCartStore from 'store/useCartStore';
 import styles from './Header.module.css';

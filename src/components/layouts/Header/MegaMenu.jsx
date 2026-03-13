@@ -6,6 +6,8 @@ import { AppConfig } from '../../../config/AppConfig';
 import { useMenu } from '../../../hooks/useMenu';
 import { useBanners } from 'hooks/useBanners';
 
+const BRAND_KEYWORDS = ['KIMBERLY', '3M', 'WIESE', 'SILVER'];
+
 const MegaMenu = () => {
 
     const { data: bannerData } = useBanners();
@@ -33,6 +35,7 @@ const MegaMenu = () => {
             .replace(/\s+/g, '-')
             .replace(/-+/g, '-');
     }, []);
+
 
     const menuStructure = useMemo(() => {
         if (!menuData) return [];
@@ -114,8 +117,8 @@ const MegaMenu = () => {
 
 
     // Datos para la columna de Promoción
-    const promoImage = activeSubItem?.image || currentCategoryData?.promotion?.image;
-    const promoTitle = activeSubItem?.name || currentCategoryData?.promotion?.title;
+    //const promoImage = activeSubItem?.image || currentCategoryData?.promotion?.image;
+    //const promoTitle = activeSubItem?.name || currentCategoryData?.promotion?.title;
     
     // Link del botón de promoción
     const getPromoButtonLink = () => {
