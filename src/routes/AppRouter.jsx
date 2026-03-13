@@ -19,7 +19,6 @@ const PrivacyPolicy = lazy(() => import('pages/info/PrivacyPolicy'));
 //import ReviewStats from 'components/reviews/ReviewStats';
 //const ReviewsSection = lazy(() => import('components/reviews/ReviewsSection'));
 
-
 const AppRouter = () => {
   return (
     <Suspense fallback={<div className="loading-screen">Cargando...</div>}>
@@ -28,16 +27,16 @@ const AppRouter = () => {
       <Route path="/" element={<HomePage />} />
 
       {/* 2. RUTAS DINÁMICAS PRINCIPALES */}
-      <Route path="/producto/:id" element={<ProductDetailPage />} />
+      <Route path="/producto/:id/:slug?" element={<ProductDetailPage />} />
+        
       <Route path="/categoria/:slug" element={<CategoryPage />} />
       <Route path="/marca/:slug" element={<BrandPage />} />
       <Route path="/buscar" element={<SearchResultsPage />} />
 
       {/* 3. REDIRECCIONES DE CATEGORÍAS (SEO) */}
       {['botiquin', 'papeleria', 'ferreteria', 'pisos-y-superficies'].map(cat => (
-        <Route key={cat} path={`/${cat}`} element={<Navigate to={`/categoria/${cat}`} replace />} />
+          <Route key={cat} path={`/${cat}`} element={<Navigate to={`/categoria/${cat}`} replace />} />
       ))}
-
 
       {/* --- 🚀 RESCATE DE GOOGLE (Legacy Redirects) --- */}
       <Route path="/subcategoria/mopas-y-accesorios" element={<Navigate to="/categoria/herramientas-para-limpieza/mopa-y-mecha" replace />} />

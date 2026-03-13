@@ -1,11 +1,18 @@
 /* --- ESTILOS BASE (Escritorio) --- */
 .banner-slider-container {
   width: 100%;
-  max-width: 1220px; 
+  max-width: 1210px; 
   height: 100%;
-  margin: 40px auto;    
-  padding: 0 8px;  
-  box-sizing: border-box; 
+  margin: 20px auto;    
+  padding: 0 10px;   
+}
+
+.banner-img {
+  width: 100%;
+  height: 270px; /* Altura fija en desktop para orden */
+  object-fit: cover;
+  border-radius: 5px !important;
+  display: block;
 }
 
 /* Este es el límite en escritorio */
@@ -21,38 +28,52 @@
   border-radius: 15px;
 }
 
-/* --- ESTILOS PARA MÓVILES (Aquí es donde lo agrandamos) --- */
+/* --- ESTILOS PARA MÓVILES Y TABLETS (Optimizado) --- */
 @media (max-width: 768px) {
   
   .banner-slider-container {
-    margin: 20px auto; /* Menos margen arriba para que no baje tanto */
-    padding: 0 15px;
+    /* Reducimos márgenes para que no flote tanto */
+    margin: 5px auto !important; 
+    padding: 0 0 !important; /* Un poquito de margen a los lados para que no tope al borde */
     max-width: 100%;
+    width: 100%;
+    box-sizing: border-box;
+    overflow: hidden;
+  }
+
+  .banner-slider-container .slick-list {
+    border-radius: 10px;
   }
 
   .banner-slider-container .slick-slide {
-    max-height: 400px;  /* ¡IMPORTANTE! Quitamos el límite de 270px */
-    height: auto !important;     /* <--- AQUÍ CAMBIAS EL ALTO. Pon 350px o 400px si lo quieres más gigante */
+    height: auto !important; 
+    /* Centra la imagen dentro del slide por si acaso */
+    display: flex !important;
+    justify-content: center;
   }
 
   .banner-slider-container .slick-slide img {
-    height: auto !important;     /* Debe coincidir con el alto de arriba */
-    max-height: 400px;
-    object-fit: cover; /* Evita que la imagen se estire, la centra y recorta lo necesario */
-    border-radius: 12px;
+    width: 100%;
+    /* Mantenemos la proporción original de la imagen */
+    height: auto !important; 
+    /* 'initial' asegura que no se use el cover de escritorio que a veces recorta */
+    object-fit: initial !important; 
+    border-radius: 10px;
+    display: block;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1); /* Una sombra suave para que resalte */
   }
 
-  /* Ajustamos los puntitos para que no se pierdan */
+  /* Ajustamos los puntitos para que queden pegaditos al banner */
   .banner-slider-container .slick-dots {
-    bottom: -20px; 
+    bottom: 5px !important; 
+    position: relative; /* Esto quita el espacio vacío de abajo */
   }
 }
 
-/* --- ESTILOS DE LOS PUNTOS (Generales) --- */
 .banner-slider-container .slick-dots li button:before {
-  font-size: 9px; 
-  color: #135eab; /* Cambié a azul para que se vea mejor sobre blanco */
-  opacity: 0.25;
+  font-size: 8px; 
+  color: #135eab; 
+  opacity: 0.3;
 }
 
 .banner-slider-container .slick-dots li.slick-active button:before {
@@ -64,12 +85,9 @@
 @media (max-width: 480px) {
   
   .banner-slider-container {
-    margin-top: -10px !important; 
-    margin-bottom: 30px !important;
-    /* 🔥 Quitamos los márgenes laterales para que sea "Full Width" 🔥 */
-    padding: 0 !important; 
-    max-width: 100% !important;
-    width: 100% !important;
+    padding: 0 !important;
+    margin-top: 0;
+    max-width: 100%;
   }
 
   .banner-slider-container .slick-slide {

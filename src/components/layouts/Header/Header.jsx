@@ -16,7 +16,7 @@ import {
 const Header = () => {
   const navigate = useNavigate(); 
   const [searchTerm, setSearchTerm] = useState(''); 
-  const whatsappUrl = `https://api.whatsapp.com/send/?phone=50231094985&text&type=phone_number&app_absent=0`;
+  const whatsappUrl = `https://wa.me/50231094985`;
 
   const { data: bannerData } = useBanners();
 
@@ -90,7 +90,7 @@ const Header = () => {
             <div className={styles.splashContent}>
               <motion.img 
                 src={logoSplash} 
-                alt="Cargando..." 
+                alt="Disdel S.A. - Cargando Experiencia" 
                 initial={{ y: 20, opacity: 0, scale: 0.8 }}
                 animate={{ y: 0, opacity: 1, scale: 1 }}
                 transition={{ delay: 0.2, duration: 0.5, ease: "easeOut" }}
@@ -102,24 +102,33 @@ const Header = () => {
         )}
       </AnimatePresence>
 
-    <header className={styles.header}>
+    <header className={styles.header} role="banner">
       <div className={styles.headerContainer}>
 
         {/* 1. LOGO (headerLeft) */}
         <div className={styles.headerLeft}>
           <Link to="/" onClick={handleLogoClick}>
-             <img src={logoMain} alt="Disdel Logo" className={styles.logo} />
+            <img src={logoMain} alt="Disdel S.A. - Expertos en Limpieza y Mantenimiento Institucional" className={styles.logo} fetchpriority="high" />
           </Link>
         </div>
 
         {/* 2. BUSCADOR Y NAV (headerCenter) */}
         <div className={styles.headerCenter}>
-            <form className={styles.searchBar} onSubmit={handleSearchSubmit}>
-              <input type="text" placeholder="Búsqueda de productos..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
-              <button type="submit" className={styles.searchButton}><FaSearch /></button>
+            <form className={styles.searchBar} onSubmit={handleSearchSubmit} role="search">
+              <input 
+                id="header-search"
+                type="text" 
+                placeholder="Buscar productos en Disdel..." 
+                value={searchTerm} 
+                onChange={(e) => setSearchTerm(e.target.value)} 
+                aria-label="Campo de búsqueda de productos"
+              />
+              <button type="submit" className={styles.searchButton} aria-label="Ejecutar búsqueda">
+                <FaSearch />
+              </button>
             </form>
           
-          <nav className={styles.mainNav}>
+          <nav className={styles.mainNav} role="navigation" aria-label="Navegación principal">
             <div
               className={styles.categoriesContainer}
               onMouseEnter={() => setIsMegaMenuOpen(true)}
@@ -146,13 +155,18 @@ const Header = () => {
 
         {/* 4. CARRITO (headerRight) */}
         <div className={styles.headerRight}>
-            <Link to="/carrito" className={cartClasses}>
-              <img src={iconCart} alt="Carrito" className={styles.cartIcon} />
-              <span className={styles.cartNotification}>{cartItemCount}</span>
+            <Link to="/carrito" className={cartClasses} aria-label={`Ver mi cotización: ${cartItemCount} artículos`}>
+              <img src={iconCart} alt="" aria-hidden="true" className={styles.cartIcon} />
+              <span className={styles.cartNotification} aria-hidden="true">{cartItemCount}</span>
             </Link>
           </div>
 
-          <button className={styles.hamburgerButton} onClick={() => setIsMobileMenuOpen(true)}>
+
+          <button 
+            className={styles.hamburgerButton} 
+            onClick={() => setIsMobileMenuOpen(true)}
+            aria-label="Abrir menú móvil"
+          >
             <FaBars />
           </button>
         </div>
@@ -163,7 +177,7 @@ const Header = () => {
     
     <div className={`${styles.mobileMenu} ${isMobileMenuOpen ? styles.open : ''}`}>
           <div className={styles.mobileMenuHeader}>
-            <h3>Menú</h3>
+            <h3>Menú Disdel</h3>
             <button onClick={() => setIsMobileMenuOpen(false)} className={styles.closeButton}><FaTimes /></button>
           </div>
 
@@ -190,12 +204,13 @@ const Header = () => {
             </a>
 
             <hr className={styles.divider} />
-            <Link to="/" onClick={() => setIsMobileMenuOpen(false)} className={styles.sidebarLinkSimple}>Inicio</Link>
-            <a href={whatsappUrl} target="_blank" rel="noopener noreferrer" className={styles.sidebarLinkSimple}>Contacto WhatsApp</a>
+            <Link to="/" onClick={() => setIsMobileMenuOpen(false)} className={styles.sidebarLinkSimple}>Inicio del Catálogo</Link>
+            <a href={whatsappUrl} target="_blank" rel="noopener noreferrer" className={styles.sidebarLinkSimple}>Chat de Ventas PBX</a>
           </nav>
       </div>
     </>
   );
 };
+
 
 export default Header;

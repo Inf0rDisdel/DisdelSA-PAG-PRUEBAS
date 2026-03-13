@@ -1,6 +1,6 @@
 .cat-master-wrapper {
   background-color: #f9fafb;
-  padding-bottom: 60px;
+  padding-bottom: 10px;
   min-height: 100vh;
   --cat-color: #135eab;
   font-family: 'Poppins', sans-serif;
@@ -14,17 +14,19 @@
 
 /* --- BANNER ESTIRADO (ENCABEZADO) --- */
 .cat-header-section {
-  margin-top: 20px;
-  margin-bottom: 30px;
+  margin-top: 15px; /* Más pegado al menú */
+  margin-bottom: 25px;
   border-radius: 16px;
   overflow: hidden;
   position: relative;
   box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+  aspect-ratio: 1300 / 280; /* 🔥 CLS FIX: Reserva el espacio del banner */
+  background: #eee;
 }
 
 .cat-main-banner {
   width: 100%;
-  height: 280px; 
+  height: 100%;
   object-fit: cover;
   display: block;
 }
@@ -51,7 +53,7 @@
 .cat-content-layout {
   display: grid;
   grid-template-columns: 260px 1fr; 
-  gap: 40px;
+  gap: 30px; /* Reducido de 40px a 30px para compactar */
   align-items: flex-start;
 }
 
@@ -142,22 +144,19 @@
   display: grid;
   /* Ajustado para que el espacio sea más equilibrado */
   grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); 
-  gap: 25px; /* 🔥 Espacio PRO aumentado entre tarjetas */
+  gap: 20px; /* 🔥 Espacio PRO aumentado entre tarjetas */
 }
 
 .cat-product-card {
   background: #fff;
   border: 1px solid #eee;
   border-radius: 14px;
-  padding: 20px; /* Espacio interno PRO */
+  padding: 15px; /* Un toque más compacto */
   position: relative;
   transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
   display: flex;
   flex-direction: column;
-  height: auto;
-  overflow: hidden;
 }
-
 
 .cat-product-card:hover {
   transform: translateY(-8px);
@@ -181,17 +180,21 @@
 .cat-card-link { display: flex; flex-direction: column; flex: 1; text-decoration: none !important; }
 
 .cat-img-wrapper {
-  height: 170px;
+  width: 100%;
+  aspect-ratio: 1 / 1; /* 🔥 CLS FIX: Evita saltos de imagen */
   display: flex; 
   align-items: center; 
   justify-content: center;
-  margin-bottom: 20px;
+  margin-bottom: 15px;
+  background-color: #fcfcfc;
 }
+
 .cat-img-wrapper img { 
-  max-width: 100%; 
-  max-height: 100%; 
+  max-width: 90%; 
+  max-height: 90%; 
   object-fit: contain; 
 }
+
 
 /*.cat-product-card:hover .cat-img-wrapper img { transform: scale(1.05); }*/
 
@@ -322,15 +325,8 @@
     gap: 10px !important;
   }
 
-  .cat-sidebar-left {
-    position: sticky;
-    top: 115px;
-    width: 100%;
-    z-index: 1000;
-    padding: 10px 0;
-    border-radius: 0;
-    border: none;
-    border-bottom: 1px solid #eee;
+ .cat-sidebar-left {
+    top: 90px !important; /* Ajuste para que no flote tan abajo */
   }
 
   .cat-sidebar-label {
@@ -380,8 +376,7 @@
 
   .cat-grid-products {
     grid-template-columns: repeat(3, 1fr);
-    gap: 15px;
-    padding: 15px;
+    gap: 12px;
   }
   .cat-product-card { padding: 2px !important; gap: 12px; }
   .cat-img-wrapper { height: 110px !important; }
@@ -419,8 +414,8 @@
   }
 
   .cat-grid-products {
-    grid-template-columns: repeat(2, 1fr) !important; /* 2 productos por fila */
-    gap: 12px !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 10px !important;
   }
 
   .cat-product-card {

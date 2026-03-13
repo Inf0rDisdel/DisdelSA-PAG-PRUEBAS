@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async'; 
 
@@ -7,13 +7,11 @@ import { useBanners } from 'hooks/useBanners';
 import useCartStore from 'store/useCartStore';
 import { useProductDetail } from 'hooks/useProductDetail';
 
-import { 
-  FiCheckCircle, FiPackage, FiChevronLeft, FiTarget, FiInfo
-} from 'react-icons/fi';
+import { FiCheckCircle, FiPackage, FiChevronLeft, FiTarget} from 'react-icons/fi';
 import './ProductDetailPage.css';
 
 const ProductDetailPage = () => {
-  const { id } = useParams();
+  const { id, slug } = useParams();
   const navigate = useNavigate();
   const addItem = useCartStore((state) => state.addItem);
   const { data: bannerData } = useBanners();
@@ -21,22 +19,29 @@ const ProductDetailPage = () => {
   const cleanId = id ? id.replace(/\/$/, "").trim().toUpperCase() : "";
   const canonicalId = id ? id.replace(/\/$/, "").trim().toLowerCase() : "";
 
-   // Hook personalizado para traer datos
   const { data: product, isLoading, isError } = useProductDetail(cleanId);
 
   const [selectedImage, setSelectedImage] = useState(null);
   const [selectedUnit, setSelectedUnit] = useState(''); 
   const [selectedType, setSelectedType] = useState('Y');
 
+  const createSlug = useCallback((text) => {
+    if (!text) return '';
+    return text.toString().toLowerCase().trim()
+        .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+        .replace(/ñ/g, 'n').replace(/[^a-z0-9 -]/g, '').replace(/\s+/g, '-');
+  }, []);
+
   const defaultImage = useMemo(() => {
-    const found = bannerData?.ImagenPredeterminado?.find(i => i.Titulo?.trim() === "ImagenDefault");
+    const found = bannerData?.ImagenPredeterminado?.find(i => i.Titulo?.trim() === "ImagenDefault3");
     const fileName = found?.BannerImagenMovil || found?.Imagen;
     return fileName ? `${AppConfig.baseImageUrl}${fileName}` : '';
   }, [bannerData]);
 
-  const getImageUrl = (imgName) => (imgName && imgName.trim() !== "") 
+  // Envolvemos en useCallback para quitar el Warning de la terminal
+  const getImageUrl = useCallback((imgName) => (imgName && imgName.trim() !== "") 
     ? `${AppConfig.baseImageUrl}productos/${imgName}` 
-    : defaultImage;
+    : defaultImage, [defaultImage]);
 
   const productImages = useMemo(() => {
       if (!product) return [];
@@ -53,38 +58,39 @@ const ProductDetailPage = () => {
 
   const fullSchema = useMemo(() => {
     if (!product) return null;
-    const fullUrl = `https://www.disdelsa.com/producto/${canonicalId}`;
-    const brandName = product.Marca || "Disdel";
+    const slugName = createSlug(product.Descripcion);
+    const fullUrl = `https://disdelsa.com/producto/${canonicalId}/${slugName}`;
 
     return {
       "@context": "https://schema.org/",
       "@type": "Product",
-      "@id": `${fullUrl}#product`,
       "name": product.Descripcion,
-      "image": productImages.map(img => getImageUrl(img)),
-      "description": `Solicite cotización de ${product.Descripcion} en Guatemala. Suministro profesional para empresas y oficinas.`,
+      "image": getImageUrl(product.Imagen),
+      "description": `Cotiza ${product.Descripcion} en Disdel Guatemala. Ideal para ${product.Categoria}. Calidad institucional.`,
       "sku": product.IdProducto,
-      "mpn": product.IdProducto,
-      "brand": { 
-        "@type": "Brand", 
-        "name": brandName 
-      },
+      "brand": { "@type": "Brand", "name": product.Marca || "Disdel" },
       "offers": {
         "@type": "Offer",
         "url": fullUrl,
         "priceCurrency": "GTQ",
-        "price": "0.00", // Al ser cotización, mantenemos 0.00 pero con estructura válida
+        "price": "0.00",
+        "valueAddedTaxIncluded": "true",
         "availability": "https://schema.org/InStock",
         "itemCondition": "https://schema.org/NewCondition",
-        "priceValidUntil": "2026-12-31",
         "seller": {
-          "@type": "Organization", // "Organization" es más aceptado por Google que WholesaleStore
-          "name": "Disdel, S.A.",
-          "url": "https://disdelsa.com/"
+          "@type": "Organization",
+          "name": "Disdel, S.A."
         }
       }
     };
-  }, [product, canonicalId, productImages, defaultImage]);
+  }, [product, canonicalId, createSlug, getImageUrl]);
+
+  useEffect(() => {
+    if (product && !slug) {
+        const slugName = createSlug(product.Descripcion);
+        navigate(`/producto/${canonicalId}/${slugName}`, { replace: true });
+    }
+  }, [product, slug, canonicalId, navigate, createSlug]);
 
   useEffect(() => {
     if (id && id !== id.toLowerCase()) {
@@ -114,32 +120,30 @@ const ProductDetailPage = () => {
   };
 
   if (isLoading) return <div className="pdp-loading"><div className="spinner"></div><p>Cargando producto...</p></div>;
+  
   if (isError || !product) return (
     <div className="pdp-container" style={{minHeight: '60vh', display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
-        <p>Redirigiendo a búsqueda...</p>
+        <p>Buscando producto...</p>
     </div>
   );
 
   const seoTitle = `${product.Descripcion} ${product.Marca ? '| ' + product.Marca : ''} | Disdel Guatemala`;
   const mainImg = getImageUrl(selectedImage || product.Imagen);
-  const currentUrl = `https://disdelsa.com/producto/${canonicalId}`;
+  const currentSlug = createSlug(product.Descripcion);
+  const currentUrl = `https://disdelsa.com/producto/${canonicalId}/${currentSlug}`;
 
   return (
     <div className="pdp-container">
     <Helmet>
-    {/* --- 1. SEO DE BÚSQUEDA Y GOOGLE --- */}
     <title>{seoTitle}</title>
-    <meta name="description" content={`Solicite cotización de ${product.Descripcion} en Guatemala. Suministro profesional para empresas, oficinas y sector hostelero. Producto garantizado de la línea ${product.Categoria}. Calidad y respaldo institucional por Disdel, S.A.`} />
+    <meta name="description" content={`Solicite cotización de ${product.Descripcion} en Guatemala. Suministro profesional para empresas. Categoría ${product.Categoria}.`} />
     <link rel="canonical" href={currentUrl} />
-    
-    {/* Precarga de imagen crítica para mejorar el LCP (Core Web Vitals) */}
     <link rel="preload" as="image" href={mainImg} />
 
-    {/* --- 2. OPEN GRAPH (Facebook, WhatsApp, LinkedIn) --- */}
     <meta property="og:title" content={seoTitle} />
-    <meta property="og:description" content={`Distribución líder de ${product.Descripcion} en Guatemala. ¡Cotiza ahora para tu empresa con Disdelsa!`} />
+    <meta property="og:description" content={`Distribución de ${product.Descripcion} en Guatemala. ¡Cotiza ahora con Disdel!`} />
     <meta property="og:image" content={mainImg} />
-    <meta property="og:url" content={`https://www.disdelsa.com/producto/${canonicalId}`} />
+    <meta property="og:url" content={currentUrl} />
     <meta property="og:type" content="product" />
     <meta property="og:site_name" content="Disdel" />
 
@@ -174,15 +178,19 @@ const ProductDetailPage = () => {
       <div className="pdp-main-grid">
         <section className="pdp-gallery-section">
             <div className="pdp-main-image-wrapper">
-              <img 
-                    src={mainImg} 
-                    alt={`${product.Descripcion} - Suministro Institucional Guatemala`} 
-                    className="pdp-main-img" 
-                    width="600" height="600"
-                    fetchpriority="high" 
-                    loading="eager"
-                />  
-            </div>
+            <img 
+              src={mainImg} 
+              alt={`${product.Descripcion} - Suministro Institucional`} 
+              className="pdp-main-img" 
+              // 🔥 MEJORA Core Web Vitals:
+              width="600" 
+              height="600"
+              fetchpriority="high" 
+              loading="eager"
+              decoding="sync" // Fuerza al navegador a procesarla de inmediato
+              style={{ aspectRatio: '1/1' }}
+            />  
+          </div>
             {productImages.length > 1 && (
                 <div className="pdp-thumbnails">
                     {productImages.map((img, index) => (
@@ -220,7 +228,7 @@ const ProductDetailPage = () => {
 
           <div className="pdp-commercial-desc">
             <p>
-              <FiInfo /> <strong>Solución Institucional:</strong> En Disdel nos especializamos en el abastecimiento técnico de <strong>{product.Descripcion}</strong> para el sector empresarial. Este artículo de la línea <strong>{product.Categoria}</strong> ha sido seleccionado bajo rigurosos estándares para garantizar la máxima eficiencia y rendimiento en las operaciones de su institución o negocio en toda Guatemala.
+              <FiTarget /> <strong>Venta Institucional:</strong> Abastecimiento profesional de {product.Descripcion} para empresas en toda Guatemala.
             </p>
           </div>
 

@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import styles from './MegaMenu.module.css';
 
@@ -13,25 +13,26 @@ const MegaMenu = () => {
 
     const defaultIcon = useMemo(() => {
         
-        const found = bannerData?.ImagenPredeterminado?.find(i=> i.Titulo?.trim() === "ImagenDefault");
-
+        const found = bannerData?.ImagenPredeterminado?.find(i=> i.Titulo?.trim() === "ImagenDefault2");
         const fileName = found?.BannerImagenMovil;
-        
         return fileName ? `${AppConfig.baseImageUrl}${fileName}` : '';
     }, [bannerData]);
 
-    const [activeCategory, setActiveCategory] = useState('Todos los Departamentos');
+    const [activeCategory, setActiveCategory] = useState('Todas las Categorias');
     const [activeSubItem, setActiveSubItem] = useState(null);
 
     const brandKeywords = ['KIMBERLY', '3M', 'WIESE', 'SILVER'];
 
     // Helper para Slugs
-    const createSlug = (text) => {
-        if(!text) return '';
+    const createSlug = useCallback((text) => {
+        if (!text) return '';
         return text.toString().toLowerCase().trim()
-            .normalize("NFD").replace(/[\u0300-\u036f]/g, "") // Quitar acentos
-            .replace(/\s+/g, '-');
-    };
+            .normalize("NFD").replace(/[\u0300-\u036f]/g, "") // Quita acentos
+            .replace(/ñ/g, 'n')
+            .replace(/[^a-z0-9 -]/g, '') // Limpia caracteres raros
+            .replace(/\s+/g, '-')
+            .replace(/-+/g, '-');
+    }, []);
 
     const menuStructure = useMemo(() => {
         if (!menuData) return [];
@@ -46,7 +47,7 @@ const MegaMenu = () => {
 
         // 1. Estructura de "Todos los Departamentos" (Van a /categoria/)
         const allDepartments = {
-            name: 'Todos los Departamentos',
+            name: 'Todas las Categorias',
             icon: defaultIcon, 
             isStatic: true,
             subCategories: [
@@ -88,12 +89,12 @@ const MegaMenu = () => {
             promotion: { 
                 title: seg.NombreSegmento, 
                 image: seg.Imagen ? `${AppConfig.baseImageUrl}${seg.Imagen}` : defaultIcon, 
-                buttonText: 'Ver Marca' 
+                buttonText: 'Ver Productos' 
             }
         }));
 
         return [allDepartments, ...mappedBrands];
-    }, [menuData, defaultIcon]);
+    }, [menuData, defaultIcon, createSlug]);
 
     const currentCategoryData = menuStructure.find(cat => cat.name === activeCategory);
 
@@ -107,13 +108,10 @@ const MegaMenu = () => {
                 to: `/marca/${item.parentSlug}`,
                 state: { preSelectedCatId: item.id }
             };
-        } else {
-            // Si es categoria: /categoria/herramientas-limpieza
-            return {
-                to: `/categoria/${createSlug(item.name)}`
-            };
         }
+        return { to: `/categoria/${createSlug(item.name)}` };
     };
+
 
     // Datos para la columna de Promoción
     const promoImage = activeSubItem?.image || currentCategoryData?.promotion?.image;
@@ -122,20 +120,21 @@ const MegaMenu = () => {
     // Link del botón de promoción
     const getPromoButtonLink = () => {
         if (activeSubItem) return getLinkProps(activeSubItem);
-        if (currentCategoryData?.isStatic) return { to: '/categoria/todos' };
+        if (currentCategoryData?.isStatic) return { to: '/buscar?q=suministros' };
         return { to: `/marca/${createSlug(currentCategoryData?.name)}` };
     };
 
     if (isLoading || isError || !menuData) return null;
 
     return (
-        <div className={styles.megaMenuContainer}>
+        <nav className={styles.megaMenuContainer} role ="navigation" arial-label="Menú de categorias">
             {/* Columna 1: Segmentos / Marcas */}
             <div className={`${styles.megaMenuColumn} ${styles.categoriesColumn}`}>
-                <ul>
+                <ul role="menubar">
                     {menuStructure.map((category) => (
                         <li
                             key={category.name}
+                            role="none"
                             className={activeCategory === category.name ? styles.active : ''}
                             onMouseEnter={() => {
                                 setActiveCategory(category.name);
@@ -143,7 +142,7 @@ const MegaMenu = () => {
                             }}
                         >
                             <div className={styles.categoryLink}>
-                                <img src={category.icon} alt={category.name} className={styles.categoryIcon} />
+                                <img src={category.icon} alt="" aria-hidden="true" className={styles.categoryIcon} loading="lazy" />
                                 <span>{category.name}</span>
                             </div>
                         </li>
@@ -152,21 +151,21 @@ const MegaMenu = () => {
             </div>
 
             {/* Columna 2: Subcategorías */}
-            <div className={`${styles.megaMenuColumn} ${styles.subcategoriesColumn}`} onMouseLeave={() => setActiveSubItem(null)}>
+            <div 
+                className={`${styles.megaMenuColumn} ${styles.subcategoriesColumn}`} 
+                onMouseLeave={() => setActiveSubItem(null)}
+            >
                 {currentCategoryData && currentCategoryData.subCategories.map((group, index) => (
                     <div key={index} className={styles.subcategoryGroup}>
                         <h4>{group.title}</h4>
-                        <ul>
-                            {group.items?.map(item => {
-                                const linkProps = getLinkProps(item);
-                                return (
-                                    <li key={item.name} onMouseEnter={() => setActiveSubItem(item)}>
-                                        <Link {...linkProps}>
-                                            {item.name}
-                                        </Link>
-                                    </li>
-                                );
-                            })}
+                        <ul role="menu">
+                            {group.items?.map(item => (
+                                <li key={item.name} role="none" onMouseEnter={() => setActiveSubItem(item)}>
+                                    <Link {...getLinkProps(item)} role="menuitem">
+                                        {item.name}
+                                    </Link>
+                                </li>
+                            ))}
                         </ul>
                     </div>
                 ))}
@@ -176,18 +175,22 @@ const MegaMenu = () => {
             <div className={`${styles.megaMenuColumn} ${styles.promotionColumn}`}>
                 <div className={styles.promotionCard}>
                     <div className={styles.promoImageContainer}>
-                        <img src={promoImage || defaultIcon} alt={promoTitle} />
+                        <img 
+                            src={activeSubItem?.image || currentCategoryData?.promotion?.image || defaultIcon} 
+                            alt={activeSubItem?.name || currentCategoryData?.promotion?.title} 
+                            loading="lazy"
+                        />
                     </div>
-                    <h3>{promoTitle}</h3>
-                    <p>{activeSubItem ? 'Ver productos de esta categoría' : currentCategoryData?.promotion?.text}</p>
+                    <h3>{activeSubItem?.name || currentCategoryData?.promotion?.title}</h3>
+                    <p>{activeSubItem ? `Explorar suministros de ${activeSubItem.name}` : currentCategoryData?.promotion?.text}</p>
                     
                     <Link {...getPromoButtonLink()} className={styles.promoButton}>
-                        {activeSubItem ? 'Ir a Productos' : currentCategoryData?.promotion?.buttonText}
+                        {activeSubItem ? 'Ver Categoría' : currentCategoryData?.promotion?.buttonText}
                     </Link>
                 </div>
             </div>
-        </div>
-    );
+        </nav>
+    );    
 };
 
 export default MegaMenu;
