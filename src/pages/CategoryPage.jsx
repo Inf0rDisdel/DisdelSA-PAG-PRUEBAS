@@ -205,6 +205,9 @@ const CategoryPage = () => {
               className="cat-main-banner" 
               fetchpriority="high"
               loading="eager"
+              width="1300"
+              height="280"
+              decoding="async"
             />
             {!isMobile && (
               <div className="cat-header-overlay">
@@ -232,8 +235,14 @@ const CategoryPage = () => {
                   tabIndex="0"
                 >
                   <div className="cat-nav-icon">
-                    <img src={cat.Imagen ? `${AppConfig.baseImageUrl}${cat.Imagen}` : defaultImage} alt={cat.NombreCategoria} />
-                  </div>
+                    <img 
+                      src={cat.Imagen ? `${AppConfig.baseImageUrl}${cat.Imagen}` : defaultImage} 
+                      alt={cat.NombreCategoria} 
+                      width="24"
+                      height="24"
+                      loading="lazy"
+                    />
+                 </div>
                   <span>{cat.NombreCategoria}</span>
                 </div>
               ))}
@@ -268,12 +277,11 @@ const CategoryPage = () => {
                           src={prod.Imagen ? `${AppConfig.baseImageUrl}productos/${prod.Imagen}` : defaultImage} 
                           alt={prod.Descripcion} 
                           // 🔥 MEJORA Core Web Vitals:
-                          width="200" 
-                          height="200"
+                          width="250" 
+                          height="250"
                           loading={index < 6 ? "eager" : "lazy"} 
                           fetchpriority={index < 6 ? "high" : "auto"}
                           decoding="async"
-                          style={{ aspectRatio: '1/1', objectFit: 'contain' }} // Reserva el espacio exacto
                         />
                       </div>
                       <span className="cat-card-tag">{prod.Categoria}</span>

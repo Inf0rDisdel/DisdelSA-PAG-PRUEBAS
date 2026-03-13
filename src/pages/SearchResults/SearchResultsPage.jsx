@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { useProducts } from 'hooks/useProducts'; 
@@ -12,6 +12,58 @@ const SearchResultsPage = () => {
   const queryParams = new URLSearchParams(location.search);
   const query = queryParams.get('q') || '';
   const decodedQuery = decodeURIComponent(query);
+
+  const [selectedBrands, setSelectedBrands] = useState([]);
+  const [selectedCats, setSelectedCats] = useState([]);
+
+  // --- 1. LÓGICA DE FILTRADO DE TEXTO (Tu lógica original mejorada) ---
+  const matchedByText = useMemo(() => {
+    if (!productos || !Array.isArray(productos)) return [];
+    
+    const searchLower = decodedQuery.toLowerCase().trim();
+    if (!searchLower) return productos;
+
+    const searchWords = searchLower.split(/\s+/);
+    
+    const matched = productos.filter(p => {
+      const descripcion = (p.Descripcion || "").toString().toLowerCase();
+      const id = (p.IdProducto || "").toString().toLowerCase();
+      const marca = (p.Marca || "").toString().toLowerCase();
+      const categoria = (p.Categoria || "").toString().toLowerCase();
+      const combinedText = `${descripcion} ${id} ${marca} ${categoria}`;
+      return searchWords.every(word => combinedText.includes(word));
+    });
+
+    const seenIds = new Set();
+    return matched.filter(p => {
+      if (!p.IdProducto || seenIds.has(p.IdProducto)) return false;
+      seenIds.add(p.IdProducto);
+      return true;
+    });
+  }, [productos, decodedQuery]);
+
+  // --- 2. EXTRACCIÓN DE FACETAS (Para los checkboxes del filtro) ---
+  const facets = useMemo(() => {
+    const brands = {};
+    const categories = {};
+    matchedByText.forEach(p => {
+      if (p.Marca) brands[p.Marca] = (brands[p.Marca] || 0) + 1;
+      if (p.Categoria) categories[p.Categoria] = (categories[p.Categoria] || 0) + 1;
+    });
+    return {
+      brands: Object.entries(brands).sort((a, b) => b[1] - a[1]),
+      categories: Object.entries(categories).sort((a, b) => b[1] - a[1])
+    };
+  }, [matchedByText]);
+
+  // --- 3. APLICACIÓN DE FILTROS SELECCIONADOS ---
+  const resultadosFinales = useMemo(() => {
+    return matchedByText.filter(p => {
+      const matchBrand = selectedBrands.length === 0 || selectedBrands.includes(p.Marca);
+      const matchCat = selectedCats.length === 0 || selectedCats.includes(p.Categoria);
+      return matchBrand && matchCat;
+    });
+  }, [matchedByText, selectedBrands, selectedCats]);
 
   const fullSchema = useMemo(() => ({
     "@context": "https://schema.org",
@@ -28,44 +80,15 @@ const SearchResultsPage = () => {
         "mainEntity": {
           "@type": "ItemList",
           "name": `Resultados para ${decodedQuery}`,
-          "numberOfItems": 0 // Se actualiza abajo
+          "numberOfItems": resultadosFinales.length 
         }
       }
     ]
-  }), [query, decodedQuery]);
+  }), [query, decodedQuery, resultadosFinales.length]);
 
-  // LÓGICA DE FILTRADO + ELIMINACIÓN DE DUPLICADOS
-  const resultados = useMemo(() => {
-    if (!productos || !Array.isArray(productos)) return [];
-    
-    const searchLower = query.toLowerCase().trim();
-    if (!searchLower) return productos;
-
-    const searchWords = searchLower.split(/\s+/);
-    
-    // 1. Primero filtramos por coincidencia de texto
-    const matched = productos.filter(p => {
-      const descripcion = (p.Descripcion || "").toString().toLowerCase();
-      const id = (p.IdProducto || "").toString().toLowerCase();
-      const marca = (p.Marca || "").toString().toLowerCase();
-      const categoria = (p.Categoria || "").toString().toLowerCase();
-      const combinedText = `${descripcion} ${id} ${marca} ${categoria}`;
-      return searchWords.every(word => combinedText.includes(word));
-    });
-
-    // 2. Luego eliminamos duplicados por ID usando un Set
-    const seenIds = new Set();
-    return matched.filter(p => {
-      if (!p.IdProducto || seenIds.has(p.IdProducto)) return false;
-      seenIds.add(p.IdProducto);
-      return true;
-    });
-
-  }, [productos, decodedQuery]);
-
-  if (fullSchema && fullSchema["@graph"][1].mainEntity) {
-    fullSchema["@graph"][1].mainEntity.numberOfItems = resultados.length;
-  }
+ const handleToggleFilter = (value, list, setList) => {
+    setList(prev => prev.includes(value) ? prev.filter(i => i !== value) : [...prev, value]);
+  };
 
   if (isLoading) return <div className={styles.loading}>Buscando suministros en Disdel...</div>;
   
@@ -114,37 +137,80 @@ const SearchResultsPage = () => {
 
       <div className={styles.container}>
         <header className={styles.searchHeader}>
-          <p>Se encontraron {resultados.length} coincidencias</p>
+          <p>Se encontraron {resultadosFinales.length} coincidencias</p>
         </header>
 
-        <div className={styles.resultsContent} style={{ minHeight: '60vh' }}>
-          {resultados.length > 0 ? (
-            <div className={styles.productGrid}>
-              {resultados.slice(0, 80).map((p, index) => (
-                <ProductCard 
-                  key={p.IdProducto} 
-                  index={index} 
-                  product={{
-                    id: p.IdProducto,
-                    name: p.Descripcion,
-                    price: p.PrecioIVA,
-                    image: p.Imagen,
-                    brand: p.Marca,
-                    ...p 
-                  }} 
-                />
-              ))}
-            </div>
-          ) : (
-            <div className={styles.noResults}>
-              <div className={styles.icon}>🔍</div>
-              <h2>No hay resultados para tu búsqueda</h2>
-              <p>Intenta con palabras más generales o revisa la ortografía.</p>
-              <button onClick={() => window.history.back()} className={styles.btnBack}>
-                Volver atrás
-              </button>
-            </div>
+        <div className={styles.searchContentLayout}>
+          {/* 🔥 SIDEBAR DE FILTROS (Mantenemos coherencia visual) */}
+          {matchedByText.length > 0 && (
+            <aside className={styles.filterSidebar}>
+              <div className={styles.filterGroup}>
+                <h4>Marcas</h4>
+                <ul>
+                  {facets.brands.slice(0, 15).map(([name, count]) => (
+                    <li key={name}>
+                      <label>
+                        <input 
+                          type="checkbox" 
+                          checked={selectedBrands.includes(name)}
+                          onChange={() => handleToggleFilter(name, selectedBrands, setSelectedBrands)}
+                        />
+                        <span>{name} ({count})</span>
+                      </label>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              <div className={styles.filterGroup}>
+                <h4>Categorías</h4>
+                <ul>
+                  {facets.categories.slice(0, 15).map(([name, count]) => (
+                    <li key={name}>
+                      <label>
+                        <input 
+                          type="checkbox" 
+                          checked={selectedCats.includes(name)}
+                          onChange={() => handleToggleFilter(name, selectedCats, setSelectedCats)}
+                        />
+                        <span>{name} ({count})</span>
+                      </label>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </aside>
           )}
+
+        <div className={styles.resultsContent} style={{ minHeight: '60vh', flex: 1 }}>
+            {resultadosFinales.length > 0 ? (
+              <div className={styles.productGrid}>
+                {resultadosFinales.slice(0, 80).map((p, index) => (
+                  <ProductCard 
+                    key={p.IdProducto} 
+                    index={index} 
+                    product={{
+                      id: p.IdProducto,
+                      name: p.Descripcion,
+                      price: p.PrecioIVA,
+                      image: p.Imagen,
+                      brand: p.Marca,
+                      ...p 
+                    }} 
+                  />
+                ))}
+              </div>
+          ) : (
+              <div className={styles.noResults}>
+                <div className={styles.icon}>🔍</div>
+                <h2>No hay resultados para tu búsqueda</h2>
+                <p>Intenta con palabras más generales o revisa la ortografía.</p>
+                <button onClick={() => window.history.back()} className={styles.btnBack}>
+                  Volver atrás
+                </button>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </main>

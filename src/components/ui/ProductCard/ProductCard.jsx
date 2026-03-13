@@ -4,21 +4,29 @@ import useCartStore from 'store/useCartStore';
 import { AppConfig } from 'config/AppConfig';
 import { FaCheckCircle } from 'react-icons/fa';
 import { FiShoppingCart } from 'react-icons/fi';
+import { useQueryClient } from '@tanstack/react-query';
 import './ProductCard.css';
 
 import { useBanners } from 'hooks/useBanners';
 
-const ProductCard =memo (({ product, index }) => {
+const ProductCard = memo(({ product, index }) => {
   const { IdProducto, Descripcion, Imagen, Marca, Categoria } = product;
   const addItem = useCartStore((state) => state.addItem);
-  const {data: bannerData} = useBanners();
+  const { data: bannerData } = useBanners();
+  const queryClient = useQueryClient();
+
+  const handlePrefetch = () => {
+    queryClient.prefetchQuery({
+      queryKey:['product', IdProducto.trim().toUpperCase()],
+      staleTime: 1000 * 60 * 5,
+    });
+  };
 
   const defaultImage = useMemo(() => {
-    const found = bannerData?.ImagenPredeterminado?.find(i=> i.Titulo?.trim() === "ImagenDefault3");
-    return found?.BannerImagenMovil || found?.Imagen 
-      ? `${AppConfig.baseImageUrl}${found.BannerImagenMovil || found.Imagen}` 
-      : '';
-  }, [bannerData]);
+    const found = bannerData?.ImagenPredeterminado?.find(i => i.Titulo?.trim() === "ImagenDefault3");
+    const img = found?.BannerImagenMovil || found?.Imagen;
+    return img ? `${AppConfig.baseImageUrl}${img}` : '';
+  }, [bannerData])
 
   const badgeLogo = useMemo(() => {
     const found = bannerData?.Iconos?.find(i => i.Titulo?.trim() === "IconoDisdel");
@@ -36,15 +44,15 @@ const ProductCard =memo (({ product, index }) => {
   return (
     <article 
       className="product-card"
-      itemScope 
-      itemType="https://schema.org/Product"
+      itemScope itemType="https://schema.org/Product"
+      onMouseEnter={handlePrefetch}
     >
 
       <meta itemProp="sku" content={IdProducto} />
       <meta itemProp="brand" content={Marca || "Disdel"} />
 
       <div className="product-brand-badge">
-        {badgeLogo && <img src={badgeLogo} alt="Disdel" className="badge-logo-img" />}
+        {badgeLogo && <img src={badgeLogo} alt="Disdel" className="badge-logo-img" loading="lazy" />}
       </div>
       <div className="product-id-badge">ID: {IdProducto}</div>
 

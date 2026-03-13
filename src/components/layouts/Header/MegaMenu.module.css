@@ -159,3 +159,60 @@
   text-decoration: none; 
   color: inherit; 
 }
+
+/* ====================================================== */
+/* AJUSTES PARA TABLET (768px) - NIVEL MASTER             */
+/* ====================================================== */
+@media (max-width: 768px) {
+  .megaMenuContainer {
+    /* 1. Ajustamos el ancho para que no desborde la pantalla */
+    width: 95vw; 
+    left: -20px; /* Ajuste para centrarlo un poco mejor respecto al contenedor */
+    max-width: 740px;
+    height: auto;
+    max-height: 80vh; /* Que no sea más alto que el 80% de la pantalla */
+    overflow-y: auto;
+  }
+
+  /* 2. Ocultamos la columna de promoción en Tablet */
+  /* POR QUÉ: En tablets verticales el espacio es oro. Los E-commerce Pro 
+     prefieren dar espacio a los links de categorías que a una imagen estática. */
+  .promotionColumn {
+    display: none;
+  }
+
+  /* 3. Reajustamos las columnas restantes (2 columnas ahora) */
+  .categoriesColumn {
+    flex: 0 0 200px; /* Un poco más angosta */
+    background-color: #f1f3f5;
+  }
+
+  .subcategoriesColumn {
+    flex: 1;
+    padding: 15px;
+    display: block; /* Aseguramos que se comporte bien */
+  }
+
+  /* 4. Ajustes de legibilidad */
+  .subcategoryGroup h4 {
+    font-size: 14px;
+    margin-bottom: 8px;
+  }
+
+  .subcategoryGroup li a {
+    font-size: 13px;
+    padding: 10px 12px; /* Área de toque más grande para dedos */
+    border-bottom: 1px solid #f8f9fa; /* Separación sutil */
+  }
+
+  .categoriesColumn li {
+    font-size: 13px;
+    padding: 15px 10px; /* Más cómodo para navegar con el pulgar */
+  }
+
+  .categoryIcon {
+    width: 20px;
+    height: 20px;
+    margin-right: 8px;
+  }
+}

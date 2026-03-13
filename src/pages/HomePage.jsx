@@ -87,31 +87,35 @@ const HomePage = () => {
 
 
   const carruseles = useMemo(() => {
-    if (!allProducts || !Array.isArray(allProducts)) {
-      return { higiene: [], coffee: [], cotizados: [] };
+    const result = { higiene: [], coffee: [], cotizados: [] };
+    
+    if (!allProducts || !Array.isArray(allProducts)) return result;
+
+  const higieneTemp = allProducts.filter(p => String(p.IdSegmento) === "1059").slice(0, 30);
+  const coffeeTemp = allProducts.filter(p => String(p.IdCategoria) === "2166").slice(0, 30);
+
+    // Recorremos los 4,000 productos UNA SOLA VEZ
+    for (let i = 0; i < allProducts.length; i++) {
+        const p = allProducts[i];
+        if (String(p.IdSegmento) === "1059") higieneTemp.push(p);
+        if (String(p.IdCategoria) === "2166") coffeeTemp.push(p);
     }
-    const shuffleAndSlice = (array, count) => {
-      return [...array]
-        .sort(() => 0.5 - Math.random())
-        .slice(0, count)
-        .map(p => ({
-          id: p.IdProducto,
-          name: p.Descripcion,
-          image: `${AppConfig.baseImageUrl}productos/${p.Imagen}`,
-          disdelId: p.IdProducto,
-          ...p 
-        }));
-    };
 
-    const higieneData = allProducts.filter(p => String(p.IdSegmento) === "1059");
-    const coffeeData = allProducts.filter(p => String(p.IdCategoria) === "2166");
-    const cotizadosData = [...allProducts];
+    // Función rápida de mapeo
+    const format = (p) => ({
+        id: p.IdProducto,
+        name: p.Descripcion,
+        image: `${AppConfig.baseImageUrl}productos/${p.Imagen}`,
+        disdelId: p.IdProducto,
+        ...p 
+    });
 
-    return {
-      higiene: shuffleAndSlice(higieneData, 15),
-      coffee: shuffleAndSlice(coffeeData, 15),
-      cotizados: shuffleAndSlice(cotizadosData, 10)
-    };
+    // Mezclamos y cortamos solo los necesarios
+    result.higiene = higieneTemp.sort(() => 0.5 - Math.random()).slice(0, 15).map(format);
+    result.coffee = coffeeTemp.sort(() => 0.5 - Math.random()).slice(0, 15).map(format);
+    result.cotizados = allProducts.slice(0, 10).map(format);
+
+    return result;
   }, [allProducts]);
 
   return (
@@ -141,8 +145,8 @@ const HomePage = () => {
 
       <HeroSlider />
 
-      <CategoryGrid isLoading={isLoading}/>
-      <FeaturedBrands isLoading={isLoading}/>
+      <CategoryGrid /> 
+      <FeaturedBrands />
 
       <BannerSlider />
 
