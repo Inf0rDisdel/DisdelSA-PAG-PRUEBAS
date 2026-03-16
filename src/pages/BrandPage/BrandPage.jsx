@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useMemo, useRef } from 'react'; 
-import { useParams, Link, useLocation } from 'react-router-dom';
+import React, { useState, useEffect, useMemo, useRef, useCallback } from 'react'; 
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { FiChevronLeft, FiChevronRight, FiShoppingCart, FiCheckCircle } from 'react-icons/fi';
 import './BrandPage.css';
@@ -14,9 +14,10 @@ import Skeleton from 'components/ui/Skeleton/Skeleton';
 import ProductCardSkeleton from 'components/ui/ProductCard/ProductCardSkeleton';
 
 const BrandPage = () => {
-  const { slug } = useParams();
+  const { slug, subSlug } = useParams();
+  const navigate = useNavigate();
+
   const { data: bannerData } = useBanners();
-  const location = useLocation();
   const addItem = useCartStore((state) => state.addItem);
   const { data: menuData, isLoading: loadingMenu } = useMenu();
   const { data: productsData, isLoading: loadingProducts } = useProducts();
@@ -35,10 +36,13 @@ const BrandPage = () => {
   }, []);
 
   const norm = (id) => (id === null || id === undefined) ? '' : String(id).trim();
-  const createSlug = (text) => text?.toString().toLowerCase().trim()
-      .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
-      .replace(/ñ/g, 'n').replace(/\s+/g, '-') || '';
 
+  const createSlug = useCallback((text) => {
+    if (!text) return '';
+    return text.toString().toLowerCase().trim()
+        .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+        .replace(/ñ/g, 'n').replace(/\s+/g, '-').replace(/-+/g, '-');
+  }, []);
 
   const defaultImage = useMemo(() => {
     const found = bannerData?.ImagenPredeterminado?.find(b => b.Titulo?.trim() === "ImagenDefault3");
@@ -76,9 +80,8 @@ const BrandPage = () => {
 
   const currentBrandSegment = useMemo(() => {
     if (!menuData) return null;
-
     return menuData.find(seg => createSlug(seg.NombreSegmento).includes(cleanSlug) || cleanSlug.includes(createSlug(seg.NombreSegmento)));
-  }, [menuData, cleanSlug]);
+  }, [menuData, cleanSlug, createSlug]);
   
   const brandNameOfficial = useMemo(() => {
     return currentBrandSegment?.NombreSegmento || slug.replace(/-/g, ' ');
@@ -86,20 +89,12 @@ const BrandPage = () => {
 
   const filteredProducts = useMemo(() => {
     if (!productsData || !currentBrandSegment) return [];
-    const filtered = productsData.filter(prod => {
+    return productsData.filter(prod => {
       if (norm(prod.IdSegmento) !== norm(currentBrandSegment.IdSegmento)) return false;
       if (activeCatId && norm(prod.IdCategoria) !== norm(activeCatId)) return false;
       return true;
     });
-    
-    const seenIds = new Set();
-    return filtered.filter(prod => {
-      const duplicate = seenIds.has(prod.IdProducto);
-      seenIds.add(prod.IdProducto);
-      return !duplicate;
-    });
   }, [productsData, currentBrandSegment, activeCatId]);
-
 
   // --- SCHEMA DINÁMICO ---
   const fullSchema = useMemo(() => {
@@ -142,20 +137,25 @@ const BrandPage = () => {
         }
       ]
     };
-  }, [currentBrandSegment, brandNameOfficial, filteredProducts, canonicalSlug, defaultImage]);
+  }, [currentBrandSegment, brandNameOfficial, filteredProducts, canonicalSlug, defaultImage, createSlug]);
 
   useEffect(() => {
-    if (currentBrandSegment?.Categorias?.length > 0) {
-      const preId = location.state?.preSelectedCatId;
-      if (preId) {
-        const exists = currentBrandSegment.Categorias.some(c => String(c.IdCategoria) === String(preId));
-        setActiveCatId(exists ? preId : null);
-      } else {
-        setActiveCatId(null);
-      }
+    if (currentBrandSegment && subSlug) {
+      const found = currentBrandSegment.Categorias?.find(c => createSlug(c.NombreCategoria) === subSlug);
+      setActiveCatId(found ? found.IdCategoria : null);
+    } else {
+      setActiveCatId(null);
     }
-  }, [currentBrandSegment, location.state, slug]);
+  }, [currentBrandSegment, subSlug, createSlug]);
 
+  const handleBrandCatClick = (catName) => {
+    if (!catName) {
+      navigate(`/marca/${slug}`);
+    } else {
+      navigate(`/marca/${slug}/${createSlug(catName)}`);
+    }
+  };
+  
   const handleScroll = (direction) => {
     if (scrollRef.current) {
       const { scrollLeft } = scrollRef.current;
@@ -165,6 +165,7 @@ const BrandPage = () => {
   };
 
   if (loadingMenu || loadingProducts) {
+
     return (
       <div className="brand-container">
         <Skeleton width="100%" height={isMobile ? "180px" : "280px"} style={{ marginBottom: '30px' }} />
@@ -204,6 +205,8 @@ const BrandPage = () => {
       </div>
     );
   }
+
+  if (!currentBrandSegment) return null;
  
   return (
     <div className="brand-container" style={{ '--brand-color': visualConfig.color }}>
@@ -235,15 +238,13 @@ const BrandPage = () => {
     </Helmet>
 
       <section className="brand-hero">
-        {isMobile && visualConfig.bannerMob ? (
-          <img src={visualConfig.bannerMob} alt={brandNameOfficial} className='banner-fade-in' fetchpriority="high" loading="eager" />
-        ) : visualConfig.banner ? (
-          <img src={visualConfig.banner} alt={brandNameOfficial} className='banner-fade-in' fetchpriority="high" loading="eager" />
-        ) : (
-           <div className="brand-hero-fallback" style={{ background: visualConfig.color }}>
-            <h1>{brandNameOfficial}</h1>
-          </div>
-        )}
+        <img 
+          src={isMobile && visualConfig.bannerMob ? visualConfig.bannerMob : visualConfig.banner} 
+          alt={brandNameOfficial} 
+          className='banner-fade-in' 
+          fetchpriority="high" 
+          loading="eager" 
+        />
       </section>
 
       <div className="brand-layout">
@@ -257,7 +258,7 @@ const BrandPage = () => {
           </div>
           
           <nav className="categories-stack" ref={scrollRef}>
-            <button className={`category-card-btn ${!activeCatId ? 'active-filter' : ''}`} onClick={() => setActiveCatId(null)}>
+            <button className={`category-card-btn ${!activeCatId ? 'active-filter' : ''}`} onClick={() => handleBrandCatClick(null)}>
               <div className="cat-img-box"><img src={iconoInicio} alt="Inicio" /></div>
               <span className="cat-text">Ver Todo</span>
             </button>
@@ -266,7 +267,7 @@ const BrandPage = () => {
                 <div 
                   key={cat.IdCategoria} 
                   className={`category-card-btn ${norm(activeCatId) === norm(cat.IdCategoria) ? 'active-filter' : ''}`} 
-                  onClick={() => setActiveCatId(cat.IdCategoria)}
+                  onClick={() => handleBrandCatClick(cat.NombreCategoria)} // ✅ CONECTADO
                 >
                   <div className="cat-img-box">
                     <img src={cat.Imagen ? `${AppConfig.baseImageUrl}${cat.Imagen}` : defaultImage} alt={cat.NombreCategoria} loading="lazy" />
@@ -281,26 +282,25 @@ const BrandPage = () => {
           <div className="grid-container">
             {filteredProducts.map((prod, index) => (
                 <article className="product-card" key={prod.IdProducto}>
-                  {/* --- LOGO ÚNICO CORREGIDO --- */}
                   <div className='product-brand-badge'>
                     {badgeLogo && <img src={badgeLogo} alt="Disdel" className="badge-logo-img" />}
                   </div>
 
-                  <Link to={`/producto/${prod.IdProducto.toLowerCase()}`} className="prod-link-wrapper">
-                      <div className="prod-img-container">
-                        <img src={prod.Imagen ? `${AppConfig.baseImageUrl}productos/${prod.Imagen}` : defaultImage} 
+                  <Link to={`/producto/${prod.IdProducto.toLowerCase()}/${createSlug(prod.Descripcion)}`} className="prod-link-wrapper">
+                    <div className="prod-img-container">
+                      <img 
+                        src={prod.Imagen ? `${AppConfig.baseImageUrl}productos/${prod.Imagen}` : defaultImage} 
                         alt={prod.Descripcion} 
                         loading={index < 4 ? "eager" : "lazy"} 
                         fetchpriority={index < 4 ? "high" : "auto"}
-                        decoding='async'
-                        width="200"
-                        height="200"
-                        style={{aspectRatio: "1/1"}}
+                        decoding="async"
+                        width="200" height="200"
+                        style={{ aspectRatio: "1/1", objectFit: "contain" }}
                       />
-                      </div>
-                      <div className="prod-category-label">{prod.Categoria}</div>
-                      <div className="prod-title-text">{prod.Descripcion}</div>
-                      <span className="product-detail-id">Disdel # {prod.IdProducto}</span>
+                    </div>
+                    <div className="prod-category-label">{prod.Categoria}</div>
+                    <div className="prod-title-text">{prod.Descripcion}</div>
+                    <span className="product-detail-id">Disdel # {prod.IdProducto}</span>
                   </Link>
 
                    <div className="product-card-footer">

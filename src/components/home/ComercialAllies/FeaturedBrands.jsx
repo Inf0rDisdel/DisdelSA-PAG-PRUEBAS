@@ -6,7 +6,6 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import './FeaturedBrands.css'; 
 
-
 import { AppConfig } from '../../../config/AppConfig';
 import { useBanners } from '../../../hooks/useBanners';
 
@@ -55,10 +54,10 @@ const FeaturedBrands = ({brands, isLoading}) => {
   if (isError || !banners?.aliados?.length) return null;
 
   return (
-    <section className="featured-brands-section" style={{ minHeight: isPhone ? '200px' : '350px' }}>
+    <section className="featured-brands-section" style={{ minHeight: 'auto' }}>
       <h2 className="section-title">Aliados Comerciales</h2>
       
-       <div className="brands-content-wrapper" style={{ minHeight: isPhone ? '140px' : '250px' }}>
+       <div className="brands-content-wrapper" style={{ minHeight: 'auto' }}>
         {isLoading ? (
           /* 🔥 MEJORA CLS: El esqueleto ahora coincide con el tamaño real de los items */
           <div className='brands-container' style={{display :'flex', gap:'15px', overflow:'hidden'}}>

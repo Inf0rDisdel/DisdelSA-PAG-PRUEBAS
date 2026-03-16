@@ -28,8 +28,11 @@ const ProductDetailPage = () => {
   const createSlug = useCallback((text) => {
     if (!text) return '';
     return text.toString().toLowerCase().trim()
-        .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
-        .replace(/ñ/g, 'n').replace(/[^a-z0-9 -]/g, '').replace(/\s+/g, '-');
+        .normalize("NFD").replace(/[\u0300-\u036f]/g, "") // Quita acentos
+        .replace(/ñ/g, 'n') // Sincronizado con Sitemap
+        .replace(/[^a-z0-9 -]/g, '')
+        .replace(/\s+/g, '-')
+        .replace(/-+/g, '-');
   }, []);
 
   const defaultImage = useMemo(() => {
@@ -59,29 +62,37 @@ const ProductDetailPage = () => {
   const fullSchema = useMemo(() => {
     if (!product) return null;
     const slugName = createSlug(product.Descripcion);
-    const fullUrl = `https://disdelsa.com/producto/${canonicalId}/${slugName}`;
+    const productUrl = `https://disdelsa.com/producto/${canonicalId}/${slugName}`;
+    const categoryUrl = `https://disdelsa.com/categoria/${createSlug(product.Categoria)}`;
 
     return {
       "@context": "https://schema.org/",
-      "@type": "Product",
-      "name": product.Descripcion,
-      "image": getImageUrl(product.Imagen),
-      "description": `Cotiza ${product.Descripcion} en Disdel Guatemala. Ideal para ${product.Categoria}. Calidad institucional.`,
-      "sku": product.IdProducto,
-      "brand": { "@type": "Brand", "name": product.Marca || "Disdel" },
-      "offers": {
-        "@type": "Offer",
-        "url": fullUrl,
-        "priceCurrency": "GTQ",
-        "price": "0.00",
-        "valueAddedTaxIncluded": "true",
-        "availability": "https://schema.org/InStock",
-        "itemCondition": "https://schema.org/NewCondition",
-        "seller": {
-          "@type": "Organization",
-          "name": "Disdel, S.A."
+      "@graph": [
+        {
+          "@type": "Product",
+          "name": product.Descripcion,
+          "image": getImageUrl(product.Imagen),
+          "description": `Cotiza ${product.Descripcion} en Disdel Guatemala. Ideal para ${product.Categoria}. Calidad institucional.`,
+          "sku": product.IdProducto,
+          "brand": { "@type": "Brand", "name": product.Marca || "Disdel" },
+          "offers": {
+            "@type": "Offer",
+            "url": productUrl,
+            "priceCurrency": "GTQ",
+            "price": "0.00",
+            "availability": "https://schema.org/InStock",
+            "seller": { "@type": "Organization", "name": "Disdel, S.A." }
+          }
+        },
+        {
+          "@type": "BreadcrumbList",
+          "itemListElement": [
+            { "@type": "ListItem", "position": 1, "name": "Inicio", "item": "https://disdelsa.com/" },
+            { "@type": "ListItem", "position": 2, "name": product.Categoria, "item": categoryUrl },
+            { "@type": "ListItem", "position": 3, "name": product.Descripcion, "item": productUrl }
+          ]
         }
-      }
+      ]
     };
   }, [product, canonicalId, createSlug, getImageUrl]);
 
@@ -138,7 +149,7 @@ const ProductDetailPage = () => {
     <title>{seoTitle}</title>
     <meta name="description" content={`Solicite cotización de ${product.Descripcion} en Guatemala. Suministro profesional para empresas. Categoría ${product.Categoria}.`} />
     <link rel="canonical" href={currentUrl} />
-    <link rel="preload" as="image" href={mainImg} />
+    <link rel="preload" as="image" href={mainImg} fetchpriority="high" />
 
     <meta property="og:title" content={seoTitle} />
     <meta property="og:description" content={`Distribución de ${product.Descripcion} en Guatemala. ¡Cotiza ahora con Disdel!`} />
@@ -177,18 +188,17 @@ const ProductDetailPage = () => {
 
       <div className="pdp-main-grid">
         <section className="pdp-gallery-section">
-            <div className="pdp-main-image-wrapper">
+          <div className="pdp-main-image-wrapper">
             <img 
               src={mainImg} 
               alt={`${product.Descripcion} - Suministro Institucional`} 
               className="pdp-main-img" 
-              // 🔥 MEJORA Core Web Vitals:
               width="600" 
               height="600"
-              fetchpriority="high" 
+              fetchPriority="high" // Corregido a camelCase para React
               loading="eager"
-              decoding="sync" // Fuerza al navegador a procesarla de inmediato
-              style={{ aspectRatio: '1/1' }}
+              decoding="sync" 
+              style={{ aspectRatio: '1/1', objectFit: 'contain' }}
             />  
           </div>
             {productImages.length > 1 && (

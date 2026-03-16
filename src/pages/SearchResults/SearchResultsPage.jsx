@@ -186,9 +186,9 @@ const SearchResultsPage = () => {
             {resultadosFinales.length > 0 ? (
               <div className={styles.productGrid}>
                 {resultadosFinales.slice(0, 80).map((p, index) => (
-                  <ProductCard 
+                <ProductCard 
                     key={p.IdProducto} 
-                    index={index} 
+                    index={index} // <-- Pásale el index
                     product={{
                       id: p.IdProducto,
                       name: p.Descripcion,

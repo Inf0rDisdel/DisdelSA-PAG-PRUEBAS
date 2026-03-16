@@ -26,17 +26,16 @@ const AppRouter = () => {
 
       <Route path="/" element={<HomePage />} />
 
-      {/* 2. RUTAS DINÁMICAS PRINCIPALES */}
       <Route path="/producto/:id/:slug?" element={<ProductDetailPage />} />
+      <Route path="/categoria/:slug/:subSlug?/:filterSlug?" element={<CategoryPage />} />
+      <Route path="/marca/:slug/:subSlug?/:filterSlug?" element={<BrandPage />} />
         
-      <Route path="/categoria/:slug" element={<CategoryPage />} />
-      <Route path="/marca/:slug" element={<BrandPage />} />
       <Route path="/buscar" element={<SearchResultsPage />} />
 
       {/* 3. REDIRECCIONES DE CATEGORÍAS (SEO) */}
       {['botiquin', 'papeleria', 'ferreteria', 'pisos-y-superficies'].map(cat => (
-          <Route key={cat} path={`/${cat}`} element={<Navigate to={`/categoria/${cat}`} replace />} />
-      ))}
+            <Route key={cat} path={`/${cat}`} element={<Navigate to={`/categoria/${cat}`} replace />} />
+        ))}
 
       {/* --- 🚀 RESCATE DE GOOGLE (Legacy Redirects) --- */}
       <Route path="/subcategoria/mopas-y-accesorios" element={<Navigate to="/categoria/herramientas-para-limpieza/mopa-y-mecha" replace />} />
@@ -51,18 +50,16 @@ const AppRouter = () => {
       <Route path="/limpieza" element={<Navigate to="/categoria/herramientas-para-limpieza" replace />} />
       
       {/* Rescate genérico para cualquier otra subcategoría vieja */}
-      <Route path="/subcategoria/:slug" element={<LegacyRedirect />} />
+       <Route path="/subcategoria/:slug" element={<LegacyRedirect />} />
+        <Route path="/carrito" element={<CartPage />} />
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/my-business" element={<MyBusinessPage />} />
+        <Route path="/politicas-de-privacidad" element={<PrivacyPolicy /> } />
+        <Route path="/quienes-somos" element={<AboutUs/>} />
+        <Route path="/ayuda" element={<Ayuda/>} />
+        <Route path="/ubicaciones" element={<Locations/>} />
 
-      {/* --- RUTAS ESTÁTICAS ACTUALES --- */}
-      <Route path="/carrito" element={<CartPage />} />
-      <Route path="/login" element={<LoginPage />} />
-      <Route path="/my-business" element={<MyBusinessPage />} />
-      <Route path="/politicas-de-privacidad" element={<PrivacyPolicy /> } />
-      <Route path="/quienes-somos" element={<AboutUs/>} />
-      <Route path="/ayuda" element={<Ayuda/>} />
-      <Route path="/ubicaciones" element={<Locations/>} />
-
-    <Route path="*" element={<Navigate to="/" replace />} />
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </Suspense>
   );
