@@ -14,7 +14,7 @@ import Skeleton from 'components/ui/Skeleton/Skeleton';
 import ProductCardSkeleton from 'components/ui/ProductCard/ProductCardSkeleton';
 
 const CategoryPage = () => {
-  const { slug, subSlug, filterSlug } = useParams(); 
+  const { slug, cat, subcat } = useParams();
   const navigate = useNavigate();
 
   const { data: bannerData } = useBanners();
@@ -35,20 +35,24 @@ const CategoryPage = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
+  // 🔥 SCROLL TOP CORRECTO
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
-  }, [slug, subSlug, filterSlug]);
+  }, [slug, cat, subcat]);
 
   const cleanSlug = slug ? slug.replace(/\/$/, "").trim() : '';
   const canonicalSlug = cleanSlug.toLowerCase();
   const norm = (id) => (id === null || id === undefined) ? '' : String(id).trim();
 
-  const createSlug = useCallback((text) => {
-    if (!text) return '';
-    return text.toString().toLowerCase().trim()
-        .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
-        .replace(/ñ/g, 'n').replace(/\s+/g, '-').replace(/-+/g, '-');
-  }, []);
+  const createSlug = (text) => {
+  if (!text) return '';
+  return text.toString().toLowerCase().trim()
+    .normalize("NFD").replace(/[\u0300-\u036f]/g, "") // Quita acentos
+    .replace(/ñ/g, 'n')
+    .replace(/[^a-z0-9\s-]/g, '') // Quita caracteres especiales excepto guiones y espacios
+    .replace(/\s+/g, '-') // Espacios por guiones
+    .replace(/-+/g, '-'); // Quita guiones dobles
+};
 
   const currentSegment = useMemo(() => {
       if (!menuData) return null;
@@ -99,21 +103,27 @@ const CategoryPage = () => {
   const seoData = useMemo(() => {
   const segmentName = currentSegment?.NombreSegmento || "Categoría";
   const categoryName = activeCategoryData?.NombreCategoria;
-  const subCategoryName = activeCategoryData?.SubCategorias?.find(s => norm(s.IdSubCategoria) === norm(activeSubCatId))?.NombreSubCategoria;
+  const subCategoryName = activeCategoryData?.SubCategorias?.find(
+    s => norm(s.IdSubCategoria) === norm(activeSubCatId)
+  )?.NombreSubCategoria;
 
-  // Creamos un título dinámico: "Subcat | Categoria | Disdel"
   let dynamicTitle = segmentName;
-  if (categoryName && subSlug) dynamicTitle = `${categoryName} | ${segmentName}`;
-  if (subCategoryName && filterSlug) dynamicTitle = `${subCategoryName} | ${categoryName}`;
+
+  if (categoryName && cat) {
+    dynamicTitle = `${categoryName} | ${segmentName}`;
+  }
+
+  if (subCategoryName && subcat) {
+    dynamicTitle = `${subCategoryName} | ${categoryName}`;
+  }
 
   return {
     title: `${dynamicTitle} Mayorista en Guatemala | Disdel`,
     description: `Distribución de ${dynamicTitle}. Suministros industriales con entrega rápida en toda Guatemala.`,
-    // ✅ URL Canónica dinámica basada en los 3 niveles
-    url: `https://disdelsa.com/categoria/${slug}${subSlug ? '/' + subSlug : ''}${filterSlug ? '/' + filterSlug : ''}`,
+    url: `https://disdelsa.com/categoria/${slug}${cat ? '/' + cat : ''}${subcat ? '/' + subcat : ''}`,
     image: catBanner.desktop || defaultImage
   };
-}, [currentSegment, activeCategoryData, activeSubCatId, slug, subSlug, filterSlug, catBanner, defaultImage]);
+}, [currentSegment, activeCategoryData, activeSubCatId, slug, cat, subcat, catBanner, defaultImage]);
 
   const fullSchema = useMemo(() => {
     if (!currentSegment) return null;
@@ -124,9 +134,22 @@ const CategoryPage = () => {
           "@type": "BreadcrumbList",
           "@id": `${seoData.url}/#breadcrumb`,
           "itemListElement": [
-            { "@type": "ListItem", "position": 1, "name": "Inicio", "item": "https://disdelsa.com/" },
-            { "@type": "ListItem", "position": 2, "name": currentSegment.NombreSegmento, "item": seoData.url }
-          ]
+          { "@type": "ListItem", "position": 1, "name": "Inicio", "item": "https://disdelsa.com/" },
+          { "@type": "ListItem", "position": 2, "name": currentSegment.NombreSegmento, "item": `https://disdelsa.com/categoria/${slug}` },
+          // 🚀 Esto es lo que "le explica" a Google los niveles extra que se ven en tu foto
+          ...(cat ? [{ 
+              "@type": "ListItem", 
+              "position": 3, 
+              "name": activeCategoryData?.NombreCategoria || cat, 
+              "item": `https://disdelsa.com/categoria/${slug}/${cat}` 
+          }] : []),
+          ...(subcat ? [{ 
+              "@type": "ListItem", 
+              "position": 4, 
+              "name": subcat.replace(/-/g, ' '), 
+              "item": seoData.url 
+          }] : [])
+        ]
         },
         {
           "@type": "CollectionPage",
@@ -145,7 +168,7 @@ const CategoryPage = () => {
             "itemListElement": filteredProducts.slice(0, 40).map((prod, index) => ({
               "@type": "ListItem",
               "position": index + 1,
-              "url": `https://disdelsa.com/producto/${String(prod.IdProducto).toLowerCase()}`,
+              "url": `https://disdelsa.com/producto/${String(prod.IdProducto).toLowerCase()}/${createSlug(prod.Descripcion)}`,
               "name": prod.Descripcion,
               "image": prod.Imagen ? `${AppConfig.baseImageUrl}productos/${prod.Imagen}` : defaultImage
             }))
@@ -156,35 +179,43 @@ const CategoryPage = () => {
   }, [currentSegment, filteredProducts, seoData, defaultImage]);
 
   useEffect(() => {
-    if (currentSegment && currentSegment.Categorias) {
-      if (subSlug) {
-        const foundCat = currentSegment.Categorias.find(c => createSlug(c.NombreCategoria) === subSlug);
-        if (foundCat) {
-          setActiveCatId(foundCat.IdCategoria);
-          if (filterSlug && foundCat.SubCategorias) {
-            const foundSub = foundCat.SubCategorias.find(s => createSlug(s.NombreSubCategoria) === filterSlug);
-            setActiveSubCatId(foundSub ? foundSub.IdSubCategoria : null);
-          } else {
-            setActiveSubCatId(null);
-          }
-        }
+  if (!currentSegment?.Categorias) return;
+
+  if (cat) {
+    const foundCat = currentSegment.Categorias.find(
+      c => createSlug(c.NombreCategoria) === cat
+    );
+
+    if (foundCat) {
+      setActiveCatId(foundCat.IdCategoria);
+
+      if (subcat && foundCat.SubCategorias) {
+        const foundSub = foundCat.SubCategorias.find(
+          s => createSlug(s.NombreSubCategoria) === subcat
+        );
+
+        setActiveSubCatId(foundSub ? foundSub.IdSubCategoria : null);
       } else {
-        setActiveCatId(currentSegment.Categorias[0]?.IdCategoria);
         setActiveSubCatId(null);
       }
     }
-  }, [currentSegment, subSlug, filterSlug, createSlug]);
+  } else {
+    setActiveCatId(currentSegment.Categorias[0]?.IdCategoria);
+    setActiveSubCatId(null);
+  }
+}, [cat, subcat, currentSegment, createSlug]);
 
   const handleCategoryClick = (cat) => {
-    navigate(`/categoria/${slug}/${createSlug(cat.NombreCategoria)}`);
-  };
+      navigate(`/categoria/${slug}/${createSlug(cat.NombreCategoria)}`);
+    };
 
-  const handleSubCategoryClick = (subName) => {
-    const currentSubSlug = subSlug || createSlug(activeCategoryData?.NombreCategoria);
+    const handleSubCategoryClick = (subName) => {
+    const currentSubSlug = cat || createSlug(activeCategoryData?.NombreCategoria);
+
     if (currentSubSlug) {
       navigate(`/categoria/${slug}/${currentSubSlug}/${createSlug(subName)}`);
     }
-  };
+    };
   
    if (loadingMenu || loadingProducts) {
     return (
@@ -242,31 +273,6 @@ const CategoryPage = () => {
             )}
         </div>
 
-        {/* ✅ Breadcrumbs PRO */}
-         <nav className="cat-breadcrumbs">
-            <Link to="/">Inicio</Link>
-            <FiChevronRight className="breadcrumb-divider" />
-            <Link to={`/categoria/${slug}`} className={!subSlug ? 'active' : ''}>
-              {currentSegment?.NombreSegmento}
-            </Link>
-            {subSlug && activeCategoryData && (
-              <>
-                <FiChevronRight className="breadcrumb-divider" />
-                <Link to={`/categoria/${slug}/${subSlug}`} className={!filterSlug ? 'active' : ''}>
-                  {activeCategoryData.NombreCategoria}
-                </Link>
-              </>
-            )}
-            {filterSlug && (
-              <>
-                <FiChevronRight className="breadcrumb-divider" />
-                <span className="active">
-                  {activeCategoryData?.SubCategorias?.find(s => createSlug(s.NombreSubCategoria) === filterSlug)?.NombreSubCategoria}
-                </span>
-              </>
-            )}
-          </nav>
-
         <div className="cat-content-layout">
           <aside className="cat-sidebar-left">
             {/* Restaurado el label simple sin flechas */}
@@ -276,18 +282,16 @@ const CategoryPage = () => {
 
              <div className="cat-sidebar-nav" ref={scrollRef}>
               {currentSegment.Categorias?.map((cat) => (
-                <div 
-                  key={cat.IdCategoria} 
-                  className={`cat-nav-item ${norm(activeCatId) === norm(cat.IdCategoria) ? 'active-filter' : ''}`} 
-                  onClick={() => handleCategoryClick(cat)} // ✅ CAMBIADO
-                  role="button"
-                  tabIndex="0"
+                <Link
+                  key={cat.IdCategoria}
+                  to={`/categoria/${canonicalSlug}/${createSlug(cat.NombreCategoria)}`}
+                  className={`cat-nav-item ${norm(activeCatId) === norm(cat.IdCategoria) ? 'active-filter' : ''}`}
                 >
                   <div className="cat-nav-icon">
                     <img src={cat.Imagen ? `${AppConfig.baseImageUrl}${cat.Imagen}` : defaultImage} alt={cat.NombreCategoria} width="24" height="24" loading="lazy" />
                  </div>
                   <span>{cat.NombreCategoria}</span>
-                </div>
+                </Link>
               ))}
             </div>
           </aside>
@@ -296,13 +300,13 @@ const CategoryPage = () => {
             {activeCategoryData?.SubCategorias?.length > 0 && (
                 <div className="cat-subcategories-bar">
                     {activeCategoryData.SubCategorias.map(sub => (
-                        <button 
-                          key={sub.IdSubCategoria} 
-                          className={`cat-sub-pill ${norm(activeSubCatId) === norm(sub.IdSubCategoria) ? 'active' : ''}`} 
-                          onClick={() => handleSubCategoryClick(sub.NombreSubCategoria)} // ✅ CAMBIADO
+                        <Link
+                          key={sub.IdSubCategoria}
+                          to={`/categoria/${canonicalSlug}/${createSlug(activeCategoryData?.NombreCategoria)}/${createSlug(sub.NombreSubCategoria)}`}
+                          className={`cat-sub-pill ${norm(activeSubCatId) === norm(sub.IdSubCategoria) ? 'active' : ''}`} style={{ textDecoration: 'none' }}
                         >
                             {sub.NombreSubCategoria}
-                        </button>
+                        </Link>
                     ))}
                 </div>
             )}
@@ -314,7 +318,9 @@ const CategoryPage = () => {
                       <div className="cat-brand-badge">
                         {badgeLogo && <img src={badgeLogo} alt="Disdel" className="cat-badge-logo-img" />}
                       </div>
-                      <Link to={`/producto/${prod.IdProducto.toLowerCase()}/${createSlug(prod.Descripcion)}`} className="cat-card-link" style={{ textDecoration: 'none' }}>
+                      <Link 
+                        to={`/producto/${prod.IdProducto}/${createSlug(prod.Descripcion)}`}
+                        className="cat-card-link" style={{ textDecoration: 'none' }}>
                         <div className="cat-img-wrapper">
                           <img 
                             src={prod.Imagen ? `${AppConfig.baseImageUrl}productos/${prod.Imagen}` : defaultImage} 

@@ -88,6 +88,7 @@
   transition: all 0.2s ease;
   border-left: 3px solid transparent; 
   background: white;
+  text-decoration: none !important;
 }
 
 .cat-nav-item:hover { background-color: #f8f9fa; transform: translateX(5px); }
@@ -123,6 +124,7 @@
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
+  text-decoration: none !important;
 }
 
 .cat-sub-pill:hover {

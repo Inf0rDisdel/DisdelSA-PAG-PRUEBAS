@@ -168,6 +168,82 @@
   background: #fff;
 }
 
+/* Contenedor padre de la barra y las sugerencias */
+.searchWrapper {
+  position: relative;
+  width: 100%;
+}
+
+.suggestionsBox {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: white;
+  border-radius: 0 0 12px 12px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+  z-index: 9999;
+  margin-top: 2px;
+  overflow: hidden;
+  border: 1px solid #eee;
+}
+
+.suggestionItem {
+  display: flex;
+  align-items: center;
+  padding: 10px 15px;
+  cursor: pointer;
+  transition: background 0.2s;
+  border-bottom: 1px solid #f9f9f9;
+}
+
+.suggestionItem:hover {
+  background: #f0f7ff;
+}
+
+.suggestImg {
+  width: 45px;
+  height: 45px;
+  object-fit: contain;
+  margin-right: 12px;
+  border: 1px solid #eee;
+  border-radius: 4px;
+}
+
+.suggestInfo {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.suggestTitle {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #333;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.suggestMeta {
+  font-size: 0.75rem;
+  color: #777;
+}
+
+.suggestFooter {
+  padding: 12px;
+  text-align: center;
+  font-size: 0.85rem;
+  color: #135eab;
+  background: #f8f9fa;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.suggestFooter:hover {
+  text-decoration: underline;
+}
+
 .resNombre {
   margin: 0;
   font-size: 13px;

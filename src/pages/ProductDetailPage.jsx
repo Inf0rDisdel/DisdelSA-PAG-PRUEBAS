@@ -12,28 +12,32 @@ import './ProductDetailPage.css';
 
 const ProductDetailPage = () => {
   const { id, slug } = useParams();
+  const cleanId = id?.toString().split('-')[0];
+  const canonicalId = id ? String(id).replace(/\/$/, "").trim().toLowerCase() : "";
+ 
   const navigate = useNavigate();
   const addItem = useCartStore((state) => state.addItem);
   const { data: bannerData } = useBanners();
  
-  const cleanId = id ? id.replace(/\/$/, "").trim().toUpperCase() : "";
-  const canonicalId = id ? id.replace(/\/$/, "").trim().toLowerCase() : "";
-
   const { data: product, isLoading, isError } = useProductDetail(cleanId);
+
+  console.log("ID URL:", id);
+  console.log("ID limpio:", cleanId);
+  console.log("Producto:", product);
 
   const [selectedImage, setSelectedImage] = useState(null);
   const [selectedUnit, setSelectedUnit] = useState(''); 
   const [selectedType, setSelectedType] = useState('Y');
 
-  const createSlug = useCallback((text) => {
-    if (!text) return '';
-    return text.toString().toLowerCase().trim()
-        .normalize("NFD").replace(/[\u0300-\u036f]/g, "") // Quita acentos
-        .replace(/ñ/g, 'n') // Sincronizado con Sitemap
-        .replace(/[^a-z0-9 -]/g, '')
-        .replace(/\s+/g, '-')
-        .replace(/-+/g, '-');
-  }, []);
+  const createSlug = (text) => {
+  if (!text) return '';
+  return text.toString().toLowerCase().trim()
+    .normalize("NFD").replace(/[\u0300-\u036f]/g, "") // Quita acentos
+    .replace(/ñ/g, 'n')
+    .replace(/[^a-z0-9\s-]/g, '') // Quita caracteres especiales excepto guiones y espacios
+    .replace(/\s+/g, '-') // Espacios por guiones
+    .replace(/-+/g, '-'); // Quita guiones dobles
+};
 
   const defaultImage = useMemo(() => {
     const found = bannerData?.ImagenPredeterminado?.find(i => i.Titulo?.trim() === "ImagenDefault3");
@@ -68,22 +72,46 @@ const ProductDetailPage = () => {
     return {
       "@context": "https://schema.org/",
       "@graph": [
-        {
-          "@type": "Product",
-          "name": product.Descripcion,
-          "image": getImageUrl(product.Imagen),
-          "description": `Cotiza ${product.Descripcion} en Disdel Guatemala. Ideal para ${product.Categoria}. Calidad institucional.`,
-          "sku": product.IdProducto,
-          "brand": { "@type": "Brand", "name": product.Marca || "Disdel" },
-          "offers": {
-            "@type": "Offer",
-            "url": productUrl,
-            "priceCurrency": "GTQ",
-            "price": "0.00",
-            "availability": "https://schema.org/InStock",
-            "seller": { "@type": "Organization", "name": "Disdel, S.A." }
-          }
+       {
+        "@type": "Product",
+        "name": product.Descripcion,
+
+        // ✅ CAMBIO: image como array
+        "image": productImages.length > 0
+          ? productImages.map(img => getImageUrl(img))
+          : [getImageUrl(product.Imagen)],
+
+        "description": `Cotiza ${product.Descripcion} en Disdel Guatemala. Ideal para ${product.Categoria}. Calidad institucional.`,
+
+        "sku": product.IdProducto,
+
+        // ✅ NUEVO
+        "url": productUrl,
+
+        // ✅ NUEVO
+        "category": product.Categoria,
+
+        "brand": {
+          "@type": "Brand",
+          "name": product.Marca || "Disdel"
         },
+
+        "offers": {
+          "@type": "Offer",
+          "url": productUrl,
+          "priceCurrency": "GTQ",
+          "price": "0.00",
+
+          // ✅ NUEVO
+          "itemCondition": "https://schema.org/NewCondition",
+
+          "availability": "https://schema.org/InStock",
+          "seller": {
+            "@type": "Organization",
+            "name": "Disdel, S.A."
+          }
+        }
+      },
         {
           "@type": "BreadcrumbList",
           "itemListElement": [
@@ -94,36 +122,36 @@ const ProductDetailPage = () => {
         }
       ]
     };
-  }, [product, canonicalId, createSlug, getImageUrl]);
+  }, [product, canonicalId, createSlug, getImageUrl, productImages]);
+
+useEffect(() => {
+  if (product) {
+    const correctSlug = createSlug(product.Descripcion);
+    const correctId = String(cleanId).toLowerCase();
+
+    // Verificamos si ALGO en la URL actual está mal (ya sea el ID o el SLUG)
+    if (slug !== correctSlug || id !== correctId) {
+      // Hacemos una única redirección con ambos valores corregidos
+      navigate(`/producto/${correctId}/${correctSlug}`, { replace: true });
+    }
+  }
+}, [product, slug, id, cleanId, navigate, createSlug]);
+
+ useEffect(() => {
+  if (isError) {
+    console.error("Error cargando producto:", cleanId);
+  }
+}, [isError, cleanId]);
 
   useEffect(() => {
-    if (product && !slug) {
-        const slugName = createSlug(product.Descripcion);
-        navigate(`/producto/${canonicalId}/${slugName}`, { replace: true });
+  if (product) {
+    if (!selectedImage) setSelectedImage(product.Imagen);
+    if (!selectedUnit) {
+      setSelectedUnit(product.Unidad || product.Empaque || 'Unidad');
+      setSelectedType(product.Unidad ? 'Y' : 'N');
     }
-  }, [product, slug, canonicalId, navigate, createSlug]);
-
-  useEffect(() => {
-    if (id && id !== id.toLowerCase()) {
-      navigate(`/producto/${id.toLowerCase()}`, { replace: true });
-    }
-  }, [id, navigate]);
-
-  useEffect(() => {
-    if (isError && cleanId) {
-        navigate(`/buscar?q=${cleanId}`, { replace: true });
-    }
-  }, [isError, cleanId, navigate]);
-
-  useEffect(() => {
-    if (product) {
-        if (!selectedImage) setSelectedImage(product.Imagen);
-        if (!selectedUnit) {
-            setSelectedUnit(product.Unidad || product.Empaque || 'Unidad');
-            setSelectedType(product.Unidad ? 'Y' : 'N');
-        }
-    }
-  }, [product, selectedImage, selectedUnit]);
+  }
+}, [product, selectedImage, selectedUnit]);
 
   const handleAddToCart = () => {
     if (!product) return;
@@ -148,7 +176,7 @@ const ProductDetailPage = () => {
     <Helmet>
     <title>{seoTitle}</title>
     <meta name="description" content={`Solicite cotización de ${product.Descripcion} en Guatemala. Suministro profesional para empresas. Categoría ${product.Categoria}.`} />
-    <link rel="canonical" href={currentUrl} />
+    <link rel="canonical" href={`https://disdelsa.com/producto/${id}/${createSlug(product.Descripcion)}`} />
     <link rel="preload" as="image" href={mainImg} fetchpriority="high" />
 
     <meta property="og:title" content={seoTitle} />
@@ -166,7 +194,7 @@ const ProductDetailPage = () => {
     <meta property="product:condition" content="new" />
     <meta property="product:price:amount" content="0.00" />
     <meta property="product:price:currency" content="GTQ" />
-    <meta property="product:availability" content="instock" />
+    <meta property="product:availability" content="in stock" />
     <meta property="product:brand" content={product.Marca || "Disdel"} />
 
     {/* --- 3. TWITTER CARD --- */}

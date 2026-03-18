@@ -124,7 +124,7 @@ const escapeXml = (str) =>
                 marca.Categorias.forEach(c => {
                     urls.push({
                         loc: `${BASE_URL}/marca/${marcaSlug}/${createSlug(c.NombreCategoria)}`,
-                        priority: '0.7',
+                        priority: '0.8',
                         changefreq: 'daily'
                     });
                 });

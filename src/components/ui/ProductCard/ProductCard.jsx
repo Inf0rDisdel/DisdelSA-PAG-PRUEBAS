@@ -1,4 +1,5 @@
 import React, { memo, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import useCartStore from 'store/useCartStore';
 import { AppConfig } from 'config/AppConfig';
@@ -10,10 +11,13 @@ import './ProductCard.css';
 import { useBanners } from 'hooks/useBanners';
 
 const ProductCard = memo(({ product, index }) => {
+  const navigate = useNavigate();
   const { IdProducto, Descripcion, Imagen, Marca, Categoria } = product;
+  console.log("ID Producto:", IdProducto);
   const addItem = useCartStore((state) => state.addItem);
   const { data: bannerData } = useBanners();
   const queryClient = useQueryClient();
+  
 
   const handlePrefetch = () => {
     queryClient.prefetchQuery({
@@ -21,6 +25,17 @@ const ProductCard = memo(({ product, index }) => {
       staleTime: 1000 * 60 * 5,
     });
   };
+
+  const createSlug = (text) => {
+  if (!text) return '';
+  return text.toString().toLowerCase().trim()
+    .normalize("NFD").replace(/[\u0300-\u036f]/g, "") // Quita acentos
+    .replace(/ñ/g, 'n')
+    .replace(/[^a-z0-9\s-]/g, '') // Quita caracteres especiales excepto guiones y espacios
+    .replace(/\s+/g, '-') // Espacios por guiones
+    .replace(/-+/g, '-'); // Quita guiones dobles
+};
+
 
   const defaultImage = useMemo(() => {
     const found = bannerData?.ImagenPredeterminado?.find(i => i.Titulo?.trim() === "ImagenDefault3");
@@ -57,7 +72,7 @@ const ProductCard = memo(({ product, index }) => {
       <div className="product-id-badge">ID: {IdProducto}</div>
 
       <Link 
-        to={`/producto/${IdProducto.toLowerCase()}`} 
+        to={`/producto/${IdProducto}/${createSlug(Descripcion)}`}
         className="product-link"
         itemProp="url"
       >

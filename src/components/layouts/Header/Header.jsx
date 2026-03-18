@@ -1,4 +1,4 @@
-import React, {  useState, useEffect } from 'react'; 
+import React, {  useState, useEffect, useRef } from 'react'; 
 import { Link, useNavigate } from 'react-router-dom'; 
 import useCartStore from 'store/useCartStore';
 import styles from './Header.module.css';
@@ -8,10 +8,10 @@ import { motion, AnimatePresence } from "framer-motion";
 
 import { AppConfig } from 'config/AppConfig';
 import { useBanners } from 'hooks/useBanners';
+import { useProducts } from 'hooks/useProducts';
 
 import {
-  FaSearch, FaAngleDown, FaBars, FaTimes
-} from 'react-icons/fa';
+  FaSearch, FaAngleDown, FaBars, FaTimes} from 'react-icons/fa';
 
 const Header = () => {
   const navigate = useNavigate(); 
@@ -20,6 +20,11 @@ const Header = () => {
 
   const { data: bannerData } = useBanners();
 
+  const { data: productsData } = useProducts(); // Trae la data de productos
+  const [suggestions, setSuggestions] = useState([]); // Estado para la lista de sugerencias
+  const [showSuggestions, setShowSuggestions] = useState(false); // Estado para mostrar/ocultar el panel
+  const searchRef = useRef(null); // Referencia para detectar clics fuera del buscador
+
   const cart = useCartStore((state) => state.cart);
   const cartItemCount = cart.reduce((total, item) => total + (item.quantity || 1), 0);
 
@@ -27,6 +32,61 @@ const Header = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [btnIsHighlighted, setBtnIsHighlighted] = useState(false);
   const [isTransitioning, setIsTransitioning] = useState(false);
+
+  const createSlug = (text) => {
+  if (!text) return '';
+  return text.toString().toLowerCase().trim()
+    .normalize("NFD").replace(/[\u0300-\u036f]/g, "") // Quita acentos
+    .replace(/ñ/g, 'n')
+    .replace(/[^a-z0-9\s-]/g, '') // Quita caracteres especiales excepto guiones y espacios
+    .replace(/\s+/g, '-') // Espacios por guiones
+    .replace(/-+/g, '-'); // Quita guiones dobles
+};
+
+useEffect(() => {
+    if (searchTerm.trim().length > 2 && productsData) {
+      const searchLower = searchTerm.toLowerCase();
+      const words = searchLower.split(/\s+/);
+      
+      const filtered = productsData.filter(p => {
+        const text = `${p.Descripcion} ${p.IdProducto} ${p.Marca}`.toLowerCase();
+        return words.every(word => text.includes(word));
+      }).slice(0, 6); // Limitamos a 6 sugerencias para no saturar
+
+      setSuggestions(filtered);
+      setShowSuggestions(true);
+    } else {
+      setSuggestions([]);
+      setShowSuggestions(false);
+    }
+  }, [searchTerm, productsData]);
+
+  // Cerrar sugerencias al hacer clic fuera
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (searchRef.current && !searchRef.current.contains(e.target)) {
+        setShowSuggestions(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const handleSearchSubmit = (e) => {
+    e.preventDefault(); 
+    if (searchTerm.trim()) {
+      navigate(`/buscar?q=${encodeURIComponent(searchTerm.trim())}`);
+      setSearchTerm(''); 
+      setShowSuggestions(false);
+      setIsMobileMenuOpen(false); 
+    }
+  };
+
+  const handleSuggestionClick = (p) => {
+    setSearchTerm('');
+    setShowSuggestions(false);
+    navigate(`/producto/${p.IdProducto}/${createSlug(p.Descripcion)}`);
+  };
 
   const getIcon = (dbTitle) => {
     const found = bannerData?.Iconos?.find(i => i.Titulo?.trim() === dbTitle);
@@ -51,27 +111,6 @@ const Header = () => {
         setTimeout(() => setIsTransitioning(false),600);
     }, 600)
   };
-
-  const handleSearchSubmit = (e) => {
-    e.preventDefault(); 
-    if (searchTerm.trim()) {
-      navigate(`/buscar?q=${encodeURIComponent(searchTerm.trim())}`);
-      setSearchTerm(''); 
-      setIsMobileMenuOpen(false); 
-    }
-  };
-
-  useEffect(() => {
-    if (cartItemCount === 0) return;
-    setBtnIsHighlighted(true);
-    const timer = setTimeout(() => setBtnIsHighlighted(false), 300);
-    return () => clearTimeout(timer);
-  }, [cartItemCount]); 
-
-  useEffect(() => {
-    document.body.style.overflow = isMobileMenuOpen ? 'hidden' : 'unset';
-    return () => { document.body.style.overflow = 'unset'; };
-  }, [isMobileMenuOpen]);
 
   const cartClasses = `${styles.cartLink} ${btnIsHighlighted ? styles.bump : ''}`;
   const handleContactClick = () => window.open(whatsappUrl, '_blank', 'noopener,noreferrer');
@@ -120,20 +159,54 @@ const Header = () => {
 
         {/* 2. BUSCADOR Y NAV (headerCenter) */}
         <div className={styles.headerCenter}>
+          <div className={styles.searchWrapper} ref={searchRef}>
             <form className={styles.searchBar} onSubmit={handleSearchSubmit} role="search">
               <input 
                 id="header-search"
                 type="text" 
                 placeholder="Buscar productos en Disdel..." 
                 value={searchTerm} 
-                onChange={(e) => setSearchTerm(e.target.value)} 
-                aria-label="Campo de búsqueda de productos"
-              />
+                  onChange={(e) => setSearchTerm(e.target.value)} 
+                  onFocus={() => searchTerm.length > 2 && setShowSuggestions(true)}
+                  autoComplete="off"
+                />
               <button type="submit" className={styles.searchButton} aria-label="Ejecutar búsqueda">
                 <FaSearch />
               </button>
             </form>
-          
+
+            <AnimatePresence>
+                {showSuggestions && suggestions.length > 0 && (
+                  <motion.div 
+                    className={styles.suggestionsBox}
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                  >
+                    {suggestions.map(p => (
+                      <div 
+                        key={p.IdProducto} 
+                        className={styles.suggestionItem}
+                        onClick={() => handleSuggestionClick(p)}
+                      >
+                        <img 
+                          src={p.Imagen ? `${AppConfig.baseImageUrl}productos/${p.Imagen}` : ''} 
+                          alt="" 
+                          className={styles.suggestImg} 
+                        />
+                        <div className={styles.suggestInfo}>
+                          <span className={styles.suggestTitle}>{p.Descripcion}</span>
+                          <span className={styles.suggestMeta}>Disdel # {p.IdProducto} | {p.Marca}</span>
+                        </div>
+                      </div>
+                    ))}
+                    <div className={styles.suggestFooter} onClick={handleSearchSubmit}>
+                      Ver todos los resultados para "{searchTerm}"
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+          </div>
           <nav className={styles.mainNav} role="navigation" aria-label="Navegación principal">
             <div
               className={styles.categoriesContainer}

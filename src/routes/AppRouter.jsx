@@ -27,8 +27,8 @@ const AppRouter = () => {
       <Route path="/" element={<HomePage />} />
 
       <Route path="/producto/:id/:slug?" element={<ProductDetailPage />} />
-      <Route path="/categoria/:slug/:subSlug?/:filterSlug?" element={<CategoryPage />} />
-      <Route path="/marca/:slug/:subSlug?/:filterSlug?" element={<BrandPage />} />
+      <Route path="/categoria/:slug/:cat?/:subcat?" element={<CategoryPage />} />
+      <Route path="/marca/:slug/:subcat?" element={<BrandPage />} />
         
       <Route path="/buscar" element={<SearchResultsPage />} />
 

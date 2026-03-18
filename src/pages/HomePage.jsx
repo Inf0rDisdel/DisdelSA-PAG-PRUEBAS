@@ -92,7 +92,7 @@ const HomePage = () => {
   const carruseles = useMemo(() => {
     const result = { higiene: [], coffee: [], cotizados: [] };
     
-    if (!allProducts || !Array.isArray(allProducts)) return result;;
+    if (!allProducts || !Array.isArray(allProducts)) return result;
 
     // Formateador rápido de producto
     const format = (p) => ({
