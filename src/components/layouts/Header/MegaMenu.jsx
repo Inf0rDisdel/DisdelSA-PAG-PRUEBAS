@@ -6,13 +6,14 @@ import { AppConfig } from '../../../config/AppConfig';
 import { useMenu } from '../../../hooks/useMenu';
 import { useBanners } from 'hooks/useBanners';
 
+const brandKeywords = ['KIMBERLY', '3M', 'WIESE', 'SILVER'];
+
 const MegaMenu = () => {
 
     const { data: bannerData } = useBanners();
     const { data: menuData, isLoading, isError } = useMenu();
 
     const defaultIcon = useMemo(() => {
-        
         const found = bannerData?.ImagenPredeterminado?.find(i=> i.Titulo?.trim() === "ImagenDefault2");
         const fileName = found?.BannerImagenMovil;
         return fileName ? `${AppConfig.baseImageUrl}${fileName}` : '';
@@ -21,15 +22,13 @@ const MegaMenu = () => {
     const [activeCategory, setActiveCategory] = useState('Todas las Categorias');
     const [activeSubItem, setActiveSubItem] = useState(null);
 
-    const brandKeywords = ['KIMBERLY', '3M', 'WIESE', 'SILVER'];
-
     // Helper para Slugs
     const createSlug = useCallback((text) => {
         if (!text) return '';
         return text.toString().toLowerCase().trim()
-            .normalize("NFD").replace(/[\u0300-\u036f]/g, "") // Quita acentos
-            .replace(/ñ/g, 'n')
-            .replace(/[^a-z0-9 -]/g, '') // Limpia caracteres raros
+            .normalize("NFD").replace(/[\u0300-\u036f]/g, "") 
+            .replace(/ñ/g, 'n') // Sincronizado
+            .replace(/[^a-z0-9 -]/g, '') 
             .replace(/\s+/g, '-')
             .replace(/-+/g, '-');
     }, []);
@@ -94,16 +93,13 @@ const MegaMenu = () => {
         }));
 
         return [allDepartments, ...mappedBrands];
-    }, [menuData, defaultIcon, createSlug]);
+    }, [menuData, defaultIcon]);
 
     const currentCategoryData = menuStructure.find(cat => cat.name === activeCategory);
 
-    // Lógica de Links Dinámicos
     const getLinkProps = (item) => {
         if (!item) return { to: '#' };
-
         if (item.type === 'marca') {
-            // Si es marca: /marca/3m y mandamos el ID de categoria por state
             return {
                 to: `/marca/${item.parentSlug}`,
                 state: { preSelectedCatId: item.id }
@@ -111,11 +107,9 @@ const MegaMenu = () => {
         }
         return { to: `/categoria/${createSlug(item.name)}` };
     };
-
-
     // Datos para la columna de Promoción
-    const promoImage = activeSubItem?.image || currentCategoryData?.promotion?.image;
-    const promoTitle = activeSubItem?.name || currentCategoryData?.promotion?.title;
+    //const promoImage = activeSubItem?.image || currentCategoryData?.promotion?.image;
+    //const promoTitle = activeSubItem?.name || currentCategoryData?.promotion?.title;
     
     // Link del botón de promoción
     const getPromoButtonLink = () => {
@@ -183,7 +177,6 @@ const MegaMenu = () => {
                     </div>
                     <h3>{activeSubItem?.name || currentCategoryData?.promotion?.title}</h3>
                     <p>{activeSubItem ? `Explorar suministros de ${activeSubItem.name}` : currentCategoryData?.promotion?.text}</p>
-                    
                     <Link {...getPromoButtonLink()} className={styles.promoButton}>
                         {activeSubItem ? 'Ver Categoría' : currentCategoryData?.promotion?.buttonText}
                     </Link>

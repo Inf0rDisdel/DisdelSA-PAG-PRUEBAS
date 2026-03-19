@@ -17,8 +17,9 @@ const HeroSlider = () => {
   }, []);
 
   if (isLoading || isError) {
-    return <div className="main-container" style={{ minHeight: isMobile ? '320px' : '320px' }}></div>;
+    return <div className="main-container" style={{ height: isMobile ? '210px' : '320px' }}></div>;
   }
+
 
   if (!banners) return null;
 
@@ -95,8 +96,8 @@ const HeroSlider = () => {
                       <img 
                         src={`${AppConfig.baseImageUrl}${slide.BannerImagenMovil}`} 
                         alt={slide.Titulo || "Catálogo industrial Disdel"} 
-                        // 🔥 SEO FIX 3 (LCP Escritorio): Prioridad de carga
-                        fetchpriority={index === 0 ? "high" : "auto"}
+                        // 🔥 Optimización LCP Escritorio
+                        fetchpriority={index === 0 ? "high" : "low"}
                         loading={index === 0 ? "eager" : "lazy"}
                         decoding="async"
                       />

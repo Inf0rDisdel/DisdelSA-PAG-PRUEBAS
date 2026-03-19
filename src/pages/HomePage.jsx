@@ -19,6 +19,10 @@ const HomePage = () => {
   const addItem = useCartStore((state) => state.addItem);
   const { data: allProducts, isLoading } = useProducts();
 
+  const cleanBaseUrl = AppConfig.baseImageUrl.endsWith('/') 
+    ? AppConfig.baseImageUrl 
+    : `${AppConfig.baseImageUrl}/`;
+
   const fullGraphSchema = {
     "@context": "https://schema.org",
     "@graph": [
@@ -85,38 +89,34 @@ const HomePage = () => {
     });
   };
 
-
   const carruseles = useMemo(() => {
     const result = { higiene: [], coffee: [], cotizados: [] };
     
     if (!allProducts || !Array.isArray(allProducts)) return result;
 
-  const higieneTemp = allProducts.filter(p => String(p.IdSegmento) === "1059").slice(0, 30);
-  const coffeeTemp = allProducts.filter(p => String(p.IdCategoria) === "2166").slice(0, 30);
-
-    // Recorremos los 4,000 productos UNA SOLA VEZ
-    for (let i = 0; i < allProducts.length; i++) {
-        const p = allProducts[i];
-        if (String(p.IdSegmento) === "1059") higieneTemp.push(p);
-        if (String(p.IdCategoria) === "2166") coffeeTemp.push(p);
-    }
-
-    // Función rápida de mapeo
+    // Formateador rápido de producto
     const format = (p) => ({
         id: p.IdProducto,
         name: p.Descripcion,
-        image: `${AppConfig.baseImageUrl}productos/${p.Imagen}`,
+        image: `${cleanBaseUrl}productos/${p.Imagen}`, // Ahora usa la variable protegida
         disdelId: p.IdProducto,
         ...p 
     });
 
-    // Mezclamos y cortamos solo los necesarios
+    const higieneTemp = [];
+    const coffeeTemp = [];
+    
+    for (let i = 0; i < allProducts.length; i++) {
+        const p = allProducts[i];
+        if (result.cotizados.length < 10) result.cotizados.push(format(p));
+        if (String(p.IdSegmento) === "1059") higieneTemp.push(p);
+        if (String(p.IdCategoria) === "2166") coffeeTemp.push(p);
+    }
+
     result.higiene = higieneTemp.sort(() => 0.5 - Math.random()).slice(0, 15).map(format);
     result.coffee = coffeeTemp.sort(() => 0.5 - Math.random()).slice(0, 15).map(format);
-    result.cotizados = allProducts.slice(0, 10).map(format);
-
     return result;
-  }, [allProducts]);
+  }, [allProducts, cleanBaseUrl]);
 
   return (
     <main>
@@ -162,7 +162,6 @@ const HomePage = () => {
           />
         </div>
       )}
-
 
       {(isLoading || carruseles.higiene.length > 0) && (
         <div className="carousel-wrapper">

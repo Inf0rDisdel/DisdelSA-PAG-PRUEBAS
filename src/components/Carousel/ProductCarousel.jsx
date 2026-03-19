@@ -27,13 +27,16 @@ const ProductCarousel = ({ title, products = [], isLoading, variant = '' }) => {
     return (
       <div className="product-carousel-container">
         <div style={{ padding: '0 20px' }}>
-          <Skeleton width="250px" height="30px" style={{ marginBottom: '20px' }} />
+          {/* Título en esqueleto */}
+          <Skeleton width="250px" height="30px" style={{ marginBottom: '25px' }} />
         </div>
         <div style={{ 
           display: 'grid', 
-          gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', 
-          gap: '20px',
-          padding: '0 20px'
+          // Ajustamos a 5 columnas para que sea igual al slider real
+          gridTemplateColumns: 'repeat(5, 1fr)', 
+          gap: '15px',
+          padding: '0 20px',
+          overflow: 'hidden'
         }}>
           {[1, 2, 3, 4, 5].map((n) => (
             <ProductCardSkeleton key={n} />
@@ -41,8 +44,7 @@ const ProductCarousel = ({ title, products = [], isLoading, variant = '' }) => {
         </div>
       </div>
     );
-  }
-
+}
   const settings = {
     dots: false,
     infinite: products && products.length > 5, 
