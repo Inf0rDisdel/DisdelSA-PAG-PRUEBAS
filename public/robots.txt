@@ -12,4 +12,4 @@ Disallow: /login
 Disallow: /my-business
 
 # Avisar a Google dónde está el mapa de la web
-Sitemap: https://www.disdelsa.com/sitemap.xml
+Sitemap: https://disdelsa.com/sitemap.xml

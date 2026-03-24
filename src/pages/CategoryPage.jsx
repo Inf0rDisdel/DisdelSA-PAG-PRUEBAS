@@ -9,6 +9,7 @@ import { useBanners } from 'hooks/useBanners';
 import useCartStore from 'store/useCartStore';
 import { useMenu } from 'hooks/useMenu';
 import { useProducts } from 'hooks/useProducts';
+import { createSlug } from 'utils/slugify';
 
 import Skeleton from 'components/ui/Skeleton/Skeleton';
 import ProductCardSkeleton from 'components/ui/ProductCard/ProductCardSkeleton';
@@ -43,16 +44,6 @@ const CategoryPage = () => {
   const cleanSlug = slug ? slug.replace(/\/$/, "").trim() : '';
   const canonicalSlug = cleanSlug.toLowerCase();
   const norm = (id) => (id === null || id === undefined) ? '' : String(id).trim();
-
-  const createSlug = (text) => {
-  if (!text) return '';
-  return text.toString().toLowerCase().trim()
-    .normalize("NFD").replace(/[\u0300-\u036f]/g, "") // Quita acentos
-    .replace(/ñ/g, 'n')
-    .replace(/[^a-z0-9\s-]/g, '') // Quita caracteres especiales excepto guiones y espacios
-    .replace(/\s+/g, '-') // Espacios por guiones
-    .replace(/-+/g, '-'); // Quita guiones dobles
-};
 
   const currentSegment = useMemo(() => {
       if (!menuData) return null;
@@ -318,9 +309,7 @@ const CategoryPage = () => {
                       <div className="cat-brand-badge">
                         {badgeLogo && <img src={badgeLogo} alt="Disdel" className="cat-badge-logo-img" />}
                       </div>
-                      <Link 
-                        to={`/producto/${prod.IdProducto}/${createSlug(prod.Descripcion)}`}
-                        className="cat-card-link" style={{ textDecoration: 'none' }}>
+                      <Link  to={`/producto/${String(prod.IdProducto).trim().toLowerCase()}/${createSlug(prod.Descripcion)}`}className="cat-card-link"  style={{ textDecoration: 'none' }}>
                         <div className="cat-img-wrapper">
                           <img 
                             src={prod.Imagen ? `${AppConfig.baseImageUrl}productos/${prod.Imagen}` : defaultImage} 

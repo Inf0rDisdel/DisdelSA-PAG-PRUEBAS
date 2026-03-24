@@ -1,5 +1,5 @@
 .product-carousel-container {
-  min-height: 480px;
+  min-height: 500px;
   width: 100%;
   max-width: 1200px;
   margin: 20px auto;
@@ -8,6 +8,8 @@
   background-color: #ffffff;
   border-radius: 10px;
   overflow: hidden; /* Evita que el carrusel cause scroll horizontal en toda la página */
+  contain: content;
+  will-change: transform;
 }
 
 .carousel-item-padding {
@@ -49,6 +51,7 @@
 .slick-track {
 display: flex !important;
 align-items: stretch;
+will-change: transform;
 }
 .slick-slide {
 height: inherit !important;

@@ -7,10 +7,14 @@
   flex-direction: column;
   height: 100%; /* IMPORTANTE: Que use el alto del track de Slick */
   width: 100%; 
+  max-width: 320px;
   box-sizing: border-box;
   transition: transform 0.3s ease;
   position: relative;
   contain: layout;
+  content-visibility: auto;
+  contain-intrinsic-size: 320px;
+  will-change: transform;
 }
 /* --- 1. EL BADGE DEL LOGO (Aseguramos visibilidad) --- */
 .product-brand-badge {
@@ -96,9 +100,9 @@ max-width: 100%;
 max-height: 100%;
 object-fit: contain;
 transition: opacity 0.3s ease;
+aspect-ratio: 1 / 1 ;
+background-color: #f5f5f5;
 }
-
-
 
 .brand-tag {/*-----PARA ACOREJIR*/
 font-size: 10px;

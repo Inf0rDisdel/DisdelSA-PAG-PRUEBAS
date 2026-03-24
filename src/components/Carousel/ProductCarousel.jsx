@@ -48,9 +48,11 @@ const ProductCarousel = ({ title, products = [], isLoading, variant = '' }) => {
   const settings = {
     dots: false,
     infinite: products && products.length > 5, 
-    speed: 500,
+    speed: 400,
     slidesToShow: 5, 
     slidesToScroll: 1,
+    lazyLoad: 'progressive',
+    cssEase: 'cubic-bezier(0.25,0.46,0.45,0.94',
     responsive: [
       {
         breakpoint: 1024,
@@ -69,6 +71,7 @@ const ProductCarousel = ({ title, products = [], isLoading, variant = '' }) => {
           slidesToScroll: 1,
           dots: false,
           arrows: false,
+          swipeToSlide: true,
           infinite:products && products.length>2,
           adaptiveHeight: false
         }

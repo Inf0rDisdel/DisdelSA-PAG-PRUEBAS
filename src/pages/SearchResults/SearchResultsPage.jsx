@@ -186,17 +186,12 @@ const SearchResultsPage = () => {
             {resultadosFinales.length > 0 ? (
               <div className={styles.productGrid}>
                 {resultadosFinales.slice(0, 80).map((p, index) => (
-                <ProductCard 
+                  <ProductCard 
                     key={p.IdProducto} 
-                    index={index} // <-- Pásale el index
-                    product={{
-                      id: p.IdProducto,
-                      name: p.Descripcion,
-                      price: p.PrecioIVA,
-                      image: p.Imagen,
-                      brand: p.Marca,
-                      ...p 
-                    }} 
+                    index={index} 
+                    // 🔥 Simplificamos: Pasamos 'p' directamente. 
+                    // Tu ProductCard ya sabe leer IdProducto, Descripcion, etc.
+                    product={p} 
                   />
                 ))}
               </div>

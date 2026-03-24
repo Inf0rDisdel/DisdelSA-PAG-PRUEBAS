@@ -1,43 +1,42 @@
-import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import React, { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async'; 
+import Skeleton from 'components/ui/Skeleton/Skeleton';
 
 import { AppConfig } from 'config/AppConfig';
 import { useBanners } from 'hooks/useBanners';
 import useCartStore from 'store/useCartStore';
 import { useProductDetail } from 'hooks/useProductDetail';
 
-import { FiCheckCircle, FiPackage, FiChevronLeft, FiTarget} from 'react-icons/fi';
+import { FiCheckCircle, FiPackage, FiChevronLeft, FiTarget,FiInfo, FiTruck, FiAward } from 'react-icons/fi';
+import { createSlug } from 'utils/slugify';
 import './ProductDetailPage.css';
 
 const ProductDetailPage = () => {
   const { id, slug } = useParams();
-  const cleanId = id?.toString().split('-')[0];
-  const canonicalId = id ? String(id).replace(/\/$/, "").trim().toLowerCase() : "";
+  const cleanIdFromUrl = id ? String(id).trim().toLowerCase() : "";
+  const canonicalId = cleanIdFromUrl; 
  
   const navigate = useNavigate();
   const addItem = useCartStore((state) => state.addItem);
   const { data: bannerData } = useBanners();
- 
-  const { data: product, isLoading, isError } = useProductDetail(cleanId);
-
-  console.log("ID URL:", id);
-  console.log("ID limpio:", cleanId);
-  console.log("Producto:", product);
+  const { data: product, isLoading, isError } = useProductDetail(cleanIdFromUrl);
 
   const [selectedImage, setSelectedImage] = useState(null);
   const [selectedUnit, setSelectedUnit] = useState(''); 
   const [selectedType, setSelectedType] = useState('Y');
 
-  const createSlug = (text) => {
-  if (!text) return '';
-  return text.toString().toLowerCase().trim()
-    .normalize("NFD").replace(/[\u0300-\u036f]/g, "") // Quita acentos
-    .replace(/ñ/g, 'n')
-    .replace(/[^a-z0-9\s-]/g, '') // Quita caracteres especiales excepto guiones y espacios
-    .replace(/\s+/g, '-') // Espacios por guiones
-    .replace(/-+/g, '-'); // Quita guiones dobles
-};
+  const [zoomPos, setZoomPos] = useState({ x: 0, y: 0, show: false });
+
+  const handleMouseMove = (e) => {
+    const { left, top, width, height } = e.currentTarget.getBoundingClientRect();
+    const x = ((e.pageX - left - window.scrollX) / width) * 100;
+    const y = ((e.pageY - top - window.scrollY) / height) * 100;
+    setZoomPos({ x, y, show: true });
+  };
+
+  const currentSlug = useMemo(() => product ? createSlug(product.Descripcion) : '', [product]);
+  const currentUrl = `https://disdelsa.com/producto/${canonicalId}/${currentSlug}`;
 
   const defaultImage = useMemo(() => {
     const found = bannerData?.ImagenPredeterminado?.find(i => i.Titulo?.trim() === "ImagenDefault3");
@@ -45,7 +44,6 @@ const ProductDetailPage = () => {
     return fileName ? `${AppConfig.baseImageUrl}${fileName}` : '';
   }, [bannerData]);
 
-  // Envolvemos en useCallback para quitar el Warning de la terminal
   const getImageUrl = useCallback((imgName) => (imgName && imgName.trim() !== "") 
     ? `${AppConfig.baseImageUrl}productos/${imgName}` 
     : defaultImage, [defaultImage]);
@@ -65,50 +63,45 @@ const ProductDetailPage = () => {
 
   const fullSchema = useMemo(() => {
     if (!product) return null;
-    const slugName = createSlug(product.Descripcion);
-    const productUrl = `https://disdelsa.com/producto/${canonicalId}/${slugName}`;
     const categoryUrl = `https://disdelsa.com/categoria/${createSlug(product.Categoria)}`;
 
-    return {
+     return {
       "@context": "https://schema.org/",
       "@graph": [
        {
         "@type": "Product",
         "name": product.Descripcion,
-
-        // ✅ CAMBIO: image como array
-        "image": productImages.length > 0
-          ? productImages.map(img => getImageUrl(img))
-          : [getImageUrl(product.Imagen)],
-
-        "description": `Cotiza ${product.Descripcion} en Disdel Guatemala. Ideal para ${product.Categoria}. Calidad institucional.`,
-
+        "image": productImages.length > 0 ? productImages.map(img => getImageUrl(img)) : [getImageUrl(product.Imagen)],
+        "description": `Cotiza ${product.Descripcion} en Disdel Guatemala. Ideal para ${product.Categoria}. Calidad institucional y venta al por mayor`,
         "sku": product.IdProducto,
-
-        // ✅ NUEVO
-        "url": productUrl,
-
-        // ✅ NUEVO
+        "url": currentUrl,
         "category": product.Categoria,
-
-        "brand": {
-          "@type": "Brand",
-          "name": product.Marca || "Disdel"
-        },
-
+        "brand": { "@type": "Brand", "name": product.Marca || "Disdel" },
         "offers": {
           "@type": "Offer",
-          "url": productUrl,
+          "url": currentUrl,
           "priceCurrency": "GTQ",
-          "price": "0.00",
-
-          // ✅ NUEVO
+          "price": product.Precio || "0.00",
+          "priceValidUntil": "2026-12-31",
           "itemCondition": "https://schema.org/NewCondition",
-
           "availability": "https://schema.org/InStock",
-          "seller": {
-            "@type": "Organization",
-            "name": "Disdel, S.A."
+          "shippingDetails": {
+            "@type": "OfferShippingDetails",
+            "shippingRate": { "@type": "MonetaryAmount", "value": "0", "currency": "GTQ" },
+            "shippingDestination": [{ "@type": "DefinedRegion", "addressCountry": "GT" }],
+            "deliveryTime": {
+              "@type": "ShippingDeliveryTime",
+              "handlingTime": { "@type": "QuantitativeValue", "minValue": 0, "maxValue": 1, "unitCode": "DAY" },
+              "transitTime": { "@type": "QuantitativeValue", "minValue": 1, "maxValue": 3, "unitCode": "DAY" }
+            }
+          },
+          "hasMerchantReturnPolicy": {
+            "@type": "MerchantReturnPolicy",
+            "applicableCountry": "GT",
+            "returnPolicyCategory": "https://schema.org/MerchantReturnFiniteReturnPeriod",
+            "merchantReturnDays": 30,
+            "returnMethod": "https://schema.org/ReturnByMail",
+            "returnFees": "https://schema.org/FreeReturn"
           }
         }
       },
@@ -117,66 +110,92 @@ const ProductDetailPage = () => {
           "itemListElement": [
             { "@type": "ListItem", "position": 1, "name": "Inicio", "item": "https://disdelsa.com/" },
             { "@type": "ListItem", "position": 2, "name": product.Categoria, "item": categoryUrl },
-            { "@type": "ListItem", "position": 3, "name": product.Descripcion, "item": productUrl }
+            { "@type": "ListItem", "position": 3, "name": product.Descripcion, "item": currentUrl }
           ]
         }
       ]
     };
-  }, [product, canonicalId, createSlug, getImageUrl, productImages]);
+  }, [product, canonicalId, currentUrl, getImageUrl, productImages]);
 
 useEffect(() => {
-  if (product) {
-    const correctSlug = createSlug(product.Descripcion);
-    const correctId = String(cleanId).toLowerCase();
-
-    // Verificamos si ALGO en la URL actual está mal (ya sea el ID o el SLUG)
-    if (slug !== correctSlug || id !== correctId) {
-      // Hacemos una única redirección con ambos valores corregidos
-      navigate(`/producto/${correctId}/${correctSlug}`, { replace: true });
+    if (product) {
+      const correctSlug = createSlug(product.Descripcion);
+      const correctId = String(product.IdProducto).trim().toLowerCase();
+      if (slug !== correctSlug || cleanIdFromUrl !== correctId) {
+        navigate(`/producto/${correctId}/${correctSlug}`, { replace: true });
+      }
     }
-  }
-}, [product, slug, id, cleanId, navigate, createSlug]);
-
- useEffect(() => {
-  if (isError) {
-    console.error("Error cargando producto:", cleanId);
-  }
-}, [isError, cleanId]);
+  }, [product, slug, cleanIdFromUrl, navigate]);
 
   useEffect(() => {
-  if (product) {
-    if (!selectedImage) setSelectedImage(product.Imagen);
-    if (!selectedUnit) {
-      setSelectedUnit(product.Unidad || product.Empaque || 'Unidad');
-      setSelectedType(product.Unidad ? 'Y' : 'N');
+    if (product) {
+      if (!selectedImage) setSelectedImage(product.Imagen);
+      if (!selectedUnit) {
+        setSelectedUnit(product.Unidad || product.Empaque || 'Unidad');
+        setSelectedType(product.Unidad ? 'Y' : 'N');
+      }
     }
-  }
-}, [product, selectedImage, selectedUnit]);
+  }, [product, selectedImage, selectedUnit]);
 
   const handleAddToCart = () => {
     if (!product) return;
     addItem({ ...product, presentationSelected: selectedUnit, unitType: selectedType });
   };
 
-  if (isLoading) return <div className="pdp-loading"><div className="spinner"></div><p>Cargando producto...</p></div>;
-  
-  if (isError || !product) return (
-    <div className="pdp-container" style={{minHeight: '60vh', display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
-        <p>Buscando producto...</p>
-    </div>
-  );
+   if (isLoading) {
+    return (
+      <div className="pdp-container">
+        {/* Botón de volver */}
+        <Skeleton width="150px" height="20px" style={{ marginBottom: '25px' }} />
+        
+        <div className="pdp-main-grid">
+          {/* Galería Skeleton */}
+          <div className="pdp-gallery-wrapper">
+            <div className="pdp-thumbnails-vertical">
+              <Skeleton width="75px" height="75px" style={{ marginBottom: '12px' }} />
+              <Skeleton width="75px" height="75px" style={{ marginBottom: '12px' }} />
+              <Skeleton width="75px" height="75px" />
+            </div>
+            {/* Imagen Principal Skeleton */}
+            <div style={{ flex: 1 }}>
+               <Skeleton width="100%" height="500px" />
+            </div>
+          </div>
+
+          {/* Información Skeleton */}
+          <div className="pdp-info-section">
+            <div style={{ display: 'flex', gap: '10px', marginBottom: '15px' }}>
+                <Skeleton width="80px" height="25px" />
+                <Skeleton width="120px" height="25px" />
+            </div>
+            <Skeleton width="100%" height="40px" style={{ marginBottom: '15px' }} />
+            <Skeleton width="200px" height="20px" style={{ marginBottom: '30px' }} />
+            
+            {/* Caja de descripción skeleton */}
+            <Skeleton width="100%" height="150px" style={{ marginBottom: '25px' }} />
+            
+            {/* Presentación skeleton */}
+            <Skeleton width="100%" height="60px" style={{ marginBottom: '25px' }} />
+            
+            {/* Botón skeleton */}
+            <Skeleton width="100%" height="55px" style={{ borderRadius: '12px' }} />
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (isError || !product) return <div className="pdp-container">Buscando producto...</div>;
 
   const seoTitle = `${product.Descripcion} ${product.Marca ? '| ' + product.Marca : ''} | Disdel Guatemala`;
   const mainImg = getImageUrl(selectedImage || product.Imagen);
-  const currentSlug = createSlug(product.Descripcion);
-  const currentUrl = `https://disdelsa.com/producto/${canonicalId}/${currentSlug}`;
 
   return (
     <div className="pdp-container">
     <Helmet>
     <title>{seoTitle}</title>
     <meta name="description" content={`Solicite cotización de ${product.Descripcion} en Guatemala. Suministro profesional para empresas. Categoría ${product.Categoria}.`} />
-    <link rel="canonical" href={`https://disdelsa.com/producto/${id}/${createSlug(product.Descripcion)}`} />
+    <link rel="canonical" href={currentUrl} />
     <link rel="preload" as="image" href={mainImg} fetchpriority="high" />
 
     <meta property="og:title" content={seoTitle} />
@@ -204,9 +223,7 @@ useEffect(() => {
     <meta name="twitter:image" content={mainImg} />
 
     {fullSchema && (
-          <script type="application/ld+json">
-            {JSON.stringify(fullSchema)}
-          </script>
+          <script type="application/ld+json">{JSON.stringify(fullSchema)}</script>
         )}
       </Helmet>
 
@@ -214,60 +231,64 @@ useEffect(() => {
         <FiChevronLeft /> Volver al catálogo
       </button>
 
-      <div className="pdp-main-grid">
-        <section className="pdp-gallery-section">
-          <div className="pdp-main-image-wrapper">
+       <div className="pdp-main-grid">
+        <section className="pdp-gallery-wrapper">
+          
+          {/* 1. MINIATURAS (Lado izquierdo) */}
+          <div className="pdp-thumbnails-vertical">
+            {productImages.map((img, index) => (
+              <div 
+                key={index} 
+                className={`pdp-thumb-item ${selectedImage === img ? 'active' : ''}`} 
+                onMouseEnter={() => setSelectedImage(img)}
+              >
+                <img src={getImageUrl(img)} alt={`Vista ${index}`} loading='lazy' />
+              </div>
+            ))}
+          </div>
+
+          {/* 2. IMAGEN PRINCIPAL (Lado derecho de las miniaturas) */}
+          <div 
+            className="pdp-main-image-zoom-container"
+            onMouseMove={handleMouseMove}
+            onMouseLeave={() => setZoomPos({ ...zoomPos, show: false })}
+          >
             <img 
               src={mainImg} 
-              alt={`${product.Descripcion} - Suministro Institucional`} 
-              className="pdp-main-img" 
-              width="600" 
-              height="600"
-              fetchPriority="high" // Corregido a camelCase para React
-              loading="eager"
-              decoding="sync" 
-              style={{ aspectRatio: '1/1', objectFit: 'contain' }}
-            />  
+              alt={product.Descripcion} 
+              className={`pdp-main-img ${zoomPos.show ? 'is-zoomed' : ''}`}
+              style={{
+                transformOrigin: `${zoomPos.x}% ${zoomPos.y}%`
+              }}
+            />
           </div>
-            {productImages.length > 1 && (
-                <div className="pdp-thumbnails">
-                    {productImages.map((img, index) => (
-                        <button 
-                          key={index} 
-                          className={`pdp-thumb ${selectedImage === img ? 'active' : ''}`} 
-                          onClick={() => setSelectedImage(img)}
-                          aria-label={`Ver imagen ${index + 1}`}
-                        >
-                            <img src={getImageUrl(img)} alt={`Vista ${index + 1}`} loading="lazy" width="80" height="80" />
-                        </button>
-                    ))}
-                </div>
-            )}
         </section>
         
         <section className="pdp-info-section">
           <header className="pdp-header-info">
               <div className="pdp-meta-top">
-                  {/* Badge de Marca: Estilo sutil */}
                   {product.Marca && <span className="pdp-brand-tag">{product.Marca}</span>}
-                  {/* Badge de Área/Categoría: Azul Disdel (PRO) */}
                   <span className="pdp-category-badge">{product.Categoria}</span>
               </div>
       
               <h1 className="pdp-title">{product.Descripcion}</h1>
               <div className="pdp-sku-row">
               <span className="pdp-sku">Código: <strong>{product.IdProducto}</strong></span>
-              {/* Estado de disponibilidad: Verde (PRO) */}
               <span className="pdp-stock-status in-stock">
                 <FiCheckCircle className="pdp-check-icon" /> Disponible 
               </span>
             </div>
           </header>
 
-          <div className="pdp-commercial-desc">
-            <p>
-              <FiTarget /> <strong>Venta Institucional:</strong> Abastecimiento profesional de {product.Descripcion} para empresas en toda Guatemala.
-            </p>
+          <div className="pdp-commercial-desc-card">
+             <p> 
+                <FiAward className="pdp-desc-icon" /> 
+                <strong>Solución Institucional:</strong> En disdel nos especializamos en el abastecimiento técnico de  <strong>{product.Descripcion}</strong> para el sector empresarial. Este artículo de la línea  <strong>{product.Categoria}</strong>ha sido seleccionada bajo riguroso estándares para garantizar la máxima eficiencia y rendimiento en las operaciones de su institución o negocio en toda Guatemala.
+             </p>
+             <div className="pdp-features-list">
+                <span><FiTruck /> Envío a toda la República</span>
+                <span><FiAward /> Garantía de Calidad Disdel</span>
+             </div>
           </div>
 
           {hasDifferentOptions ? (
@@ -292,9 +313,9 @@ useEffect(() => {
               </div>
           ) : (
               <div className="pdp-unit-info-single">
-                  <FiCheckCircle className="icon-check" /> 
-                  <span>Presentación: <strong>{selectedUnit}</strong></span>
-              </div>
+                <FiCheckCircle className="icon-check" /> 
+                <span>Presentación: <strong>{selectedUnit}</strong></span>
+            </div>
           )}
 
           <div className="pdp-action-box">

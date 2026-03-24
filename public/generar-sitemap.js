@@ -7,7 +7,7 @@ const path = require('path');
 const BASE_URL = 'https://disdelsa.com'; 
 const API_PRODUCTOS = 'https://www.disdelsagt.com/MyWsMobil/api/PaginaWeb/GetProductos'; 
 const API_MENU = 'https://www.disdelsagt.com/MyWsMobil/api/PaginaWeb/GetMenu';
-const OUTPUT_FILE = path.join(__dirname, 'sitemap.xml');
+const OUTPUT_FILE = path.join(__dirname, 'public', 'sitemap.xml'); 
 
 const MARCAS_TOP = ['KIMBERLY CLARK', '3M', 'WIESE', 'SILVER', 'LEONCITO'];
 const CATEGORIAS_TOP = [
@@ -20,18 +20,22 @@ const createSlug = (text) => {
     return text.toString().toLowerCase().trim()
         .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
         .replace(/ñ/g, 'n')
-        .replace(/[^a-z0-9 -]/g, '') 
+        .replace(/[^a-z0-9\s-]/g, '')
         .replace(/\s+/g, '-') 
         .replace(/-+/g, '-'); 
 };
 
 const escapeXml = (str) =>
     str.replace(/[<>&'"]/g, c => ({
-        '<': '&lt;', 'ReferenceError': '&gt;', '&': '&amp;', "'": '&apos;', '"': '&quot;'
+        '<': '&lt;', 
+        '>': '&gt;',
+        '&': '&amp;',
+        "'": '&apos;', 
+        '"': '&quot;'
     }[c]));
 
     async function generateSitemap() {
-    console.log('🚀 Generando Sitemap Nivel GALAXIA...');
+    /*console.log('🚀 Generando Sitemap Nivel GALAXIA...');*/
     const hoy = new Date().toISOString().split('T')[0];
 
     let urls = [
@@ -46,7 +50,7 @@ const escapeXml = (str) =>
 
     try {
         // 1. CATEGORÍAS (Nivel 1, 2 y 3)
-        console.log('📂 Categorizando árbol jerárquico...');
+        /*console.log('📂 Categorizando árbol jerárquico...');*/
         const resMenu = await axios.post(API_MENU, payload, config);
 
         if (resMenu.data && Array.isArray(resMenu.data)) {
@@ -87,20 +91,20 @@ const escapeXml = (str) =>
         }
 
         // 2. PRODUCTOS (ID + SLUG)
-        console.log('📦 Indexando Catálogo de Productos...');
+        /*console.log('📦 Indexando Catálogo de Productos...');*/
         const resProd = await axios.post(API_PRODUCTOS, payload, config);
         const productos = resProd.data;
 
         if (productos && Array.isArray(productos)) {
             productos.forEach(prod => {
-                const cleanId = (prod.IdProducto || '').trim().toLowerCase();
+                const cleanId = String(prod.IdProducto || '').trim().toLowerCase();
                 const slugName = createSlug(prod.Descripcion || '');
                 if(!cleanId || !slugName) return;
 
                 urls.push({
-                    loc: `${BASE_URL}/producto/${cleanId}/${slugName}`,
-                    priority: '0.8', // Subimos prioridad porque es donde se vende
-                    changefreq: 'weekly'
+                loc: `${BASE_URL}/producto/${cleanId}/${slugName}`,
+                priority: '0.8',
+                changefreq: 'weekly'
                 });
             });
         }
@@ -133,22 +137,22 @@ const escapeXml = (str) =>
 
         // 4. CONSTRUIR XML
         let xml = `<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-${urls.map(u => `  <url>
-    <loc>${escapeXml(u.loc)}</loc>
-    <lastmod>${hoy}</lastmod>
-    <changefreq>${u.changefreq}</changefreq>
-    <priority>${u.priority}</priority>
-  </url>`).join('\n')}
-</urlset>`;
+            <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+            ${urls.map(u => `  <url>
+                <loc>${escapeXml(u.loc)}</loc>
+                <lastmod>${hoy}</lastmod>
+                <changefreq>${u.changefreq}</changefreq>
+                <priority>${u.priority}</priority>
+            </url>`).join('\n')}
+        </urlset>`;
 
         fs.mkdirSync(path.dirname(OUTPUT_FILE), { recursive: true });
         fs.writeFileSync(OUTPUT_FILE, xml);
 
-        console.log(`\n✅ ¡Sitemap NIVEL PRO completado!`);
-        console.log(`📊 URLs Totales: ${urls.length} (Google las amará)`);
+        /*console.log(`\n✅ ¡Sitemap NIVEL PRO completado!`);
+        console.log(`📊 URLs Totales: ${urls.length} (Google las amará)`);*/
     } catch (error) {
-        console.error('❌ Error fatal:', error.message);
+        /*console.error('❌ Error fatal:', error.message);*/
     }
 }
 generateSitemap();

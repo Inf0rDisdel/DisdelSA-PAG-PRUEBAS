@@ -35,9 +35,10 @@
 
 .productGrid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 20px;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); 
+  gap: 25px;
   padding: 10px 0;
+  width: 100%;
 }
 
 /* --- FILTROS --- */
@@ -55,7 +56,13 @@
   padding: 0;
   max-height: 250px;
   overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #135eab #f0f0f0;
 }
+
+.filterGroup ul::-webkit-scrollbar { width: 6px; }
+.filterGroup ul::-webkit-scrollbar-track { background: #f1f1f1; }
+.filterGroup ul::-webkit-scrollbar-thumb { background: #135eab; border-radius: 10px; }
 
 .filterGroup li {
   margin-bottom: 10px;
@@ -80,22 +87,19 @@
   }
 
   .filterSidebar {
-    flex: none;
     width: 100%;
     position: relative;
-    top: 0;
     display: grid;
-    grid-template-columns: 1fr 1fr; /* Filtros en 2 columnas para no ocupar tanto espacio vertical */
+    grid-template-columns: 1fr 1fr;
     gap: 20px;
   }
-
   .filterGroup {
     margin-bottom: 0;
   }
 
   .productGrid {
-    grid-template-columns: repeat(3, 1fr); /* 3 columnas en tablet */
-  }
+    .productGrid { grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); }
+}
 }
 
 /* ====================================================== */
@@ -126,8 +130,8 @@
   }
 
   .productGrid {
-    grid-template-columns: repeat(2, 1fr); /* Mantenemos 2 columnas, es el estándar de E-commerce */
-    gap: 10px;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
   }
 
   .searchHeader h1 {

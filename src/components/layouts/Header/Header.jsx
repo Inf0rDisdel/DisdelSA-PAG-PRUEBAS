@@ -5,6 +5,7 @@ import styles from './Header.module.css';
 import MegaMenu from './MegaMenu';
 
 import { motion, AnimatePresence } from "framer-motion";
+import { createSlug } from 'utils/slugify';
 
 import { AppConfig } from 'config/AppConfig';
 import { useBanners } from 'hooks/useBanners';
@@ -32,16 +33,6 @@ const Header = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [btnIsHighlighted, setBtnIsHighlighted] = useState(false);
   const [isTransitioning, setIsTransitioning] = useState(false);
-
-  const createSlug = (text) => {
-  if (!text) return '';
-  return text.toString().toLowerCase().trim()
-    .normalize("NFD").replace(/[\u0300-\u036f]/g, "") // Quita acentos
-    .replace(/ñ/g, 'n')
-    .replace(/[^a-z0-9\s-]/g, '') // Quita caracteres especiales excepto guiones y espacios
-    .replace(/\s+/g, '-') // Espacios por guiones
-    .replace(/-+/g, '-'); // Quita guiones dobles
-};
 
 useEffect(() => {
     if (searchTerm.trim().length > 2 && productsData) {

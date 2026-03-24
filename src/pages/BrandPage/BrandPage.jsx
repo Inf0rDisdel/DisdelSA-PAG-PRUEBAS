@@ -9,6 +9,7 @@ import useCartStore from 'store/useCartStore';
 import { useMenu } from 'hooks/useMenu';
 import { useProducts } from 'hooks/useProducts';
 import { useBanners } from 'hooks/useBanners';
+import { createSlug } from 'utils/slugify';
 
 import Skeleton from 'components/ui/Skeleton/Skeleton';
 import ProductCardSkeleton from 'components/ui/ProductCard/ProductCardSkeleton';
@@ -35,16 +36,6 @@ const BrandPage = () => {
   }, []);
 
   const norm = (id) => (id === null || id === undefined) ? '' : String(id).trim();
-  const createSlug = (text) => {
-  if (!text) return '';
-  return text.toString().toLowerCase().trim()
-    .normalize("NFD").replace(/[\u0300-\u036f]/g, "") // Quita acentos
-    .replace(/ñ/g, 'n')
-    .replace(/[^a-z0-9\s-]/g, '') // Quita caracteres especiales excepto guiones y espacios
-    .replace(/\s+/g, '-') // Espacios por guiones
-    .replace(/-+/g, '-'); // Quita guiones dobles
-};
-
 
   const defaultImage = useMemo(() => {
     const found = bannerData?.ImagenPredeterminado?.find(b => b.Titulo?.trim() === "ImagenDefault3");
@@ -345,7 +336,7 @@ const BrandPage = () => {
                     {badgeLogo && <img src={badgeLogo} alt="Disdel" className="badge-logo-img" />}
                   </div>
 
-                  <Link to={`/producto/${prod.IdProducto}`} className="prod-link-wrapper">
+                  <Link to={`/producto/${String(prod.IdProducto).trim().toLowerCase()}/${createSlug(prod.Descripcion)}`} className="prod-link-wrapper">
                       <div className="prod-img-container">
                         <img src={prod.Imagen ? `${AppConfig.baseImageUrl}productos/${prod.Imagen}` : defaultImage} 
                         alt={prod.Descripcion} 
