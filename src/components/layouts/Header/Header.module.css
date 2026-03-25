@@ -11,7 +11,7 @@
 
 .headerContainer {
   width: 100%;
-  max-width: 1212px; 
+  max-width: 1310px; 
   margin: 0 auto;    
   padding: 0 15px;
   display: flex;
@@ -325,7 +325,6 @@
 .mainNav {
   display: flex;
   gap: 15px;
-  margin-left: 20px;
   
   /* CAMBIO CLAVE: Alineamos los botones a la IZQUIERDA */
   justify-content: flex-start !important; 

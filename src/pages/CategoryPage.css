@@ -142,9 +142,8 @@
 /* --- TARJETAS DE PRODUCTO --- */
 .cat-grid-products {
   display: grid;
-  /* Ajustado para que el espacio sea más equilibrado */
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); 
-  gap: 25px; /* 🔥 Espacio PRO aumentado entre tarjetas */
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 25px;
 }
 
 .cat-product-card {
@@ -424,11 +423,11 @@
     padding-right: 12px !important;
   }
 
-  .cat-grid-products {
-    grid-template-columns: repeat(2, 1fr) !important; /* 2 productos por fila */
-    gap: 12px !important;
+ .cat-grid-products {
+    grid-template-columns: repeat(2, 1fr) !important; /* 🔥 Obliga a 2 columnas */
+    gap: 10px;
   }
-
+  
   .cat-product-card {
     padding: 12px !important; /* Más compacto en móvil */
   }

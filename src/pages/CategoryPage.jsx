@@ -3,6 +3,7 @@ import React, { useState, useMemo, useEffect, useRef, useCallback } from 'react'
 import { Helmet } from 'react-helmet-async';
 import { FiShoppingCart, FiChevronRight } from 'react-icons/fi'; 
 import './CategoryPage.css';
+import ProductCard from 'components/ui/ProductCard/ProductCard';
 
 import { AppConfig } from 'config/AppConfig';
 import { useBanners } from 'hooks/useBanners';
@@ -305,35 +306,14 @@ const CategoryPage = () => {
            <div className="cat-grid-products"> 
               {filteredProducts.length > 0 ? (
                 filteredProducts.map((prod, index) => (
-                    <article key={prod.IdProducto} className="cat-product-card">
-                      <div className="cat-brand-badge">
-                        {badgeLogo && <img src={badgeLogo} alt="Disdel" className="cat-badge-logo-img" />}
-                      </div>
-                      <Link  to={`/producto/${String(prod.IdProducto).trim().toLowerCase()}/${createSlug(prod.Descripcion)}`}className="cat-card-link"  style={{ textDecoration: 'none' }}>
-                        <div className="cat-img-wrapper">
-                          <img 
-                            src={prod.Imagen ? `${AppConfig.baseImageUrl}productos/${prod.Imagen}` : defaultImage} 
-                            alt={prod.Descripcion} 
-                            width="250" height="250"
-                            loading={index < 6 ? "eager" : "lazy"} 
-                            fetchpriority={index < 6 ? "high" : "auto"}
-                            decoding="async"
-                          />
-                        </div>
-                        <span className="cat-card-tag">{prod.Categoria}</span>
-                        <h2 className="cat-title">{prod.Descripcion}</h2>
-                        <span className="cat-detail-id">Disdel # {prod.IdProducto}</span>
-                      </Link>
-                      <div className="cat-card-footer">
-                          <button 
-                            className="cat-quote-btn" 
-                            onClick={() => addItem({...prod, presentationSelected: prod.Unidad || prod.Empaque, unitType: prod.Unidad ? 'Y' : 'N'})}
-                          >
-                              <FiShoppingCart className="cat-cart-icon" /> COTIZAR 
-                          </button>
-                      </div>
-                    </article>
-              ))
+                  /* 🔥 Usamos el componente único. 
+                    Esto hereda automáticamente el SEO y el diseño Pro */
+                  <ProductCard 
+                    key={prod.IdProducto} 
+                    product={prod} 
+                    index={index} 
+                  />
+                ))
               ) : (
                 <div className="no-products-found" style={{gridColumn: '1/-1', textAlign:'center', padding: '50px'}}>
                   <p>No se encontraron productos en esta selección.</p>

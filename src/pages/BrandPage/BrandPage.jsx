@@ -3,6 +3,7 @@ import { useParams, Link, useLocation } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { FiChevronLeft, FiChevronRight, FiShoppingCart } from 'react-icons/fi';
 import './BrandPage.css';
+import ProductCard from 'components/ui/ProductCard/ProductCard';
 
 import { AppConfig } from 'config/AppConfig';
 import useCartStore from 'store/useCartStore';
@@ -328,45 +329,18 @@ const BrandPage = () => {
         </aside>
 
          <main className="products-area">
-          <div className="grid-container">
-            {filteredProducts.map((prod, index) => (
-                <article className="product-card" key={prod.IdProducto}>
-                  {/* --- LOGO ÚNICO CORREGIDO --- */}
-                  <div className='product-brand-badge'>
-                    {badgeLogo && <img src={badgeLogo} alt="Disdel" className="badge-logo-img" />}
-                  </div>
-
-                  <Link to={`/producto/${String(prod.IdProducto).trim().toLowerCase()}/${createSlug(prod.Descripcion)}`} className="prod-link-wrapper">
-                      <div className="prod-img-container">
-                        <img src={prod.Imagen ? `${AppConfig.baseImageUrl}productos/${prod.Imagen}` : defaultImage} 
-                        alt={prod.Descripcion} 
-                        loading={index < 4 ? "eager" : "lazy"} 
-                        fetchpriority={index < 4 ? "high" : "auto"}
-                        decoding='async'
-                        width="200"
-                        height="200"
-                        style={{aspectRatio: "1/1"}}
-                      />
-                      </div>
-                      <div className="prod-category-label">{prod.Categoria}</div>
-                      <div className="prod-title-text">{prod.Descripcion}</div>
-                      <span className="product-detail-id">Disdel # {prod.IdProducto}</span>
-                  </Link>
-
-                   <div className="product-card-footer">
-                    <div className="sold-by">
-                    </div>
-                    <button className="quote-button" onClick={() => {
-                        const defaultPresentation = prod.Unidad || prod.Empaque || 'Unidad';
-                        addItem({ ...prod, presentationSelected: defaultPresentation, unitType: prod.Unidad ? 'Y' : 'N' });
-                    }}>
-                      <FiShoppingCart className="cart-icon-btn" /> COTIZAR
-                    </button>
-                  </div>
-                </article>
-            ))}
-          </div>
-        </main>
+  <div className="grid-container">
+    {filteredProducts.map((prod, index) => (
+      /* 🔥 Usamos el componente oficial que ya tiene 
+         el SEO, el zoom y el diseño Pro integrado */
+      <ProductCard 
+        key={prod.IdProducto} 
+        product={prod} 
+        index={index} 
+      />
+    ))}
+  </div>
+</main>
       </div>
     </div>
   );

@@ -207,7 +207,7 @@ useEffect(() => {
               <button className={styles.navButton}>Categorias <FaAngleDown /></button>
               {isMegaMenuOpen && <MegaMenu />}
             </div>
-            <button className={styles.navButton} onClick={handleContactClick}>Contacto</button>
+            <button className={styles.navButton} onClick={() => navigate('/ayuda')}>Líneas de Asistencia</button>
           </nav>
         </div>
 
@@ -275,7 +275,7 @@ useEffect(() => {
 
             <hr className={styles.divider} />
             <Link to="/" onClick={() => setIsMobileMenuOpen(false)} className={styles.sidebarLinkSimple}>Inicio del Catálogo</Link>
-            <a href={whatsappUrl} target="_blank" rel="noopener noreferrer" className={styles.sidebarLinkSimple}>Chat de Ventas PBX</a>
+            <Link to="/ayuda" onClick={() => setIsMobileMenuOpen(false)} className={styles.sidebarLinkSimple}>Centro de Ayuda</Link>
           </nav>
       </div>
     </>
