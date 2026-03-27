@@ -1,58 +1,46 @@
-import React, { memo, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { memo, useMemo, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import useCartStore from 'store/useCartStore';
 import { AppConfig } from 'config/AppConfig';
-import { FaCheckCircle } from 'react-icons/fa';
 import { FiShoppingCart } from 'react-icons/fi';
 import { useQueryClient } from '@tanstack/react-query';
+import { useBanners } from 'hooks/useBanners';
+import { createSlug } from 'utils/slugify';
 import './ProductCard.css';
 
-import { useBanners } from 'hooks/useBanners';
-
 const ProductCard = memo(({ product, index }) => {
-  const navigate = useNavigate();
   const { IdProducto, Descripcion, Imagen, Marca, Categoria } = product;
-  console.log("ID Producto:", IdProducto);
   const addItem = useCartStore((state) => state.addItem);
   const { data: bannerData } = useBanners();
   const queryClient = useQueryClient();
+  const prefetchTimerRef = useRef(null); 
   
 
-  const handlePrefetch = () => {
-    queryClient.prefetchQuery({
-      queryKey:['product', IdProducto.trim().toUpperCase()],
-      staleTime: 1000 * 60 * 5,
-    });
+  const handleMouseEnter = () => {
+    prefetchTimerRef.current = setTimeout(() => {
+      queryClient.prefetchQuery({
+        queryKey: ['product', IdProducto.trim().toUpperCase()],
+        staleTime: 1000 * 60 * 5,
+      });
+    }, 80);
   };
 
-  const createSlug = (text) => {
-  if (!text) return '';
-  return text.toString().toLowerCase().trim()
-    .normalize("NFD").replace(/[\u0300-\u036f]/g, "") // Quita acentos
-    .replace(/ñ/g, 'n')
-    .replace(/[^a-z0-9\s-]/g, '') // Quita caracteres especiales excepto guiones y espacios
-    .replace(/\s+/g, '-') // Espacios por guiones
-    .replace(/-+/g, '-'); // Quita guiones dobles
-};
+  const handleMouseLeave = () => {
+    if (prefetchTimerRef.current) clearTimeout(prefetchTimerRef.current);
+  };
 
-
-  const defaultImage = useMemo(() => {
+  const imageUrl = useMemo(() => {
     const found = bannerData?.ImagenPredeterminado?.find(i => i.Titulo?.trim() === "ImagenDefault3");
-    const img = found?.BannerImagenMovil || found?.Imagen;
-    return img ? `${AppConfig.baseImageUrl}${img}` : '';
-  }, [bannerData])
+    const defaultImg = found?.BannerImagenMovil || found?.Imagen ? `${AppConfig.baseImageUrl}${found.BannerImagenMovil || found.Imagen}` : '';
+    return (Imagen && Imagen.trim() !== "") 
+      ? `${AppConfig.baseImageUrl}productos/${Imagen}` 
+      : defaultImg;
+  }, [Imagen, bannerData]);
 
   const badgeLogo = useMemo(() => {
     const found = bannerData?.Iconos?.find(i => i.Titulo?.trim() === "IconoDisdel");
     return found ? `${AppConfig.baseImageUrl}${found.Imagen}` : '';
   }, [bannerData]);
-
-  const imageUrl = useMemo(() => {
-    return (Imagen && Imagen.trim() !== "") 
-      ? `${AppConfig.baseImageUrl}productos/${Imagen}` 
-      : defaultImage;
-  }, [Imagen, defaultImage]);
 
   const isPriority = index < 4;
 
@@ -60,7 +48,8 @@ const ProductCard = memo(({ product, index }) => {
     <article 
       className="product-card"
       itemScope itemType="https://schema.org/Product"
-      onMouseEnter={handlePrefetch}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
     >
 
       <meta itemProp="sku" content={IdProducto} />
@@ -72,7 +61,7 @@ const ProductCard = memo(({ product, index }) => {
       <div className="product-id-badge">ID: {IdProducto}</div>
 
       <Link 
-        to={`/producto/${IdProducto}/${createSlug(Descripcion)}`}
+        to={`/producto/${String(IdProducto).trim().toLowerCase()}/${createSlug(Descripcion)}`}
         className="product-link"
         itemProp="url"
       >
@@ -85,6 +74,7 @@ const ProductCard = memo(({ product, index }) => {
             decoding='async'
             fetchpriority={isPriority ? "high" : "auto"}
             itemProp="image"
+            style={{ aspectRatio: '1/1', objectFit: 'contain' }}
           />
         </div>
         
@@ -105,10 +95,6 @@ const ProductCard = memo(({ product, index }) => {
         <meta itemProp="priceCurrency" content="GTQ" />
         <meta itemProp="price" content="0.00" />
         <link itemProp="availability" href="https://schema.org/InStock" />
-
-        <div className="sold-by">
-          <FaCheckCircle className="checkmark-icon" /> Disponible para cotizar
-        </div>
 
         <button 
           className="quote-button" 

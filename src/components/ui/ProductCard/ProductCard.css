@@ -5,12 +5,13 @@
   padding: 15px;
   display: flex;
   flex-direction: column;
-  height: 100%; /* IMPORTANTE: Que use el alto del track de Slick */
+  height: 100%;
   width: 100%; 
+  /* ❌ ELIMINA: max-width: 320px; (Esto rompe el grid en móvil) */
   box-sizing: border-box;
   transition: transform 0.3s ease;
   position: relative;
-  contain: layout;
+  will-change: transform;
 }
 /* --- 1. EL BADGE DEL LOGO (Aseguramos visibilidad) --- */
 .product-brand-badge {
@@ -96,9 +97,9 @@ max-width: 100%;
 max-height: 100%;
 object-fit: contain;
 transition: opacity 0.3s ease;
+aspect-ratio: 1 / 1 ;
+background-color: #f5f5f5;
 }
-
-
 
 .brand-tag {/*-----PARA ACOREJIR*/
 font-size: 10px;
@@ -179,10 +180,10 @@ z-index: 1;
 margin-top: auto;
 }
 /* --- AJUSTES RESPONSIVOS MODO PRO --- */
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
   .product-card { padding: 10px; }
-  .product-image-container { height: 110px; } /* Imagen más pequeña */
-  .product-title { font-size: 11px; min-height: 30px; }
+  .product-image-container { height: 120px !important; }
+  .product-title { font-size: 12px; min-height: 32px; }
   .quote-button { padding: 8px 0; font-size: 11px; }
 }
 

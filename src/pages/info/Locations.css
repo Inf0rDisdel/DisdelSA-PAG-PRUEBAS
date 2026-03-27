@@ -24,11 +24,11 @@
 }
 
 .loc-container {
-  max-width: 1200px;
+  max-width: 1250px;
   margin: 0 auto;
   display: grid;
   grid-template-columns: 1fr 1.1fr;
-  gap: 100px; /* Aumentado de 80px a 100px para más aire lateral */
+  gap: 120px; /* Aumentado de 80px a 100px para más aire lateral */
   align-items: center;
 }
 

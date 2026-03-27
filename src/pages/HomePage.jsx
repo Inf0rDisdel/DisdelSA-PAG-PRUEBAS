@@ -108,13 +108,25 @@ const HomePage = () => {
     
     for (let i = 0; i < allProducts.length; i++) {
         const p = allProducts[i];
-        if (result.cotizados.length < 10) result.cotizados.push(format(p));
+        if (result.cotizados.length < 12) result.cotizados.push(format(p));
         if (String(p.IdSegmento) === "1059") higieneTemp.push(p);
         if (String(p.IdCategoria) === "2166") coffeeTemp.push(p);
     }
 
-    result.higiene = higieneTemp.sort(() => 0.5 - Math.random()).slice(0, 15).map(format);
-    result.coffee = coffeeTemp.sort(() => 0.5 - Math.random()).slice(0, 15).map(format);
+    if (higieneTemp.length > 0) {
+        result.higiene = higieneTemp.sort(() => 0.5 - Math.random()).slice(0, 15).map(format);
+    } else {
+        // 2. BLINDAJE: Si Higiene falló, rellenamos con productos aleatorios generales
+        result.higiene = allProducts.slice(10, 25).map(format);
+    }
+
+    if (coffeeTemp.length > 0) {
+        result.coffee = coffeeTemp.sort(() => 0.5 - Math.random()).slice(0, 15).map(format);
+    } else {
+        // BLINDAJE
+        result.coffee = allProducts.slice(25, 40).map(format);
+    }
+
     return result;
   }, [allProducts, cleanBaseUrl]);
 

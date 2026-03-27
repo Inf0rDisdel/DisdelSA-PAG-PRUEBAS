@@ -2,7 +2,7 @@
 
 /* 1. CONTENEDOR PRINCIPAL - Ajustado para alinear con el Header */
 .cart-page-container {
-  max-width: 1230px; /* Sube este valor hasta que se alinee con tu logo/carrito */
+  max-width: 1315px; /* Sube este valor hasta que se alinee con tu logo/carrito */
   margin: 0 auto;
   padding: 40px 20px;
   width: 95%; /* Ayuda a mantener margen en pantallas medianas */

@@ -5,6 +5,7 @@ import styles from './Header.module.css';
 import MegaMenu from './MegaMenu';
 
 import { motion, AnimatePresence } from "framer-motion";
+import { createSlug } from 'utils/slugify';
 
 import { AppConfig } from 'config/AppConfig';
 import { useBanners } from 'hooks/useBanners';
@@ -32,16 +33,6 @@ const Header = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [btnIsHighlighted, setBtnIsHighlighted] = useState(false);
   const [isTransitioning, setIsTransitioning] = useState(false);
-
-  const createSlug = (text) => {
-  if (!text) return '';
-  return text.toString().toLowerCase().trim()
-    .normalize("NFD").replace(/[\u0300-\u036f]/g, "") // Quita acentos
-    .replace(/ñ/g, 'n')
-    .replace(/[^a-z0-9\s-]/g, '') // Quita caracteres especiales excepto guiones y espacios
-    .replace(/\s+/g, '-') // Espacios por guiones
-    .replace(/-+/g, '-'); // Quita guiones dobles
-};
 
 useEffect(() => {
     if (searchTerm.trim().length > 2 && productsData) {
@@ -216,7 +207,7 @@ useEffect(() => {
               <button className={styles.navButton}>Categorias <FaAngleDown /></button>
               {isMegaMenuOpen && <MegaMenu />}
             </div>
-            <button className={styles.navButton} onClick={handleContactClick}>Contacto</button>
+            <button className={styles.navButton} onClick={() => navigate('/ayuda')}>Líneas de Asistencia</button>
           </nav>
         </div>
 
@@ -284,7 +275,7 @@ useEffect(() => {
 
             <hr className={styles.divider} />
             <Link to="/" onClick={() => setIsMobileMenuOpen(false)} className={styles.sidebarLinkSimple}>Inicio del Catálogo</Link>
-            <a href={whatsappUrl} target="_blank" rel="noopener noreferrer" className={styles.sidebarLinkSimple}>Chat de Ventas PBX</a>
+            <Link to="/ayuda" onClick={() => setIsMobileMenuOpen(false)} className={styles.sidebarLinkSimple}>Centro de Ayuda</Link>
           </nav>
       </div>
     </>

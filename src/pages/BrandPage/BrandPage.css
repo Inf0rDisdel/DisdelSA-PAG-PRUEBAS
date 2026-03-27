@@ -89,8 +89,10 @@
 /* 🔥 4 PRODUCTOS EN PC */
 .grid-container {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  /* auto-fill crea los huecos exactos sin estirar de más */
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
   gap: 30px;
+  width: 100%;
 }
 
 .product-card {
@@ -187,15 +189,18 @@
 /*  1. TABLETS (Hasta 1024px) - 3 PRODUCTOS               */
 /* ======================================================= */
 @media (max-width: 768px) {
-  .brand-layout { display: flex !important; flex-direction: column !important; gap: 15px !important; }
-
-  .sidebar-filters {
-    position: sticky !important; top: 138px !important;
-    width: 100% !important; z-index: 1000 !important;
-    padding: 10px 0 !important; border-radius: 0; background: white !important;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.08) !important; border-bottom: 1px solid #eee;
+  .brand-layout { 
+    display: flex !important; 
+    flex-direction: column !important; 
+    gap: 15px !important; 
   }
 
+  .sidebar-filters {
+    position: sticky !important; 
+    top: 100px !important; 
+    width: 100% !important; 
+    padding: 10px 0 !important;
+  }
   /*BANNER PARA MOVIL*/
   .brand-hero {
     height: auto !important; /* Altura ajustada para banners de celular */
@@ -250,7 +255,7 @@
   .cat-text { font-size: 10px !important; line-height: 1.1 !important; display: block !important; }
 
   /* 🔥 3 PRODUCTOS POR FILA PARA TABLET */
-  .grid-container { grid-template-columns: repeat(3, 1fr) !important; gap: 15px; padding: 15px !important; }
+  .grid-container { grid-template-columns: repeat(3, 1fr) !important; gap: 15px; padding: 10px !important; }
 
 }
 
@@ -279,8 +284,8 @@
     height: 180px !important;
   }
 
-  .grid-container { grid-template-columns: repeat(2, 1fr) !important; gap: 12px !important; }
-  .product-card { padding: 12px !important; }
+  .grid-container { grid-template-columns: repeat(2, 1fr) !important; gap: 10px !important; }
+  .product-card { padding: 10px !important; }
 
   .prod-img-container {
   aspect-ratio: 1 / 1;
