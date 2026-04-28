@@ -1,20 +1,25 @@
-import { useLocation, Link, useParams } from 'react-router-dom';
-import React, { useState, useMemo, useEffect, useRef } from 'react'; 
+import { useLocation, Link, useParams, useNavigate } from 'react-router-dom';
+import React, { useState, useMemo, useEffect, useRef, useCallback } from 'react'; 
 import { Helmet } from 'react-helmet-async';
-import { FiChevronLeft, FiChevronRight } from 'react-icons/fi'; 
+import { FiShoppingCart, FiChevronRight } from 'react-icons/fi'; 
 import './CategoryPage.css';
+import ProductCard from 'components/ui/ProductCard/ProductCard';
 
 import { AppConfig } from 'config/AppConfig';
+import { useBanners } from 'hooks/useBanners';
 import useCartStore from 'store/useCartStore';
 import { useMenu } from 'hooks/useMenu';
 import { useProducts } from 'hooks/useProducts';
+import { createSlug } from 'utils/slugify';
 
-import bannerFijo from 'assets/images/banners/BANCategoria.jpg'; 
-import bannerMob from 'assets/images/banners/Adaptacion--banner-Disdel.png';
-import defaultImage from 'assets/images/categories/KCP.jpg'; 
+import Skeleton from 'components/ui/Skeleton/Skeleton';
+import ProductCardSkeleton from 'components/ui/ProductCard/ProductCardSkeleton';
 
 const CategoryPage = () => {
-  const { slug } = useParams();
+  const { slug, cat, subcat } = useParams();
+  const navigate = useNavigate();
+
+  const { data: bannerData } = useBanners();
   const addItem = useCartStore((state) => state.addItem);
   const location = useLocation(); 
   const { data: menuData, isLoading: loadingMenu } = useMenu();
@@ -22,30 +27,34 @@ const CategoryPage = () => {
 
   const [activeCatId, setActiveCatId] = useState(null);
   const [activeSubCatId, setActiveSubCatId] = useState(null);
-
-  // Lógica para detectar móvil (Breakpoint 468px)
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 468);
 
-  useEffect(() => {
+  const scrollRef = useRef(null);
+
+   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth <= 468);
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  const scrollRef = useRef(null);
+  // 🔥 SCROLL TOP CORRECTO
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, [slug, cat, subcat]);
 
+  const cleanSlug = slug ? slug.replace(/\/$/, "").trim() : '';
+  const canonicalSlug = cleanSlug.toLowerCase();
   const norm = (id) => (id === null || id === undefined) ? '' : String(id).trim();
-  
-  const createSlug = (text) => text?.toString().toLowerCase().trim()
-        .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
-        .replace(/ñ/g, 'n').replace(/\s+/g, '-') || '';
 
   const currentSegment = useMemo(() => {
       if (!menuData) return null;
+      return menuData.find(seg => createSlug(seg.NombreSegmento) === cleanSlug) || null;
+  }, [menuData, cleanSlug, createSlug]);
 
-      const cleanSlug = slug.replace(/\/$/, "");
-      return menuData.find(seg => createSlug(seg.NombreSegmento) === cleanSlug);
-  }, [menuData, slug]);
+  const badgeLogo = useMemo (() => {
+      const found = bannerData?.Iconos?.find(b=> b.Titulo === "IconoDisdel");
+      return found ? `${AppConfig.baseImageUrl}${found.Imagen}` : '';
+    }, [bannerData]);
 
   const activeCategoryData = useMemo(() => {
       if (!currentSegment || !activeCatId) return null;
@@ -68,65 +77,150 @@ const CategoryPage = () => {
       });
   }, [productsData, currentSegment, activeCatId, activeSubCatId]);
 
-  const itemListSchema = useMemo(() => {
+  const defaultImage = useMemo(() => {
+    const found = bannerData?.ImagenPredeterminado?.find(i => i.Titulo?.trim() === "ImagenDefault3");
+    return found?.BannerImagenMovil || found?.Imagen 
+      ? `${AppConfig.baseImageUrl}${found.BannerImagenMovil || found.Imagen}` 
+      : '';
+  }, [bannerData]);
+
+  const catBanner = useMemo(() => {
+    const bannerObj = bannerData?.sliderPrincipal?.[1]; 
     return {
-        "@context": "https://schema.org",
-        "@type": "ItemList",
-        "numberOfItems": filteredProducts.length,
-        "itemListElement": filteredProducts.slice(0, 15).map((prod, index) => ({
-            "@type": "ListItem",
-            "position": index + 1,
-            "url": `https://www.disdelsa.com/producto/${prod.IdProducto}`
-        }))
+      desktop: bannerObj?.Imagen ? `${AppConfig.baseImageUrl}${bannerObj.Imagen}` : '',
+      mobile: bannerObj?.BannerImagenMovil ? `${AppConfig.baseImageUrl}${bannerObj.BannerImagenMovil}` : ''
     };
-  }, [filteredProducts]);
+  }, [bannerData]);
+
+  const seoData = useMemo(() => {
+  const segmentName = currentSegment?.NombreSegmento || "Categoría";
+  const categoryName = activeCategoryData?.NombreCategoria;
+  const subCategoryName = activeCategoryData?.SubCategorias?.find(
+    s => norm(s.IdSubCategoria) === norm(activeSubCatId)
+  )?.NombreSubCategoria;
+
+  let dynamicTitle = segmentName;
+
+  if (categoryName && cat) {
+    dynamicTitle = `${categoryName} | ${segmentName}`;
+  }
+
+  if (subCategoryName && subcat) {
+    dynamicTitle = `${subCategoryName} | ${categoryName}`;
+  }
+
+  return {
+    title: `${dynamicTitle} Mayorista en Guatemala | Disdel`,
+    description: `Distribución de ${dynamicTitle}. Suministros industriales con entrega rápida en toda Guatemala.`,
+    url: `https://disdelsa.com/categoria/${slug}${cat ? '/' + cat : ''}${subcat ? '/' + subcat : ''}`,
+    image: catBanner.desktop || defaultImage
+  };
+}, [currentSegment, activeCategoryData, activeSubCatId, slug, cat, subcat, catBanner, defaultImage]);
+
+  const fullSchema = useMemo(() => {
+    if (!currentSegment) return null;
+    return {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "BreadcrumbList",
+          "@id": `${seoData.url}/#breadcrumb`,
+          "itemListElement": [
+          { "@type": "ListItem", "position": 1, "name": "Inicio", "item": "https://disdelsa.com/" },
+          { "@type": "ListItem", "position": 2, "name": currentSegment.NombreSegmento, "item": `https://disdelsa.com/categoria/${slug}` },
+          // 🚀 Esto es lo que "le explica" a Google los niveles extra que se ven en tu foto
+          ...(cat ? [{ 
+              "@type": "ListItem", 
+              "position": 3, 
+              "name": activeCategoryData?.NombreCategoria || cat, 
+              "item": `https://disdelsa.com/categoria/${slug}/${cat}` 
+          }] : []),
+          ...(subcat ? [{ 
+              "@type": "ListItem", 
+              "position": 4, 
+              "name": subcat.replace(/-/g, ' '), 
+              "item": seoData.url 
+          }] : [])
+        ]
+        },
+        {
+          "@type": "CollectionPage",
+          "@id": `${seoData.url}/#collection`,
+          "url": seoData.url,
+          "name": seoData.title,
+          "description": seoData.description,
+          "publisher": {
+            "@type": "Organization",
+            "name": "Disdel, S.A.",
+            "url": "https://disdelsa.com/"
+          },
+          "mainEntity": {
+            "@type": "ItemList",
+            "numberOfItems": filteredProducts.length,
+            "itemListElement": filteredProducts.slice(0, 40).map((prod, index) => ({
+              "@type": "ListItem",
+              "position": index + 1,
+              "url": `https://disdelsa.com/producto/${String(prod.IdProducto).toLowerCase()}/${createSlug(prod.Descripcion)}`,
+              "name": prod.Descripcion,
+              "image": prod.Imagen ? `${AppConfig.baseImageUrl}productos/${prod.Imagen}` : defaultImage
+            }))
+          }
+        }
+      ]
+    };
+  }, [currentSegment, filteredProducts, seoData, defaultImage]);
 
   useEffect(() => {
-    if (currentSegment && currentSegment.Categorias?.length > 0) {
-        const preSelectedId = location.state?.preSelectedCatId;
-        if (preSelectedId) {
-            setActiveCatId(preSelectedId);
-            window.history.replaceState({}, document.title);
-        } else {
-            setActiveCatId(currentSegment.Categorias[0].IdCategoria);
-        }
+  if (!currentSegment?.Categorias) return;
+
+  if (cat) {
+    const foundCat = currentSegment.Categorias.find(
+      c => createSlug(c.NombreCategoria) === cat
+    );
+
+    if (foundCat) {
+      setActiveCatId(foundCat.IdCategoria);
+
+      if (subcat && foundCat.SubCategorias) {
+        const foundSub = foundCat.SubCategorias.find(
+          s => createSlug(s.NombreSubCategoria) === subcat
+        );
+
+        setActiveSubCatId(foundSub ? foundSub.IdSubCategoria : null);
+      } else {
         setActiveSubCatId(null);
+      }
     }
-  }, [currentSegment, location.state]);
+  } else {
+    setActiveCatId(currentSegment.Categorias[0]?.IdCategoria);
+    setActiveSubCatId(null);
+  }
+}, [cat, subcat, currentSegment, createSlug]);
 
   const handleCategoryClick = (cat) => {
-      setActiveCatId(cat.IdCategoria);
-      setActiveSubCatId(cat.SubCategorias?.length > 0 ? cat.SubCategorias[0].IdSubCategoria : null);
-  };
+      navigate(`/categoria/${slug}/${createSlug(cat.NombreCategoria)}`);
+    };
 
-  const handleScroll = (direction) => {
-    if (scrollRef.current) {
-      const { scrollLeft } = scrollRef.current;
-      const scrollTo = direction === 'left' ? scrollLeft - 150 : scrollLeft + 150;
-      scrollRef.current.scrollTo({ left: scrollTo, behavior: 'smooth' });
+    const handleSubCategoryClick = (subName) => {
+    const currentSubSlug = cat || createSlug(activeCategoryData?.NombreCategoria);
+
+    if (currentSubSlug) {
+      navigate(`/categoria/${slug}/${currentSubSlug}/${createSlug(subName)}`);
     }
-  };
-
-  if (loadingMenu || loadingProducts) {
+    };
+  
+   if (loadingMenu || loadingProducts) {
     return (
       <div className="cat-master-wrapper">
         <div className="cat-container">
-          <div className="skeleton-shimmer" style={{width: '100%', height: isMobile ? '140px' : '200px', borderRadius: '16px', marginBottom: '20px'}}></div>
+          <Skeleton width="100%" height={isMobile ? "150px" : "300px"} style={{ marginBottom: '20px' }} />
           <div className="cat-content-layout">
-            <aside className="cat-sidebar-left">
-               <div className="skeleton-shimmer" style={{width: '100%', height: '300px'}}></div>
-            </aside>
-            <main className="cat-right-column">
-               <div className="cat-grid-products">
-                  {[1,2,3,4].map(n => (
-                    <div key={n} className="skeleton-card">
-                      <div className="skeleton-shimmer" style={{height: '130px'}}></div>
-                      <div className="skeleton-shimmer" style={{height: '18px', width: '90%'}}></div>
-                      <div className="skeleton-shimmer" style={{height: '40px', marginTop: 'auto'}}></div>
-                    </div>
-                  ))}
-               </div>
-            </main>
+             <aside className="cat-sidebar-left"><Skeleton width="100%" height="400px" /></aside>
+             <main className="cat-right-column">
+                <div className="cat-grid-products">
+                  {[1, 2, 3, 4, 5, 6].map(n => <ProductCardSkeleton key={n} />)}
+                </div>
+             </main>
           </div>
         </div>
       </div>
@@ -136,50 +230,60 @@ const CategoryPage = () => {
   if (!currentSegment) return <div className="no-products-msg">Categoría no encontrada</div>;
 
   return (
-    <div className="cat-master-wrapper" style={{ '--cat-color': "#135eab" }}>
+    <div className="cat-master-wrapper">
       <Helmet>
-        <title>{`${currentSegment.NombreSegmento} | Disdel`}</title>
-        <meta name="description" content={`Encuentra los mejores productos de ${currentSegment.NombreSegmento} en Disdel S.A. Suministros de limpieza profesional en Guatemala.`} />
-        <link rel="canonical" href={`https://www.disdelsa.com/categoria/${slug}`} />
-        <script type="application/ld+json">{JSON.stringify(itemListSchema)}</script>
+        <title>{seoData.title}</title>
+        <meta name="description" content={seoData.description} />
+        <link rel="canonical" href={seoData.url} />
+        
+        <meta property="og:title" content={seoData.title} />
+        <meta property="og:description" content={seoData.description} />
+        <meta property="og:image" content={seoData.image} />
+        <meta property="og:url" content={seoData.url} />
+        <meta property="og:type" content="website" />
+        <meta property="og:site_name" content="Disdel" />
+
+        <meta name="twitter:card" content="summary_large_image" />
+        <script type="application/ld+json">{JSON.stringify(fullSchema)}</script>
       </Helmet>
       
       <div className="cat-container">
-        {/* SECCIÓN DEL BANNER DINÁMICO */}
         <div className="cat-header-section">
             <img 
-              src={isMobile ? bannerMob : bannerFijo} 
-              alt="Banner Principal Disdel" 
+              src={isMobile ? (catBanner.mobile || catBanner.desktop) : catBanner.desktop} 
+              alt={currentSegment.NombreSegmento} 
               className="cat-main-banner" 
+              fetchpriority="high"
+              loading="eager"
+              width="1300" height="280"
+              decoding="async"
             />
-            
             {!isMobile && (
               <div className="cat-header-overlay">
-                  <h1 className="cat-segment-title" style={{color:'white'}}>
-                    {currentSegment.NombreSegmento}
-                  </h1>
+                  <h1 className="cat-segment-title">{currentSegment.NombreSegmento}</h1>
               </div>
             )}
         </div>
 
         <div className="cat-content-layout">
           <aside className="cat-sidebar-left">
+            {/* Restaurado el label simple sin flechas */}
             <div className="cat-sidebar-header-mobile">
-                <div className="cat-sidebar-label">SUBCATEGORÍAS</div>
-                <div className="cat-nav-arrows">
-                  <button onClick={() => handleScroll('left')} className="scroll-arrow"><FiChevronLeft /></button>
-                  <button onClick={() => handleScroll('right')} className="scroll-arrow"><FiChevronRight /></button>
-                </div>
+                <div className="cat-sidebar-label">CATEGORÍAS</div>
             </div>
 
-            <div className="cat-sidebar-nav" ref={scrollRef}>
+             <div className="cat-sidebar-nav" ref={scrollRef}>
               {currentSegment.Categorias?.map((cat) => (
-                <div key={cat.IdCategoria} className={`cat-nav-item ${norm(activeCatId) === norm(cat.IdCategoria) ? 'active-filter' : ''}`} onClick={() => handleCategoryClick(cat)}>
+                <Link
+                  key={cat.IdCategoria}
+                  to={`/categoria/${canonicalSlug}/${createSlug(cat.NombreCategoria)}`}
+                  className={`cat-nav-item ${norm(activeCatId) === norm(cat.IdCategoria) ? 'active-filter' : ''}`}
+                >
                   <div className="cat-nav-icon">
-                    <img src={cat.Imagen ? `${AppConfig.baseImageUrl}${cat.Imagen}` : defaultImage} alt={cat.NombreCategoria} />
-                  </div>
+                    <img src={cat.Imagen ? `${AppConfig.baseImageUrl}${cat.Imagen}` : defaultImage} alt={cat.NombreCategoria} width="24" height="24" loading="lazy" />
+                 </div>
                   <span>{cat.NombreCategoria}</span>
-                </div>
+                </Link>
               ))}
             </div>
           </aside>
@@ -188,35 +292,33 @@ const CategoryPage = () => {
             {activeCategoryData?.SubCategorias?.length > 0 && (
                 <div className="cat-subcategories-bar">
                     {activeCategoryData.SubCategorias.map(sub => (
-                        <button key={sub.IdSubCategoria} className={`cat-sub-pill ${norm(activeSubCatId) === norm(sub.IdSubCategoria) ? 'active' : ''}`} onClick={() => setActiveSubCatId(sub.IdSubCategoria)}>
+                        <Link
+                          key={sub.IdSubCategoria}
+                          to={`/categoria/${canonicalSlug}/${createSlug(activeCategoryData?.NombreCategoria)}/${createSlug(sub.NombreSubCategoria)}`}
+                          className={`cat-sub-pill ${norm(activeSubCatId) === norm(sub.IdSubCategoria) ? 'active' : ''}`} style={{ textDecoration: 'none' }}
+                        >
                             {sub.NombreSubCategoria}
-                        </button>
+                        </Link>
                     ))}
                 </div>
             )}
 
-            <div className="cat-grid-products"> 
-              {filteredProducts.map((prod) => (
-                  <div key={prod.IdProducto} className="cat-product-card">
-                    <div className="cat-id-badge">ID: {prod.IdProducto}</div>
-                    <Link to={`/producto/${prod.IdProducto}`} style={{textDecoration:'none', color:'inherit'}}>
-                      <div className="cat-img-wrapper">
-                        <img src={prod.Imagen ? `${AppConfig.baseImageUrl}productos/${prod.Imagen}` : defaultImage} alt={prod.Descripcion} loading="lazy" />
-                      </div>
-                      <span className="cat-card-tag">{prod.Categoria}</span>
-                      <h3 className="cat-title">{prod.Descripcion}</h3>
-                    </Link>
-                    <button className="cat-btn" onClick={() => {
-                        addItem({
-                            ...prod,
-                            presentationSelected: prod.Unidad || prod.Empaque,
-                            unitType: prod.Unidad ? 'Y' : 'N'
-                        });
-                    }}>
-                        Cotizar
-                    </button>
-                  </div>
-              ))}
+           <div className="cat-grid-products"> 
+              {filteredProducts.length > 0 ? (
+                filteredProducts.map((prod, index) => (
+                  /* 🔥 Usamos el componente único. 
+                    Esto hereda automáticamente el SEO y el diseño Pro */
+                  <ProductCard 
+                    key={prod.IdProducto} 
+                    product={prod} 
+                    index={index} 
+                  />
+                ))
+              ) : (
+                <div className="no-products-found" style={{gridColumn: '1/-1', textAlign:'center', padding: '50px'}}>
+                  <p>No se encontraron productos en esta selección.</p>
+                </div>
+              )}
             </div>
           </main>
         </div>

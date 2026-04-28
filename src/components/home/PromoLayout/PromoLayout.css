@@ -9,7 +9,7 @@
 }
 
 .pl-grid-container {
-  max-width: 1200px;
+  max-width: 1290px;
   margin: 0 auto;
   
   /* --- CONFIGURACIÓN POR DEFECTO (PC y TABLET) --- */
@@ -29,7 +29,7 @@
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   cursor: pointer;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
-  height: 220px; /* Altura fija para PC/Tablet */
+  height: 250px; /* Altura fija para PC/Tablet */
   width: 100%;
 }
 

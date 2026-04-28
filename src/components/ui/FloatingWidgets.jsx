@@ -1,12 +1,26 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React,{useMemo} from 'react';
+//import { Link } from 'react-router-dom';
 
 import './FloatingWidgets.css'; 
+import { AppConfig } from 'config/AppConfig';
+import { useBanners } from 'hooks/useBanners';
 
-import opinionsButtonImage from 'assets/icons/OPINIONES.png';
-import whatsappButtonImage from 'assets/icons/CONTACTANOS-WA.png';
+//import opinionsButtonImage from 'assets/icons/IconosFooter/OPINIONES.webp';
+//import whatsappButtonImage from 'assets/icons/IconosFooter/CONTACTANOS-WA.webp';
 
 const FloatingWidgets = () => {
+
+    const {data: bannerData} = useBanners();
+
+    const whatsappButtonImage = useMemo(() => {
+        const found = bannerData?.Iconos?.find(i=> i.Titulo?.trim() === "IconoWHTS");
+
+        const fileName= found?.Imagen;
+        return fileName ? `${AppConfig.baseImageUrl}${fileName}` : '';
+    }, [bannerData]);
+
+    if (!whatsappButtonImage) return null;
+
     return (
         <div className="footer-floating-widgets">
             {/* <Link to="/opiniones" className="widget-item widget-opinions">

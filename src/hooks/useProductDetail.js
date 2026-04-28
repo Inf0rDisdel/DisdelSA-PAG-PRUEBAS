@@ -5,12 +5,16 @@ const fetchProductDetail = async (id) => {
     // 1. Verificamos que el ID no sea undefined
     if (!id) throw new Error("ID de producto inválido");
 
+    const idLimpioParaAPI = String(id).trim().toUpperCase();
+
     console.log("📡 Enviando petición para ID:", id); // Debug para ti
 
     // 2. Enviamos el objeto JSON exacto que espera C#
     const { data } = await ApiMobil.post('/api/PaginaWeb/GetProductoDetalle', 
-        { idProducto: String(id) } // Aseguramos que sea string
+        { idProducto: idLimpioParaAPI }
     );
+    
+    if(!data) throw new Error("Producto no encontrado en DB");
     
     return data;
 };
@@ -19,8 +23,10 @@ export const useProductDetail = (productId) => {
     return useQuery({
         queryKey: ['producto-detalle', productId],
         queryFn: () => fetchProductDetail(productId),
-        enabled: !!productId, // Solo ejecuta si hay ID
-        staleTime: 1000 * 60 * 30, 
-        retry: 1
+        // No disparamos la petición si el ID está vacío
+        enabled: !!productId && productId.length > 0, 
+        staleTime: 1000 * 60 * 30, // 30 minutos en caché
+        retry: 1, 
+        refetchOnWindowFocus: false 
     });
 };

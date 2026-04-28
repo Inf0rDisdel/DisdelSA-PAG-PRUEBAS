@@ -1,11 +1,10 @@
 import React, { useMemo } from 'react';
 import { Helmet } from 'react-helmet-async';
 import useCartStore from 'store/useCartStore';
-import { toast } from 'react-hot-toast'; // Importación necesaria
+import { toast } from 'react-hot-toast'; 
 import { useProducts } from 'hooks/useProducts'; 
 import { AppConfig } from 'config/AppConfig'; 
 
-// Componentes
 import FeaturedBrands from 'components/home/ComercialAllies/FeaturedBrands';
 import CategoryGrid from 'components/home/FeaturedCategories/CategoryGrid';
 import BannerSlider from 'components/home/HeroSlider/BannerSlider';
@@ -16,73 +15,135 @@ import InfoSection from 'components/home/InfoSection/InfoSection';
 import PromoLayout from 'components/home/PromoLayout/PromoLayout';
 import ProductCarousel from 'components/Carousel/ProductCarousel';
 
+const fullGraphSchema = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Organization",
+        "@id": "https://disdelsa.com/#organization",
+        "name": "Disdel, S.A.",
+        "alternateName": "Disdelsa",
+        "url": "https://disdelsa.com/",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "https://disdelsa.com/logo.png"
+        },
+        "image": "https://disdelsa.com/og-image.jpg",
+        "description": "Distribuidor mayorista líder en Guatemala de suministros de limpieza, higiene, cafetería y equipo de protección personal para empresas e instituciones.",
+        "address": {
+          "@type": "PostalAddress",
+          "streetAddress": "15 Calle 16-30, Zona 1",
+          "addressLocality": "Ciudad de Guatemala",
+          "postalCode": "01001",
+          "addressCountry": "GT"
+        },
+        "contactPoint": {
+          "@type": "ContactPoint",
+          "telephone": "+502-2422-6120",
+          "contactType": "ventas y servicio al cliente",
+          "areaServed": "GT",
+          "availableLanguage": "Spanish"
+        },
+        "sameAs": [
+          "https://www.facebook.com/disdelsagt",
+          "https://www.instagram.com/disdelsagt",
+          "https://www.linkedin.com/company/disdelsa"
+        ]
+      },
+      {
+        "@type": "WebSite",
+        "@id": "https://disdelsa.com/#website",
+        "url": "https://disdelsa.com/",
+        "name": "Disdel Suministros Institucionales",
+        "publisher": { "@id": "https://disdelsa.com/#organization" },
+        "potentialAction": {
+          "@type": "SearchAction",
+          "target": "https://disdelsa.com/buscar?q={search_term_string}",
+          "query-input": "required name=search_term_string"
+        }
+      }
+    ]
+  };
+
 const HomePage = () => {
   const addItem = useCartStore((state) => state.addItem);
   const { data: allProducts, isLoading } = useProducts();
 
-  const orgSchema = {
-    "@context": "https://schema.org",
-    "@type": "Organization",
-    "name": "Disdel, S.A.",
-    "url": "https://www.disdelsa.com/",
-    "logo": "https://www.disdelsa.com/logo.png",
-    "contactPoint": {
-      "@type": "ContactPoint",
-      "telephone": "+502-2422-6100",
-      "contactType": "customer service"
-    }
-  };
+  const cleanBaseUrl = useMemo(() => 
+    AppConfig.baseImageUrl.endsWith('/') ? AppConfig.baseImageUrl : `${AppConfig.baseImageUrl}/`
+  , []);
 
   const handleAddToCart = (product) => {
-    // Definimos la unidad por defecto al agregar desde el inicio
-    const defaultPresentation = product.Unidad || 'Unidad';
-    const defaultType = product.Unidad ? 'Y' : 'N';
-
     addItem({
       ...product,
-      presentationSelected: defaultPresentation,
-      unitType: defaultType
+      presentationSelected: product.Unidad || 'Unidad',
+      unitType: product.Unidad ? 'Y' : 'N'
+    });
+    toast.success(`${product.Descripcion.substring(0, 20)}... añadido`, {
+      position: 'bottom-right',
+      style: { background: '#135eab', color: '#fff' }
     });
   };
 
   const carruseles = useMemo(() => {
     if (!allProducts || !Array.isArray(allProducts)) {
-      return { higiene: [], coffee: [], cotizados: [] };
+        return { higiene: [], coffee: [], cotizados: [] };
     }
-    const shuffleAndSlice = (array, count) => {
-      return [...array]
-        .sort(() => 0.5 - Math.random())
-        .slice(0, count)
-        .map(p => ({
-          id: p.IdProducto,
-          name: p.Descripcion,
-          image: `${AppConfig.baseImageUrl}productos/${p.Imagen}`,
-          disdelId: p.IdProducto,
-          ...p 
-        }));
-    };
-    const higieneData = allProducts.filter(p => String(p.IdSegmento) === "1059");
-    const coffeeData = allProducts.filter(p => String(p.IdCategoria) === "2166");
-    const cotizadosData = [...allProducts];
+
+    const format = (p) => ({
+        id: p.IdProducto,
+        name: p.Descripcion,
+        image: `${cleanBaseUrl}productos/${p.Imagen}`,
+        disdelId: p.IdProducto,
+        ...p 
+    });
+
+    // EFICIENCIA: Una sola iteración para clasificar
+    const higieneTemp = [];
+    const coffeeTemp = [];
+    const cotizadosTemp = allProducts.slice(0, 12).map(format);
+
+    allProducts.forEach(p => {
+        if (String(p.IdSegmento) === "1059") higieneTemp.push(format(p));
+        if (String(p.IdCategoria) === "2166") coffeeTemp.push(format(p));
+    });
 
     return {
-      higiene: shuffleAndSlice(higieneData, 15),
-      coffee: shuffleAndSlice(coffeeData, 15),
-      cotizados: shuffleAndSlice(cotizadosData, 10)
+        cotizados: cotizadosTemp,
+        higiene: higieneTemp.length > 0 ? higieneTemp.slice(0, 15) : allProducts.slice(10, 25).map(format),
+        coffee: coffeeTemp.length > 0 ? coffeeTemp.slice(0, 15) : allProducts.slice(25, 40).map(format)
     };
-  }, [allProducts]);
+  }, [allProducts, cleanBaseUrl]);
 
   return (
     <main>
       <Helmet>
-        <title>Disdel, S.A. | Suministros de Limpieza y Mantenimiento</title>
-        <script type="application/ld+json">{JSON.stringify(orgSchema)}</script>
+        {/* --- 🚀 SEO TÉCNICO B2B --- */}
+        <title>Disdel | Suministros de Limpieza, Higiene , Protección corporal, cafetería Mayorista en Guatemala</title>
+        <meta name="description" content="Distribuidor institucional líder en Guatemala. Proveemos suministros de limpieza profesional, equipo de protección personal (EPP) y cafetería para hoteles, hospitales y empresas." />
+        <link rel="canonical" href="https://disdelsa.com/" />
+
+        {/* --- OPEN GRAPH (Facebook, WhatsApp, LinkedIn) --- */}
+        <meta property="og:type" content="website" />
+        <meta property="og:title" content="Disdel | Soluciones Integrales para Empresas en Guatemala" />
+        <meta property="og:description" content="Encuentra marcas líderes como Kimberly Clark, 3M y Wiese. Cotización inmediata para suministros institucionales." />
+        <meta property="og:image" content="https://disdelsa.com/og-image.jpg" />
+        <meta property="og:url" content="https://disdelsa.com/" />
+        <meta property="og:site_name" content="Disdel, S.A." />
+
+        {/* --- TWITTER CARD --- */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="Disdel Guatemala - Suministros Mayoristas" />
+        <meta name="twitter:description" content="Abastecimiento técnico para empresas de limpieza y mantenimiento." />
+
+        {/* --- SCHEMAS --- */}
+        <script type="application/ld+json">{JSON.stringify(fullGraphSchema)}</script>
       </Helmet>
 
       <HeroSlider />
 
-      <CategoryGrid isLoading={isLoading}/>
-      <FeaturedBrands isLoading={isLoading}/>
+      <CategoryGrid /> 
+      <FeaturedBrands />
 
       <BannerSlider />
 
@@ -98,7 +159,6 @@ const HomePage = () => {
           />
         </div>
       )}
-
 
       {(isLoading || carruseles.higiene.length > 0) && (
         <div className="carousel-wrapper">

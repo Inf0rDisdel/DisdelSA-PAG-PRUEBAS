@@ -1,36 +1,58 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom'; 
+import React,{useMemo} from 'react';
 import Slider from 'react-slick';
 import "slick-carousel/slick/slick.css"; 
 import "slick-carousel/slick/slick-theme.css";
 import './ProductCarousel.css';
-import fondoImagen from 'assets/icons/FONDO-BLANCO.jpg';
+import { AppConfig } from 'config/AppConfig';
+import { useBanners } from 'hooks/useBanners';
+import ProductCard from 'components/ui/ProductCard/ProductCard';
+import ProductCardSkeleton from 'components/ui/ProductCard/ProductCardSkeleton';
+import Skeleton from 'components/ui/Skeleton/Skeleton';
 
-const ProductCarousel = ({ title, products = [],isLoading, addToCart, variant = '' }) => {
-   if (isLoading) {
+const ProductCarousel = ({ title, products = [], isLoading, variant = '' }) => {
+
+  const{data: bannerData} = useBanners();
+
+  const images = useMemo(() => {
+    const getUrl = (imgName) => imgName? `${AppConfig.baseImageUrl}${imgName}` : '';
+
+    const fondoImagen = bannerData?.ImagenPredeterminado?.find(i=> i.Titulo?.trim() === "FondoCarousel")?.Imagen;
+
+    return {
+      fondoImagen: getUrl(fondoImagen)
+    };
+  }, [bannerData]);
+
+  if (isLoading) {
     return (
       <div className="product-carousel-container">
-        <div className="skeleton-box" style={{ width: '200px', height: '30px', borderRadius: '50px', marginBottom: '20px' }}></div>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
-          {[1, 2].map((n) => (
-            <div key={n} className="product-card" style={{ border: '1px solid #eee' }}>
-              <div className="skeleton-box" style={{ width: '100%', height: '120px', borderRadius: '10px' }}></div>
-              <div className="skeleton-box" style={{ width: '80%', height: '15px', marginTop: '15px' }}></div>
-              <div className="skeleton-box" style={{ width: '60%', height: '12px', marginTop: '10px' }}></div>
-              <div className="skeleton-box" style={{ width: '90%', height: '40px', marginTop: 'auto', borderRadius: '8px' }}></div>
-            </div>
+        <div style={{ padding: '0 20px' }}>
+          {/* Título en esqueleto */}
+          <Skeleton width="250px" height="30px" style={{ marginBottom: '25px' }} />
+        </div>
+        <div style={{ 
+          display: 'grid', 
+          // Ajustamos a 5 columnas para que sea igual al slider real
+          gridTemplateColumns: 'repeat(5, 1fr)', 
+          gap: '15px',
+          padding: '0 20px',
+          overflow: 'hidden'
+        }}>
+          {[1, 2, 3, 4, 5].map((n) => (
+            <ProductCardSkeleton key={n} />
           ))}
         </div>
       </div>
     );
-  };
-
+}
   const settings = {
-    dots: true,
-    infinite: products && products.length > 4, 
-    speed: 500,
-    slidesToShow: 4, 
+    dots: false,
+    infinite: products && products.length > 5, 
+    speed: 400,
+    slidesToShow: 5, 
     slidesToScroll: 1,
+    lazyLoad: 'progressive',
+    cssEase: 'cubic-bezier(0.25,0.46,0.45,0.94',
     responsive: [
       {
         breakpoint: 1024,
@@ -43,14 +65,18 @@ const ProductCarousel = ({ title, products = [],isLoading, addToCart, variant = 
         }
       },
       {
-        breakpoint: 600, 
+        breakpoint: 480, 
         settings: {
           slidesToShow: 2, 
-          slidesToScroll: 2,
+          slidesToScroll: 1,
           dots: false,
-          arrows: false
+          arrows: false,
+          swipeToSlide: true,
+          infinite:products && products.length>2,
+          adaptiveHeight: false
         }
-      }
+      },
+      
     ]
   };
 
@@ -58,47 +84,19 @@ const ProductCarousel = ({ title, products = [],isLoading, addToCart, variant = 
     return null; 
   }
 
-  return (
+   return (
     <div className={`product-carousel-container ${variant}`}
-      style={{ 
-        backgroundImage: `url(${fondoImagen})`,
-        backgroundColor: '#ffffff' 
-      }} 
+      style={{ backgroundImage: `url(${images.fondoImagen})` }} 
     >
       <h2 className="carousel-title">{title}</h2>
       <Slider {...settings}>
-        {products.map((product) => {
-          if (!product || !product.id) return null; 
-          
+        {products.map((product, index) => {
+          // Validamos con IdProducto (que es el que viene de tu API)
+          if (!product || (!product.IdProducto && !product.id)) return null;
+
           return (
-            <div key={product.id}>
-              <div className="product-card">
-                
-                <Link 
-                  to={`/producto/${product.id}`} 
-                  state={{ product: product }}
-                  className='product_link'
-                  style={{ 
-                    textDecoration: 'none', 
-                    color: 'inherit', 
-                    display: 'flex',           
-                    flexDirection: 'column',   
-                    flexGrow: 1,               
-                    justifyContent: 'flex-start' 
-                  }}
-                >
-                  <img src={product.image} alt={product.name} className="product-image" />
-                  <h3 className="product-name">{product.name}</h3>
-                  <p className="product-disdel-id">{product.disdelId}</p>
-                </Link>
-                
-                <button 
-                  className="add-cart-button"
-                  onClick={() => addToCart(product)}
-                >
-                  Cotizar
-                </button>
-              </div>
+            <div key={product.IdProducto || product.id} className="carousel-item-padding">
+              <ProductCard product={product} index={index} />
             </div>
           );
         })}

@@ -8,14 +8,21 @@ import './CategoryGrid.css';
 
 import { AppConfig } from '../../../config/AppConfig';
 import { useMenu } from '../../../hooks/useMenu';
-import defaultIcon from 'assets/images/categories/KCP.jpg'; 
+import { useBanners } from 'hooks/useBanners';
+import Skeleton from 'components/ui/Skeleton/Skeleton';
 
-const CategoryGrid = ({isLoading}) => {
-  // --- 1. TODOS LOS HOOKS ARRIBA ---
-  const { data: menuData } = useMenu();
+const CategoryGrid = ({ isLoading: isLoadingProp }) => {
+  const { data: menuData, isLoading: isLoadingMenu } = useMenu();
+  const { data: bannerData, isLoading: isLoadingBanners } = useBanners();
+  
   const [sliderKey, setSliderKey] = useState(Date.now());
+  const loading = isLoadingProp || isLoadingMenu || isLoadingBanners;
 
-  // Renombramos la variable interna para que no choque con las props
+  const defaultImage = useMemo(() => {
+    const imgDb = bannerData?.ImagenPredeterminado?.find (b=> b.Titulo === "ImagenDefault");
+    return imgDb ? `${AppConfig.baseImageUrl}${imgDb.Imagen}` : ''; 
+  }, [bannerData]);
+
   const filteredCategories = useMemo(() => {
       if (!menuData) return [];
       const excludedBrands = ['KIMBERLY', '3M', 'WIESE', 'SILVER'];
@@ -25,24 +32,19 @@ const CategoryGrid = ({isLoading}) => {
   }, [menuData]);
 
   useEffect(() => {
-    const handleResize = () => {
-      setTimeout(() => {
-        setSliderKey(Date.now());
-      }, 100);
-    };
+    const handleResize = () => setSliderKey(Date.now());
     window.addEventListener('resize', handleResize);
-    handleResize();
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  // --- 2. HELPERS ---
   const createSlug = (text) => {
-      return text
-        .toString()
-        .toLowerCase()
-        .trim()
+    if (!text) return '';
+    return text.toString().toLowerCase().trim()
         .normalize("NFD").replace(/[\u0300-\u036f]/g, "") 
-        .replace(/\s+/g, '-'); 
+        .replace(/ñ/g, 'n') // Sincronizado
+        .replace(/[^a-z0-9 -]/g, '') 
+        .replace(/\s+/g, '-') 
+        .replace(/-+/g, '-'); 
   };
 
   const settings = {
@@ -58,54 +60,51 @@ const CategoryGrid = ({isLoading}) => {
       { breakpoint: 468, settings: { slidesToShow: 3, slidesToScroll: 3, arrows: false } }
     ]
   };
-
-  // --- 3. CONDICIONALES DE RENDERIZADO ---
   
-  // Skeleton Loader
-  if (isLoading) {
+  if (loading) {
     return (
-      <div className="category-grid" style={{ 
-        display: 'grid', 
-        gridTemplateColumns: 'repeat(2, 1fr)', 
-        gap: '15px', 
-        padding: '20px' 
-      }}>
-        {[1, 2, 3, 4].map((i) => (
-          <div key={i} style={{ background: 'white', padding: '10px', borderRadius: '12px' }}>
-            <div className="skeleton-shimmer" style={{ width: '100%', height: '100px', borderRadius: '8px' }}></div>
-            <div className="skeleton-shimmer" style={{ width: '70%', height: '14px', marginTop: '10px', borderRadius: '4px' }}></div>
+      <section className="cgs-section" style={{ minHeight: '400px' }}>
+        <h2 className="cgs-title">Categorías Destacadas</h2>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '20px' }}>
+            {[1, 2, 3, 4].map((i) => (
+              <div key={i} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                <Skeleton width="100%" height="240px" style={{ borderRadius: '20px' }} />
+                <Skeleton width="80%" height="20px" style={{ marginTop: '15px' }} />
+              </div>
+            ))}
           </div>
-        ))}
-      </div>
+      </section>
     );
   }
 
-  // Si no hay datos después de cargar
-  if (!filteredCategories.length) return null;
+  if (!loading && (!filteredCategories || filteredCategories.length === 0)) {
+    return null;
+  }
 
   return (
-    <section className="cgs-section">
+    <section className="cgs-section" style={{ minHeight: '400px' }}>
       <h2 className="cgs-title">Categorías Destacadas</h2>
       <div className="cgs-slider">
-        <Slider key={sliderKey} {...settings}>
-          {filteredCategories.map((category) => (
-            <div key={category.IdSegmento}>
-              <Link 
-                className="cgs-item" 
-                to={`/categoria/${createSlug(category.NombreSegmento)}`}
-              >
-                <div className="cgs-image-wrapper">
-                  <img 
-                    src={category.Imagen ? `${AppConfig.baseImageUrl}${category.Imagen}` : defaultIcon} 
-                    alt={category.NombreSegmento} 
-                    className="cgs-image" 
-                  />
-                </div>
-                <p>{category.NombreSegmento}</p>
-              </Link>
-            </div>
-          ))}
-        </Slider>
+          <Slider key={sliderKey} {...settings}>
+            {filteredCategories.map((category, index) => (
+              <div key={category.IdSegmento}>
+                <Link className="cgs-item" to={`/categoria/${createSlug(category.NombreSegmento)}`}>
+                  <div className="cgs-image-wrapper">
+                    <img 
+                      src={category.Imagen ? `${AppConfig.baseImageUrl}${category.Imagen}` : defaultImage} 
+                      alt={category.NombreSegmento} 
+                      className="cgs-image" 
+                      loading={index < 4 ? "eager" : "lazy"} 
+                      decoding="async"
+                      // ✅ CORRECCIÓN: Minúsculas para evitar Warning de React
+                      fetchpriority={index < 4 ? "high" : "low"} 
+                    />
+                  </div>
+                  <p>{category.NombreSegmento}</p>
+                </Link>
+              </div>
+            ))}
+          </Slider>
       </div>
     </section>
   );

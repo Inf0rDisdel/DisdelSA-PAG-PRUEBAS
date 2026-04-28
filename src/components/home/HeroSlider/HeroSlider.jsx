@@ -1,65 +1,115 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Carousel } from 'react-responsive-carousel';
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 
-// 1. Importamos tu Configuración Global
 import { AppConfig } from '../../../config/AppConfig';
-
-// 2. Importamos Hooks y Estilos
 import { useBanners } from '../../../hooks/useBanners';
 import './HeroSlider.css';
 
 const HeroSlider = () => {
   const { data: banners, isLoading, isError } = useBanners();
+  const[isMobile, setIsMobile] = useState(window.innerWidth <= 480);
 
-  if (isLoading || isError) return null;
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth <= 480);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
-  return (
-    <div className="main-container">
+  if (isLoading || isError) {
+    return <div className="main-container" style={{ height: isMobile ? '210px' : '320px' }}></div>;
+  }
 
-      {/* --- BANNERS LATERALES (Tipo 26) --- */}
-      <div className="banners-container">
-        {banners.lateralesPrincipal?.slice(0, 2).map((ban) => (
-            <div className="banner-item" key={ban.EntityID}>
-                <img 
-                    // 🔥 USAMOS AppConfig AQUÍ
-                    src={`${AppConfig.baseImageUrl}${ban.Imagen}`} 
-                    alt={ban.Titulo || "Disdelsa, distribucion y comercializacion de productos de limpieza"} 
-                />
-            </div>
-        ))}
-      </div>
 
-      {/* --- SLIDER PRINCIPAL (Tipo 3) --- */}
-      <div className="slider-container">
-        <div className="carousel-wrapper">
-          
-          {banners.sliderPrincipal?.length > 0 && (
+  if (!banners) return null;
+
+   return (
+    <section className="main-container" aria-label="Promociones principales">
+      {isMobile ? (
+        <>
+          <div className="mobile-hero-carousel">
             <Carousel
-                showArrows={false}
-                showThumbs={false}
-                showStatus={false}
-                infiniteLoop={true}
-                autoPlay={true}
-                interval={4000}
-                stopOnHover={true}
+              showArrows={false}
+              showThumbs={false}
+              showStatus={false}
+              infiniteLoop={true}
+              autoPlay={true}
+              interval={3000}
             >
-                {banners.sliderPrincipal.map((slide) => (
-                    <div key={slide.EntityID}>
-                        <img 
-                            // 🔥 USAMOS AppConfig AQUÍ TAMBIÉN
-                            src={`${AppConfig.baseImageUrl}${slide.BannerImagenMovil}`} 
-                            alt={slide.Titulo || "Promoción Principal"} 
-                        />
-                    </div>
-                ))}
+              {banners.sliderPrincipal.map((slide, index) => (
+                <div key={slide.EntityID}>
+                  <img 
+                    src={`${AppConfig.baseImageUrl}${slide.BannerImagenMovil || slide.Imagen}`} 
+                    alt={slide.Titulo || "Suministros de limpieza Disdel"} 
+                    // 🔥 SEO FIX 2 (LCP): Prioridad alta solo a la primera imagen
+                    fetchpriority={index === 0 ? "high" : "auto"}
+                    loading={index === 0 ? "eager" : "lazy"}
+                    decoding="async"
+                  />
+                </div>
+              ))}
             </Carousel>
-          )}
+          </div>
 
-        </div>
-      </div>
+          <div className="banners-container">
+            {banners.lateralesPrincipal?.slice(0, 1).map((ban) => (
+              <div className="banner-item" key={ban.EntityID}>
+                <img 
+                  src={`${AppConfig.baseImageUrl}${ban.Imagen}`} 
+                  alt={ban.Titulo || "Distribuidor autorizado"} 
+                  loading="lazy"
+                  decoding="async"
+                />
+              </div>
+            ))}
+          </div>
+        </>
+      ) : (
+        <>
+          <div className="banners-container">
+            {banners.lateralesPrincipal?.slice(0, 2).map((ban) => (
+              <div className="banner-item" key={ban.EntityID}>
+                <img 
+                  src={`${AppConfig.baseImageUrl}${ban.Imagen}`} 
+                  alt={ban.Titulo || "Productos para empresas Guatemala"} 
+                  loading="lazy"
+                  decoding="async"
+                />
+              </div>
+            ))}
+          </div>
 
-    </div>
+          <div className="slider-container">
+            <div className="carousel-wrapper">
+              {banners.sliderPrincipal?.length > 0 && (
+                <Carousel
+                  showArrows={false}
+                  showThumbs={false}
+                  showStatus={false}
+                  infiniteLoop={true}
+                  autoPlay={true}
+                  interval={4000}
+                  stopOnHover={true}
+                >
+                  {banners.sliderPrincipal.map((slide, index) => (
+                    <div key={slide.EntityID}>
+                      <img 
+                        src={`${AppConfig.baseImageUrl}${slide.BannerImagenMovil}`} 
+                        alt={slide.Titulo || "Catálogo industrial Disdel"} 
+                        // 🔥 Optimización LCP Escritorio
+                        fetchpriority={index === 0 ? "high" : "low"}
+                        loading={index === 0 ? "eager" : "lazy"}
+                        decoding="async"
+                      />
+                    </div>
+                  ))}
+                </Carousel>
+              )}
+            </div>
+          </div>
+        </>
+      )}
+    </section>
   );
 };
 
