@@ -14,8 +14,10 @@ import './App.css';
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      refetchOnWindowFocus: false, // Evita recargas innecesarias al cambiar de pestaña
-      retry: 1, // Reintenta una vez si falla
+      refetchOnWindowFocus: false,
+      retry: 1,
+      // PERFORMANCE: Aumentamos el staleTime global para evitar peticiones flash
+      staleTime: 1000 * 60 * 5, 
     },
   },
 });
@@ -24,7 +26,6 @@ function App() {
   return (
     // 3. ENVOLVER CON EL PROVIDER
     <QueryClientProvider client={queryClient}>
-      <HelmetProvider>
         <div className="App">
           {/* Toaster para las notificaciones de Zustand y Query */}
           <Toaster /> 
@@ -34,14 +35,13 @@ function App() {
           
           <ScrollToTop/>
           
-          <main>
+          <main role='main'>
             <AppRouter />
           </main>
           
           <FloatingWidgets />
           <Footer />
         </div>
-      </HelmetProvider>
     </QueryClientProvider>
   );
 }

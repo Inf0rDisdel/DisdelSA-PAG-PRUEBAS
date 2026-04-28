@@ -2,6 +2,7 @@
   "name": "disdel-tienda",
   "version": "0.1.0",
   "private": true,
+  "homepage": "/",
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^6.5.2",
     "@fortawesome/free-solid-svg-icons": "^6.5.2",
@@ -10,7 +11,7 @@
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
-    "axios": "^1.13.2",
+    "axios": "^1.13.5",
     "framer-motion": "^12.34.2",
     "gsap": "^3.12.5",
     "react": "^18.2.0",
@@ -32,6 +33,7 @@
     "zustand": "^5.0.8"
   },
   "scripts": {
+    "prebuild": "node public/generar-sitemap.js",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",

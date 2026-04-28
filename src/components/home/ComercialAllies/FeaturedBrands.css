@@ -1,21 +1,25 @@
-/* --- ESTILOS PROTEGIDOS (Solo afectan a este componente) --- */
+
 
 .featured-brands-section {
-  max-width: 1200px;
-  margin: 8px auto;
-  padding: 5px 8px;
+  max-width: 1300px;
+  margin: 0 auto;
+  margin-top: 0 !important;
+  padding: 0px 10px;
   text-align: left;
+  display: block;
+  padding-top: 0 !important;
+  min-height: auto !important;
 }
 
 .featured-brands-section .section-title {
   display: inline-block; /* Se ajusta solo al ancho del texto */
-  padding: 3px 20px;
+  padding: 8px 28px;
   background-color: white;
   border: 1px solid #b4dbed;
-  border-radius: 50px;
+  border-radius: 22px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-  margin-bottom: 5px; 
-  font-size: 1.2rem;   
+  margin-bottom: 10px; 
+  font-size: 1.3rem;   
   color: #135eab !important;
   white-space: nowrap; 
 }
@@ -24,7 +28,8 @@
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: 10px;
+  gap: 15px;
+  min-height: 250px; 
 }
 
 .featured-brands-section .brand-item {
@@ -32,24 +37,29 @@
   justify-content: center;
   align-items: center;
   flex: 1 1 200px;
-  max-width: 300px;
+  max-width: 340px;
+  height: 250px;
   padding: 0px;
   box-sizing: border-box;
 
-  border:2px solid transparent;
-  border-radius: 30px;
+  border:1px solid #f0f0f0;
+  border-radius: 35px;
 
   transition: all 0.3s ease;
   cursor:pointer;
-  background-color: transparent;
+  background-color: #ffffff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+
+  transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+  cursor: pointer;
 }
 
 /* --- EFECTO LEVANTAR (HOVER) --- */
 .featured-brands-section .brand-item:hover {
-  transform: translateY(-8px); /* Se eleva 8 píxeles */
+  transform: translateY(-10px); /* Se eleva 8 píxeles */
   border-color: #476f96;
   background-color: #ffffff;
-  box-shadow: 0 10px 20px rgba(13, 94, 171, 0.1);
+  box-shadow: 0 20px 40px rgba(13, 94, 171, 0.1);
 }
 
 
@@ -63,34 +73,85 @@
 
 /* Tablet (Solo afecta a brand-item dentro de esta sección) */
 @media (max-width: 1024px) {
+   .featured-brands-section .brands-container {
+    gap: 5px !important; /* 🔥 Más pegados entre ellos */
+    padding: 0 12px;
+  }
+
   .featured-brands-section .brand-item {
-    flex-basis: calc(25% - 12px);
-    max-width: calc(25% - 12px);
+    /* Mantenemos 4 por fila pero con más presencia */
+    flex: 0 0 calc(25% - 5px) !important; 
+    max-width: calc(25% - 5px) !important;
+    height: 100%; /* Altura fija para que el contenedor sea grande */
+    padding: 0;
+  }
+
+  .featured-brands-section {
+    padding-top: 0 !important;
+    margin-top: -10px !important; /* Subimos toda la sección */
+  }
+
+
+  .featured-brands-section .brand-item img {
+    /* 🔥 Forzamos a que el logo crezca dentro de ese contenedor */
+    max-width: 200px !important; 
+    max-height: 200px !important;
+  }
+  
+  .featured-brands-section .section-title {
+    margin-left: 15px; 
+    /* Subimos el título aún más para eliminar el hueco */
+    margin-top: -35px !important; 
+    margin-bottom: 10px !important;
+    font-size: 1.1rem;
   }
 }
-
 /* --- SOLO PARA MOVILES (≤ 480px) --- */
 @media (max-width: 480px) {
-  /* En móvil solemos quitar el borde hover porque no hay puntero, 
-     pero si quieres que se vea al tocarlo, se mantiene igual */
-  .featured-brands-section .phone-brand-link {
+  
+  .featured-brands-section {
+    /* Tiramos de toda la sección hacia arriba */
+    margin-top: -175px !important; 
+    padding-top: 0 !important;
+    min-height: auto !important;
+  }
+
+  .section-title {
+    display: table !important;           
+    /* Reset de márgenes: 0 arriba para que mande el margin de la sección, 
+       y poco espacio abajo para que los logos no se separen del título */
+    margin: 0 auto 5px auto !important; 
+    text-align: center !important;
+    border: none !important; 
+    box-shadow: none !important; 
+    background-color: transparent !important;
+  }
+
+  /* 1. Mantenemos el tamaño que pediste (140px) */
+  .featured-brands-section .phone-brand-link,
+  .featured-brands-section .brand-item {
     display: flex !important;
     justify-content: center;
     align-items: center;
     height: 140px; 
-    border: 2px solid transparent;
-    border-radius: 20px;
-    transition: all 0.3s ease;
+    border: none !important;          
+    border-radius: 0 !important;      
+    box-shadow: none !important;      
+    background-color: transparent !important;
   }
 
-  .featured-brands-section .phone-brand-link:active {
-    border-color: #135eab;
-    transform: scale(0.95);
+  /* 2. Anulamos efectos táctiles */
+  .featured-brands-section .phone-brand-link:active,
+  .featured-brands-section .brand-item:hover,
+  .featured-brands-section .brand-item:active {
+    transform: none !important;       
   }
 
-  .featured-brands-section .phone-brand-img {
-    max-width: 140px; 
-    max-height: 140px;
+  /* 3. Imagen (Mantenemos tamaño actual) */
+  .featured-brands-section .phone-brand-img,
+  .featured-brands-section .brand-item img {
+    max-width: 150px; 
+    max-height: 150px;
     object-fit: contain;
   }
 }

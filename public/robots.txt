@@ -1,6 +1,9 @@
 # https://www.robotstxt.org/robotstxt.html
 User-agent: *
 Allow: /
+Allow: /producto/
+Allow: /categoria/
+Allow: /marca/
 
 # No queremos que Google indexe páginas privadas o de proceso
 Disallow: /carrito
@@ -9,4 +12,4 @@ Disallow: /login
 Disallow: /my-business
 
 # Avisar a Google dónde está el mapa de la web
-Sitemap: https://www.disdelsa.com/sitemap.xml
+Sitemap: https://disdelsa.com/sitemap.xml

@@ -5,107 +5,145 @@
 }
 
 .container {
-  max-width: 1200px; /* Un poco más ancho para que quepan bien */
+  max-width: 1300px;
   margin: 0 auto;
   padding: 0 15px;
 }
 
-.searchHeader {
-  margin-bottom: 25px;
-  border-bottom: 1px solid #eee;
-  padding-bottom: 15px;
+/* --- LAYOUT MASTER --- */
+.searchContentLayout {
+  display: flex;
+  gap: 30px;
+  align-items: flex-start;
 }
 
-.searchHeader h1 {
-  font-size: 22px;
-  color: #333;
-  margin-bottom: 5px;
+.filterSidebar {
+  flex: 0 0 260px;
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  border: 1px solid #eee;
+  position: sticky;
+  top: 20px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.03);
 }
 
-.searchHeader h1 span {
-  color: #135eab;
-}
-
-.metchCount {
-  font-size: 14px;
-  color: #666;
+.mainContent {
+  flex: 1;
+  width: 100%;
 }
 
 .productGrid {
   display: grid;
-  /* Aumentamos el ancho mínimo a 260px para que las cards respiren */
-  grid-template-columns: repeat(3, 1fr); 
-  
-  /* Aumentamos la separación a 35px */
-  gap: 15px; 
-  
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); 
+  gap: 25px;
   padding: 10px 0;
   width: 100%;
 }
 
-.grid-container {
-  display: grid;
-  /* Separación de 30px entre cards */
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-  gap: 30px; 
-  padding: 20px 0;
+/* --- FILTROS --- */
+.filterGroup h4 {
+  font-size: 14px;
+  text-transform: uppercase;
+  color: #135eab;
+  margin-bottom: 12px;
+  border-bottom: 1px solid #f0f0f0;
+  padding-bottom: 5px;
 }
 
-.noResults {
-  text-align: center;
-  background: white;
-  padding: 60px;
-  border-radius: 10px;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+.filterGroup ul {
+  list-style: none;
+  padding: 0;
+  max-height: 250px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #135eab #f0f0f0;
 }
 
-.btnBack {
-  background: #135eab;
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 5px;
+.filterGroup ul::-webkit-scrollbar { width: 6px; }
+.filterGroup ul::-webkit-scrollbar-track { background: #f1f1f1; }
+.filterGroup ul::-webkit-scrollbar-thumb { background: #135eab; border-radius: 10px; }
+
+.filterGroup li {
+  margin-bottom: 10px;
+}
+
+.filterGroup label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  color: #555;
   cursor: pointer;
-  margin-top: 15px;
 }
 
-.loading {
-  text-align: center;
-  padding: 100px;
-  font-size: 20px;
-}
-
-/*DISEÑO RESPONSIVO PARA TABLES*/
-@media (min-width: 768px) {
-  .productGrid {
-    grid-template-columns: repeat(3, 1fr);
+/* ====================================================== */
+/* 1. TABLETS (Hasta 992px)                               */
+/* ====================================================== */
+@media (max-width: 992px) {
+  .searchContentLayout {
+    flex-direction: column; /* Apilamos Sidebar arriba y productos abajo */
     gap: 20px;
   }
-  .searchHeader h1 { font-size: 28px; }
+
+  .filterSidebar {
+    width: 100%;
+    position: relative;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+  .filterGroup {
+    margin-bottom: 0;
+  }
+
+  .productGrid {
+    .productGrid { grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); }
+}
 }
 
-/* Desktop: 4 columnas (1024px o más) */
-@media (min-width: 1024px) {
+/* ====================================================== */
+/* 2. MÓVILES (Hasta 768px)                               */
+/* ====================================================== */
+@media (max-width: 768px) {
   .productGrid {
-    grid-template-columns: repeat(4, 1fr);
-    gap: 30px;
+    grid-template-columns: repeat(2, 1fr); /* 2 columnas en móvil para que las fotos se vean grandes */
+    gap: 15px;
+  }
+
+  .searchHeader h1 {
+    font-size: 24px;
   }
 }
 
-.noResults {
-  text-align: center;
-  background: white;
-  padding: 60px 20px;
-  border-radius: 12px;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.05);
-  margin-top: 40px;
+/* ====================================================== */
+/* 3. MÓVILES PEQUEÑOS (Hasta 480px)                      */
+/* ====================================================== */
+@media (max-width: 480px) {
+  .searchPageWrapper {
+    padding: 20px 0;
+  }
+
+  .filterSidebar {
+    grid-template-columns: 1fr; /* Filtros en 1 columna en móvil pequeño */
+    padding: 15px;
+  }
+
+  .productGrid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+
+  .searchHeader h1 {
+    font-size: 20px;
+  }
+
+  .noResults {
+    padding: 40px 20px;
+  }
 }
 
-.icon {
-  font-size: 50px;
-  margin-bottom: 20px;
-}
-
+/* --- ESTILOS EXTRA PARA BOTONES Y CARGA --- */
 .btnBack {
   background: #135eab;
   color: white;
@@ -115,16 +153,18 @@
   cursor: pointer;
   margin-top: 20px;
   font-weight: 600;
-  transition: background 0.3s;
+  transition: all 0.3s ease;
 }
 
 .btnBack:hover {
   background: #0d4a8a;
+  transform: translateY(-2px);
 }
 
 .loading {
   text-align: center;
-  padding: 150px 20px;
+  padding: 100px 20px;
   font-size: 18px;
-  color: #666;
+  color: #135eab;
+  font-weight: 600;
 }

@@ -15,16 +15,28 @@ export const useBanners = () => {
         queryKey: ['banners'],
         queryFn: fetchBanners,
         staleTime: 1000 * 60 * 30, 
-        retry: 1, // Si falla, que intente solo 1 vez más
+        retry: 1,
         select: (data) => {
-            return {
-                sliderPrincipal: data.filter(b => b.IdTipoBanner === 3),
-                lateralesPrincipal: data.filter(b => b.IdTipoBanner === 26),
-                promoNescafe: data.filter(b => b.IdTipoBanner === 1),
-                sliderMarcas: data.filter(b => b.IdTipoBanner === 4),
-                aliados: data.filter(b => b.IdTipoBanner === 14), 
-                promoGrid: data.filter(b => b.IdTipoBanner === 15)
+            // EFICIENCIA: Mapeo en una sola pasada O(n)
+            const initialGroups = {
+                sliderPrincipal: [], lateralesPrincipal: [], promoNescafe: [],
+                sliderMarcas: [], promoExtra: [], aliados: [], promoGrid: [],
+                BannersMarcasInternos: [], QuienesSomos: [], Ubicaciones: [],
+                ImagenPredeterminado: [], Logo: [], Iconos: []
             };
+
+            const mapping = {
+                3: 'sliderPrincipal', 26: 'lateralesPrincipal', 1: 'promoNescafe',
+                4: 'sliderMarcas', 9: 'promoExtra', 14: 'aliados', 15: 'promoGrid',
+                27: 'BannersMarcasInternos', 28: 'QuienesSomos', 29: 'Ubicaciones',
+                30: 'ImagenPredeterminado', 31: 'Logo', 32: 'Iconos'
+            };
+
+            return data.reduce((acc, banner) => {
+                const key = mapping[banner.IdTipoBanner];
+                if (key) acc[key].push(banner);
+                return acc;
+            }, initialGroups);
         }
     });
 };

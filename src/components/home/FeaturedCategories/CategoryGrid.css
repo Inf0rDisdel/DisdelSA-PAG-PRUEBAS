@@ -1,27 +1,20 @@
-/* =========================================
-   ESTILOS ÚNICOS PARA CATEGORY GRID
-   Prefijo usado: cgs-
-   ========================================= */
-
-/* Contenedor Principal */
 .cgs-section {
   text-align: left; 
-  padding: 5px 40px; 
-  max-width: 1200px;
+  padding: 10px 20px; 
+  max-width: 1300px;
   margin: auto; 
-  margin-top: -22px;
+  margin-top: -10px;
 }
 
-/* Título de la sección */
 .cgs-title {
   display: inline-block; 
-  padding: 5px 20px;
+  padding: 8px 28px;
   background-color: white;
   border: 1px solid #b4dbed;
-  border-radius: 50px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-  margin-bottom: 14px; 
-  font-size: 1.2rem;   
+  border-radius: 22px !important;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  margin-bottom: 25px; 
+  font-size: 1.3rem;   
   color: #135eab !important;
 }
 
@@ -29,7 +22,7 @@
 .cgs-slider {
   position: relative;
   overflow: hidden; 
-  margin: 0 -15px;
+  margin: 0 -10px;
 }
 
 /* Item Individual (Cada categoría) */
@@ -40,19 +33,21 @@
   text-align: center;
   cursor: pointer;
   text-decoration: none;
-  padding: 0 15px; 
+  padding: 0 8px; 
   outline: none; /* Quita el borde azul al hacer click */
+  transition: all 0.3s ease;
 }
 
 /* Texto de la categoría */
 .cgs-item p {
-  margin-top: 15px;
+  margin-top: 16px;
   font-size: 1.1rem; 
   color: #135eab;  
   height: 10px; 
   display: flex;
   align-items: center;
   justify-content: center;
+  line-height: 1.2;
 }
 
 /* Wrapper de la imagen (opcional si lo usas en el JSX) */
@@ -64,18 +59,23 @@
 
 /* Imagen de la categoría */
 .cgs-image {
-  width: 220px; 
-  height: 205px; 
+  width: 260px; 
+  height: 240px; 
   border-radius: 20px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); 
+  box-shadow: 
+    0 10px 20px rgba(0, 0, 0, 0.04),
+    0 2px 6px rgba(0, 0, 0, 0.04);
   object-fit: cover; 
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  background-color: #fff;
+  border: 1px solid #f5f5f5; /* Un borde casi imperceptible */
+  transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
 }
 
 /* Efecto Hover */
 .cgs-item:hover .cgs-image {
-  transform: translateY(-8px);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+  transform: translateY(-12px) scale(1.02);
+  box-shadow: 0 20px 40px rgba(19, 94, 171, 0.12);
+  border-color: #135eab;
 }
 
 /* =========================================
@@ -85,6 +85,7 @@
 
 /* Solo modificamos las flechas que están DENTRO de .cgs-section */
 .cgs-section .slick-arrow {
+  position: absolute;
   background-color: white;
   width: 35px;
   height: 35px;
@@ -103,7 +104,6 @@
 .cgs-section .slick-arrow::before {
   font-family: 'slick'; /* Asegura que cargue la fuente de iconos */
   font-size: 20px;
-  color: #135eab;
   opacity: 1;
 }
 
@@ -129,13 +129,13 @@
   color: #96c121;
 }
 
-/* =========================================
-   RESPONSIVE (MÓVIL) - CORREGIDO
-   ========================================= */
-@media (max-width: 768px) {
-
+/* ============================================================
+   RESPONSIVE (TABLET) - 481px hasta 1024px
+   Usamos min-width para que NO toque al celular
+   ============================================================ */
+@media (min-width: 481px) and (max-width: 1024px) {
   .cgs-section {
-    padding: 20px 0;
+    padding: 20px 10px;
     margin-top: 0;
   }
   
@@ -143,31 +143,80 @@
     margin: 0 0;
   }
 
-  /* CAMBIO AQUÍ: Ahora el título ya no sobra hacia la derecha */
   .cgs-title {
     font-size: 1.1rem;
-    width: auto;             /* Ajuste automático al texto */
-    margin-left: 8px;       /* Alineado a la izquierda con un margen */
-    margin-right: 0;
-    display: inline-block;   /* Volvemos a inline-block para que no ocupe todo el ancho */
+    margin-left: 15px;
     text-align: left;
+    display: inline-block;
   }
 
   .cgs-item {
-    padding: 0 5px; 
+    padding: 0 5px !important; 
   }
 
+  /* Logos grandes para Tablet */
   .cgs-image {
-    width: 130px;  
-    height: 120px; 
+    width: 155px !important;  
+    height: 155px !important;
+    border-radius: 15px;
   }
 
   .cgs-item p {
-    font-size: 0.9rem;
+    font-size: 1rem;
     margin-top: 10px;
+    font-weight: 500;
+  }
+}
+
+/* ============================================================
+   RESPONSIVE (SOLO TELÉFONOS) - 480px o menos
+   ============================================================ */
+@media (max-width: 480px) {
+  .cgs-section {
+    padding: 12px 0;
+  }
+
+  /* 1. Título centrado y sin bordes (como querías) */
+  .cgs-title {
+    display: table;           
+    margin: 0 auto 15px auto !important; 
+    text-align: center !important;
+    font-weight: 700;
+    border: none !important; 
+    box-shadow: none !important; 
   }
 
   .cgs-section .slick-dots {
-    bottom: -25px; 
+    display: none !important;
+  }
+
+  .cgs-item {
+    padding: 0 2px !important; 
+  }
+
+
+  /* 🔥 2. AJUSTE DE ICONOS PARA MÓVIL (Reparación) 🔥 */
+  /* Bajamos el tamaño para que quepan 3 sin amontonarse */
+  .cgs-image {
+    width: 115px !important;  
+    height: 115px !important;
+    border-radius: 0 !important;
+    box-shadow:none;
+  }
+
+  /* Ajustamos el texto para que no choque */
+  .cgs-item p {
+    font-size: 0.85rem !important;
+    margin-top: 5px !important;
+    height: auto !important; /* Permite que crezca si el nombre es largo */
+    line-height: 1.1;
+  }
+
+  /* 3. Quitamos efectos táctiles */
+  .cgs-item:hover .cgs-image,
+  .cgs-item:active .cgs-image,
+  .cgs-item:focus .cgs-image {
+    transform: none !important;
+    box-shadow: none !important;
   }
 }

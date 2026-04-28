@@ -1,81 +1,76 @@
-// src/routes/AppRouter.jsxapprouter
-import React from 'react';
-import { Routes, Route, Navigate, useParams, Link } from 'react-router-dom';
+import React, { Suspense, lazy } from 'react';
+import { Routes, Route, Navigate, useParams } from 'react-router-dom';
 
-import HomePage from '../pages/HomePage';
-import LoginPage from '../pages/login/LoginPage';
-import MyBusinessPage from '../pages/my-business/MyBusinessPage';
-import CartPage from 'pages/cart/CartPages'; 
-import ProductDetailPage from 'pages/ProductDetailPage';
-import CategoryDetail from '../pages/CategoryDetail/CategoryDetail';
-import SearchResultsPage from 'pages/SearchResults/SearchResultsPage';
+const HomePage = lazy(() => import('../pages/HomePage'));
+const ProductDetailPage = lazy(() => import('pages/ProductDetailPage'));
+const SearchResultsPage = lazy(() => import('pages/SearchResults/SearchResultsPage'));
+const CategoryPage = lazy(() => import('../pages/CategoryPage'));
+const BrandPage = lazy(() => import('../pages/BrandPage/BrandPage'));
 
-import CategoryPage from '../pages/CategoryPage'; 
-import BrandPage from '../pages/BrandPage/BrandPage';
+const LoginPage = lazy(() => import('../pages/login/LoginPage'));
+const MyBusinessPage = lazy(() => import('../pages/my-business/MyBusinessPage'));
+const CartPage = lazy(() => import('pages/cart/CartPages')); 
 
-import AboutUs from 'pages/info/AboutUs';
-import Ayuda from 'pages/info/Ayuda';
-import Locations from 'pages/info/Locations';
+const AboutUs = lazy(() => import('pages/info/AboutUs'));
+const Ayuda = lazy(() => import('pages/info/Ayuda'));
+const Locations = lazy(() => import('pages/info/Locations'));
 
-import PrivacyPolicy from 'pages/info/PrivacyPolicy';
-import ReviewStats from 'components/reviews/ReviewStats';
-import ReviewsSection from 'components/reviews/ReviewsSection';
-
+const PrivacyPolicy = lazy(() => import('pages/info/PrivacyPolicy'));
+//import ReviewStats from 'components/reviews/ReviewStats';
+//const ReviewsSection = lazy(() => import('components/reviews/ReviewsSection'));
 
 const AppRouter = () => {
   return (
-    <Routes>
+    <Suspense fallback={<div style={{ minHeight: '80vh', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+        <div className="spinner"></div> 
+    </div>}>
+      <Routes>
+
       <Route path="/" element={<HomePage />} />
-      <Route path="/producto/:id" element={<ProductDetailPage />} />
-       <Route path="/producto/:id/" element={<ProductDetailPage />} /> {/* <--- ACEPTA CON BARRA */}
+
+      <Route path="/producto/:id/:slug?" element={<ProductDetailPage />} />
+      <Route path="/categoria/:slug/:cat?/:subcat?" element={<CategoryPage />} />
+      <Route path="/marca/:slug/:subcat?" element={<BrandPage />} />
+        
       <Route path="/buscar" element={<SearchResultsPage />} />
 
+      {/* 3. REDIRECCIONES DE CATEGORÍAS (SEO) */}
+      {['botiquin', 'papeleria', 'ferreteria', 'pisos-y-superficies'].map(cat => (
+            <Route key={cat} path={`/${cat}`} element={<Navigate to={`/categoria/${cat}`} replace />} />
+        ))}
+
       {/* --- 🚀 RESCATE DE GOOGLE (Legacy Redirects) --- */}
-      
-      {/* 1. Mopas y accesorios -> Categoria Herramientas */}
       <Route path="/subcategoria/mopas-y-accesorios" element={<Navigate to="/categoria/herramientas-para-limpieza/mopa-y-mecha" replace />} />
-      
-      {/* 2. Detergente para ropa -> Categoria Químicos */}
       <Route path="/subcategoria/detergente-para-ropa" element={<Navigate to="/categoria/quimicos-para-limpieza" replace />} />
-      
-      {/* 3. Plataformas y accesorios -> Papelería */}
       <Route path="/subcategoria/plataformas-y-accesorios" element={<Navigate to="/categoria/papeleria" replace />} />
       
-      {/* 4. Contactos y Conocenos */}
-      <Route path="/Contactanos" element={<Navigate to="/ayuda" replace />} />
-      <Route path="/Conocenos" element={<Navigate to="/quienes-somos" replace />} />
+      {/* Redirecciones de contacto/info (Case insensitive fallback) */}
+      <Route path="/contactanos" element={<Navigate to="/ayuda" replace />} />
+      <Route path="/contacto" element={<Navigate to="/ayuda" replace />} />
+      <Route path="/conocenos" element={<Navigate to="/quienes-somos" replace />} />
+      <Route path="/politicas" element={<Navigate to="/politicas-de-privacidad" replace />} />
       <Route path="/limpieza" element={<Navigate to="/categoria/herramientas-para-limpieza" replace />} />
-
+      
       {/* Rescate genérico para cualquier otra subcategoría vieja */}
-      <Route path="/subcategoria/:slug" element={<LegacyRedirect />} />
+       <Route path="/subcategoria/:slug" element={<LegacyRedirect />} />
+        <Route path="/carrito" element={<CartPage />} />
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/my-business" element={<MyBusinessPage />} />
+        <Route path="/politicas-de-privacidad" element={<PrivacyPolicy /> } />
+        <Route path="/quienes-somos" element={<AboutUs/>} />
+        <Route path="/ayuda" element={<Ayuda/>} />
+        <Route path="/ubicaciones" element={<Locations/>} />
 
-      {/* --- RUTAS ACTUALES --- */}
-      <Route path="/categoria/:slug" element={<CategoryPage />} />
-      <Route path="/seccion/:categorySlug" element={<CategoryDetail />} />
-      <Route path="/marca/:slug" element={<BrandPage />} />
-      <Route path="/carrito" element={<CartPage />} />
-      <Route path="/login" element={<LoginPage />} />
-      <Route path="/my-business" element={<MyBusinessPage />} />
-      <Route path="/politicas-de-privacidad" element={<PrivacyPolicy /> } />
-      <Route path="/opiniones" element={<ReviewsSection/>} />
-      <Route path="/quienes-somos" element={<AboutUs/>} />
-      <Route path="/ayuda" element={<Ayuda/>} />
-      <Route path="/ubicaciones" element={<Locations/>} />
-
-      <Route path="*" element={
-        <div style={{textAlign: 'center', padding: '100px 20px'}}>
-            <h1>Página no encontrada (404)</h1>
-            <p>Lo sentimos, el enlace que seguiste podría estar roto.</p>
-            <Link to="/" style={{color: '#135eab', fontWeight: 'bold', textDecoration: 'none'}}>Volver al inicio</Link>
-        </div>
-      } />
-    </Routes>
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+    </Suspense>
   );
 };
 
+// Componente para manejar subcategorías que ya no existen mandándolas al buscador
 const LegacyRedirect = () => {
     const { slug } = useParams();
-    return <Navigate to={`/buscar?q=${slug}`} replace />;
+    return <Navigate to={`/buscar?q=${slug.replace(/-/g, ' ')}`} replace />;
 };
 
 export default AppRouter;

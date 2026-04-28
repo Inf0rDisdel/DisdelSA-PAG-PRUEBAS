@@ -19,8 +19,8 @@ const URLs = {
 
 export const AppConfig = {
     baseUrlVentas: estoyEnModoLocal ? URLs.local.ventas : URLs.produccion.ventas,
-     baseUrlSuscripcion: estoyEnModoLocal ? URLs.local.suscripcion : URLs.produccion.suscripcion,
+    baseUrlSuscripcion: estoyEnModoLocal ? URLs.local.suscripcion : URLs.produccion.suscripcion,
     baseUrlMaestros: estoyEnModoLocal ? URLs.local.maestros : URLs.produccion.maestros,
     baseUrlMobil: estoyEnModoLocal ? URLs.local.mobil : URLs.produccion.mobil,
-    baseImageUrl: "https://disdelsa.com/imagenes/"
+    baseImageUrl: "https://disdelsa.com/imagenes/" 
 };

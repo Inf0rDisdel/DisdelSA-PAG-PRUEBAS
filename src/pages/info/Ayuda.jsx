@@ -1,11 +1,26 @@
-import React from "react";
+import React,{useMemo} from "react";
 import './Ayuda.css';
 
-// Asegúrate de que las rutas a tus iconos sean correctas
-import iconMercadeo from 'assets/icons/mercadeo.png'; // Ajusta la ruta si es necesario
-import iconSoporte from 'assets/icons/soporte.png';   // Ajusta la ruta si es necesario
+import { AppConfig } from "config/AppConfig";
+import { useBanners } from "hooks/useBanners";
+
 
 const Ayuda = () => {
+
+    const {data: bannerData} = useBanners();
+
+    const images = useMemo(()=> {
+        const getUrl = (imgName) => imgName? `${AppConfig.baseImageUrl}${imgName}` : '';
+
+        const iconAyuda = bannerData?.Iconos?.find(i=> i.Titulo?.trim() === "IconosAyuda")?.Imagen;
+        const iconAyuda2=bannerData?.Iconos?.find(i=> i.Titulo?.trim()=== "iconoAyuda2")?.Imagen;
+
+        return {
+            ayuda: getUrl(iconAyuda),
+            mercadeo: getUrl(iconAyuda2)
+        };
+    }, [bannerData]);
+
     return (
         <div className="ayuda-container">
             {/* Header alineado a la izquierda */}
@@ -19,7 +34,7 @@ const Ayuda = () => {
                 {/* TARJETA 1: MERCADEO */}
                 <div className="ayuda-card">
                     <div className="icon-wrapper">
-                        <img src={iconMercadeo} className="ayuda-icon" alt="Mercadeo" />
+                        <img src={images.ayuda} alt="Ayuda Soporte" />
                     </div>
                     
                     <div className="card-info">
@@ -37,7 +52,7 @@ const Ayuda = () => {
                 {/* TARJETA 2: SOPORTE TÉCNICO */}
                 <div className="ayuda-card">
                     <div className="icon-wrapper">
-                        <img src={iconSoporte} className="ayuda-icon" alt="Soporte" />
+                        <img src={images.mercadeo} alt="Icono Mercadeo Soporte" />
                     </div>
 
                     <div className="card-info">
