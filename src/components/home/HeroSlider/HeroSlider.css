@@ -2,7 +2,7 @@
   max-width: 1300px;
   margin: 10px auto;
   display: flex;
-  gap: 20px;
+  gap: 20px; 
   min-height: 320px; 
   contain: paint;
 }

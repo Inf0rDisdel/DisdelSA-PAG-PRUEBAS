@@ -8,23 +8,19 @@ import './FeaturedBrands.css';
 
 import { AppConfig } from '../../../config/AppConfig';
 import { useBanners } from '../../../hooks/useBanners';
+import { createSlug } from 'utils/slugify';
 
-const FeaturedBrands = ({brands, isLoading}) => {
-  // --- 1. TODOS LOS HOOKS VAN ARRIBA (Sin excepciones) ---
-  const { data: banners, isError } = useBanners();
+const FeaturedBrands = ({ isLoading: isLoadingProp }) => {
+  const { data: banners, isLoading: isLoadingBanners, isError } = useBanners();
   const [isPhone, setIsPhone] = useState(window.innerWidth <= 480);
+  
+  const loading = isLoadingProp || isLoadingBanners;
 
   useEffect(() => {
     const handleResize = () => setIsPhone(window.innerWidth <= 480);
-    window.addEventListener('resize', handleResize);
+    window.addEventListener('resize', handleResize, { passive: true });
     return () => window.removeEventListener('resize', handleResize);
   }, []);
-
-  // --- 2. FUNCIONES HELPER ---
-  const crearSlug = (titulo) => {
-      if (!titulo) return 'marca';
-      return titulo.toLowerCase().trim().replace(/\s+/g, '-');
-  };
 
   const settings = {
     dots: false,
@@ -32,51 +28,42 @@ const FeaturedBrands = ({brands, isLoading}) => {
     speed: 500,
     slidesToShow: 3, 
     slidesToScroll: 1,
-    arrows: false
+    arrows: false,
+    swipeToSlide: true
   };
-
-  // --- 3. CONDICIONALES DE RENDERIZADO (Después de los Hooks) ---
   
   // Skeleton Loader
-  if (isLoading) {
-    return(
-      <div className='brands-container' style={{display :'flex', gap:'15px', overflow:'hidden', padding:'20px'}}>
-        {[1,2,3,4,5].map((i) => (
-          <div key={i} style={{flexShrink: 0}}>
-            <div className='skeleton-shimmer' style={{width:'80px', height:'80px', borderRadius:'50%'}}></div>
-            <div className='skeleton-shimmer' style={{width:'60px', height:'10px', marginTop:'10px', borderRadius:'4px', marginInline:'auto'}}></div>
-          </div>
-        ))}
-      </div>
+  if (loading) {
+    return (
+      <section className="featured-brands-section">
+        <div className="section-title-skeleton"></div>
+        <div className='brands-container-skeleton'>
+          {[1, 2, 3, 4].map((i) => (
+            <div key={i} className="brand-item-skeleton"></div>
+          ))}
+        </div>
+      </section>
     );
   }
 
   if (isError || !banners?.aliados?.length) return null;
 
   return (
-    <section className="featured-brands-section" style={{ minHeight: 'auto' }}>
+    <section className="featured-brands-section" aria-label="Nuestras Marcas Aliadas">
       <h2 className="section-title">Aliados Comerciales</h2>
       
-       <div className="brands-content-wrapper" style={{ minHeight: 'auto' }}>
-        {isLoading ? (
-          /* 🔥 MEJORA CLS: El esqueleto ahora coincide con el tamaño real de los items */
-          <div className='brands-container' style={{display :'flex', gap:'15px', overflow:'hidden'}}>
-            {[1,2,3,4,5].map((i) => (
-              <div key={i} className="brand-item" style={{ background: '#f5f5f5', border: 'none' }}>
-                <div className='skeleton-shimmer' style={{ width: '100%', height: '100%' }}></div>
-              </div>
-            ))}
-          </div>
-        ) : isPhone ? (
+      <div className="brands-content-wrapper">
+        {isPhone ? (
           <Slider {...settings} className="brands-phone-slider">
-            {banners.aliados.map((ban) => (
+            {banners.aliados.map((ban, index) => (
               <div key={ban.EntityID} className="phone-slide-item">
-                <Link to={`/marca/${crearSlug(ban.Titulo)}`} className="phone-brand-link">
+                <Link to={`/marca/${createSlug(ban.Titulo)}`} className="phone-brand-link">
                   <img 
                     src={`${AppConfig.baseImageUrl}${ban.Imagen}`} 
-                    alt={ban.Titulo || "Marca Aliada"} 
+                    alt={`Distribuidor autorizado ${ban.Titulo}`} 
                     className="phone-brand-img"
-                    loading="lazy" 
+                    loading={index < 3 ? "eager" : "lazy"} 
+                    fetchpriority={index < 3 ? "high" : "low"}
                   />
                 </Link>
               </div>
@@ -84,9 +71,17 @@ const FeaturedBrands = ({brands, isLoading}) => {
           </Slider>
         ) : (
           <div className="brands-container">
-            {banners.aliados.map((ban) => (
-                <Link key={ban.EntityID} to={`/marca/${crearSlug(ban.Titulo)}`} className="brand-item">
-                    <img src={`${AppConfig.baseImageUrl}${ban.Imagen}`} alt={ban.Titulo || "Marca Aliada"} loading="lazy" />
+            {banners.aliados.map((ban, index) => (
+                <Link 
+                  key={ban.EntityID} 
+                  to={`/marca/${createSlug(ban.Titulo)}`} 
+                  className="brand-item"
+                >
+                    <img 
+                      src={`${AppConfig.baseImageUrl}${ban.Imagen}`} 
+                      alt={`Distribuidor autorizado ${ban.Titulo}`} 
+                      loading={index < 6 ? "eager" : "lazy"} 
+                    />
                 </Link>
             ))}
           </div>

@@ -15,7 +15,9 @@ export const useBanners = () => {
         queryKey: ['banners'],
         queryFn: fetchBanners,
         staleTime: 1000 * 60 * 30, 
+        gcTime: 1000 * 60 * 60,
         retry: 1,
+        placeholderData: (prev) => prev, 
         select: (data) => {
             // EFICIENCIA: Mapeo en una sola pasada O(n)
             const initialGroups = {

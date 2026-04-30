@@ -4,19 +4,14 @@
     <base href="/" />
     <meta charset="utf-8" />
 
+    <link rel="preconnect" href="https://www.disdelsagt.com">
+    <link rel="dns-prefetch" href="https://www.disdelsagt.com">
+
     <link rel="preconnect" href="https://disdelsa.com">
     <link rel="dns-prefetch" href="https://disdelsa.com">
-    <link rel="preconnect" href="https://www.disdelsagt.com">
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
-    <script async src="https://www.googletagmanager.com/gtag/js?id=%REACT_APP_GA_ID%"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', '%REACT_APP_GA_ID%');
-    </script>
 
     <!-- 2. FUENTES (Carga prioritaria) -->
     <link rel="preload" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" as="style">
@@ -46,8 +41,15 @@
     
     <title>Disdel, S.A. | Suministros de Limpieza y Mantenimiento Profesional</title>
 
+    <script async defer src="https://www.googletagmanager.com/gtag/js?id=%REACT_APP_GA_ID%"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', '%REACT_APP_GA_ID%');
+    </script>
   </head>
-  <body>
+  <body style="margin: 0; background-color: #f8f9fa;">
     <noscript>Necesitas activar JavaScript para visualizar el catálogo de Disdel, S.A.</noscript>
     <div id="root"></div>
   </body>

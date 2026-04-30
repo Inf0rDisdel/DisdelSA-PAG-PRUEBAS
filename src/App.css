@@ -26,3 +26,16 @@
 }
 
 /* ... (Aquí pueden ir tus otros estilos de .App-header, etc.) ... */
+/* Reserva espacio para el layout de 2 columnas */
+.brand-layout, .cat-content-layout {
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  min-height: 80vh; /* 🚀 Evita que el footer suba y baje */
+}
+
+@media (max-width: 768px) {
+  .brand-layout, .cat-content-layout {
+    display: flex;
+    flex-direction: column;
+  }
+}

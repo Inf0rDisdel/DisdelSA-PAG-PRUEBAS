@@ -1,7 +1,6 @@
 import { useLocation, Link, useParams, useNavigate } from 'react-router-dom';
-import React, { useState, useMemo, useEffect, useRef, useCallback } from 'react'; 
+import React, { useState, useMemo, useEffect, useRef } from 'react'; 
 import { Helmet } from 'react-helmet-async';
-import { FiShoppingCart, FiChevronRight } from 'react-icons/fi'; 
 import './CategoryPage.css';
 import ProductCard from 'components/ui/ProductCard/ProductCard';
 
@@ -14,13 +13,14 @@ import { createSlug } from 'utils/slugify';
 
 import Skeleton from 'components/ui/Skeleton/Skeleton';
 import ProductCardSkeleton from 'components/ui/ProductCard/ProductCardSkeleton';
+import { getCollectionSchema, getBreadcrumbs } from 'utils/schemas/mainSchemas';
 
 const CategoryPage = () => {
   const { slug, cat, subcat } = useParams();
   const navigate = useNavigate();
 
   const { data: bannerData } = useBanners();
-  const addItem = useCartStore((state) => state.addItem);
+  // const addItem = useCartStore((state) => state.addItem);
   const location = useLocation(); 
   const { data: menuData, isLoading: loadingMenu } = useMenu();
   const { data: productsData, isLoading: loadingProducts } = useProducts();
@@ -39,7 +39,7 @@ const CategoryPage = () => {
 
   // 🔥 SCROLL TOP CORRECTO
   useEffect(() => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+  window.scrollTo(0, 0); // 🚀 Más rápido para bots que 'smooth'
   }, [slug, cat, subcat]);
 
   const cleanSlug = slug ? slug.replace(/\/$/, "").trim() : '';
@@ -50,11 +50,6 @@ const CategoryPage = () => {
       if (!menuData) return null;
       return menuData.find(seg => createSlug(seg.NombreSegmento) === cleanSlug) || null;
   }, [menuData, cleanSlug, createSlug]);
-
-  const badgeLogo = useMemo (() => {
-      const found = bannerData?.Iconos?.find(b=> b.Titulo === "IconoDisdel");
-      return found ? `${AppConfig.baseImageUrl}${found.Imagen}` : '';
-    }, [bannerData]);
 
   const activeCategoryData = useMemo(() => {
       if (!currentSegment || !activeCatId) return null;
@@ -100,14 +95,8 @@ const CategoryPage = () => {
   )?.NombreSubCategoria;
 
   let dynamicTitle = segmentName;
-
-  if (categoryName && cat) {
-    dynamicTitle = `${categoryName} | ${segmentName}`;
-  }
-
-  if (subCategoryName && subcat) {
-    dynamicTitle = `${subCategoryName} | ${categoryName}`;
-  }
+  if (categoryName && cat) dynamicTitle = `${categoryName} | ${segmentName}`;
+  if (subCategoryName && subcat) dynamicTitle = `${subCategoryName} | ${categoryName}`;
 
   return {
     title: `${dynamicTitle} Mayorista en Guatemala | Disdel`,
@@ -119,95 +108,39 @@ const CategoryPage = () => {
 
   const fullSchema = useMemo(() => {
     if (!currentSegment) return null;
+    const schemaUrl = `https://disdelsa.com/categoria/${slug}${cat ? '/' + cat : ''}`;
+    
     return {
-      "@context": "https://schema.org",
-      "@graph": [
-        {
-          "@type": "BreadcrumbList",
-          "@id": `${seoData.url}/#breadcrumb`,
-          "itemListElement": [
-          { "@type": "ListItem", "position": 1, "name": "Inicio", "item": "https://disdelsa.com/" },
-          { "@type": "ListItem", "position": 2, "name": currentSegment.NombreSegmento, "item": `https://disdelsa.com/categoria/${slug}` },
-          // 🚀 Esto es lo que "le explica" a Google los niveles extra que se ven en tu foto
-          ...(cat ? [{ 
-              "@type": "ListItem", 
-              "position": 3, 
-              "name": activeCategoryData?.NombreCategoria || cat, 
-              "item": `https://disdelsa.com/categoria/${slug}/${cat}` 
-          }] : []),
-          ...(subcat ? [{ 
-              "@type": "ListItem", 
-              "position": 4, 
-              "name": subcat.replace(/-/g, ' '), 
-              "item": seoData.url 
-          }] : [])
+        "@context": "https://schema.org",
+        "@graph": [
+            getCollectionSchema(seoData.title, seoData.description, schemaUrl, filteredProducts),
+            getBreadcrumbs([
+                { name: "Inicio", item: "https://disdelsa.com/" },
+                { name: currentSegment.NombreSegmento, item: `https://disdelsa.com/categoria/${slug}` },
+                ...(cat ? [{ name: activeCategoryData?.NombreCategoria || cat, item: `https://disdelsa.com/categoria/${slug}/${cat}` }] : [])
+            ])
         ]
-        },
-        {
-          "@type": "CollectionPage",
-          "@id": `${seoData.url}/#collection`,
-          "url": seoData.url,
-          "name": seoData.title,
-          "description": seoData.description,
-          "publisher": {
-            "@type": "Organization",
-            "name": "Disdel, S.A.",
-            "url": "https://disdelsa.com/"
-          },
-          "mainEntity": {
-            "@type": "ItemList",
-            "numberOfItems": filteredProducts.length,
-            "itemListElement": filteredProducts.slice(0, 40).map((prod, index) => ({
-              "@type": "ListItem",
-              "position": index + 1,
-              "url": `https://disdelsa.com/producto/${String(prod.IdProducto).toLowerCase()}/${createSlug(prod.Descripcion)}`,
-              "name": prod.Descripcion,
-              "image": prod.Imagen ? `${AppConfig.baseImageUrl}productos/${prod.Imagen}` : defaultImage
-            }))
-          }
+    };
+  }, [currentSegment, filteredProducts, seoData, slug, cat, activeCategoryData]);  
+
+   useEffect(() => {
+    if (!currentSegment?.Categorias) return;
+    if (cat) {
+      const foundCat = currentSegment.Categorias.find(c => createSlug(c.NombreCategoria) === cat);
+      if (foundCat) {
+        setActiveCatId(foundCat.IdCategoria);
+        if (subcat && foundCat.SubCategorias) {
+          const foundSub = foundCat.SubCategorias.find(s => createSlug(s.NombreSubCategoria) === subcat);
+          setActiveSubCatId(foundSub ? foundSub.IdSubCategoria : null);
+        } else {
+          setActiveSubCatId(null);
         }
-      ]
-    };
-  }, [currentSegment, filteredProducts, seoData, defaultImage]);
-
-  useEffect(() => {
-  if (!currentSegment?.Categorias) return;
-
-  if (cat) {
-    const foundCat = currentSegment.Categorias.find(
-      c => createSlug(c.NombreCategoria) === cat
-    );
-
-    if (foundCat) {
-      setActiveCatId(foundCat.IdCategoria);
-
-      if (subcat && foundCat.SubCategorias) {
-        const foundSub = foundCat.SubCategorias.find(
-          s => createSlug(s.NombreSubCategoria) === subcat
-        );
-
-        setActiveSubCatId(foundSub ? foundSub.IdSubCategoria : null);
-      } else {
-        setActiveSubCatId(null);
       }
+    } else {
+      setActiveCatId(currentSegment.Categorias[0]?.IdCategoria);
+      setActiveSubCatId(null);
     }
-  } else {
-    setActiveCatId(currentSegment.Categorias[0]?.IdCategoria);
-    setActiveSubCatId(null);
-  }
-}, [cat, subcat, currentSegment, createSlug]);
-
-  const handleCategoryClick = (cat) => {
-      navigate(`/categoria/${slug}/${createSlug(cat.NombreCategoria)}`);
-    };
-
-    const handleSubCategoryClick = (subName) => {
-    const currentSubSlug = cat || createSlug(activeCategoryData?.NombreCategoria);
-
-    if (currentSubSlug) {
-      navigate(`/categoria/${slug}/${currentSubSlug}/${createSlug(subName)}`);
-    }
-    };
+  }, [cat, subcat, currentSegment]);
   
    if (loadingMenu || loadingProducts) {
     return (
@@ -266,23 +199,21 @@ const CategoryPage = () => {
         </div>
 
         <div className="cat-content-layout">
-          <aside className="cat-sidebar-left">
-            {/* Restaurado el label simple sin flechas */}
+           <aside className="cat-sidebar-left">
             <div className="cat-sidebar-header-mobile">
                 <div className="cat-sidebar-label">CATEGORÍAS</div>
             </div>
-
              <div className="cat-sidebar-nav" ref={scrollRef}>
-              {currentSegment.Categorias?.map((cat) => (
+              {currentSegment.Categorias?.map((catItem) => (
                 <Link
-                  key={cat.IdCategoria}
-                  to={`/categoria/${canonicalSlug}/${createSlug(cat.NombreCategoria)}`}
-                  className={`cat-nav-item ${norm(activeCatId) === norm(cat.IdCategoria) ? 'active-filter' : ''}`}
+                  key={catItem.IdCategoria}
+                  to={`/categoria/${canonicalSlug}/${createSlug(catItem.NombreCategoria)}`}
+                  className={`cat-nav-item ${norm(activeCatId) === norm(catItem.IdCategoria) ? 'active-filter' : ''}`}
                 >
                   <div className="cat-nav-icon">
-                    <img src={cat.Imagen ? `${AppConfig.baseImageUrl}${cat.Imagen}` : defaultImage} alt={cat.NombreCategoria} width="24" height="24" loading="lazy" />
+                    <img src={catItem.Imagen ? `${AppConfig.baseImageUrl}${catItem.Imagen}` : defaultImage} alt={catItem.NombreCategoria} width="24" height="24" loading="lazy" />
                  </div>
-                  <span>{cat.NombreCategoria}</span>
+                  <span>{catItem.NombreCategoria}</span>
                 </Link>
               ))}
             </div>
@@ -295,7 +226,7 @@ const CategoryPage = () => {
                         <Link
                           key={sub.IdSubCategoria}
                           to={`/categoria/${canonicalSlug}/${createSlug(activeCategoryData?.NombreCategoria)}/${createSlug(sub.NombreSubCategoria)}`}
-                          className={`cat-sub-pill ${norm(activeSubCatId) === norm(sub.IdSubCategoria) ? 'active' : ''}`} style={{ textDecoration: 'none' }}
+                          className={`cat-sub-pill ${norm(activeSubCatId) === norm(sub.IdSubCategoria) ? 'active' : ''}`}
                         >
                             {sub.NombreSubCategoria}
                         </Link>

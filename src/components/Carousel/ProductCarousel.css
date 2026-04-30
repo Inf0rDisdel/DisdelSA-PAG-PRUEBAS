@@ -1,5 +1,8 @@
 .product-carousel-container {
-  min-height: 500px;
+  min-height: 520px;
+  contain: layout;
+  background-size: cover;
+  background-position: center;
   width: 100%;
   max-width: 1305px;
   margin: 20px auto;
@@ -19,6 +22,7 @@
 /* 🔥 FIX MAESTRO: Evita que el carrusel corte los botones abajo */
 .product-carousel-container .slick-list {/*-------PARA COREJIR------*/
   padding-bottom: 30px !important; 
+  margin: 0 -8px;
 }
 
 .carousel-title {/*-----PARA CORREJIR-----*/

@@ -1,16 +1,17 @@
 .promo-nescafe-wrapper {
-  padding: 0 0;
-  margin-top: 0; 
+  padding: 20px 0;
+  margin-top: 20px 0;
+  contain: content; 
 }
 
 .promo-nescafe-title {
-  font-size: 24px;
+  font-size: 22px;
   text-align: left;
-  margin-bottom: 20px;
+  margin-bottom: 25px;
   color: #333;
   max-width: 1300px;
-  margin-left: 88px;
-  margin-right: 0;
+  margin-left: auto;
+  margin-right: auto;
   padding: 0 20px;
   box-sizing: border-box;
 }
@@ -26,22 +27,31 @@
   height: 420px; 
 }
 
+.promo-nescafe-container-skeleton {
+  max-width: 1300px;
+  height: 420px;
+  margin: 0 auto;
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 12px;
+}
+
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
 
 .promo-item {
-  /* Eliminamos el box-shadow para un look más limpio como pediste */
-  /* Si quieres la sombra sutil de la imagen de referencia, descomenta la siguiente línea: */
-  /* box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); */
-  
   border-radius: 12px; /* Un poco más de redondeo como en la imagen */
   overflow: hidden; /* Muy importante para que la imagen respete el borde redondeado */
 
   /* ===== CAMBIO CLAVE 2: CREAMOS UN CONTEXTO DE POSICIONAMIENTO ===== */
   position: relative; 
+  background-color: #f1f5f9;
 }
 
-/* --- Estilo para la imagen --- */
 .promo-item img {
-  /* ===== CAMBIO CLAVE 3: LA IMAGEN AHORA LLENA SU CONTENEDOR ===== */
   position: absolute;
   top: 0;
   left: 0;
@@ -49,12 +59,12 @@
   height: 100%;
   object-fit: cover; /* 'cover' se asegura de que la imagen cubra todo el espacio sin deformarse */
   display: block;
-  transition: transform 0.4s ease; /* Pequeño efecto de zoom al pasar el mouse */
+  transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1); /* Pequeño efecto de zoom al pasar el mouse */
 }
 
 /* Efecto hover opcional pero recomendado */
 .promo-item:hover img {
-  transform: scale(1.03);
+  transform: scale(1.04);
 }
 
 /* --- Tamaños para escritorio --- */
@@ -98,19 +108,19 @@
 
   /* 1. SEPARACIÓN DE LA SECCIÓN COMPLETA */
   .promo-nescafe-wrapper {
-    padding: 20px 0 !important;
+    padding: 12px 0 !important;
     /* Espacio arriba y abajo para que no choque con los carruseles */
-    margin: 30px 0 !important; 
+    margin: 10px 0 !important; 
   }
 
   /* 2. EL TÍTULO: Lo hacemos lucir como los otros títulos pill-shape */
   .promo-nescafe-title {
     display: none !important;
   }
-
+  
   /* 3. EL BANNER PRINCIPAL (LA IMAGEN) */
   .promo-nescafe-container {
-    padding: 0 15px !important; /* Margen a los lados para que no toque los bordes del cel */
+    padding: 0 8px !important; /* Margen a los lados para que no toque los bordes del cel */
     height: auto !important;
   }
 
@@ -118,7 +128,7 @@
     width: 100% !important;
     /* Bajamos un poco la altura para que no ocupe toda la pantalla y se vea el producto */
     height: 250px !important; 
-    border-radius: 15px !important; /* Bordes redondeados profesionales */
+    border-radius: 12px !important; /* Bordes redondeados profesionales */
     box-shadow: 0 4px 15px rgba(0,0,0,0.1) !important;
     overflow: hidden !important;
   }
@@ -130,5 +140,10 @@
   /* Ocultamos definitivamente el secundario en móviles muy pequeños */
   .banner-secundario {
     display: none !important;
+  }
+
+  .promo-nescafe-container-skeleton {
+    height: 220px;
+    margin: 0 15px;
   }
 }

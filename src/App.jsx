@@ -1,5 +1,4 @@
 import React from 'react'; 
-import { HelmetProvider } from 'react-helmet-async';
 import { Toaster } from 'react-hot-toast'; // Notificaciones rápidas
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'; // 1. IMPORTAR
 
@@ -18,6 +17,7 @@ const queryClient = new QueryClient({
       retry: 1,
       // PERFORMANCE: Aumentamos el staleTime global para evitar peticiones flash
       staleTime: 1000 * 60 * 5, 
+      keepPreviousData: true, 
     },
   },
 });

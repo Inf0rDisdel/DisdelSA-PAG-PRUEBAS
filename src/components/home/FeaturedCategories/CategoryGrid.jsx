@@ -10,6 +10,7 @@ import { AppConfig } from '../../../config/AppConfig';
 import { useMenu } from '../../../hooks/useMenu';
 import { useBanners } from 'hooks/useBanners';
 import Skeleton from 'components/ui/Skeleton/Skeleton';
+import { createSlug } from 'utils/slugify';
 
 const CategoryGrid = ({ isLoading: isLoadingProp }) => {
   const { data: menuData, isLoading: isLoadingMenu } = useMenu();
@@ -37,16 +38,6 @@ const CategoryGrid = ({ isLoading: isLoadingProp }) => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  const createSlug = (text) => {
-    if (!text) return '';
-    return text.toString().toLowerCase().trim()
-        .normalize("NFD").replace(/[\u0300-\u036f]/g, "") 
-        .replace(/ñ/g, 'n') // Sincronizado
-        .replace(/[^a-z0-9 -]/g, '') 
-        .replace(/\s+/g, '-') 
-        .replace(/-+/g, '-'); 
-  };
-
   const settings = {
     arrows: true,
     dots: true, 
@@ -63,23 +54,22 @@ const CategoryGrid = ({ isLoading: isLoadingProp }) => {
   
   if (loading) {
     return (
-      <section className="cgs-section" style={{ minHeight: '400px' }}>
-        <h2 className="cgs-title">Categorías Destacadas</h2>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '20px' }}>
-            {[1, 2, 3, 4].map((i) => (
-              <div key={i} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                <Skeleton width="100%" height="240px" style={{ borderRadius: '20px' }} />
-                <Skeleton width="80%" height="20px" style={{ marginTop: '15px' }} />
-              </div>
-            ))}
-          </div>
-      </section>
+      <section className="cgs-section">
+      <h2 className="cgs-title">Categorías Destacadas</h2>
+      <div className="cgs-skeleton-grid"> 
+          {[1, 2, 3, 4].map((i) => (
+            <div key={i} className="cgs-item-skeleton">
+              <Skeleton width="100%" height="240px" style={{ borderRadius: '20px' }} />
+              {/* 👈 MUY IMPORTANTE: Reserva el espacio exacto del texto */}
+              <Skeleton width="60%" height="20px" style={{ marginTop: '16px' }} />
+            </div>
+          ))}
+      </div>
+    </section>
     );
   }
 
-  if (!loading && (!filteredCategories || filteredCategories.length === 0)) {
-    return null;
-  }
+  if (!filteredCategories || filteredCategories.length === 0) return null;
 
   return (
     <section className="cgs-section" style={{ minHeight: '400px' }}>
@@ -94,10 +84,10 @@ const CategoryGrid = ({ isLoading: isLoadingProp }) => {
                       src={category.Imagen ? `${AppConfig.baseImageUrl}${category.Imagen}` : defaultImage} 
                       alt={category.NombreSegmento} 
                       className="cgs-image" 
+                      // 🚀 Mantenemos la mejora de velocidad
                       loading={index < 4 ? "eager" : "lazy"} 
-                      decoding="async"
-                      // ✅ CORRECCIÓN: Minúsculas para evitar Warning de React
                       fetchpriority={index < 4 ? "high" : "low"} 
+                      decoding="async"
                     />
                   </div>
                   <p>{category.NombreSegmento}</p>

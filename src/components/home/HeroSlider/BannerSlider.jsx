@@ -41,10 +41,11 @@ const BannerSlider = () => {
     slidesToShow: 1,
     slidesToScroll: 1,
     autoplay: true,
-    autoplaySpeed: 3500,
+    autoplaySpeed: 4000,
     arrows: false,
     fade: true, 
-    pauseOnHover: false
+    pauseOnHover: false,
+    lazyLoad: 'progressive'
   };
 
   if (isLoading) {
@@ -77,8 +78,8 @@ const BannerSlider = () => {
                   alt={ban.Titulo || "Promoción Disdel"} 
                   className="banner-img"
                   // SEO y Performance: El primero carga de una, los demás después
-                  fetchpriority={index === 0 ? "high" : "auto"}
                   loading={index === 0 ? "eager" : "lazy"}
+                  decoding={index === 0 ? "sync" : "async"}
                 />
               </picture>
             </div>
@@ -86,6 +87,7 @@ const BannerSlider = () => {
         })}
       </Slider>
     </div>
+
   );
 };
 

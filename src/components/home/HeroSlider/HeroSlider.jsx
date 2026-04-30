@@ -17,9 +17,13 @@ const HeroSlider = () => {
   }, []);
 
   if (isLoading || isError) {
-    return <div className="main-container" style={{ height: isMobile ? '210px' : '320px' }}></div>;
+    return (
+      <section className="main-container skeleton-hero" aria-hidden="true">
+        <div className="banners-container-skeleton"></div>
+        <div className="slider-container-skeleton"></div>
+      </section>
+    );
   }
-
 
   if (!banners) return null;
 
@@ -34,7 +38,8 @@ const HeroSlider = () => {
               showStatus={false}
               infiniteLoop={true}
               autoPlay={true}
-              interval={3000}
+              interval={3500}
+              stopOnHover={false}
             >
               {banners.sliderPrincipal.map((slide, index) => (
                 <div key={slide.EntityID}>
@@ -44,12 +49,13 @@ const HeroSlider = () => {
                     // 🔥 SEO FIX 2 (LCP): Prioridad alta solo a la primera imagen
                     fetchpriority={index === 0 ? "high" : "auto"}
                     loading={index === 0 ? "eager" : "lazy"}
-                    decoding="async"
+                    decoding={index === 0 ? "sync" : "async"}
                   />
                 </div>
               ))}
             </Carousel>
           </div>
+
 
           <div className="banners-container">
             {banners.lateralesPrincipal?.slice(0, 1).map((ban) => (
@@ -95,11 +101,11 @@ const HeroSlider = () => {
                     <div key={slide.EntityID}>
                       <img 
                         src={`${AppConfig.baseImageUrl}${slide.BannerImagenMovil}`} 
-                        alt={slide.Titulo || "Catálogo industrial Disdel"} 
+                        alt={slide.Titulo || "Catálogo Disdel"} 
                         // 🔥 Optimización LCP Escritorio
                         fetchpriority={index === 0 ? "high" : "low"}
                         loading={index === 0 ? "eager" : "lazy"}
-                        decoding="async"
+                        decoding={index === 0 ? "sync" : "async"}
                       />
                     </div>
                   ))}

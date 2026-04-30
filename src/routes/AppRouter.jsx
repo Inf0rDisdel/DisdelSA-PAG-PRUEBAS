@@ -19,11 +19,16 @@ const PrivacyPolicy = lazy(() => import('pages/info/PrivacyPolicy'));
 //import ReviewStats from 'components/reviews/ReviewStats';
 //const ReviewsSection = lazy(() => import('components/reviews/ReviewsSection'));
 
+const HomeSkeleton = () => (
+  <div style={{ minHeight: '100vh', background: '#f8f9fa' }}>
+    {/* Un bloque gris que simula el HeroSlider para que nada salte al cargar */}
+    <div style={{ width: '100%', height: '500px', background: '#eee' }}></div>
+  </div>
+);
+
 const AppRouter = () => {
   return (
-    <Suspense fallback={<div style={{ minHeight: '80vh', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-        <div className="spinner"></div> 
-    </div>}>
+    <Suspense fallback={<HomeSkeleton />}>
       <Routes>
 
       <Route path="/" element={<HomePage />} />
