@@ -94,17 +94,18 @@ const CategoryPage = () => {
     s => norm(s.IdSubCategoria) === norm(activeSubCatId)
   )?.NombreSubCategoria;
 
-  let dynamicTitle = segmentName;
+  let dynamicTitle = categoryName || segmentName;
   if (categoryName && cat) dynamicTitle = `${categoryName} | ${segmentName}`;
   if (subCategoryName && subcat) dynamicTitle = `${subCategoryName} | ${categoryName}`;
 
   return {
-    title: `${dynamicTitle} Mayorista en Guatemala | Disdel`,
-    description: `Distribución de ${dynamicTitle}. Suministros industriales con entrega rápida en toda Guatemala.`,
+    // Título Híbrido: Genérico + Profesional + Marca
+    title: `${dynamicTitle} Profesional en Guatemala | Mayoreo y Unidad | Disdel`,
+    description: `Distribución líder de ${dynamicTitle} institucional en Guatemala. Soluciones de alta concentración para empresas, hospitales y hogares. Cotización inmediata y envíos a todo el país.`,
     url: `https://disdelsa.com/categoria/${slug}${cat ? '/' + cat : ''}${subcat ? '/' + subcat : ''}`,
     image: catBanner.desktop || defaultImage
   };
-}, [currentSegment, activeCategoryData, activeSubCatId, slug, cat, subcat, catBanner, defaultImage]);
+}, [currentSegment, activeCategoryData, slug, cat, subcat, catBanner, defaultImage]);
 
   const fullSchema = useMemo(() => {
     if (!currentSegment) return null;
@@ -254,6 +255,23 @@ const CategoryPage = () => {
           </main>
         </div>
       </div>
+
+      <section className="cat-expert-content">
+        <div className="cat-container">
+          <hr className="pdp-divider" />
+          <h2>Guía de Selección Profesional: {activeCategoryData?.NombreCategoria || currentSegment?.NombreSegmento}</h2>
+          <p>
+            En <strong>Disdel</strong>, entendemos que el abastecimiento de {activeCategoryData?.NombreCategoria || currentSegment?.NombreSegmento} requiere estándares de calidad institucional. 
+            Ya sea que necesite suministros por <strong>unidad</strong> para su oficina o por <strong>mayoreo</strong> para mantenimiento industrial, 
+            nuestro catálogo ofrece rendimiento garantizado en toda Guatemala.
+          </p>
+          <div className="cat-benefits-grid">
+            <div className="benefit-item">✅ Grado Institucional</div>
+            <div className="benefit-item">✅ Asesoría Técnica</div>
+            <div className="benefit-item">✅ Entrega en 24-48 horas</div>
+          </div>
+        </div>
+      </section>
     </div>
   );
 };

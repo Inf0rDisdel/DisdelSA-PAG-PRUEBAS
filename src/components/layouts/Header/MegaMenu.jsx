@@ -13,14 +13,14 @@ const MegaMenu = () => {
     const { data: bannerData } = useBanners();
     const { data: menuData, isLoading, isError } = useMenu();
 
+    const [activeCategory, setActiveCategory] = useState('Todas las Categorias');
+    const [activeSubItem, setActiveSubItem] = useState(null);
+
     const defaultIcon = useMemo(() => {
         const found = bannerData?.ImagenPredeterminado?.find(i=> i.Titulo?.trim() === "ImagenDefault2");
         const fileName = found?.BannerImagenMovil;
         return fileName ? `${AppConfig.baseImageUrl}${fileName}` : '';
     }, [bannerData]);
-
-    const [activeCategory, setActiveCategory] = useState('Todas las Categorias');
-    const [activeSubItem, setActiveSubItem] = useState(null);
 
     // Helper para Slugs
     const createSlug = useCallback((text) => {
@@ -102,10 +102,12 @@ const MegaMenu = () => {
         if (item.type === 'marca') {
             return {
                 to: `/marca/${item.parentSlug}`,
-                state: { preSelectedCatId: item.id }
+                state: { preSelectedCatId: item.id },
+                title: `Ver productos de ${item.name} en Disdel`
             };
         }
-        return { to: `/categoria/${createSlug(item.name)}` };
+        return { to: `/categoria/${createSlug(item.name)}`,
+        title: `Explorar categoría ${item.name}`};
     };
     // Datos para la columna de Promoción
     //const promoImage = activeSubItem?.image || currentCategoryData?.promotion?.image;
@@ -124,19 +126,25 @@ const MegaMenu = () => {
         <nav className={styles.megaMenuContainer} role ="navigation" arial-label="Menú de categorias">
             {/* Columna 1: Segmentos / Marcas */}
             <div className={`${styles.megaMenuColumn} ${styles.categoriesColumn}`}>
-                <ul role="menubar">
+                <ul role="menubar" className={styles.menuList}>
                     {menuStructure.map((category) => (
                         <li
                             key={category.name}
                             role="none"
-                            className={activeCategory === category.name ? styles.active : ''}
+                            className={`${styles.menuListItem} ${activeCategory === category.name ? styles.active : ''}`}
                             onMouseEnter={() => {
                                 setActiveCategory(category.name);
                                 setActiveSubItem(null); 
                             }}
                         >
                             <div className={styles.categoryLink}>
-                                <img src={category.icon} alt="" aria-hidden="true" className={styles.categoryIcon} loading="lazy" />
+                                <img 
+                                    src={category.icon || defaultIcon} 
+                                    alt={`Icono ${category.name}`} 
+                                    aria-hidden="true" 
+                                    className={styles.categoryIcon} 
+                                    loading="lazy" 
+                                />
                                 <span>{category.name}</span>
                             </div>
                         </li>
@@ -155,7 +163,11 @@ const MegaMenu = () => {
                         <ul role="menu">
                             {group.items?.map(item => (
                                 <li key={item.name} role="none" onMouseEnter={() => setActiveSubItem(item)}>
-                                    <Link {...getLinkProps(item)} role="menuitem">
+                                    <Link 
+                                        {...getLinkProps(item)} 
+                                        role="menuitem"
+                                        className={styles.subLink}
+                                    >
                                         {item.name}
                                     </Link>
                                 </li>
@@ -173,12 +185,17 @@ const MegaMenu = () => {
                             src={activeSubItem?.image || currentCategoryData?.promotion?.image || defaultIcon} 
                             alt={activeSubItem?.name || currentCategoryData?.promotion?.title} 
                             loading="lazy"
+                            className={styles.promoImg}
                         />
                     </div>
-                    <h3>{activeSubItem?.name || currentCategoryData?.promotion?.title}</h3>
-                    <p>{activeSubItem ? `Explorar suministros de ${activeSubItem.name}` : currentCategoryData?.promotion?.text}</p>
+                     <h3 className={styles.promoTitle}>
+                        {activeSubItem?.name || currentCategoryData?.promotion?.title}
+                    </h3>
+                    <p className={styles.promoText}>
+                        {activeSubItem ? `Descubre las mejores soluciones institucionales de ${activeSubItem.name}.` : currentCategoryData?.promotion?.text}
+                    </p>
                     <Link {...getPromoButtonLink()} className={styles.promoButton}>
-                        {activeSubItem ? 'Ver Categoría' : currentCategoryData?.promotion?.buttonText}
+                        {activeSubItem ? 'Ver Ahora' : currentCategoryData?.promotion?.buttonText}
                     </Link>
                 </div>
             </div>
