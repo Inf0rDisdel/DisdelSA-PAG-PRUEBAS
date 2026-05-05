@@ -142,8 +142,10 @@ useEffect(() => {
               src={logoMain} 
               alt="Disdel S.A. - Expertos en Limpieza y Mantenimiento Institucional" 
               className={styles.logo} 
-              // 🔥 Prioridad máxima de carga sin afectar el tamaño
-              fetchpriority="high" 
+              fetchpriority="high" // 🚀 Prioridad máxima
+              loading="eager"      // 🚀 Carga inmediata
+              width="180"          // 🚀 Dimensiones explícitas
+              height="90"  
             />
           </Link>
         </div>
