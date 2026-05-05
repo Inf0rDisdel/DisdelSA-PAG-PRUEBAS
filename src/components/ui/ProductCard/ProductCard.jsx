@@ -43,6 +43,7 @@ const ProductCard = memo(({ product, index }) => {
   }, [bannerData]);
 
   const isPriority = index < 4;
+  const productUrl = `/producto/${String(IdProducto).trim().toLowerCase()}/${createSlug(Descripcion)}`;
 
   return (
     <article 
@@ -61,20 +62,21 @@ const ProductCard = memo(({ product, index }) => {
       <div className="product-id-badge">ID: {IdProducto}</div>
 
       <Link 
-        to={`/producto/${String(IdProducto).trim().toLowerCase()}/${createSlug(Descripcion)}`}
+        to={productUrl}
         className="product-link"
         itemProp="url"
+        title={`Ver detalle de ${Descripcion}`}
       >
         <div className="product-image-container">
           <img 
             src={imageUrl} 
             alt={Descripcion} 
             className="product-image" 
+            width="200" height="200" // 🚀 Evita saltos de diseño (CLS)
             loading={isPriority ? "eager" : "lazy"} 
             decoding='async'
             fetchpriority={isPriority ? "high" : "auto"}
             itemProp="image"
-            style={{ aspectRatio: '1/1', objectFit: 'contain' }}
           />
         </div>
         
