@@ -6,9 +6,9 @@ import ProductCard from 'components/ui/ProductCard/ProductCard';
 
 import { AppConfig } from 'config/AppConfig';
 import { useBanners } from 'hooks/useBanners';
-import useCartStore from 'store/useCartStore';
 import { useMenu } from 'hooks/useMenu';
 import { useProducts } from 'hooks/useProducts';
+import { useFilterProducts } from 'hooks/useFilterProducts';
 import { createSlug } from 'utils/slugify';
 
 import Skeleton from 'components/ui/Skeleton/Skeleton';
@@ -21,26 +21,22 @@ const CategoryPage = () => {
 
   const { data: bannerData } = useBanners();
   // const addItem = useCartStore((state) => state.addItem);
-  const location = useLocation(); 
+  // const location = useLocation(); 
   const { data: menuData, isLoading: loadingMenu } = useMenu();
   const { data: productsData, isLoading: loadingProducts } = useProducts();
 
   const [activeCatId, setActiveCatId] = useState(null);
   const [activeSubCatId, setActiveSubCatId] = useState(null);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 468);
-
   const scrollRef = useRef(null);
 
-   useEffect(() => {
+  useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth <= 468);
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  // 🔥 SCROLL TOP CORRECTO
-  useEffect(() => {
-  window.scrollTo(0, 0); // 🚀 Más rápido para bots que 'smooth'
-  }, [slug, cat, subcat]);
+  useEffect(() => { window.scrollTo(0, 0); }, [slug, cat, subcat]);
 
   const cleanSlug = slug ? slug.replace(/\/$/, "").trim() : '';
   const canonicalSlug = cleanSlug.toLowerCase();
@@ -56,27 +52,16 @@ const CategoryPage = () => {
       return currentSegment.Categorias?.find(cat => norm(cat.IdCategoria) === norm(activeCatId));
   }, [currentSegment, activeCatId]);
 
-  const filteredProducts = useMemo(() => {
-      if (!productsData || !currentSegment) return [];
-      const filtered = productsData.filter(prod => {
-          if (norm(prod.IdSegmento) !== norm(currentSegment.IdSegmento)) return false;
-          if (activeCatId && norm(prod.IdCategoria) !== norm(activeCatId)) return false;
-          if (activeSubCatId && norm(prod.IdSubCategoria) !== norm(activeSubCatId)) return false;
-          return true;
-      });
-      const seenIds = new Set();
-      return filtered.filter(prod => {
-          const duplicate = seenIds.has(prod.IdProducto);
-          seenIds.add(prod.IdProducto);
-          return !duplicate;
-      });
-  }, [productsData, currentSegment, activeCatId, activeSubCatId]);
+  const filteredProducts = useFilterProducts(
+    productsData,
+    currentSegment,
+    activeCatId,
+    activeSubCatId
+  );
 
   const defaultImage = useMemo(() => {
     const found = bannerData?.ImagenPredeterminado?.find(i => i.Titulo?.trim() === "ImagenDefault3");
-    return found?.BannerImagenMovil || found?.Imagen 
-      ? `${AppConfig.baseImageUrl}${found.BannerImagenMovil || found.Imagen}` 
-      : '';
+    return found ? `${AppConfig.baseImageUrl}${found.BannerImagenMovil || found.Imagen}` : '';
   }, [bannerData]);
 
   const catBanner = useMemo(() => {

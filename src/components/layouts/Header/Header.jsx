@@ -1,4 +1,4 @@
-import React, {  useState, useEffect, useRef } from 'react'; 
+import React, {  useState, useEffect, useRef, useMemo, useCallback } from 'react'; 
 import { Link, useNavigate } from 'react-router-dom'; 
 import useCartStore from 'store/useCartStore';
 import styles from './Header.module.css';
@@ -17,42 +17,45 @@ import {
 const Header = () => {
   const navigate = useNavigate(); 
   const [searchTerm, setSearchTerm] = useState(''); 
-  const whatsappUrl = `https://wa.me/50231094985`;
-
-  const { data: bannerData } = useBanners();
-
-  const { data: productsData } = useProducts(); // Trae la data de productos
   const [suggestions, setSuggestions] = useState([]); // Estado para la lista de sugerencias
   const [showSuggestions, setShowSuggestions] = useState(false); // Estado para mostrar/ocultar el panel
   const searchRef = useRef(null); // Referencia para detectar clics fuera del buscador
-
+  const { data: bannerData } = useBanners();
+  const { data: productsData } = useProducts(); // Trae la data de productos
+  const whatsappUrl = `https://wa.me/50231094985`;
+  
   const cart = useCartStore((state) => state.cart);
-  const cartItemCount = cart.reduce((total, item) => total + (item.quantity || 1), 0);
+  const cartItemCount = useMemo(() => 
+    cart.reduce((total, item) => total + (item.quantity || 1), 0), 
+  [cart]);
 
   const [isMegaMenuOpen, setIsMegaMenuOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [btnIsHighlighted, setBtnIsHighlighted] = useState(false);
+  const [btnIsHighlighted, setBtnIsHighlighted] = useState(false); // Para el efecto bump
   const [isTransitioning, setIsTransitioning] = useState(false);
 
-useEffect(() => {
-    if (searchTerm.trim().length > 2 && productsData) {
-      const searchLower = searchTerm.toLowerCase();
-      const words = searchLower.split(/\s+/);
-      
-      const filtered = productsData.filter(p => {
-        const text = `${p.Descripcion} ${p.IdProducto} ${p.Marca}`.toLowerCase();
-        return words.every(word => text.includes(word));
-      }).slice(0, 6); // Limitamos a 6 sugerencias para no saturar
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (searchTerm.trim().length > 2 && productsData) {
+        const searchLower = searchTerm.toLowerCase();
+        const words = searchLower.split(/\s+/);
+        
+        const filtered = productsData.filter(p => {
+          const text = `${p.Descripcion} ${p.IdProducto} ${p.Marca}`.toLowerCase();
+          return words.every(word => text.includes(word));
+        }).slice(0, 6);
 
-      setSuggestions(filtered);
-      setShowSuggestions(true);
-    } else {
-      setSuggestions([]);
-      setShowSuggestions(false);
-    }
+        setSuggestions(filtered);
+        setShowSuggestions(true);
+      } else {
+        setSuggestions([]);
+        setShowSuggestions(false);
+      }
+    }, 150); // 150ms de espera: Imperceptible para el usuario, respiro para el CPU
+
+    return () => clearTimeout(timer);
   }, [searchTerm, productsData]);
 
-  // Cerrar sugerencias al hacer clic fuera
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (searchRef.current && !searchRef.current.contains(e.target)) {
@@ -62,6 +65,22 @@ useEffect(() => {
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+
+  const assets = useMemo(() => {
+    const getIcon = (title) => bannerData?.Iconos?.find(i => i.Titulo?.trim() === title)?.Imagen;
+    const logoObj = bannerData?.Logo?.find(i => i.Titulo?.trim() === "LogoDisdel");
+    const splashObj = bannerData?.Iconos?.find(i => i.Titulo?.trim() === "IconoSplash");
+    
+    return {
+      logoMain: logoObj ? `${AppConfig.baseImageUrl}${logoObj.Imagen}` : '',
+      logoSplash: splashObj ? `${AppConfig.baseImageUrl}${splashObj.Imagen}` : '',
+      iconUser: getIcon("IconoAsíDLimpio"),
+      iconBuilding: getIcon("IconoMyBussines"),
+      iconCart: getIcon("IconoCarrito"),
+    };
+  }, [bannerData]);
+
+  const { logoMain, logoSplash, iconUser, iconBuilding, iconCart } = assets;
 
   const handleSearchSubmit = (e) => {
     e.preventDefault(); 
@@ -79,29 +98,14 @@ useEffect(() => {
     navigate(`/producto/${p.IdProducto}/${createSlug(p.Descripcion)}`);
   };
 
-  const getIcon = (dbTitle) => {
-    const found = bannerData?.Iconos?.find(i => i.Titulo?.trim() === dbTitle);
-    return found ? `${AppConfig.baseImageUrl}${found.Imagen}` : '';
-  };
-
-  // 🚀 LOGO PRINCIPAL (Buscamos en el grupo "Logo" - ID 31)
-  const logoMainObj = bannerData?.Logo?.find(i => i.Titulo?.trim() === "LogoDisdel");
-  const logoMain = logoMainObj ? `${AppConfig.baseImageUrl}${logoMainObj.Imagen}` : '';
-
-  const iconUser = getIcon("IconoAsíDLimpio");
-  const iconBuilding = getIcon("IconoMyBussines");
-  const iconCart = getIcon("IconoCarrito");
-  const logoSplash = getIcon("IconoSplash");
-
-  const handleLogoClick = (e) => {
+  const handleLogoClick = useCallback((e) => {
     e.preventDefault();
     setIsTransitioning(true);
-
     setTimeout(() => {
       navigate("/");
-        setTimeout(() => setIsTransitioning(false),600);
-    }, 600)
-  };
+      setTimeout(() => setIsTransitioning(false), 600);
+    }, 600);
+  }, [navigate]);
 
   const cartClasses = `${styles.cartLink} ${btnIsHighlighted ? styles.bump : ''}`;
   const handleContactClick = () => window.open(whatsappUrl, '_blank', 'noopener,noreferrer');
@@ -200,6 +204,7 @@ useEffect(() => {
                 )}
               </AnimatePresence>
           </div>
+          
           <nav className={styles.mainNav} role="navigation" aria-label="Navegación principal">
             <div
               className={styles.categoriesContainer}
@@ -216,11 +221,11 @@ useEffect(() => {
         {/* 3. ICONOS DE USUARIO (desktopUserActions) */}
         <div className={styles.desktopUserActions}>
               <a href="https://asidelimpio.com" target="_blank" rel="noopener noreferrer" className={styles.actionLink}>
-                <img src={iconUser} alt="Así de Limpio" className={styles.actionIcon} />
+                <img src={`${AppConfig.baseImageUrl}${iconUser}`} alt="Así de Limpio" className={styles.actionIcon} />
                 <span className={styles.actionText}>Así de Limpio</span>
               </a>
               <a href="https://disdelsagt.com" target="_blank" rel="noopener noreferrer" className={styles.actionLink}>
-                <img src={iconBuilding} alt="MyBusiness" className={styles.actionIcon} />
+                <img src={`${AppConfig.baseImageUrl}${iconBuilding}`} alt="MyBusiness" className={styles.actionIcon} />
                 <span className={styles.actionText}>MyBusiness</span>
               </a>
           </div>
@@ -228,7 +233,7 @@ useEffect(() => {
         {/* 4. CARRITO (headerRight) */}
         <div className={styles.headerRight}>
             <Link to="/carrito" className={cartClasses} aria-label={`Ver mi cotización: ${cartItemCount} artículos`}>
-              <img src={iconCart} alt="" aria-hidden="true" className={styles.cartIcon} />
+              <img src={`${AppConfig.baseImageUrl}${iconCart}`} alt="" aria-hidden="true" className={styles.cartIcon} />
               <span className={styles.cartNotification} aria-hidden="true">{cartItemCount}</span>
             </Link>
           </div>
@@ -263,7 +268,7 @@ useEffect(() => {
             </form>
 
             <a href="https://asidelimpio.com" target="_blank" rel="noopener noreferrer" className={styles.sidebarLink}>
-              <img src={iconUser} alt="User" className={styles.sidebarIcon} />
+              <img src={`${AppConfig.baseImageUrl}${iconUser}`} alt="User" className={styles.sidebarIcon} />
               <div>
                 <span className={styles.sidebarTitle}>Así de Limpio</span>
                 <span className={styles.sidebarSubtitle}>Mi Cuenta</span>
@@ -271,13 +276,16 @@ useEffect(() => {
             </a>
 
             <a href="https://disdelsagt.com" target="_blank" rel="noopener noreferrer" className={styles.sidebarLink}>
-              <img src={iconBuilding} alt="Business" className={styles.sidebarIcon} />
+              <img src={`${AppConfig.baseImageUrl}${iconBuilding}`} alt="Business" className={styles.sidebarIcon} />
               <span>MyBusiness</span>
             </a>
 
             <hr className={styles.divider} />
             <Link to="/" onClick={() => setIsMobileMenuOpen(false)} className={styles.sidebarLinkSimple}>Inicio del Catálogo</Link>
             <Link to="/ayuda" onClick={() => setIsMobileMenuOpen(false)} className={styles.sidebarLinkSimple}>Centro de Ayuda</Link>
+            <button onClick={handleContactClick} className={styles.sidebarLinkSimple} style={{background: 'none', border: 'none', textAlign: 'left', width: '100%', cursor: 'pointer'}}>
+              WhatsApp Ventas
+          </button>
           </nav>
       </div>
     </>

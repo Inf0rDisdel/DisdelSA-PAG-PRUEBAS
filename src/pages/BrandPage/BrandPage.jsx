@@ -1,16 +1,17 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react'; 
 import { useParams, Link, useLocation } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
-import { FiChevronLeft, FiChevronRight, FiShoppingCart } from 'react-icons/fi';
+import { FiChevronLeft, FiChevronRight } from 'react-icons/fi';
 import './BrandPage.css';
 import ProductCard from 'components/ui/ProductCard/ProductCard';
 
 import { AppConfig } from 'config/AppConfig';
-import useCartStore from 'store/useCartStore';
 import { useMenu } from 'hooks/useMenu';
 import { useProducts } from 'hooks/useProducts';
 import { useBanners } from 'hooks/useBanners';
+import { useFilterProducts } from 'hooks/useFilterProducts';
 import { createSlug } from 'utils/slugify';
+import { getCollectionSchema, getBreadcrumbs } from 'utils/schemas/mainSchemas';
 
 import Skeleton from 'components/ui/Skeleton/Skeleton';
 import ProductCardSkeleton from 'components/ui/ProductCard/ProductCardSkeleton';
@@ -19,7 +20,6 @@ const BrandPage = () => {
   const { slug, subcat } = useParams();
   const { data: bannerData } = useBanners();
   const location = useLocation();
-  const addItem = useCartStore((state) => state.addItem);
   const { data: menuData, isLoading: loadingMenu } = useMenu();
   const { data: productsData, isLoading: loadingProducts } = useProducts();
 
@@ -29,6 +29,7 @@ const BrandPage = () => {
 
   const cleanSlug = slug ? slug.replace(/\/$/, "").trim() : '';
   const canonicalSlug = cleanSlug.toLowerCase(); 
+  const norm = (id) => (id === null || id === undefined) ? '' : String(id).trim();
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth <= 468);
@@ -36,16 +37,9 @@ const BrandPage = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  const norm = (id) => (id === null || id === undefined) ? '' : String(id).trim();
-
   const defaultImage = useMemo(() => {
     const found = bannerData?.ImagenPredeterminado?.find(b => b.Titulo?.trim() === "ImagenDefault3");
     return found ? `${AppConfig.baseImageUrl}${found.BannerImagenMovil || found.Imagen}` : ''; 
-  }, [bannerData]);
-
-  const badgeLogo = useMemo (() => {
-    const found = bannerData?.Iconos?.find(b=> b.Titulo === "IconoDisdel");
-    return found ? `${AppConfig.baseImageUrl}${found.Imagen}` : '';
   }, [bannerData]);
 
   const iconoInicio = useMemo (() => {
@@ -82,127 +76,50 @@ const BrandPage = () => {
     return currentBrandSegment?.NombreSegmento || slug.replace(/-/g, ' ');
   }, [currentBrandSegment, slug]);
 
-  const filteredProducts = useMemo(() => {
-    if (!productsData || !currentBrandSegment) return [];
-    const filtered = productsData.filter(prod => {
-      if (norm(prod.IdSegmento) !== norm(currentBrandSegment.IdSegmento)) return false;
-      if (activeCatId && norm(prod.IdCategoria) !== norm(activeCatId)) return false;
-      return true;
-    });
-    
-    const seenIds = new Set();
-    return filtered.filter(prod => {
-      const duplicate = seenIds.has(prod.IdProducto);
-      seenIds.add(prod.IdProducto);
-      return !duplicate;
-    });
-  }, [productsData, currentBrandSegment, activeCatId]);
-
+  const filteredProducts = useFilterProducts(productsData, currentBrandSegment, activeCatId, null);
 
   // --- SCHEMA DINÁMICO ---
   const fullSchema = useMemo(() => {
     if (!currentBrandSegment) return null;
-    const url = `https://disdelsa.com/marca/${canonicalSlug}`;
+    const baseUrl = `https://disdelsa.com/marca/${canonicalSlug}`;
+    const activeCategory = currentBrandSegment?.Categorias?.find(c => norm(c.IdCategoria) === norm(activeCatId));
+
+    const seoTitle = activeCategory 
+        ? `${activeCategory.NombreCategoria} ${brandNameOfficial} Guatemala` 
+        : `Distribuidor Autorizado ${brandNameOfficial} en Guatemala`;
+    
+    const seoDesc = activeCategory
+        ? `Compra ${activeCategory.NombreCategoria} de ${brandNameOfficial} con distribución institucional.`
+        : `Catálogo institucional de ${brandNameOfficial}. Suministros con garantía oficial.`;
 
     return {
-  "@context": "https://schema.org",
-  "@graph": (() => {
-
-    const activeCategory = currentBrandSegment?.Categorias?.find(
-      c => String(c.IdCategoria) === String(activeCatId)
-    );
-
-    const baseUrl = `https://disdelsa.com/marca/${canonicalSlug}`;
-
-    const breadcrumbItems = [
-      {
-        "@type": "ListItem",
-        "position": 1,
-        "name": "Inicio",
-        "item": "https://disdelsa.com/"
-      },
-      {
-        "@type": "ListItem",
-        "position": 2,
-        "name": brandNameOfficial,
-        "item": baseUrl
-      }
-    ];
-
-    if (activeCategory) {
-      breadcrumbItems.push({
-        "@type": "ListItem",
-        "position": 3,
-        "name": activeCategory.NombreCategoria,
-        "item": `${baseUrl}/${createSlug(activeCategory.NombreCategoria)}`
-      });
-    }
-
-      return [
-        {
-          "@type": "BreadcrumbList",
-          "@id": `${baseUrl}#breadcrumb`,
-          "itemListElement": breadcrumbItems
-        },
-        {
-          "@type": "CollectionPage",
-          "@id": `${baseUrl}#collection`,
-          "url": activeCategory 
-            ? `${baseUrl}/${createSlug(activeCategory.NombreCategoria)}`
-            : baseUrl,
-          "name": activeCategory
-            ? `${activeCategory.NombreCategoria} ${brandNameOfficial} Guatemala`
-            : `Distribuidor Autorizado ${brandNameOfficial} en Guatemala`,
-          "description": activeCategory
-            ? `Compra ${activeCategory.NombreCategoria} de ${brandNameOfficial} con distribución institucional en Guatemala. Calidad garantizada y entrega rápida.`
-            : `Catálogo institucional de ${brandNameOfficial}. Suministros industriales con garantía oficial y entrega en toda Guatemala.`,
-          "publisher": { 
-            "@type": "Organization", 
-            "name": "Disdel, S.A.",
-            "url": "https://disdelsa.com/"
-          },
-          "mainEntity": {
-            "@type": "ItemList",
-            "numberOfItems": filteredProducts.length,
-            "itemListElement": filteredProducts.slice(0, 40).map((prod, index) => ({
-              "@type": "ListItem",
-              "position": index + 1,
-              "url": `https://disdelsa.com/producto/${String(prod.IdProducto).toLowerCase()}`,
-              "name": prod.Descripcion,
-              "image": prod.Imagen 
-                ? `${AppConfig.baseImageUrl}productos/${prod.Imagen}` 
-                : defaultImage
-            }))
-          }
-        }
-      ];
-    })()
-  };
-  }, [currentBrandSegment, brandNameOfficial, filteredProducts, canonicalSlug, defaultImage]);
+        "@context": "https://schema.org",
+        "@graph": [
+            getCollectionSchema(seoTitle, seoDesc, baseUrl, filteredProducts),
+            getBreadcrumbs([
+                { name: "Inicio", item: "https://disdelsa.com/" },
+                { name: brandNameOfficial, item: baseUrl },
+                ...(activeCategory ? [{ name: activeCategory.NombreCategoria, item: `${baseUrl}/${createSlug(activeCategory.NombreCategoria)}` }] : [])
+            ])
+        ]
+    };
+  }, [currentBrandSegment, brandNameOfficial, filteredProducts, canonicalSlug, activeCatId]);
 
   useEffect(() => {
     if (currentBrandSegment?.Categorias?.length > 0) {
       const preId = location.state?.preSelectedCatId;
       if (preId) {
-        const exists = currentBrandSegment.Categorias.some(c => String(c.IdCategoria) === String(preId));
+        const exists = currentBrandSegment.Categorias.some(c => norm(c.IdCategoria) === norm(preId));
         setActiveCatId(exists ? preId : null);
-      } else {
-        setActiveCatId(null);
       }
     }
-  }, [currentBrandSegment, location.state, slug]);
+  }, [currentBrandSegment, location.state]);
 
   useEffect(() => {
-  if (!subcat || !currentBrandSegment?.Categorias) return;
-
-  const foundCat = currentBrandSegment.Categorias.find(cat =>
-    createSlug(cat.NombreCategoria) === subcat
-  );
-
-  if (foundCat) {
-    setActiveCatId(foundCat.IdCategoria);
-  }
-}, [subcat, currentBrandSegment]);
+    if (!subcat || !currentBrandSegment?.Categorias) return;
+    const foundCat = currentBrandSegment.Categorias.find(cat => createSlug(cat.NombreCategoria) === subcat);
+    if (foundCat) setActiveCatId(foundCat.IdCategoria);
+  }, [subcat, currentBrandSegment]);
 
   const handleScroll = (direction) => {
     if (scrollRef.current) {
@@ -217,16 +134,8 @@ const BrandPage = () => {
       <div className="brand-container">
         <Skeleton width="100%" height={isMobile ? "180px" : "280px"} style={{ marginBottom: '30px' }} />
         <div className="brand-layout">
-          <aside className="sidebar-filters">
-            <Skeleton width="100%" height="250px" />
-          </aside>
-          <main className="products-area">
-             <div className="grid-container">
-                {[1, 2, 3, 4].map(n => (
-                  <ProductCardSkeleton key={n} />
-                ))}
-             </div>
-          </main>
+          <aside className="sidebar-filters"><Skeleton width="100%" height="250px" /></aside>
+          <main className="products-area"><div className="grid-container">{[1, 2, 3, 4].map(n => <ProductCardSkeleton key={n} />)}</div></main>
         </div>
       </div>
     );
@@ -283,15 +192,13 @@ const BrandPage = () => {
     </Helmet>
 
       <section className="brand-hero">
-        {isMobile && visualConfig.bannerMob ? (
-          <img src={visualConfig.bannerMob} alt={brandNameOfficial} className='banner-fade-in' fetchpriority="high" loading="eager" />
-        ) : visualConfig.banner ? (
-          <img src={visualConfig.banner} alt={brandNameOfficial} className='banner-fade-in' fetchpriority="high" loading="eager" />
-        ) : (
-           <div className="brand-hero-fallback" style={{ background: visualConfig.color }}>
-            <h1>{brandNameOfficial}</h1>
-          </div>
-        )}
+        <img 
+            src={(isMobile && visualConfig.bannerMob) ? visualConfig.bannerMob : (visualConfig.banner || defaultImage)} 
+            alt={brandNameOfficial} 
+            className='banner-fade-in' 
+            fetchpriority="high" 
+            loading="eager"
+        />
       </section>
 
       <div className="brand-layout">
@@ -329,18 +236,12 @@ const BrandPage = () => {
         </aside>
 
          <main className="products-area">
-  <div className="grid-container">
-    {filteredProducts.map((prod, index) => (
-      /* 🔥 Usamos el componente oficial que ya tiene 
-         el SEO, el zoom y el diseño Pro integrado */
-      <ProductCard 
-        key={prod.IdProducto} 
-        product={prod} 
-        index={index} 
-      />
-    ))}
-  </div>
-</main>
+            <div className="grid-container">
+              {filteredProducts.map((prod, index) => (
+                <ProductCard key={prod.IdProducto} product={prod} index={index} />
+              ))}
+            </div>
+          </main>
       </div>
     </div>
   );

@@ -1,6 +1,57 @@
 import { createSlug } from '../slugify';
 import { AppConfig } from 'config/AppConfig';
 
+export const getMainGraphSchema = () => {
+  return {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Organization",
+        "@id": "https://disdelsa.com/#organization",
+        "name": "Disdel, S.A.",
+        "alternateName": "Disdelsa",
+        "url": "https://disdelsa.com/",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "https://disdelsa.com/logo-disdel.png" // Asegura que esta URL sea real
+        },
+        "image": "https://disdelsa.com/og-image.jpg",
+        "description": "Distribuidor mayorista líder en Guatemala de suministros de limpieza, higiene, cafetería y equipo de protección personal para empresas e instituciones.",
+        "address": {
+          "@type": "PostalAddress",
+          "streetAddress": "15 Calle 16-30, Zona 1",
+          "addressLocality": "Ciudad de Guatemala",
+          "postalCode": "01001",
+          "addressCountry": "GT"
+        },
+        "contactPoint": {
+          "@type": "ContactPoint",
+          "telephone": "+502-2422-6120",
+          "contactType": "ventas y servicio al cliente",
+          "areaServed": "GT",
+          "availableLanguage": "Spanish"
+        },
+        "sameAs": [
+          "https://www.facebook.com/disdelsagt",
+          "https://www.instagram.com/disdelsagt",
+          "https://www.linkedin.com/company/disdelsa"
+        ]
+      },
+      {
+        "@type": "WebSite",
+        "@id": "https://disdelsa.com/#website",
+        "url": "https://disdelsa.com/",
+        "name": "Disdel Suministros Institucionales",
+        "publisher": { "@id": "https://disdelsa.com/#organization" },
+        "potentialAction": {
+          "@type": "SearchAction",
+          "target": "https://disdelsa.com/buscar?q={search_term_string}",
+          "query-input": "required name=search_term_string"
+        }
+      }
+    ]
+  };
+};
 /**
  * 1. SCHEMA DE PRODUCTO (Detalle)
  */

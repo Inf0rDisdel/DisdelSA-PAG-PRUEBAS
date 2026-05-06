@@ -5,6 +5,7 @@ import styles from './MegaMenu.module.css';
 import { AppConfig } from '../../../config/AppConfig';
 import { useMenu } from '../../../hooks/useMenu';
 import { useBanners } from 'hooks/useBanners';
+import { createSlug } from 'utils/slugify';
 
 const brandKeywords = ['KIMBERLY', '3M', 'WIESE', 'SILVER'];
 
@@ -95,9 +96,11 @@ const MegaMenu = () => {
         return [allDepartments, ...mappedBrands];
     }, [menuData, defaultIcon]);
 
-    const currentCategoryData = menuStructure.find(cat => cat.name === activeCategory);
+    const currentCategoryData = useMemo(() => 
+        menuStructure.find(cat => cat.name === activeCategory),
+    [menuStructure, activeCategory]);
 
-    const getLinkProps = (item) => {
+    const getLinkProps = useCallback((item) => {
         if (!item) return { to: '#' };
         if (item.type === 'marca') {
             return {
@@ -106,19 +109,21 @@ const MegaMenu = () => {
                 title: `Ver productos de ${item.name} en Disdel`
             };
         }
-        return { to: `/categoria/${createSlug(item.name)}`,
-        title: `Explorar categoría ${item.name}`};
-    };
+        return { 
+            to: `/categoria/${createSlug(item.name)}`,
+            title: `Explorar categoría ${item.name}`
+        };
+    }, []);
     // Datos para la columna de Promoción
     //const promoImage = activeSubItem?.image || currentCategoryData?.promotion?.image;
     //const promoTitle = activeSubItem?.name || currentCategoryData?.promotion?.title;
     
     // Link del botón de promoción
-    const getPromoButtonLink = () => {
+    const getPromoButtonLink = useCallback(() => {
         if (activeSubItem) return getLinkProps(activeSubItem);
         if (currentCategoryData?.isStatic) return { to: '/buscar?q=suministros' };
         return { to: `/marca/${createSlug(currentCategoryData?.name)}` };
-    };
+    }, [activeSubItem, currentCategoryData, getLinkProps]);
 
     if (isLoading || isError || !menuData) return null;
 
@@ -192,7 +197,9 @@ const MegaMenu = () => {
                         {activeSubItem?.name || currentCategoryData?.promotion?.title}
                     </h3>
                     <p className={styles.promoText}>
-                        {activeSubItem ? `Descubre las mejores soluciones institucionales de ${activeSubItem.name}.` : currentCategoryData?.promotion?.text}
+                        {activeSubItem 
+                            ? `Descubre las mejores soluciones institucionales de ${activeSubItem.name}.` 
+                            : currentCategoryData?.promotion?.text || 'Expertos en abastecimiento técnico.'}
                     </p>
                     <Link {...getPromoButtonLink()} className={styles.promoButton}>
                         {activeSubItem ? 'Ver Ahora' : currentCategoryData?.promotion?.buttonText}
