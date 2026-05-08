@@ -72,8 +72,11 @@ const HomePage = () => {
     <main>
       <Helmet>
         {/* --- 🚀 SEO TÉCNICO B2B --- */}
-        <title>Disdel | Suministros de Limpieza, Higiene , Protección corporal, cafetería Mayorista en Guatemala</title>
-        <meta name="description" content="Distribuidor institucional líder en Guatemala. Proveemos suministros de limpieza profesional, equipo de protección personal (EPP) y cafetería para hoteles, hospitales y empresas." />
+        <title>Disdel Guatemala | Lider en Suministros de Limpieza y Mantenimiento </title>
+        <meta
+        name="description"
+        content="Disdel, S.A. líder en Guatemala en suministros de limpieza profesional, mantenimiento institucional, higiene, cafetería y productos para empresas."
+        />
         <link rel="canonical" href="https://disdelsa.com/" />
 
         {/* --- OPEN GRAPH (Facebook, WhatsApp, LinkedIn) --- */}

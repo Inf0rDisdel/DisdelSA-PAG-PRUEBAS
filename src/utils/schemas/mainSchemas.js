@@ -6,43 +6,78 @@ export const getMainGraphSchema = () => {
     "@context": "https://schema.org",
     "@graph": [
       {
-        "@type": "Organization",
+        "@type": ["Organization", "LocalBusiness", "WholesaleStore"],
         "@id": "https://disdelsa.com/#organization",
+
         "name": "Disdel, S.A.",
-        "alternateName": "Disdelsa",
+        "alternateName": [
+          "Disdel",
+          "Disdelsa",
+          "Disdel Guatemala"
+        ],
+
         "url": "https://disdelsa.com/",
         "logo": {
           "@type": "ImageObject",
-          "url": "https://disdelsa.com/logo-disdel.png" // Asegura que esta URL sea real
+          "url": "https://disdelsa.com/logo-disdel.png"
         },
+
         "image": "https://disdelsa.com/og-image.jpg",
-        "description": "Distribuidor mayorista líder en Guatemala de suministros de limpieza, higiene, cafetería y equipo de protección personal para empresas e instituciones.",
+
+        "description": "Empresa líder en Guatemala especializada en suministros de limpieza profesional, mantenimiento institucional, higiene, cafetería y equipo de protección personal para empresas.",
+
+        "keywords": [
+          "Disdel",
+          "Suministros de limpieza",
+          "Productos de limpieza Guatemala",
+          "Mantenimiento institucional",
+          "Mayorista limpieza Guatemala",
+          "Empresa de limpieza Guatemala",
+          "Higiene institucional",
+          "Disdel Guatemala"
+        ],
+
+        "telephone": "+502-2422-6120",
+
+        "priceRange": "$$",
+
         "address": {
           "@type": "PostalAddress",
-          "streetAddress": "15 Calle 16-30, Zona 1",
+          "streetAddress": "15 Calle 16-30 Zona 1",
           "addressLocality": "Ciudad de Guatemala",
+          "addressRegion": "Guatemala",
           "postalCode": "01001",
           "addressCountry": "GT"
         },
+
+        "areaServed": {
+          "@type": "Country",
+          "name": "Guatemala"
+        },
+
         "contactPoint": {
           "@type": "ContactPoint",
           "telephone": "+502-2422-6120",
-          "contactType": "ventas y servicio al cliente",
-          "areaServed": "GT",
-          "availableLanguage": "Spanish"
+          "contactType": "Ventas",
+          "availableLanguage": ["Spanish"]
         },
+
         "sameAs": [
           "https://www.facebook.com/disdelsagt",
           "https://www.instagram.com/disdelsagt",
           "https://www.linkedin.com/company/disdelsa"
         ]
       },
+
       {
         "@type": "WebSite",
         "@id": "https://disdelsa.com/#website",
         "url": "https://disdelsa.com/",
-        "name": "Disdel Suministros Institucionales",
-        "publisher": { "@id": "https://disdelsa.com/#organization" },
+        "name": "Disdel Guatemala",
+        "publisher": {
+          "@id": "https://disdelsa.com/#organization"
+        },
+
         "potentialAction": {
           "@type": "SearchAction",
           "target": "https://disdelsa.com/buscar?q={search_term_string}",

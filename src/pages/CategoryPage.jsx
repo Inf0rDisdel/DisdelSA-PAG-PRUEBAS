@@ -85,7 +85,7 @@ const CategoryPage = () => {
 
   return {
     // Título Híbrido: Genérico + Profesional + Marca
-    title: `${dynamicTitle} Profesional en Guatemala | Mayoreo y Unidad | Disdel`,
+    title: `Comprar ${dynamicTitle} en Guatemala | Mayoreo y Unidad | Disdel`,
     description: `Distribución líder de ${dynamicTitle} institucional en Guatemala. Soluciones de alta concentración para empresas, hospitales y hogares. Cotización inmediata y envíos a todo el país.`,
     url: `https://disdelsa.com/categoria/${slug}${cat ? '/' + cat : ''}${subcat ? '/' + subcat : ''}`,
     image: catBanner.desktop || defaultImage
@@ -179,7 +179,9 @@ const CategoryPage = () => {
             />
             {!isMobile && (
               <div className="cat-header-overlay">
-                  <h1 className="cat-segment-title">{currentSegment.NombreSegmento}</h1>
+                  <h1 className="cat-segment-title">
+                    {activeCategoryData?.NombreCategoria || currentSegment.NombreSegmento} en Guatemala
+                  </h1>
               </div>
             )}
         </div>

@@ -7,6 +7,7 @@ import { AppConfig } from 'config/AppConfig';
 import { useBanners } from 'hooks/useBanners';
 import useCartStore from 'store/useCartStore';
 import { useProductDetail } from 'hooks/useProductDetail';
+import { generateProductInsight } from 'utils/SEO/productDescriptions';
 
 import { FiCheckCircle, FiPackage, FiChevronLeft, FiTarget, FiTruck, FiAward } from 'react-icons/fi';
 import { createSlug } from 'utils/slugify';
@@ -21,12 +22,14 @@ const ProductDetailPage = () => {
   const navigate = useNavigate();
   const addItem = useCartStore((state) => state.addItem);
   const { data: bannerData } = useBanners();
-  const { data: product, isLoading, isError } = useProductDetail(cleanIdFromUrl);
+  const { data: product, isLoading, isError } = useProductDetail(id);
 
   const [selectedImage, setSelectedImage] = useState(null);
   const [selectedUnit, setSelectedUnit] = useState(''); 
   const [selectedType, setSelectedType] = useState('Y');
   const [zoomPos, setZoomPos] = useState({ x: 0, y: 0, show: false });
+
+  const professionalInsight = useMemo(() => generateProductInsight(product), [product]);
 
   //---HANDLERS---
   const handleMouseMove = (e) => {
@@ -116,14 +119,17 @@ const ProductDetailPage = () => {
     );
   }
 
-  const seoTitle = `${product.Descripcion} ${product.Marca ? '| ' + product.Marca : ''} | Disdel Guatemala`;
+  const seoTitle = `Compra ${product.Descripcion} en Guatemala ${product.Marca ? '| ' + product.Marca : ''} | `;
   const mainImg = getImageUrl(selectedImage || product.Imagen);
 
   return (
     <div className="pdp-container">
     <Helmet>
     <title>{seoTitle}</title>
-    <meta name="description" content={`Solicite cotización de ${product.Descripcion} en Guatemala. Suministro profesional para empresas. Categoría ${product.Categoria}.`} />
+    <meta
+      name="description"
+      content={`${product.Descripcion} en Guatemala al mejor precio con Disdel. Compra individual o solicita cotización para mayoreo, empresas y negocios. Venta institucional, suministros profesionales, atención rápida, precios especiales por volumen y entrega inmediata. Categoría ${product.Categoria}.`}
+    />
     <link rel="canonical" href={currentUrl} />
     <link rel="preload" as="image" href={mainImg} fetchpriority="high" />
 
@@ -210,10 +216,10 @@ const ProductDetailPage = () => {
           </header>
 
           <div className="pdp-commercial-desc-card">
-             <p> 
-                <FiAward className="pdp-desc-icon" /> 
-                <strong>Solución Institucional:</strong> En disdel nos especializamos en el abastecimiento técnico de  <strong>{product.Descripcion}</strong> para el sector empresarial. Este artículo de la línea  <strong>{product.Categoria}</strong>ha sido seleccionada bajo riguroso estándares para garantizar la máxima eficiencia y rendimiento en las operaciones de su institución o negocio en toda Guatemala. 
-             </p>
+              <p> 
+                  <FiAward className="pdp-desc-icon" /> 
+                  <span dangerouslySetInnerHTML={{ __html: `<strong>Solución Institucional:</strong> ${professionalInsight}` }} />
+              </p>
              <div className="pdp-features-list">
                 <span><FiTruck /> Envío a toda la República</span>
                 <span><FiAward /> Garantía de Calidad Disdel</span>
