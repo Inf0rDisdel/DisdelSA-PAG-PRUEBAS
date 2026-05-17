@@ -63,6 +63,7 @@
 .carousel-wrapper .carousel .slide,
 .carousel-wrapper .carousel .slide > div {
   height: 100%; 
+  border-radius: 8px;
 }
 
 .carousel-wrapper .carousel .slide img {

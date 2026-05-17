@@ -22,5 +22,10 @@ export const AppConfig = {
     baseUrlSuscripcion: estoyEnModoLocal ? URLs.local.suscripcion : URLs.produccion.suscripcion,
     baseUrlMaestros: estoyEnModoLocal ? URLs.local.maestros : URLs.produccion.maestros,
     baseUrlMobil: estoyEnModoLocal ? URLs.local.mobil : URLs.produccion.mobil,
-    baseImageUrl: "https://disdelsa.com/imagenes/" 
+    baseImageUrl: "https://disdelsa.com/imagenes/" ,
+
+    HOME_SEGMENTS: {
+        HIGIENE: "1059",
+        COFFEE_BREAK: "2166"
+    }
 };

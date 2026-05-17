@@ -90,11 +90,12 @@ export const getMainGraphSchema = () => {
 /**
  * 1. SCHEMA DE PRODUCTO (Detalle)
  */
-export const getProductSchema = (product, currentUrl, productImages) => {
+export const getProductSchema = (product, currentUrl, productImages, legacySeo = {}) => {
   const brandName = product.Marca || "Disdel";
-  const cleanDescription = (product.DescripcionAux || product.DescripcionLarga || product.Descripcion)
-    .replace(/<[^>]*>?/gm, '')
-    .substring(0, 300);
+
+  const finalTitle = legacySeo?.t || product.Descripcion;
+  const finalDesc = legacySeo?.d || product.DescripcionAux || product.Descripcion;
+  const finalKeywords = legacySeo?.k || `${product.Categoria}, ${product.Marca}`;
 
   return {
     "@context": "https://schema.org/",
@@ -102,11 +103,12 @@ export const getProductSchema = (product, currentUrl, productImages) => {
       {
         "@type": "Product",
         "@id": `${currentUrl}#product`,
-        "name": product.Descripcion,
+        "name": finalTitle, // <-- Google usará este nombre en el resultado
+        "description": finalDesc,
         "image": productImages.map(img => img.includes('http') ? img : `${AppConfig.baseImageUrl}productos/${img}`),
-        "description": `Cotización institucional para ${product.Descripcion}. ${cleanDescription}`,
         "sku": product.IdProducto,
         "mpn": product.SkuCaja || product.IdProducto,
+        "keywords": finalKeywords,
         "gtin13": product.CodigoBarras || undefined,
         "gtin": product.UPC || undefined,
         "brand": { "@type": "Brand", "name": brandName },
@@ -132,7 +134,20 @@ export const getProductSchema = (product, currentUrl, productImages) => {
         { name: "Inicio", item: "https://disdelsa.com/" },
         { name: product.Categoria, item: `https://disdelsa.com/categoria/${createSlug(product.Categoria)}` },
         { name: product.Descripcion, item: currentUrl }
-      ])
+      ]),
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": `¿Cómo comprar ${product.Descripcion} por mayoreo?`,
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": `En Disdel puedes solicitar una cotización por volumen de ${product.Descripcion} directamente en nuestro portal B2B o contactando a un asesor.`
+            }
+          }
+        ]
+      }
     ]
   };
 };
@@ -142,22 +157,31 @@ export const getProductSchema = (product, currentUrl, productImages) => {
  */
 export const getCollectionSchema = (title, description, url, products) => {
   return {
-    "@type": "CollectionPage",
-    "@id": `${url}#collection`,
-    "url": url,
-    "name": title,
-    "description": description,
-    "mainEntity": {
-      "@type": "ItemList",
-      "numberOfItems": products.length,
-      "itemListElement": products.slice(0, 40).map((prod, index) => ({
-        "@type": "ListItem",
-        "position": index + 1,
-        "url": `https://disdelsa.com/producto/${String(prod.IdProducto).toLowerCase()}/${createSlug(prod.Descripcion)}`,
-        "name": prod.Descripcion,
-        "image": `${AppConfig.baseImageUrl}productos/${prod.Imagen}`
-      }))
-    }
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "CollectionPage",
+        "@id": `${url}#collection`,
+        "url": url,
+        "name": title,
+        "description": description,
+        "mainEntity": {
+          "@type": "ItemList",
+          "numberOfItems": products.length,
+          "itemListElement": products.slice(0, 40).map((prod, index) => ({
+            "@type": "ListItem",
+            "position": index + 1,
+            "url": `https://disdelsa.com/producto/${String(prod.IdProducto).toLowerCase()}/${createSlug(prod.Descripcion)}`,
+            "name": prod.Descripcion,
+            "image": `${AppConfig.baseImageUrl}productos/${prod.Imagen}`
+          }))
+        }
+      },
+      getBreadcrumbs([
+        { name: "Inicio", item: "https://disdelsa.com/" },
+        { name: title, item: url }
+      ])
+    ]
   };
 };
 

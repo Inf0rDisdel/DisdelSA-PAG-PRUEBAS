@@ -13,6 +13,8 @@ import { FiCheckCircle, FiPackage, FiChevronLeft, FiTarget, FiTruck, FiAward } f
 import { createSlug } from 'utils/slugify';
 import './ProductDetailPage.css';
 import { getProductSchema } from 'utils/schemas/mainSchemas';
+import { optimizedSeoData } from 'utils/SEO/optimizedSeo';
+import RelatedProducts from 'components/products/RelatedProducts';
 
 const ProductDetailPage = () => {
   const { id } = useParams();
@@ -31,6 +33,42 @@ const ProductDetailPage = () => {
 
   const professionalInsight = useMemo(() => generateProductInsight(product), [product]);
 
+  const legacySeoInfo = useMemo(() => {
+    if (!product) return null;
+    // Buscamos directamente por el ID en minúsculas (llave del objeto)
+    const match = optimizedSeoData[String(product.IdProducto).toLowerCase()];
+    if (!match) return null;
+    
+    // Mapeamos las llaves cortas (k, t, d) a nombres legibles
+    return {
+      keywords: match.k,
+      title: match.t,
+      description: match.d
+    };
+  }, [product]);
+
+  const currentSlug = useMemo(() => product ? createSlug(product.Descripcion) : '', [product]);
+  const currentUrl = `https://disdelsa.com/producto/${canonicalId}/${currentSlug}`;
+
+  // 3. UNIFICACIÓN DE KEYWORDS
+  const seoKeywords = useMemo(() => {
+    if (!product) return "";
+    const base = `${product.Categoria}, ${product.Marca}, Disdel Guatemala`;
+    const extra = legacySeoInfo?.keywords || "";
+    return extra ? `${base}, ${extra}` : base;
+  }, [product, legacySeoInfo]);
+
+  // 4. GENERACIÓN DEL SCHEMA
+  const productImages = useMemo(() => {
+      if (!product) return [];
+      return product.Imagenes?.length > 0 ? product.Imagenes.filter(img => img.Imagen).map(img => img.Imagen) : [product.Imagen];
+  }, [product]);
+
+  const fullSchema = useMemo(() => {
+    if (!product) return null;
+    return getProductSchema(product, currentUrl, productImages, legacySeoInfo);
+  }, [product, currentUrl, productImages, legacySeoInfo]);
+
   //---HANDLERS---
   const handleMouseMove = (e) => {
     const { left, top, width, height } = e.currentTarget.getBoundingClientRect();
@@ -48,8 +86,6 @@ const ProductDetailPage = () => {
     });
   };
 
-  const currentSlug = useMemo(() => product ? createSlug(product.Descripcion) : '', [product]);
-  const currentUrl = `https://disdelsa.com/producto/${canonicalId}/${currentSlug}`;
 
   const defaultImage = useMemo(() => {
     const found = bannerData?.ImagenPredeterminado?.find(i => i.Titulo?.trim() === "ImagenDefault3");
@@ -60,20 +96,11 @@ const ProductDetailPage = () => {
     ? `${AppConfig.baseImageUrl}productos/${imgName}` 
     : defaultImage, [defaultImage]);
 
-  const productImages = useMemo(() => {
-      if (!product) return [];
-      return product.Imagenes?.length > 0 ? product.Imagenes.filter(img => img.Imagen).map(img => img.Imagen) : [product.Imagen];
-  }, [product]);
-
   const hasDifferentOptions = useMemo(() => {
     if (!product || !product.Unidad || !product.Empaque) return false;
     return product.Unidad.trim().toLowerCase() !== product.Empaque.trim().toLowerCase();
   }, [product]);
 
-  const fullSchema = useMemo(() => {
-    if (!product) return null;
-    return getProductSchema(product, currentUrl, productImages);
-  }, [product, currentUrl, productImages]);
 
   useEffect(() => {
     if (product) {
@@ -119,17 +146,16 @@ const ProductDetailPage = () => {
     );
   }
 
-  const seoTitle = `Compra ${product.Descripcion} en Guatemala ${product.Marca ? '| ' + product.Marca : ''} | `;
+  const seoTitle = legacySeoInfo?.title || `Compra ${product.Descripcion} en Guatemala ${product.Marca ? '| ' + product.Marca : ''} | Disdel`;
+  const seoDescription = legacySeoInfo?.description || `${product.Descripcion} en Guatemala al mejor precio con Disdel. Suministros profesionales para empresas. Categoría ${product.Categoria}.`;
   const mainImg = getImageUrl(selectedImage || product.Imagen);
 
   return (
     <div className="pdp-container">
     <Helmet>
     <title>{seoTitle}</title>
-    <meta
-      name="description"
-      content={`${product.Descripcion} en Guatemala al mejor precio con Disdel. Compra individual o solicita cotización para mayoreo, empresas y negocios. Venta institucional, suministros profesionales, atención rápida, precios especiales por volumen y entrega inmediata. Categoría ${product.Categoria}.`}
-    />
+    <meta name="description" content={seoDescription} />
+    <meta name="keywords" content={seoKeywords} />
     <link rel="canonical" href={currentUrl} />
     <link rel="preload" as="image" href={mainImg} fetchpriority="high" />
 
@@ -261,59 +287,66 @@ const ProductDetailPage = () => {
       </div>
 
       {/* --- SECCIÓN DE ESPECIFICACIONES TÉCNICAS --- */}
-<section className="pdp-specs-section">
-  <div className="pdp-specs-header">
-    <span className="pdp-specs-emoji">📌</span>
-    <h2>Especificaciones</h2>
-  </div>
-  
-  <div className="pdp-specs-grid">
-    <div className="spec-group">
-      <div className="spec-item">
-        <span className="spec-label">Empaque Individual:</span>
-        <span className="spec-value">{product.Empaque || 'Sin Definir'}</span>
-      </div>
-      <div className="spec-item">
-        <span className="spec-label">Empaque por caja:</span>
-        <span className="spec-value">{product.EmpaqueCaja ? Number(product.EmpaqueCaja).toFixed(2) : 'Sin Definir'}</span>
-      </div>
-      <div className="spec-item">
-        <span className="spec-label">Venta por Unidad:</span>
-        <span className="spec-value">{product.Unidad || 'Sin Definir'}</span>
-      </div>
-    </div>
+      <section className="pdp-specs-section">
+        <div className="pdp-specs-header">
+          <span className="pdp-specs-emoji">📌</span>
+          <h2>Especificaciones</h2>
+        </div>
+        
+        <div className="pdp-specs-grid">
+          <div className="spec-group">
+            <div className="spec-item">
+              <span className="spec-label">Empaque Individual:</span>
+              <span className="spec-value">{product.Empaque || 'Sin Definir'}</span>
+            </div>
+            <div className="spec-item">
+              <span className="spec-label">Empaque por caja:</span>
+              <span className="spec-value">{product.EmpaqueCaja ? Number(product.EmpaqueCaja).toFixed(2) : 'Sin Definir'}</span>
+            </div>
+            <div className="spec-item">
+              <span className="spec-label">Venta por Unidad:</span>
+              <span className="spec-value">{product.Unidad || 'Sin Definir'}</span>
+            </div>
+          </div>
 
-    <div className="spec-group">
-      <div className="spec-item">
-        <span className="spec-label">Marca:</span>
-        <span className="spec-value">{product.Marca || 'Disdel'}</span>
-      </div>
-      <div className="spec-item">
-        <span className="spec-label">Ancho:</span>
-        <span className="spec-value">{product.Ancho && product.Ancho !== "0" ? product.Ancho : 'Sin Definir'}</span>
-      </div>
-      <div className="spec-item">
-        <span className="spec-label">Venta por Fardo/Empaque:</span>
-        <span className="spec-value">{product.Empaque || 'Sin Definir'}</span>
-      </div>
-    </div>
+          <div className="spec-group">
+            <div className="spec-item">
+              <span className="spec-label">Marca:</span>
+              <span className="spec-value">{product.Marca || 'Disdel'}</span>
+            </div>
+            <div className="spec-item">
+              <span className="spec-label">Ancho:</span>
+              <span className="spec-value">{product.Ancho && product.Ancho !== "0" ? product.Ancho : 'Sin Definir'}</span>
+            </div>
+            <div className="spec-item">
+              <span className="spec-label">Venta por Fardo/Empaque:</span>
+              <span className="spec-value">{product.Empaque || 'Sin Definir'}</span>
+            </div>
+          </div>
 
-    <div className="spec-group">
-      <div className="spec-item">
-        <span className="spec-label">Peso:</span>
-        <span className="spec-value">{product.Peso && product.Peso !== "0" ? `${product.Peso} Kg` : 'Sin Definir'}</span>
-      </div>
-      <div className="spec-item">
-        <span className="spec-label">Volumen:</span>
-        <span className="spec-value">{product.Volumen && product.Volumen !== "0" ? product.Volumen : 'Sin Definir'}</span>
-      </div>
-      <div className="spec-item">
-        <span className="spec-label">Catálogo del Fabricante:</span>
-        <span className="spec-value">{product.SkuCaja || product.IdProducto}</span>
-      </div>
-    </div>
-  </div>
-</section>
+          <div className="spec-group">
+            <div className="spec-item">
+              <span className="spec-label">Peso:</span>
+              <span className="spec-value">{product.Peso && product.Peso !== "0" ? `${product.Peso} Kg` : 'Sin Definir'}</span>
+            </div>
+            <div className="spec-item">
+              <span className="spec-label">Volumen:</span>
+              <span className="spec-value">{product.Volumen && product.Volumen !== "0" ? product.Volumen : 'Sin Definir'}</span>
+            </div>
+            <div className="spec-item">
+              <span className="spec-label">Catálogo del Fabricante:</span>
+              <span className="spec-value">{product.SkuCaja || product.IdProducto}</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {product && (
+        <RelatedProducts 
+          category={product.Categoria} 
+          currentProductId={product.IdProducto} 
+          />
+        )}
     </div>
   );
 };

@@ -2,25 +2,37 @@
 import axios from 'axios';
 import { AppConfig } from 'config/AppConfig';
 
-// Instancia para Cotizaciones (Puerto 60839)
-export const apiVentas = axios.create({
-    baseURL: AppConfig.baseUrlVentas,
+const createInstance = (baseURL) => {
+  const instance = axios.create({
+    baseURL,
+    timeout: 15000, // 15 segundos máximo
     headers: {
-        'Content-Type': 'application/json'
+      'Content-Type': 'application/json',
+      'Accept': 'application/json'
     }
-});
+  });
 
-// Instancia para Suscripciones (Puerto 56110)
-export const apiSuscripcion = axios.create({
-    baseURL: AppConfig.baseUrlMobil, // Asegúrate de tener esta clave en AppConfig.js
-    headers: {
-        'Content-Type': 'application/json'
-    }
-});
+  // Interceptor para peticiones (útil para añadir tokens de auth después)
+  instance.interceptors.request.use(config => {
+    // Si necesitas añadir un API Key o Token B2B aquí es el lugar
+    return config;
+  }, error => Promise.reject(error));
 
-export const ApiMobil = axios.create({
-    baseURL: AppConfig.baseUrlMobil, 
-    headers: {
-        'Content-Type': 'application/json'
+  // Interceptor para respuestas (Manejo global de errores)
+  instance.interceptors.response.use(
+    response => response,
+    error => {
+      const message = error.response?.data?.message || 'Error de conexión';
+      console.error(`[API Error] ${error.config.url}:`, message);
+      // Aquí podrías integrar un sistema de logs como Sentry
+      return Promise.reject(error);
     }
-});
+  );
+
+  return instance;
+};
+
+// Usar la función que creaste para todas las instancias
+export const apiVentas = createInstance(AppConfig.baseUrlVentas);
+export const apiSuscripcion = createInstance(AppConfig.baseUrlSuscripcion);
+export const ApiMobil = createInstance(AppConfig.baseUrlMobil);

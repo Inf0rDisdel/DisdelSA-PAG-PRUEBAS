@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { ApiMobil } from '../api/apiInstance'; // Tu instancia axios
 
 const fetchProductDetail = async (id) => {
@@ -20,6 +20,9 @@ const fetchProductDetail = async (id) => {
 };
 
 export const useProductDetail = (productId) => {
+
+    const queryClient = useQueryClient();
+
     return useQuery({
         queryKey: ['producto-detalle', productId],
         queryFn: () => fetchProductDetail(productId),
@@ -27,6 +30,13 @@ export const useProductDetail = (productId) => {
         enabled: !!productId && productId.length > 0, 
         staleTime: 1000 * 60 * 30, // 30 minutos en caché
         retry: 1, 
-        refetchOnWindowFocus: false 
+        refetchOnWindowFocus: false ,
+        initialData: () => {
+            return queryClient.getQueryData(['productos-lista'])?.find(
+                p => String(p.IdProducto) === String(productId)
+            );
+        },
+        initialDataUpdatedAt: () => 
+            queryClient.getQueryState(['productos-lista'])?.dataUpdatedAt,
     });
 };

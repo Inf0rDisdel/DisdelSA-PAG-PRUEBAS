@@ -67,7 +67,7 @@ const CategoryPage = () => {
   const catBanner = useMemo(() => {
     const bannerObj = bannerData?.sliderPrincipal?.[1]; 
     return {
-      desktop: bannerObj?.Imagen ? `${AppConfig.baseImageUrl}${bannerObj.Imagen}` : '',
+      desktop: bannerObj?.ImagenBanner ? `${AppConfig.baseImageUrl}${bannerObj.ImagenBanner}` : '',
       mobile: bannerObj?.BannerImagenMovil ? `${AppConfig.baseImageUrl}${bannerObj.BannerImagenMovil}` : ''
     };
   }, [bannerData]);

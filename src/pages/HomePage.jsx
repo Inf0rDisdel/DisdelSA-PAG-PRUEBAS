@@ -16,10 +16,13 @@ import InfoSection from 'components/home/InfoSection/InfoSection';
 import PromoLayout from 'components/home/PromoLayout/PromoLayout';
 import ProductCarousel from 'components/Carousel/ProductCarousel';
 
+import { optimizedSeoData } from 'utils/SEO/optimizedSeo';
+
 const HomePage = () => {
   const addItem = useCartStore((state) => state.addItem);
   const { data: allProducts, isLoading } = useProducts();
 
+  const homeSeo = useMemo(() => optimizedSeoData['home'] || null, []);
   const fullGraphSchema = useMemo(() => getMainGraphSchema(), []);
 
   const cleanBaseUrl = useMemo(() => 
@@ -52,31 +55,33 @@ const HomePage = () => {
     });
 
     // EFICIENCIA: Una sola iteración para clasificar
-    const higieneTemp = [];
-    const coffeeTemp = [];
-    const cotizadosTemp = allProducts.slice(0, 12).map(format);
+    const higiene = [];
+    const coffee = [];
+    const cotizados = allProducts.slice(0, 12).map(format);
 
     allProducts.forEach(p => {
-        if (String(p.IdSegmento) === "1059") higieneTemp.push(format(p));
-        if (String(p.IdCategoria) === "2166") coffeeTemp.push(format(p));
+        if (String(p.IdSegmento) === AppConfig.HOME_SEGMENTS.HIGIENE) higiene.push(format(p));
+        if (String(p.IdCategoria) === AppConfig.HOME_SEGMENTS.COFFEE_BREAK) coffee.push(format(p));
     });
 
     return {
-        cotizados: cotizadosTemp,
-        higiene: higieneTemp.length > 0 ? higieneTemp.slice(0, 15) : allProducts.slice(10, 25).map(format),
-        coffee: coffeeTemp.length > 0 ? coffeeTemp.slice(0, 15) : allProducts.slice(25, 40).map(format)
+        cotizados,
+        higiene: higiene.slice(0, 15),
+        coffee: coffee.slice(0, 15)
     };
-  }, [allProducts, cleanBaseUrl]);
+  }, [allProducts]);
 
   return (
     <main>
       <Helmet>
         {/* --- 🚀 SEO TÉCNICO B2B --- */}
-        <title>Disdel Guatemala | Lider en Suministros de Limpieza y Mantenimiento </title>
+        <title> {homeSeo?.t || "Disdel Guatemala | Lider en Suministros de Limpieza y Mantenimiento"} </title>
         <meta
         name="description"
-        content="Disdel, S.A. líder en Guatemala en suministros de limpieza profesional, mantenimiento institucional, higiene, cafetería y productos para empresas."
+        content={homeSeo?.d || "Disdel, S.A. líder en Guatemala en suministros de limpieza profesional, mantenimiento institucional, higiene, cafetería y productos para empresas."}
         />
+
+        <meta name="keywords" content={homeSeo?.k || "limpieza, suministros, guatemala"} />
         <link rel="canonical" href="https://disdelsa.com/" />
 
         {/* --- OPEN GRAPH (Facebook, WhatsApp, LinkedIn) --- */}
