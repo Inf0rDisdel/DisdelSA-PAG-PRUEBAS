@@ -15,6 +15,7 @@
 }
 
 .banner-item {
+  position: relative; 
   flex: 1;
   border-radius: 8px;
   overflow: hidden;
@@ -27,6 +28,54 @@
   height: 100%;
   object-fit: cover;
 }
+
+.banner-view-btn {
+  position: absolute;
+  bottom: 15px;
+  right: 15px;
+  background-color: rgba(255, 255, 255, 0.9); /* 👈 Más opaco para que se vea */
+  color: #135eab; /* Azul Disdel */
+  padding: 8px 20px;
+  border-radius: 50px;
+  font-size: 13px;
+  font-weight: 800;
+  text-decoration: none;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
+  border: 1px solid #135eab;
+  z-index: 999 !important; 
+  display: block !important;
+}
+
+.banner-view-btn:hover {
+  background-color: #135eab;
+  color: white;
+  transform: scale(1.05);
+}
+
+/* 🚀 IMPORTANTE: Para el carrusel móvil */
+.mobile-slide-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+
+.banner-view-btn-mini {
+  position: absolute;
+  bottom: 50px; /* Un poco más arriba de los puntos del carrusel */
+  right: 20px;
+  background: white;
+  color: #333;
+  padding: 6px 15px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 800;
+  text-decoration: none;
+  z-index: 20;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+}
+
 
 .slider-container {
   width: 45%; 

@@ -7,7 +7,7 @@ import { AppConfig } from 'config/AppConfig';
 import { useBanners } from 'hooks/useBanners';
 import useCartStore from 'store/useCartStore';
 import { useProductDetail } from 'hooks/useProductDetail';
-import { generateProductInsight } from 'utils/SEO/productDescriptions';
+import { generateProductInsight, generateProductSeoDescription } from 'utils/SEO/productDescriptions';
 
 import { FiCheckCircle, FiPackage, FiChevronLeft, FiTarget, FiTruck, FiAward } from 'react-icons/fi';
 import { createSlug } from 'utils/slugify';
@@ -31,8 +31,6 @@ const ProductDetailPage = () => {
   const [selectedType, setSelectedType] = useState('Y');
   const [zoomPos, setZoomPos] = useState({ x: 0, y: 0, show: false });
 
-  const professionalInsight = useMemo(() => generateProductInsight(product), [product]);
-
   const legacySeoInfo = useMemo(() => {
     if (!product) return null;
     // Buscamos directamente por el ID en minúsculas (llave del objeto)
@@ -43,9 +41,18 @@ const ProductDetailPage = () => {
     return {
       keywords: match.k,
       title: match.t,
-      description: match.d
+      description: match.d,
+      ld: match.ld
     };
   }, [product]);
+
+  const professionalInsight = useMemo(() => 
+    generateProductInsight(product), 
+  [product]);
+
+  const seoLongDescription = useMemo(() => 
+  generateProductSeoDescription(product, legacySeoInfo),
+  [product, legacySeoInfo]);
 
   const currentSlug = useMemo(() => product ? createSlug(product.Descripcion) : '', [product]);
   const currentUrl = `https://disdelsa.com/producto/${canonicalId}/${currentSlug}`;
@@ -101,16 +108,23 @@ const ProductDetailPage = () => {
     return product.Unidad.trim().toLowerCase() !== product.Empaque.trim().toLowerCase();
   }, [product]);
 
-
   useEffect(() => {
-    if (product) {
-      if (!selectedImage) setSelectedImage(product.Imagen);
-      if (!selectedUnit) {
-        setSelectedUnit(product.Unidad || product.Empaque || 'Unidad');
-        setSelectedType(product.Unidad ? 'Y' : 'N');
-      }
-    }
-  }, [product, selectedImage, selectedUnit]);
+  // Solo actuamos si el objeto 'product' existe y tiene datos
+  if (product) {
+    // 1. Reset de Imagen: Forzamos la imagen principal del nuevo producto
+    setSelectedImage(product.Imagen);
+
+    // 2. Reset de Unidades: Calculamos la unidad inicial del nuevo producto
+    const initialUnit = product.Unidad || product.Empaque || 'Unidad';
+    setSelectedUnit(initialUnit);
+    setSelectedType(product.Unidad ? 'Y' : 'N');
+
+    // 3. 🚀 EXPERIENCIA SENIOR: Scroll al inicio
+    // Como venimos de hacer clic en un producto que estaba abajo (relacionados),
+    // debemos subir al usuario al inicio de la página para que vea el nuevo detalle.
+    window.scrollTo(0, 0);
+  }
+}, [product]); 
 
   // if (isLoading) return <div>Cargando Producto...</div>;
   // if (isError || !product) return <div>Error al cargar producto</div>;
@@ -147,20 +161,20 @@ const ProductDetailPage = () => {
   }
 
   const seoTitle = legacySeoInfo?.title || `Compra ${product.Descripcion} en Guatemala ${product.Marca ? '| ' + product.Marca : ''} | Disdel`;
-  const seoDescription = legacySeoInfo?.description || `${product.Descripcion} en Guatemala al mejor precio con Disdel. Suministros profesionales para empresas. Categoría ${product.Categoria}.`;
   const mainImg = getImageUrl(selectedImage || product.Imagen);
+  // const seoKeywords = legacySeoInfo?.keywords || `${product.Categoria}, ${product.Marca}, Disdel Guatemala`;
 
   return (
     <div className="pdp-container">
     <Helmet>
     <title>{seoTitle}</title>
-    <meta name="description" content={seoDescription} />
+    <meta name="description" content={seoLongDescription} />
     <meta name="keywords" content={seoKeywords} />
     <link rel="canonical" href={currentUrl} />
     <link rel="preload" as="image" href={mainImg} fetchpriority="high" />
 
     <meta property="og:title" content={seoTitle} />
-    <meta property="og:description" content={`Distribución de ${product.Descripcion} en Guatemala. ¡Cotiza ahora con Disdel!`} />
+    <meta property="og:description" content={seoLongDescription} />
     <meta property="og:image" content={mainImg} />
     <meta property="og:url" content={currentUrl} />
     <meta property="og:type" content="product" />
@@ -180,7 +194,7 @@ const ProductDetailPage = () => {
     {/* --- 3. TWITTER CARD --- */}
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={seoTitle} />
-    <meta name="twitter:description" content={`Compra ${product.Descripcion} en Disdel. Suministros industriales y de limpieza profesional.`} />
+    <meta name="twitter:description" content={seoLongDescription} />
     <meta name="twitter:image" content={mainImg} />
 
     {fullSchema && (
@@ -199,7 +213,7 @@ const ProductDetailPage = () => {
           <div className="pdp-thumbnails-vertical">
             {productImages.map((img, index) => (
               <div 
-                key={index} 
+                key={`${product.IdProducto}-${index}`} // 👈 Usar el ID aquí ayuda a React a no confundirse
                 className={`pdp-thumb-item ${selectedImage === img ? 'active' : ''}`} 
                 onMouseEnter={() => setSelectedImage(img)}
               >

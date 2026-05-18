@@ -16,6 +16,14 @@ const CATEGORIAS_TOP = [
     'EPP', 'QUIMICOS PARA LIMPIEZA', 'FERRETERIA', 'BOTIQUIN', 'CAFETERIA','PAPELERIA'
 ];
 
+const folder = esMarca ? 'marca' : 'categoria';
+url.push({
+    loc: `${BASE_URL}/${folder}/${segSlug}`,
+    // 🚀 Prioridad máxima para resultados cortos (Cloro, etc.)
+    priority: (CATEGORIAS_TOP.some(top => segNameUpper.includes(top))) ? '1.0' : '0.9',
+    changefreq: 'daily'
+});
+
 const createSlug = (text) => {
     if (!text) return '';
     return text.toString().toLowerCase().trim()
@@ -72,21 +80,25 @@ const escapeXml = (str) =>
                 });
 
                 // Nivel 2: /categoria/limpieza/herramientas
-                if (seg.Categorias) {
+                if (seg.Categorias && Array.isArray(seg.Categorias)) {
                     seg.Categorias.forEach(cat => {
                         const catSlug = createSlug(cat.NombreCategoria);
+                        
                         urls.push({
                             loc: `${BASE_URL}/${folder}/${segSlug}/${catSlug}`,
-                            priority: '0.7',
+                            priority: '0.8',
                             changefreq: 'daily'
                         });
 
-                        // Subcategorías (solo si no es marca, para mantener rutas limpias)
-                        if (cat.SubCategorias && !esMarca) {
+                        // --- NIVEL 3: Subcategorías (Ej: /categoria/limpieza/desinfectantes/cloro) ---
+                        // Solo procesamos subcategorías si NO es marca, para mantener rutas limpias según tu AppRouter
+                        if (cat.SubCategorias && Array.isArray(cat.SubCategorias) && !esMarca) {
                             cat.SubCategorias.forEach(sub => {
+                                const subSlug = createSlug(sub.NombreSubCategoria);
+                                
                                 urls.push({
-                                    loc: `${BASE_URL}/categoria/${segSlug}/${catSlug}/${createSlug(sub.NombreSubCategoria)}`,
-                                    priority: '0.6',
+                                    loc: `${BASE_URL}/categoria/${segSlug}/${catSlug}/${subSlug}`,
+                                    priority: '0.7', // Nivel 3 tiene un poco menos de peso que el principal
                                     changefreq: 'weekly'
                                 });
                             });
@@ -95,6 +107,7 @@ const escapeXml = (str) =>
                 }
             });
         }
+
 
         if (resProd.data && Array.isArray(resProd.data)) {
             resProd.data.forEach(prod => {

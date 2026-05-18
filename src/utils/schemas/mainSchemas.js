@@ -82,7 +82,12 @@ export const getMainGraphSchema = () => {
           "@type": "SearchAction",
           "target": "https://disdelsa.com/buscar?q={search_term_string}",
           "query-input": "required name=search_term_string"
-        }
+        },
+        "sameAs": [
+        "https://www.facebook.com/disdelsagt",
+        "https://www.instagram.com/disdelsagt",
+        "https://www.linkedin.com/company/disdelsa"
+        ]
       }
     ]
   };

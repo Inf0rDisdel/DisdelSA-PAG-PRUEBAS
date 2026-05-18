@@ -14,6 +14,7 @@ import { createSlug } from 'utils/slugify';
 import Skeleton from 'components/ui/Skeleton/Skeleton';
 import ProductCardSkeleton from 'components/ui/ProductCard/ProductCardSkeleton';
 import { getCollectionSchema, getBreadcrumbs } from 'utils/schemas/mainSchemas';
+import { optimizedSeoData } from 'utils/SEO/optimizedSeo';
 
 const CategoryPage = () => {
   const { slug, cat, subcat } = useParams();
@@ -72,25 +73,42 @@ const CategoryPage = () => {
     };
   }, [bannerData]);
 
-  const seoData = useMemo(() => {
-  const segmentName = currentSegment?.NombreSegmento || "Categoría";
-  const categoryName = activeCategoryData?.NombreCategoria;
-  const subCategoryName = activeCategoryData?.SubCategorias?.find(
-    s => norm(s.IdSubCategoria) === norm(activeSubCatId)
-  )?.NombreSubCategoria;
+  const categorySeo = useMemo(() => {
+    return optimizedSeoData[canonicalSlug] || null;
+  }, [canonicalSlug]);
 
-  let dynamicTitle = categoryName || segmentName;
-  if (categoryName && cat) dynamicTitle = `${categoryName} | ${segmentName}`;
-  if (subCategoryName && subcat) dynamicTitle = `${subCategoryName} | ${categoryName}`;
+  const seoData = useMemo(() => {
+    const segmentName = currentSegment?.NombreSegmento || "Categoría";
+    const categoryName = activeCategoryData?.NombreCategoria;
+    const subCategoryName = activeCategoryData?.SubCategorias?.find(
+      s => norm(s.IdSubCategoria) === norm(activeSubCatId)
+    )?.NombreSubCategoria;
+
+    // 🚀 FIX: Usamos "let" para permitir la construcción del título dinámico
+    let dynamicTitle = categorySeo?.t || categoryName || segmentName;
+
+    // Si no hay SEO manual en el JSON, construimos el título jerárquico
+    if (!categorySeo?.t) {
+      if (categoryName && cat && !subcat) {
+        dynamicTitle = `${categoryName} en Guatemala | ${segmentName}`;
+      }
+      if (subCategoryName && subcat) {
+        dynamicTitle = `${subCategoryName} | ${categoryName} | Disdel`;
+      }
+    }
+
+  const finalTitle = dynamicTitle.includes("Disdel") 
+    ? dynamicTitle 
+    : `${dynamicTitle} en Guatemala | Mayoreo y Unidad | Disdel`;
 
   return {
     // Título Híbrido: Genérico + Profesional + Marca
-    title: `Comprar ${dynamicTitle} en Guatemala | Mayoreo y Unidad | Disdel`,
-    description: `Distribución líder de ${dynamicTitle} institucional en Guatemala. Soluciones de alta concentración para empresas, hospitales y hogares. Cotización inmediata y envíos a todo el país.`,
+    title: finalTitle,
+    description: categorySeo?.d || `Distribución líder de ${dynamicTitle} institucional en Guatemala. Soluciones de alta concentración para empresas, hospitales y hogares. Cotización inmediata y envíos a todo el país.`,
     url: `https://disdelsa.com/categoria/${slug}${cat ? '/' + cat : ''}${subcat ? '/' + subcat : ''}`,
     image: catBanner.desktop || defaultImage
-  };
-}, [currentSegment, activeCategoryData, slug, cat, subcat, catBanner, defaultImage]);
+    };
+  }, [categorySeo, activeCategoryData, currentSegment, slug, cat, catBanner, defaultImage, activeSubCatId]);
 
   const fullSchema = useMemo(() => {
     if (!currentSegment) return null;
@@ -153,6 +171,7 @@ const CategoryPage = () => {
       <Helmet>
         <title>{seoData.title}</title>
         <meta name="description" content={seoData.description} />
+        <meta name="keywords" content={categorySeo?.k || "suministros, guatemala, limpieza"} />
         <link rel="canonical" href={seoData.url} />
         
         <meta property="og:title" content={seoData.title} />
@@ -246,16 +265,16 @@ const CategoryPage = () => {
       <section className="cat-expert-content">
         <div className="cat-container">
           <hr className="pdp-divider" />
-          <h2>Guía de Selección Profesional: {activeCategoryData?.NombreCategoria || currentSegment?.NombreSegmento}</h2>
-          <p>
-            En <strong>Disdel</strong>, entendemos que el abastecimiento de {activeCategoryData?.NombreCategoria || currentSegment?.NombreSegmento} requiere estándares de calidad institucional. 
-            Ya sea que necesite suministros por <strong>unidad</strong> para su oficina o por <strong>mayoreo</strong> para mantenimiento industrial, 
-            nuestro catálogo ofrece rendimiento garantizado en toda Guatemala.
+          <h2>{categorySeo?.t || `Guía de Selección: ${seoData.title}`}</h2>
+          <p className="cat-expert-text">
+            {categorySeo?.d || `En Disdel somos expertos en la distribución de ${currentSegment?.NombreSegmento}. 
+            Nuestro catálogo está diseñado para cumplir con los estándares de higiene más exigentes en Guatemala.`}
           </p>
+          
           <div className="cat-benefits-grid">
-            <div className="benefit-item">✅ Grado Institucional</div>
-            <div className="benefit-item">✅ Asesoría Técnica</div>
             <div className="benefit-item">✅ Entrega en 24-48 horas</div>
+            <div className="benefit-item">✅ Precios de Distribuidor</div>
+            <div className="benefit-item">✅ Soporte Técnico Especializado</div>
           </div>
         </div>
       </section>

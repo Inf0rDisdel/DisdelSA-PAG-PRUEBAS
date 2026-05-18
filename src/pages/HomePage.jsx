@@ -18,6 +18,12 @@ import ProductCarousel from 'components/Carousel/ProductCarousel';
 
 import { optimizedSeoData } from 'utils/SEO/optimizedSeo';
 
+const HomeSkeleton = () => (
+  <div style={{ minHeight: '100vh', background: '#f8f9fa', padding: '20px' }}>
+    <div style={{ width: '100vh', height:'500px', background: '#eee', borderRadius:'15px'}}></div>
+  </div>
+);
+
 const HomePage = () => {
   const addItem = useCartStore((state) => state.addItem);
   const { data: allProducts, isLoading } = useProducts();
@@ -46,30 +52,30 @@ const HomePage = () => {
         return { higiene: [], coffee: [], cotizados: [] };
     }
 
-    const format = (p) => ({
-        id: p.IdProducto,
-        name: p.Descripcion,
-        image: `${cleanBaseUrl}productos/${p.Imagen}`,
-        disdelId: p.IdProducto,
-        ...p 
-    });
+    const format = (p) => ({ ...p, id: p.IdProducto, name: p.Descripcion, image: `${AppConfig.baseImageUrl}productos/${p.Imagen}` });
 
-    // EFICIENCIA: Una sola iteración para clasificar
-    const higiene = [];
-    const coffee = [];
-    const cotizados = allProducts.slice(0, 12).map(format);
+    const seenHigiene = new Set(); const seenCoffee = new Set(); const seenCotizados = new Set();
+    const higiene = []; const coffee = []; const cotizados = [];
 
     allProducts.forEach(p => {
-        if (String(p.IdSegmento) === AppConfig.HOME_SEGMENTS.HIGIENE) higiene.push(format(p));
-        if (String(p.IdCategoria) === AppConfig.HOME_SEGMENTS.COFFEE_BREAK) coffee.push(format(p));
+        const pid = String(p.IdProducto);
+        if (String(p.IdSegmento) === AppConfig.HOME_SEGMENTS.HIGIENE && !seenHigiene.has(pid)) {
+            if (higiene.length < 15) { higiene.push(format(p)); seenHigiene.add(pid); }
+        }
+        if (String(p.IdCategoria) === AppConfig.HOME_SEGMENTS.COFFEE_BREAK && !seenCoffee.has(pid)) {
+            if (coffee.length < 15) { coffee.push(format(p)); seenCoffee.add(pid); }
+        }
+        if (cotizados.length < 12 && !seenCotizados.has(pid)) {
+            cotizados.push(format(p)); seenCotizados.add(pid);
+        }
     });
 
-    return {
-        cotizados,
-        higiene: higiene.slice(0, 15),
-        coffee: coffee.slice(0, 15)
-    };
+    return { cotizados, higiene, coffee };
   }, [allProducts]);
+
+  const showSkeletons = isLoading && (!allProducts || allProducts.length === 0);
+
+  if (showSkeletons) return <HomeSkeleton />;
 
   return (
     <main>

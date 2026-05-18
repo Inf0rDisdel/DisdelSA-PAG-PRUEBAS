@@ -1,6 +1,10 @@
-// src/utils/SEO/productDescriptions.js
+/**
+ * Genera una descripción comercial y técnica única para el producto.
+ * @param {Object} product - Los datos del producto que vienen de la API.
+ * @param {Object} legacySeo - El objeto optimizado del JSON (t, d, k, ld).
+ */
 
-export const generateProductInsight = (product) => {
+export const generateProductInsight = (product = null) => {
   if (!product) return "";
 
   const { Descripcion, Marca, Categoria } = product;
@@ -39,4 +43,36 @@ export const generateProductInsight = (product) => {
 
   // Fallback Genérico Profesional (Si no cae en ninguna categoría)
   return `Abastecimiento técnico con ${nombre}. Calidad garantizada de ${marca} en la gama de ${cat}, seleccionada bajo estándares institucionales para Guatemala.`;
+};
+
+
+
+export const generateProductSeoDescription = (product, legacySeo = null) => {
+  if (!product) return "";
+
+  const { Descripcion, Marca, Categoria, IdProducto } = product;
+  const baseDescription = legacySeo?.ld || legacySeo?.description || ""; 
+  
+  // Ganchos sin HTML (Google prefiere texto plano en meta tags)
+  const hooks = [
+    `Optimice los estándares de su empresa con ${Descripcion}.`,
+    `Garantice resultados de grado institucional utilizando ${Descripcion}.`,
+    `El ${Descripcion} es la solución técnica líder de ${Marca || "Disdel"} para su negocio.`,
+    `Abastecimiento profesional de alto rendimiento con ${Descripcion}.`
+  ];
+  const selectedHook = hooks[String(IdProducto).length % hooks.length];
+
+  let body = baseDescription;
+  if (!body || body.length < 15) {
+    const catLower = Categoria.toLowerCase();
+    if (catLower.includes("quimico") || catLower.includes("limpieza")) {
+      body = `Esta formulación de alta concentración en la línea de ${Categoria} está diseñada para desinfección profunda en entornos industriales de Guatemala.`;
+    } else {
+      body = `Este producto seleccionado de la gama ${Categoria} cumple con los requisitos técnicos exigidos para el mantenimiento institucional.`;
+    }
+  }
+
+  const closure = `Adquiera calidad garantizada con Disdel. Solicite su cotización institucional por mayoreo para el código ${IdProducto}.`;
+
+  return `${selectedHook} ${body} ${closure}`.replace(/<[^>]*>?/gm, ''); // Limpiamos cualquier HTML por si acaso
 };

@@ -10,7 +10,6 @@ import ProductCardSkeleton from 'components/ui/ProductCard/ProductCardSkeleton';
 import Skeleton from 'components/ui/Skeleton/Skeleton';
 
 const ProductCarousel = ({ title, products = [], isLoading, variant = '' }) => {
-
   const{data: bannerData} = useBanners();
 
   const images = useMemo(() => {
@@ -44,15 +43,18 @@ const ProductCarousel = ({ title, products = [], isLoading, variant = '' }) => {
         </div>
       </div>
     );
-}
+  }
+
   const settings = {
     dots: false,
-    infinite: products && products.length > 5, 
-    speed: 400,
+    infinite: products.length > 5, 
+    speed: 800,
     slidesToShow: 5, 
     slidesToScroll: 1,
-    lazyLoad: 'progressive',
-    cssEase: 'cubic-bezier(0.25,0.46,0.45,0.94',
+    autoplay: true,       // ACTIVADO
+    autoplaySpeed: 3500,  // 3.5 segundos (el punto dulce del marketing)
+    pauseOnHover: true,   // Crucial para UX: detiene el scroll al interactuar
+    cssEase: "cubic-bezier(0.25, 0.46, 0.45, 0.94)",
     responsive: [
       {
         breakpoint: 1024,
@@ -61,7 +63,7 @@ const ProductCarousel = ({ title, products = [], isLoading, variant = '' }) => {
           slidesToScroll: 1,
           dots: false,
           arrows: true,
-          infinite: products && products.length > 3
+          infinite: products.length > 3
         }
       },
       {
@@ -72,7 +74,7 @@ const ProductCarousel = ({ title, products = [], isLoading, variant = '' }) => {
           dots: false,
           arrows: false,
           swipeToSlide: true,
-          infinite:products && products.length>2,
+          infinite: products.length>2,
           adaptiveHeight: false
         }
       },
@@ -85,23 +87,23 @@ const ProductCarousel = ({ title, products = [], isLoading, variant = '' }) => {
   }
 
    return (
-    <div className={`product-carousel-container ${variant}`}
-      style={{ backgroundImage: `url(${images.fondoImagen})` }} 
+    <section 
+      className={`product-carousel-container ${variant}`}
+      style={{ backgroundImage: `url(${images.fondoImagen})` }}
+      aria-label={title}
     >
-      <h2 className="carousel-title">{title}</h2>
+      <div className="carousel-header">
+        <h2 className="carousel-title">{title}</h2>
+      </div>
+      
       <Slider {...settings}>
-        {products.map((product, index) => {
-          // Validamos con IdProducto (que es el que viene de tu API)
-          if (!product || (!product.IdProducto && !product.id)) return null;
-
-          return (
-            <div key={product.IdProducto || product.id} className="carousel-item-padding">
-              <ProductCard product={product} index={index} />
-            </div>
-          );
-        })}
+        {products.map((product, index) => (
+          <div key={product.IdProducto || index} className="carousel-item-padding">
+            <ProductCard product={product} index={index} />
+          </div>
+        ))}
       </Slider>
-    </div>
+    </section>
   );
 };
 

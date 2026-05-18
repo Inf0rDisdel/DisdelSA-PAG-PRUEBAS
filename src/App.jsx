@@ -1,6 +1,8 @@
 import React from 'react'; 
 import { Toaster } from 'react-hot-toast'; // Notificaciones rápidas
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'; // 1. IMPORTAR
+import { persistQueryClient } from '@tanstack/react-query-persist-client';
+import { createSyncStoragePersister } from '@tanstack/query-sync-storage-persister';
 
 import ScrollToTop from 'components/ui/Button/ScrollToTop';
 import AppRouter from './routes/AppRouter';
@@ -13,13 +15,24 @@ import './App.css';
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
+      gcTime: 1000 * 60 * 60 * 24, // 24 horas de vida en disco
+      staleTime: 1000 * 60 * 5,    // 5 minutos de "frescura" total
       refetchOnWindowFocus: false,
       retry: 1,
-      // PERFORMANCE: Aumentamos el staleTime global para evitar peticiones flash
-      staleTime: 1000 * 60 * 5, 
-      keepPreviousData: true, 
     },
   },
+});
+
+// 2. Crear el persistidor (Guarda la data en localStorage)
+const localStoragePersister = createSyncStoragePersister({
+  storage: window.localStorage,
+});
+
+// 3. Unir el cliente con la persistencia
+persistQueryClient({
+  queryClient,
+  persister: localStoragePersister,
+  maxAge: 1000 * 60 * 60 * 24, // Tiempo máximo de validez
 });
 
 function App() {

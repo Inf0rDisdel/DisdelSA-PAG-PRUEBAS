@@ -14,7 +14,7 @@ export const useProducts = () => {
     return useQuery({
         queryKey: ['productos-all'],
         queryFn: fetchProducts,
-        staleTime: 1000 * 60 * 30, // 30 min de datos "frescos"
+        staleTime: 1000 * 60 * 60, // 30 min de datos "frescos"
         gcTime: 1000 * 60 * 60,    // Mantener en memoria 1 hora
         refetchOnWindowFocus: false, 
         refetchOnMount: false,     // 🔥 No volver a cargar si ya existen

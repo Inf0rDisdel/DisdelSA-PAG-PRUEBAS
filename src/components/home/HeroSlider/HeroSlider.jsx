@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Carousel } from 'react-responsive-carousel';
+import { Link } from 'react-router-dom';
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 
 import { AppConfig } from '../../../config/AppConfig';
@@ -16,6 +17,25 @@ const HeroSlider = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
+  const getBannerRoute = (ban) => {
+  if (!ban) return null;
+
+  const image = (ban.Imagen || "").toLowerCase();
+
+  if (image.includes('wiese')) {
+    return '/marca/wiese/aromatizantes-ambientales';
+  }
+
+  if (
+    image.includes('nescafe') ||
+    image.includes('coffee')
+  ) {
+    return '/categoria/cafeteria/cafe-y-complementos';
+  }
+
+  return null;
+};
+
   if (isLoading || isError) {
     return (
       <section className="main-container skeleton-hero" aria-hidden="true">
@@ -27,9 +47,33 @@ const HeroSlider = () => {
 
   if (!banners) return null;
 
-   return (
+  const renderBannerItem = (ban) => {
+
+
+    console.log("BANNER:", ban);
+
+    const route = getBannerRoute(ban); 
+
+    return (
+      <div className="banner-item" key={ban.EntityID}>
+        <img 
+          src={`${AppConfig.baseImageUrl}${ban.Imagen}`} 
+          alt={ban.Titulo || "Promoción Disdel"} 
+        />
+        {/* 🚀 CORRECCIÓN 1: Usamos la variable 'route' en el 'to' */}
+        {route && (
+          <Link to={route} className="banner-view-btn">
+            Ver productos
+          </Link>
+        )}
+      </div>
+    );
+  };
+
+  return (
     <section className="main-container" aria-label="Promociones principales">
       {isMobile ? (
+        /* --- 📱 VISTA MÓVIL --- */
         <>
           <div className="mobile-hero-carousel">
             <Carousel
@@ -41,48 +85,39 @@ const HeroSlider = () => {
               interval={3500}
               stopOnHover={false}
             >
-              {banners.sliderPrincipal.map((slide, index) => (
-                <div key={slide.EntityID}>
-                  <img 
-                    src={`${AppConfig.baseImageUrl}${slide.BannerImagenMovil || slide.Imagen}`} 
-                    alt={slide.Titulo || "Suministros de limpieza Disdel"} 
-                    // 🔥 SEO FIX 2 (LCP): Prioridad alta solo a la primera imagen
-                    fetchpriority={index === 0 ? "high" : "auto"}
-                    loading={index === 0 ? "eager" : "lazy"}
-                    decoding={index === 0 ? "sync" : "async"}
-                  />
-                </div>
-              ))}
+              {banners.sliderPrincipal.map((slide, index) => {
+                const route = getBannerRoute(slide); // 🚀 Buscamos si el slide tiene link
+                return (
+                  <div key={slide.EntityID} className="mobile-slide-wrapper">
+                    <img 
+                      src={`${AppConfig.baseImageUrl}${slide.BannerImagenMovil || slide.Imagen}`} 
+                      alt={slide.Titulo || "Suministros de limpieza Disdel"} 
+                      fetchpriority={index === 0 ? "high" : "auto"}
+                      loading={index === 0 ? "eager" : "lazy"}
+                    />
+                    {/* Botón flotante sobre el slider móvil si coincide con Wiese/Nescafe */}
+                    {route && (
+                      <Link to={route} className="banner-view-btn-mini">
+                        Ver
+                      </Link>
+                    )}
+                  </div>
+                );
+              })}
             </Carousel>
           </div>
 
-
           <div className="banners-container">
-            {banners.lateralesPrincipal?.slice(0, 1).map((ban) => (
-              <div className="banner-item" key={ban.EntityID}>
-                <img 
-                  src={`${AppConfig.baseImageUrl}${ban.Imagen}`} 
-                  alt={ban.Titulo || "Distribuidor autorizado"} 
-                  loading="lazy"
-                  decoding="async"
-                />
-              </div>
-            ))}
+            {/* Renderiza el primer banner lateral con botón si aplica */}
+            {banners.lateralesPrincipal?.slice(0, 1).map(renderBannerItem)}
           </div>
         </>
       ) : (
+        /* --- 💻 VISTA ESCRITORIO --- */
         <>
           <div className="banners-container">
-            {banners.lateralesPrincipal?.slice(0, 2).map((ban) => (
-              <div className="banner-item" key={ban.EntityID}>
-                <img 
-                  src={`${AppConfig.baseImageUrl}${ban.Imagen}`} 
-                  alt={ban.Titulo || "Productos para empresas Guatemala"} 
-                  loading="lazy"
-                  decoding="async"
-                />
-              </div>
-            ))}
+            {/* Renderiza los dos banners laterales con botones si aplica */}
+            {banners.lateralesPrincipal?.slice(0, 2).map(renderBannerItem)}
           </div>
 
           <div className="slider-container">
@@ -97,18 +132,25 @@ const HeroSlider = () => {
                   interval={4000}
                   stopOnHover={true}
                 >
-                  {banners.sliderPrincipal.map((slide, index) => (
-                    <div key={slide.EntityID}>
-                      <img 
-                        src={`${AppConfig.baseImageUrl}${slide.BannerImagenMovil}`} 
-                        alt={slide.Titulo || "Catálogo Disdel"} 
-                        // 🔥 Optimización LCP Escritorio
-                        fetchpriority={index === 0 ? "high" : "low"}
-                        loading={index === 0 ? "eager" : "lazy"}
-                        decoding={index === 0 ? "sync" : "async"}
-                      />
-                    </div>
-                  ))}
+                  {banners.sliderPrincipal.map((slide, index) => {
+                    const route = getBannerRoute(slide);
+                    return (
+                      <div key={slide.EntityID} style={{ position: 'relative', height: '100%' }}>
+                        <img 
+                          src={`${AppConfig.baseImageUrl}${slide.BannerImagenMovil}`} 
+                          alt={slide.Titulo || "Catálogo Disdel"} 
+                          fetchpriority={index === 0 ? "high" : "low"}
+                          loading={index === 0 ? "eager" : "lazy"}
+                        />
+                        {/* Botón flotante para el slider de escritorio */}
+                        {route && (
+                          <Link to={route} className="banner-view-btn">
+                            Ver productos
+                          </Link>
+                        )}
+                      </div>
+                    );
+                  })}
                 </Carousel>
               )}
             </div>
