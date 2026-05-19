@@ -29,24 +29,6 @@
   object-fit: cover;
 }
 
-.banner-view-btn {
-  position: absolute;
-  bottom: 15px;
-  right: 15px;
-  background-color: rgba(255, 255, 255, 0.9); /* 👈 Más opaco para que se vea */
-  color: #135eab; /* Azul Disdel */
-  padding: 8px 20px;
-  border-radius: 50px;
-  font-size: 13px;
-  font-weight: 800;
-  text-decoration: none;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-  transition: all 0.3s ease;
-  border: 1px solid #135eab;
-  z-index: 999 !important; 
-  display: block !important;
-}
-
 .banner-view-btn:hover {
   background-color: #135eab;
   color: white;
@@ -60,22 +42,52 @@
   height: 100%;
 }
 
-
-.banner-view-btn-mini {
-  position: absolute;
-  bottom: 50px; /* Un poco más arriba de los puntos del carrusel */
-  right: 20px;
-  background: white;
-  color: #333;
-  padding: 6px 15px;
-  border-radius: 20px;
-  font-size: 12px;
-  font-weight: 800;
+/* 🚀 Estilo Base para ambos botones (Efecto Cristal) */
+.banner-view-btn, .banner-view-btn-mini {
+  background-color: rgba(255, 255, 255, 0.2) !important; /* Transparencia base */
+  backdrop-filter: blur(10px); /* 🔥 El toque Senior: desenfoca lo que hay detrás */
+  -webkit-backdrop-filter: blur(10px);
+  color: white !important;
+  border: 1px solid rgba(255, 255, 255, 0.4) !important; /* Borde sutil */
+  font-weight: 700;
   text-decoration: none;
-  z-index: 20;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  
+  /* 🪄 Transición suave */
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
 }
 
+/* 💻 Ajustes específicos Desktop */
+.banner-view-btn {
+  position: absolute !important;
+  bottom: 6px !important;
+  right: 8px !important;
+  z-index: 9999 !important;
+  padding: 5px 14px;
+  border-radius: 50px;
+  font-size: 12px;
+}
+
+/* 📱 Ajustes específicos Móvil */
+
+
+/* ✨ EFECTO HOVER (Al pasar el mouse) */
+.banner-view-btn:hover, .banner-view-btn-mini:hover {
+  background-color: rgba(255, 255, 255, 0.4) !important; /* Se aclara un poco */
+  transform: scale(1.05) translateY(-2px); /* Crece y sube sutilmente */
+  border-color: rgba(255, 255, 255, 0.8) !important;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+  color: #ffffff !important;
+}
+
+/* 👆 EFECTO CLICK */
+.banner-view-btn:active, .banner-view-btn-mini:active {
+  transform: scale(0.95); /* Se encoge un poquito al presionar */
+}
 
 .slider-container {
   width: 45%; 
@@ -202,6 +214,36 @@
 
 /* --- RESPONSIVE PRO (MÓVIL 480px) --- */
 @media (max-width: 480px) {
+
+  .banner-view-btn-mini, 
+  .banner-view-btn {
+    position: absolute !important;
+    bottom: 16px !important; /* Ajustado para que no tape mucho */
+    right: 6px !important;
+    z-index: 99 !important;
+    
+    /* Efecto Cristal */
+    background-color: rgba(255, 255, 255, 0.3) !important;
+    backdrop-filter: blur(6px) !important;
+    -webkit-backdrop-filter: blur(6px) !important;
+    
+    /* Borde y Texto */
+    border: 1px solid rgba(255, 255, 255, 0.6) !important;
+    color: white !important;
+    padding: 4px 10px !important;
+    border-radius: 20px !important;
+    font-size: 8px !important; /* 👈 Subimos a 10px para que sea legible */
+    font-weight: 800 !important;
+    text-transform: uppercase; /* Le da un toque más "botón" */
+    letter-spacing: 0.5px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    text-decoration: none !important;
+  }
+
+  /* Ajuste específico para el botón dentro del carrusel móvil (para que no choque con los puntos) */
+  .mobile-slide-wrapper .banner-view-btn-mini {
+    bottom: 35px !important; /* Lo subimos un poco más en el slider principal */
+  }
 
   .main-container {
     height: auto;

@@ -1,36 +1,88 @@
 .cgs-section {
   text-align: left; 
-  padding: 10px 20px; 
+  padding: 10px 20px 0; 
+  padding-bottom: 5px;
   max-width: 1300px;
   margin: auto; 
-  margin-top: -10px;
-  min-height: 440px;
+  margin-top: 10px;
+  min-height: unset;
   contain: layout;
 }
 
 .cgs-skeleton-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(5, 1fr);
   gap: 20px;
 }
 
 .cgs-title {
-  display: inline-block; 
-  padding: 8px 28px;
-  background-color: white;
-  border: 1px solid #b4dbed;
-  border-radius: 22px !important;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-  margin-bottom: 25px; 
-  font-size: 1.3rem;   
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+
+  padding: 10px 20px;
+  margin-bottom: 12px;
+
+  font-size: 1.3rem;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+
   color: #135eab !important;
+
+  background: rgba(255, 255, 255, 0.75);
+
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+
+  border: 1px solid rgba(255,255,255,0.45);
+
+  border-radius: 18px;
+
+  box-shadow:
+    0 8px 25px rgba(15, 23, 42, 0.05),
+    inset 0 1px 0 rgba(255,255,255,0.7);
+
+  overflow: hidden;
+
+  transition:
+    transform 0.35s ease,
+    box-shadow 0.35s ease,
+    border-color 0.35s ease;
+}
+
+.cgs-title::before {
+  content: "";
+}
+
+.cgs-title:hover {
+  transform: translateY(-2px);
+
+  border-color: rgba(143, 168, 199, 0.25);
+
+  box-shadow:
+    0 14px 35px rgba(37, 99, 235, 0.08),
+    inset 0 1px 0 rgba(255,255,255,0.9);
+}
+
+.cgs-section .cgs-title:hover {
+  transform: translateY(-2px);
+
+  border-color: rgba(143, 168, 199, 0.25);
+
+  box-shadow:
+    0 14px 35px rgba(37, 99, 235, 0.08),
+    inset 0 1px 0 rgba(255,255,255,0.9);
+}
+
+.cgs-section .cgs-title:hover::after {
+  left: 170%;
 }
 
 /* Contenedor del Slider */
 .cgs-slider {
   position: relative;
   overflow: hidden; 
-  margin: 0 -10px;
+  margin: 5px -12px;
 }
 
 /* Item Individual (Cada categoría) */
@@ -147,36 +199,19 @@
    ============================================================ */
 @media (min-width: 481px) and (max-width: 1024px) {
   .cgs-section {
-    padding: 20px 10px;
-    margin-top: 0;
+    padding: 10px 12px 0 !important; /* Quitamos el padding inferior */
+    margin-top: -10px;
+    margin-bottom: 0 !important; /* Eliminamos margen inferior */
+    min-height: auto;
   }
   
   .cgs-slider {
-    margin: 0 0;
+    margin-bottom: 0 !important; /* Evitamos que el slider empuje lo de abajo */
   }
 
-  .cgs-title {
-    font-size: 1.1rem;
-    margin-left: 15px;
-    text-align: left;
-    display: inline-block;
-  }
-
-  .cgs-item {
-    padding: 0 5px !important; 
-  }
-
-  /* Logos grandes para Tablet */
-  .cgs-image {
-    width: 155px !important;  
-    height: 155px !important;
-    border-radius: 15px;
-  }
-
-  .cgs-item p {
-    font-size: 1rem;
-    margin-top: 10px;
-    font-weight: 500;
+  /* Ajustamos los puntos del slider para que no ocupen espacio extra */
+  .cgs-section .slick-dots {
+    bottom: 0px !important;
   }
 }
 

@@ -30,16 +30,17 @@
 }
 
 .logo {
-  height: 90px;
+  height: 90px; /* Mantenemos el alto que elegiste */
+  width: auto;  /* 🚀 CLAVE: El ancho se ajusta solo para no estirarse */
   display: block;
   margin-left: -20px;
+  object-fit: contain; /* 🚀 SEGURIDAD: Evita que la imagen se salga de su área */
 
-    /* --- NUEVAS LÍNEAS PARA EL EFECTO --- */
+  /* --- Tus efectos existentes --- */
   cursor: pointer;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); /* Transición suave tipo app */
-  user-select: none; /* Evita que se seleccione la imagen al dar muchos clics */
-  -webkit-tap-highlight-color: transparent; /* Quita el cuadro azul feo en Android/iOS */
-
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
 }
 
 /* Efecto al pasar el mouse (PC) */
@@ -543,9 +544,10 @@
 
   /* 1. LOGO (Fila 1 - Izquierda) */
   .logo { 
-    height: 60px; 
+    height: 60px; /* Reducimos el alto para móvil */
+    width: auto !important; /* 🚀 REPARACIÓN: Forzamos que el ancho sea automático */
     margin-left: 0;
-    width: 100px !important;
+    max-width: 120px; /* 🚀 OPCIONAL: Un límite de seguridad para que no tape los iconos */
   }
 
   /* 2. ICONOS DE USUARIO (Fila 1 - Centro) */

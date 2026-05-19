@@ -11,13 +11,22 @@ const RelatedProducts = ({ category, currentProductId }) => {
   const relatedList = useMemo(() => {
     if (!allProducts || !Array.isArray(allProducts)) return [];
 
+    const seenIds = new Set();
+
     // Filtramos: Misma categoría, pero que NO sea el producto que estamos viendo
     return allProducts
-      .filter(p => 
-        p.Categoria === category && 
-        String(p.IdProducto) !== String(currentProductId)
-      )
-      .slice(0, 4); // Solo mostramos los primeros 4
+      .filter(p => {
+        const isSameCategory = p.Categoria === category;
+        const isNotCurrent = String(p.IdProducto) !== String(currentProductId);
+        const isNotDuplicate = !seenIds.has(p.IdProducto); // ¿Ya lo vimos?
+
+        if (isSameCategory && isNotCurrent && isNotDuplicate) {
+          seenIds.add(p.IdProducto); // Marcamos como visto
+          return true;
+        }
+        return false;
+      })
+      .slice(0, 4); // Limitamos a 4
   }, [allProducts, category, currentProductId]);
 
   if (isLoading) {
@@ -46,11 +55,10 @@ const RelatedProducts = ({ category, currentProductId }) => {
         gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', 
         gap: '20px' 
       }}>
-        {relatedList.map((prod, index) => (
+        {relatedList.map((prod) => (
           <ProductCard 
-            key={prod.IdProducto} 
+            key={`${prod.IdProducto}-${category}`} // 🚀 KEY UNICA COMPUESTA
             product={prod} 
-            index={index} 
           />
         ))}
       </div>

@@ -9,7 +9,7 @@ import './HeroSlider.css';
 
 const HeroSlider = () => {
   const { data: banners, isLoading, isError } = useBanners();
-  const[isMobile, setIsMobile] = useState(window.innerWidth <= 480);
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 480);
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth <= 480);
@@ -18,23 +18,24 @@ const HeroSlider = () => {
   }, []);
 
   const getBannerRoute = (ban) => {
-  if (!ban) return null;
+    if (!ban) return null;
+    const id = String(ban.EntityID);
+    const titulo = (ban.Titulo || "").toLowerCase();
+    const imagen = (ban.Imagen || "").toLowerCase();
 
-  const image = (ban.Imagen || "").toLowerCase();
+    // 🚀 SENIOR TIP: Usamos IDs fijos porque los nombres en DB pueden cambiar
+    // Wiese (Lateral Superior)
+    if (id === "3238" || titulo.includes('wiese') || imagen.includes('wiese')) {
+      return '/marca/wiese/aromatizantes-ambientales';
+    }
 
-  if (image.includes('wiese')) {
-    return '/marca/wiese/aromatizantes-ambientales';
-  }
+    // Nescafe (Lateral Inferior)
+    if (id === "3239" || titulo.includes('nescafe') || titulo.includes('coffee')) {
+      return '/categoria/cafeteria/cafe-y-complementos';
+    }
 
-  if (
-    image.includes('nescafe') ||
-    image.includes('coffee')
-  ) {
-    return '/categoria/cafeteria/cafe-y-complementos';
-  }
-
-  return null;
-};
+    return null;
+  };
 
   if (isLoading || isError) {
     return (
@@ -48,19 +49,13 @@ const HeroSlider = () => {
   if (!banners) return null;
 
   const renderBannerItem = (ban) => {
-
-
-    console.log("BANNER:", ban);
-
-    const route = getBannerRoute(ban); 
-
+    const route = getBannerRoute(ban);
     return (
       <div className="banner-item" key={ban.EntityID}>
         <img 
           src={`${AppConfig.baseImageUrl}${ban.Imagen}`} 
           alt={ban.Titulo || "Promoción Disdel"} 
         />
-        {/* 🚀 CORRECCIÓN 1: Usamos la variable 'route' en el 'to' */}
         {route && (
           <Link to={route} className="banner-view-btn">
             Ver productos
@@ -73,80 +68,51 @@ const HeroSlider = () => {
   return (
     <section className="main-container" aria-label="Promociones principales">
       {isMobile ? (
-        /* --- 📱 VISTA MÓVIL --- */
         <>
           <div className="mobile-hero-carousel">
-            <Carousel
-              showArrows={false}
-              showThumbs={false}
-              showStatus={false}
-              infiniteLoop={true}
-              autoPlay={true}
-              interval={3500}
-              stopOnHover={false}
-            >
+            <Carousel showArrows={false} showThumbs={false} showStatus={false} infiniteLoop autoPlay interval={3500}>
               {banners.sliderPrincipal.map((slide, index) => {
-                const route = getBannerRoute(slide); // 🚀 Buscamos si el slide tiene link
+                const route = getBannerRoute(slide);
                 return (
                   <div key={slide.EntityID} className="mobile-slide-wrapper">
                     <img 
                       src={`${AppConfig.baseImageUrl}${slide.BannerImagenMovil || slide.Imagen}`} 
-                      alt={slide.Titulo || "Suministros de limpieza Disdel"} 
+                      alt={slide.Titulo} 
                       fetchpriority={index === 0 ? "high" : "auto"}
-                      loading={index === 0 ? "eager" : "lazy"}
                     />
-                    {/* Botón flotante sobre el slider móvil si coincide con Wiese/Nescafe */}
                     {route && (
-                      <Link to={route} className="banner-view-btn-mini">
-                        Ver
-                      </Link>
+                      <Link to={route} className="banner-view-btn-mini">Ver</Link>
                     )}
                   </div>
                 );
               })}
             </Carousel>
           </div>
-
           <div className="banners-container">
-            {/* Renderiza el primer banner lateral con botón si aplica */}
             {banners.lateralesPrincipal?.slice(0, 1).map(renderBannerItem)}
           </div>
         </>
       ) : (
-        /* --- 💻 VISTA ESCRITORIO --- */
         <>
           <div className="banners-container">
-            {/* Renderiza los dos banners laterales con botones si aplica */}
+            {/* Aquí se renderizan Wiese y Nescafe en escritorio */}
             {banners.lateralesPrincipal?.slice(0, 2).map(renderBannerItem)}
           </div>
 
           <div className="slider-container">
             <div className="carousel-wrapper">
               {banners.sliderPrincipal?.length > 0 && (
-                <Carousel
-                  showArrows={false}
-                  showThumbs={false}
-                  showStatus={false}
-                  infiniteLoop={true}
-                  autoPlay={true}
-                  interval={4000}
-                  stopOnHover={true}
-                >
-                  {banners.sliderPrincipal.map((slide, index) => {
+                <Carousel showArrows={false} showThumbs={false} showStatus={false} infiniteLoop autoPlay interval={4000}>
+                  {banners.sliderPrincipal.map((slide) => {
                     const route = getBannerRoute(slide);
                     return (
-                      <div key={slide.EntityID} style={{ position: 'relative', height: '100%' }}>
+                      <div key={slide.EntityID} className="desktop-slide-wrapper">
                         <img 
-                          src={`${AppConfig.baseImageUrl}${slide.BannerImagenMovil}`} 
-                          alt={slide.Titulo || "Catálogo Disdel"} 
-                          fetchpriority={index === 0 ? "high" : "low"}
-                          loading={index === 0 ? "eager" : "lazy"}
+                          src={`${AppConfig.baseImageUrl}${slide.Imagen || slide.BannerImagenMovil}`} 
+                          alt={slide.Titulo} 
                         />
-                        {/* Botón flotante para el slider de escritorio */}
                         {route && (
-                          <Link to={route} className="banner-view-btn">
-                            Ver productos
-                          </Link>
+                          <Link to={route} className="banner-view-btn">Ver productos</Link>
                         )}
                       </div>
                     );
