@@ -44,21 +44,20 @@
 
 /* 🚀 Estilo Base para ambos botones (Efecto Cristal) */
 .banner-view-btn, .banner-view-btn-mini {
-  background-color: rgba(255, 255, 255, 0.2) !important; /* Transparencia base */
-  backdrop-filter: blur(10px); /* 🔥 El toque Senior: desenfoca lo que hay detrás */
+  background-color: rgba(255, 255, 255, 0.25) !important;
+  backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   color: white !important;
-  border: 1px solid rgba(255, 255, 255, 0.4) !important; /* Borde sutil */
+  border: 1px solid rgba(255, 255, 255, 0.5) !important;
   font-weight: 700;
   text-decoration: none;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
   cursor: pointer;
-  
-  /* 🪄 Transición suave */
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
   display: flex !important;
   align-items: center;
   justify-content: center;
+  z-index: 100 !important;
 }
 
 /* 💻 Ajustes específicos Desktop */
@@ -162,6 +161,25 @@
   background: #333 !important;
 }
 
+/* SKELETONS SIN CLS */
+.skeleton-hero {
+  display: flex;
+  gap: 20px;
+  width: 100%;
+}
+.banners-container-skeleton {
+  width: 55%;
+  height: 320px;
+  background: #eee;
+  border-radius: 8px;
+}
+.slider-container-skeleton {
+  width: 45%;
+  height: 320px;
+  background: #eee;
+  border-radius: 8px;
+}
+
 
 @media (max-width: 800px) {
   
@@ -193,15 +211,19 @@
   }
 
   .banner-item img {
-    width: 100%;        /* 🔥 IMPORTANTE: Fuerza a la imagen a llenar el ancho */
+    width: 100%;        
     height: auto;
     display: block;
-    object-fit: cover;  /* Mantiene la proporción sin deformar */
+    object-fit: cover;  
   }
 
   /* 4. Ocultamos el slider principal en móvil si así lo deseas */
-  .slider-container {
-    display: none;
+  .slider-container, .slider-container-skeleton {
+    display: none !important;
+  }
+  .banners-container-skeleton {
+    width: 100%;
+    height: 120px;
   }
 
   /* Si decides mostrarlo, usa esta configuración: */

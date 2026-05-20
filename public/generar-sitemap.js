@@ -16,14 +16,6 @@ const CATEGORIAS_TOP = [
     'EPP', 'QUIMICOS PARA LIMPIEZA', 'FERRETERIA', 'BOTIQUIN', 'CAFETERIA','PAPELERIA'
 ];
 
-const folder = esMarca ? 'marca' : 'categoria';
-url.push({
-    loc: `${BASE_URL}/${folder}/${segSlug}`,
-    // 🚀 Prioridad máxima para resultados cortos (Cloro, etc.)
-    priority: (CATEGORIAS_TOP.some(top => segNameUpper.includes(top))) ? '1.0' : '0.9',
-    changefreq: 'daily'
-});
-
 const createSlug = (text) => {
     if (!text) return '';
     return text.toString().toLowerCase().trim()

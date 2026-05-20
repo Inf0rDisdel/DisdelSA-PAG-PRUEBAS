@@ -129,22 +129,39 @@ const ProductDetailPage = () => {
   // if (isLoading) return <div>Cargando Producto...</div>;
   // if (isError || !product) return <div>Error al cargar producto</div>;
 
-   if (isLoading) {
+  if (isLoading) {
     return (
-      <div className="pdp-container">
+      <div className="pdp-container pdp-skeleton-active">
+        {/* Esqueleto del botón volver */}
         <Skeleton width="150px" height="20px" style={{ marginBottom: '25px' }} />
+        
         <div className="pdp-main-grid">
-          <div className="pdp-gallery-wrapper">
-            <div className="pdp-thumbnails-vertical">
-              {[1, 2, 3].map(i => <Skeleton key={i} width="75px" height="75px" style={{ marginBottom: '12px' }} />)}
+          {/* Esqueleto de la Galería (Debe medir exactamente 600px de alto para evitar CLS) */}
+          <div className="pdp-gallery-wrapper" style={{ display: 'flex', gap: '15px' }}>
+            <div className="pdp-thumbnails-vertical" style={{ width: '75px' }}>
+              {[1, 2, 3].map(i => (
+                <Skeleton key={i} width="75px" height="75px" style={{ marginBottom: '12px' }} />
+              ))}
             </div>
-            <div style={{ flex: 1 }}><Skeleton width="100%" height="500px" /></div>
+            <div style={{ flex: 1, height: '600px' }}> {/* 🚀 CLAVE: 600px exactos */}
+              <Skeleton width="100%" height="600px" style={{ borderRadius: '15px' }} />
+            </div>
           </div>
+          
+          {/* Esqueleto de la Info Técnica */}
           <div className="pdp-info-section">
-            <Skeleton width="40%" height="25px" style={{ marginBottom: '15px' }} />
-            <Skeleton width="100%" height="50px" style={{ marginBottom: '25px' }} />
-            <Skeleton width="100%" height="150px" style={{ marginBottom: '25px' }} />
-            <Skeleton width="100%" height="100px" style={{ borderRadius: '12px' }} />
+            <Skeleton width="30%" height="20px" style={{ marginBottom: '15px' }} />
+            <Skeleton width="80%" height="45px" style={{ marginBottom: '15px' }} />
+            <Skeleton width="40%" height="20px" style={{ marginBottom: '25px' }} />
+            
+            {/* Tarjeta comercial */}
+            <Skeleton width="100%" height="120px" style={{ borderRadius: '12px', marginBottom: '25px' }} />
+            
+            {/* Selector de presentación */}
+            <Skeleton width="100%" height="90px" style={{ borderRadius: '12px', marginBottom: '25px' }} />
+            
+            {/* Botón cotizar */}
+            <Skeleton width="100%" height="50px" style={{ borderRadius: '10px' }} />
           </div>
         </div>
       </div>

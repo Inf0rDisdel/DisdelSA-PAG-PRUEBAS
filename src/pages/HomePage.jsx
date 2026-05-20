@@ -2,7 +2,8 @@ import React, { useMemo } from 'react';
 import { Helmet } from 'react-helmet-async';
 import useCartStore from 'store/useCartStore';
 import { toast } from 'react-hot-toast'; 
-import { useProducts } from 'hooks/useProducts'; 
+import { useProducts } from 'hooks/useProducts';
+import { useBanners } from 'hooks/useBanners'; 
 import { AppConfig } from 'config/AppConfig'; 
 import { getMainGraphSchema } from 'utils/schemas/mainSchemas';
 
@@ -19,14 +20,24 @@ import ProductCarousel from 'components/Carousel/ProductCarousel';
 import { optimizedSeoData } from 'utils/SEO/optimizedSeo';
 
 const HomeSkeleton = () => (
-  <div style={{ minHeight: '100vh', background: '#f8f9fa', padding: '20px' }}>
-    <div style={{ width: '100vh', height:'500px', background: '#eee', borderRadius:'15px'}}></div>
+  <div style={{ minHeight: '100vh', background: '#f8f9fa', padding: '10px 0' }}>
+    <div className="skeleton-animation" style={{ 
+      maxWidth: '1300px', 
+      width: '100%', 
+      height: '320px', 
+      background: 'linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%)',
+      backgroundSize: '200% 100%',
+      animation: 'loading-shimmer 1.5s infinite',
+      borderRadius: '15px',
+      margin: '0 auto'
+    }}></div>
   </div>
 );
 
 const HomePage = () => {
   const addItem = useCartStore((state) => state.addItem);
   const { data: allProducts, isLoading } = useProducts();
+  const { data: bannerData} = useBanners();
 
   const homeSeo = useMemo(() => optimizedSeoData['home'] || null, []);
   const fullGraphSchema = useMemo(() => getMainGraphSchema(), []);
@@ -34,6 +45,14 @@ const HomePage = () => {
   const cleanBaseUrl = useMemo(() => 
     AppConfig.baseImageUrl.endsWith('/') ? AppConfig.baseImageUrl : `${AppConfig.baseImageUrl}/`
   , []);
+
+  const firstHeroImage = useMemo(() => {
+    const firstSlide = bannerData?.sliderPrincipal?.[0];
+    if (!firstSlide) return '';
+    const isMobile = window.innerWidth <= 480;
+    const imgPath = isMobile ? (firstSlide.BannerImagenMovil || firstSlide.Imagen) : firstSlide.BannerImagenMovil;
+    return imgPath ? `${cleanBaseUrl}${imgPath}` : '';
+  }, [bannerData, cleanBaseUrl]);
 
   const handleAddToCart = (product) => {
     addItem({
@@ -90,6 +109,10 @@ const HomePage = () => {
         <meta name="keywords" content={homeSeo?.k || "limpieza, suministros, guatemala"} />
         <link rel="canonical" href="https://disdelsa.com/" />
 
+        {firstHeroImage && (
+          <link rel="preload" as="image" href={firstHeroImage} fetchpriority="high" />
+        )}
+
         {/* --- OPEN GRAPH (Facebook, WhatsApp, LinkedIn) --- */}
         <meta property="og:type" content="website" />
         <meta property="og:title" content="Disdel | Soluciones Integrales para Empresas en Guatemala" />
@@ -107,11 +130,22 @@ const HomePage = () => {
         <script type="application/ld+json">{JSON.stringify(fullGraphSchema)}</script>
       </Helmet>
 
-      <HeroSlider />
+      <h1 style={{
+        position: 'absolute',
+        width: '1px',
+        height: '1px',
+        padding: '0',
+        margin: '-1px',
+        overflow: 'hidden',
+        clip: 'rect(0, 0, 0, 0)',
+        border: '0'
+        }}>
+        Disdel Guatemala | Suministros de Limpieza Profesional, Higiene y Mantenimiento Institucional para Empresas
+      </h1>
 
+      <HeroSlider />
       <CategoryGrid /> 
       <FeaturedBrands />
-
       <BannerSlider />
 
       {/* Condición ajustada: Si está cargando O tiene productos, muestra el componente */}

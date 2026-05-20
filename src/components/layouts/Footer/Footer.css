@@ -4,48 +4,71 @@
     width: 1px !important;
     height: 1px !important;
     padding: 0 !important;
-    margin: -1px !important;
+    margin: 1px !important;
     overflow: hidden !important;
     clip: rect(0, 0, 0, 0) !important;
     white-space: nowrap !important;
     border: 0 !important;
 }
 
+/* 🚀 EL CAMBIO MAESTRO: Todo el fondo del Footer ahora es el azul oficial de Disdel */
 .footer-wrapper {
-    padding: 50px 20px;
-    /*font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;*/
+    background-color: #135eab !important; 
+    padding: 30px 15px;
     position: relative;
     overflow: hidden;
 }
 
+/* 🚀 ALINEACIÓN DE CONTENEDORES */
 .footer-content-area {
-    max-width: 1100px;
-    margin: 0 -20px;
-    display: flex;
-    align-items: start;
-    gap: 20px;
+    max-width: 1400px !important;
+    margin: 0 auto !important;
+    display: flex !important;
+    align-items: stretch !important; /* Estira ambos lados para simetría vertical de la línea */
+    gap: 0px !important; /* Eliminamos el gap físico para que la línea sea el límite exacto */
+    width: 100% !important;
+    box-sizing: border-box !important;
 }
 
 /* ======================================================= */
 /*         COLUMNA IZQUIERDA (CONTENEDOR AZUL)             */
 /* ======================================================= */
 .footer-container {
-    background-color: #135eab;
-    color: #ffffff;
-    padding: 40px;
-    flex-basis: 70%;
-    flex-shrink: 0;
+    background-color: transparent !important; /* Transparente para usar el fondo del wrapper */
+    color: #ffffff !important;
+    
+    /* 🚀 ALINEACIÓN DE TEXTO: Sin padding izquierdo para alinearse con la barra de arriba */
+    padding: 0px 40px 0px 0px !important; 
+    
+    flex: 1 !important; 
+    box-shadow: none !important; /* Limpiamos sombras para un look plano de alta tecnología */
+    box-sizing: border-box !important;
+    
+    /* 🚀 LA LÍNEA VERTICAL DIVISORA DE TU SEGUNDA IMAGEN */
+    border-right: 1px solid rgba(255, 255, 255, 0.15) !important; 
 }
 
 .footer-columns-grid {
     display: flex;
     flex-direction: column;
-    gap: 40px;
+    gap: 25px;
 }
 
-.footer-row {
-    display: flex;
+/* FILA 1: Top (3 Columnas con divisor inferior) */
+.footer-row-top {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
     gap: 20px;
+    padding-bottom: 25px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.15); /* Línea divisora horizontal */
+}
+
+/* FILA 2: Bottom (3 Columnas fluidas y expandidas) */
+.footer-row-bottom {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    padding-top: 25px;
 }
 
 .footer-column {
@@ -53,10 +76,12 @@
 }
 
 .footer-column h3 {
-    font-size: 1rem;
-    font-weight: bold;
-    margin-bottom: 20px;
+    font-size: 0.95rem;
+    font-weight: 700;
+    margin-bottom: 15px;
     text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #ffffff; 
 }
 
 .footer-column ul {
@@ -65,180 +90,137 @@
     margin: 0;
 }
 
-.footer-column a {
-    color: #e0e0e0;
-    text-decoration: none;
-    font-size:1rem;
-    
+.footer-column ul li {
+    margin-bottom: 8px;
 }
 
+.footer-column a, .footer-link {
+    color: #e6f2ff;
+    text-decoration: none;
+    font-size: 0.88rem;
+    transition: color 0.2s ease;
+}
 
+.footer-column a:hover, .footer-link:hover {
+    color: #96c121; /* Verde Disdel sutil al pasar el mouse */
+}
+
+.social-title {
+    font-size: 0.85rem !important;
+    margin-top: 25px;
+    font-weight: 700;
+}
+
+/* REDES SOCIALES CIRCULARES */
 .social-links-list {
     display: flex;
-    flex-direction: row; /* Alinear en fila */
+    flex-direction: row;
     align-items: center;
-    gap: 15px; /* Espacio entre cada icono/link */
+    gap: 15px;
     list-style: none;
     padding: 0;
+    margin-top: 10px;
 }
 
-/* 2. Le damos el estilo circular a los iconos SVG */
 .social-links-list svg {
     background-color: white !important;
-    color: white; /* El color del icono será el azul del fondo */
-    border-radius: 30% !important; /* Esto los hace perfectamente redondos */
-    width: 20px !important;       /* Ancho del círculo */
-    height: 20px !important;      /* Alto del círculo */
+    border-radius: 30% !important;
+    width: 18px !important;       
+    height: 18px !important;      
     padding: 8px !important;
     box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-    transition: transform 0.3s ease;
+    transition: transform 0.3s ease, background-color 0.3s ease;
 }
 
-.social-links-list a:hover svg{
-    transform: translateY(-5px);
+.social-links-list a:hover svg {
+    transform: translateY(-4px);
+    background-color: #f0f0f0 !important;
 }
 
-.social-links-list a.facebook svg {
-    color: #1877F2 !important;
-}
+.social-links-list a.facebook svg { color: #1877F2 !important; }
+.social-links-list a.instagram svg { color: #E4405F !important; }
+.social-links-list a.linkedin svg { color: #0A66C2 !important; }
 
-/* Instagram Rosa/Morado oficial */
-.social-links-list a.instagram svg {
-    color: #E4405F !important;
-}
-
-/* LinkedIn Azul oscuro oficial */
-.social-links-list a.linkedin svg {
-    color: #0A66C2 !important;
-}
-
-/* 3. Aseguramos que el texto y el icono de cada link estén bien alineados */
 .social-links-list a {
     display: flex;
     align-items: center;
     gap: 10px;
 }
 
-
 /* ======================================================= */
-/*          COLUMNA DERECHA (ELEMENTOS GRÁFICOS)           */
+/*          COLUMNA DERECHA (ÁREA GRÁFICA AZUL UNIFICADA)   */
 /* ======================================================= */
 .footer-right-area {
-    flex-basis: 30%;
-    position: relative;
-    height: 350px;
+    width: 320px !important; /* Ancho fijo para mantener la simetría de la mascota */
+    flex-shrink: 0 !important;
+    position: relative !important;
+    height: auto !important; /* Auto para que herede la altura del stretch del padre */
+    box-sizing: border-box !important;
+    padding-left: 30px !important; /* Espacio después de la línea divisoria vertical */
 }
 
 .products-text {
     position: absolute;
-    top: 40px;
-    left: 0;
-    font-size: 1.8rem;
+    top: 0px; /* Alineado exactamente con el H3 de la izquierda */
+    left: 30px; 
+    font-size: 1.5rem;
     font-weight: bold;
-    color: #135eab;
-    display: flex;
+    color: #ffffff !important; /* Texto en blanco para fondo azul */
+    line-height: 1.2;
 }
 
 .products-text span {
-    font-size: 2rem;
+    font-size: 2.2rem;
     font-weight: 900;
     margin-right: 8px; 
-    color: #135eab;
+    color: #ffffff !important;
+}
+
+.products-text small {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #e6f2ff !important;
 }
 
 .mascot {
     position: absolute;
-    left: 200px;
-    bottom: -25px;
+    left: 150px; 
+    bottom: 45px;
 }
 
 .mascot img {
-    max-height: 375px;
-
+    max-height: 340px;
+    width: auto;
 }
 
-.payment-logos {
+/* CAJA BLANCA DE LOGOS (Mantiene alto contraste) */
+.payment-logos-card {
     position: absolute;
-    top: 150px; /* Ajusta este valor para subir o bajar los logos */
-    left: 0;
+    top: 150px; 
+    left: 30px;
+    background: white;
+    padding: 10px 18px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    border: 1px solid #f0f0f0;
 }
 
-.payment-logos img {
-    max-width: 160px;
+.payment-logos-card img {
+    max-width: 120px;
+    height: auto;
+    display: block;
 }
 
-/* --- CAMBIO: Posicionamos el copyright en la parte inferior --- */
 .footer-copyright {
     position: absolute;
-    bottom: 20px; /* Lo anclamos en la parte de abajo */
-    left: 0;
+    bottom: 0px; 
+    left: 30px;
 }
 
 .footer-copyright p {
-    color: #555;
-    font-size: 1.1rem;
+    color: #e6f2ff !important; /* Color claro legible sobre el azul */
+    font-size: 0.85rem;
     margin: 0;
-}
-
-/* ======================================================= */
-/*                  WIDGETS FLOTANTES                      */
-/* ======================================================= */
-.footer-floating-widgets {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  z-index: 1000;
-  display: flex;
-  flex-direction: column;
-  gap: 15px; /* Espacio entre los botones */
-}
-
-/* Estilo general para CADA botón */
-.widget-item {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  text-decoration: none;
-  transition: transform 0.2s ease-in-out;
-  cursor: pointer;
-  border-radius: 16px; /* ¡CLAVE! Aplicamos el borde redondeado a AMBOS botones */
-}
-
-.widget-item:hover {
-  transform: translateY(-4px); /* Efecto de "levantarse" al pasar el mouse */
-}
-
-
-.widget-opinions {
-  background-color: #1e60aa;
-  color: white;
-  width: 110px;
-  height: 80px;
-  flex-direction: column;
-  font-size: 14px;
-  font-weight: bold;
-}
-
-.widget-opinions img {
-  width: 28px;
-  height: 28px; 
-  margin-bottom: 5px; 
-}
-
-.widget-item:last-child {
-  background-color: white;
-  width: 90px;   
-  height: 70px; 
-}
-
-.widget-item:last-child img {
-  width: 32px;
-  height: 32px;
-}
-
-.widget-whatsapp {
-    background-color: #f0f0f0;
 }
 
 /* ======================================================= */
@@ -249,88 +231,40 @@
         flex-direction: column;
         align-items: center;
     }
-    
     .footer-right-area {
         display: none;
     }
-
     .footer-container {
         width: 100%;
         flex-basis: auto;
+        padding-right: 0px !important; /* Reestablecemos padding en móviles */
+        border-right: none !important; /* Quitamos la línea vertical en móvil */
     }
 }
 
 @media (max-width: 768px) {
-    
-    /* 1. Centramos todos los textos y columnas */
     .footer-container {
-        padding: 30px 20px;
+        padding: 30px 20px !important;
+    }
+    
+    .footer-row-top {
+        grid-template-columns: 1fr;
+        gap: 30px;
+        border-bottom: none;
+        padding-bottom: 0;
+    }
+
+    .footer-row-bottom {
+        grid-template-columns: 1fr;
+        gap: 30px;
+        padding-right: 0;
+        border-top: 1px solid rgba(255, 255, 255, 0.15);
+        padding-top: 30px;
+        margin-top: 15px;
     }
 
     .footer-columns-grid {
-        align-items: center;
-        text-align: center;
-    }
-
-    .footer-row {
-        flex-direction: column;
-        width: 100%;
-        gap: 25px;
-    }
-
-    .footer-column h3 {
-        margin-bottom: 15px;
-        font-size: 1.1rem;
-    }
-
-    .footer-column ul {
-        padding: 0;
-    }
-
-    .footer-column ul li {
-        margin-bottom: 12px;
-    }
-
-    /* 2. DISEÑO DE REDES SOCIALES (ESTILO IMAGEN 2) */
-    
-    .social-title {
-        margin-top: 10px;
-        font-size: 1.2rem !important;
-    }
-
-    .social-links-list {
-        display: flex;
-        flex-direction: row; /* Alineación horizontal */
-        justify-content: center;
-        gap: 8px; /* Espacio entre círculos */
-        margin-top: 10px;
-    }
-
-    /* Ocultamos el texto de las redes */
-    .social-text {
-        display: none;
-    }
-
-    /* Estilo de los iconos redondos blancos */
-    .social-links-list svg {
-        background-color: white !important;
-        /*color: white !important;  Color del logo en negro/oscuro como la imagen */
-        border-radius: 30% !important; /* Círculo perfecto */
-        width: 40px !important;  /* Tamaño grande como pediste */
-        height: 40px !important;
-        padding: 12px !important;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.2); /* Sombra para que resalten */
-        box-sizing: border-box;
-    }
-
-    .social-links-list a {
-        display: block;
-        padding: 0;
-    }
-
-    /* Efecto al tocar el icono */
-    .social-links-list a:active svg {
-        transform: scale(0.9);
-        background-color: #f0f0f0 !important;
+        align-items: flex-start;
+        text-align: left;
     }
 }

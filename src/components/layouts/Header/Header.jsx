@@ -31,7 +31,7 @@ const Header = () => {
 
   const [isMegaMenuOpen, setIsMegaMenuOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [btnIsHighlighted, setBtnIsHighlighted] = useState(false); // Para el efecto bump
+  const [btnIsHighlighted, setBtnIsHighlighted] = useState(false); 
   const [isTransitioning, setIsTransitioning] = useState(false);
 
   useEffect(() => {
@@ -166,6 +166,7 @@ const Header = () => {
                   onChange={(e) => setSearchTerm(e.target.value)} 
                   onFocus={() => searchTerm.length > 2 && setShowSuggestions(true)}
                   autoComplete="off"
+                  aria-label="Buscar productos"
                 />
               <button type="submit" className={styles.searchButton} aria-label="Ejecutar búsqueda">
                 <FaSearch />
@@ -190,6 +191,8 @@ const Header = () => {
                           src={p.Imagen ? `${AppConfig.baseImageUrl}productos/${p.Imagen}` : ''} 
                           alt="" 
                           className={styles.suggestImg} 
+                          width="45" // 🚀 Evita CLS interno
+                          height="45"
                         />
                         <div className={styles.suggestInfo}>
                           <span className={styles.suggestTitle}>{p.Descripcion}</span>
@@ -221,11 +224,21 @@ const Header = () => {
         {/* 3. ICONOS DE USUARIO (desktopUserActions) */}
         <div className={styles.desktopUserActions}>
               <a href="https://asidelimpio.com" target="_blank" rel="noopener noreferrer" className={styles.actionLink}>
-                <img src={`${AppConfig.baseImageUrl}${iconUser}`} alt="Así de Limpio" className={styles.actionIcon} />
+                <img src={`${AppConfig.baseImageUrl}${iconUser}`} 
+                alt="Así de Limpio" 
+                className={styles.actionIcon} 
+                width="35" // 🚀 Evita CLS
+                height="35"
+                />
                 <span className={styles.actionText}>Así de Limpio</span>
               </a>
               <a href="https://disdelsagt.com" target="_blank" rel="noopener noreferrer" className={styles.actionLink}>
-                <img src={`${AppConfig.baseImageUrl}${iconBuilding}`} alt="MyBusiness" className={styles.actionIcon} />
+                <img src={`${AppConfig.baseImageUrl}${iconBuilding}`} 
+                alt="MyBusiness" 
+                className={styles.actionIcon} 
+                width="35" // 🚀 Evita CLS
+                height="35"
+                />
                 <span className={styles.actionText}>MyBusiness</span>
               </a>
           </div>
@@ -233,7 +246,12 @@ const Header = () => {
         {/* 4. CARRITO (headerRight) */}
         <div className={styles.headerRight}>
             <Link to="/carrito" className={cartClasses} aria-label={`Ver mi cotización: ${cartItemCount} artículos`}>
-              <img src={`${AppConfig.baseImageUrl}${iconCart}`} alt="" aria-hidden="true" className={styles.cartIcon} />
+              <img src={`${AppConfig.baseImageUrl}${iconCart}`} 
+              alt="" aria-hidden="true" 
+              className={styles.cartIcon} 
+              width="40" // 🚀 Evita CLS
+              height="40"
+              />
               <span className={styles.cartNotification} aria-hidden="true">{cartItemCount}</span>
             </Link>
           </div>

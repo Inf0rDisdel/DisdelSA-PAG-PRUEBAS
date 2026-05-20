@@ -70,14 +70,15 @@ const HeroSlider = () => {
       {isMobile ? (
         <>
           <div className="mobile-hero-carousel">
-            <Carousel showArrows={false} showThumbs={false} showStatus={false} infiniteLoop autoPlay interval={3500}>
+            <Carousel showArrows={false} showThumbs={false} showStatus={false}
+              infiniteLoop={true} autoPlay={true} interval={3500} stopOnHover={false}>
               {banners.sliderPrincipal.map((slide, index) => {
                 const route = getBannerRoute(slide);
                 return (
                   <div key={slide.EntityID} className="mobile-slide-wrapper">
                     <img 
                       src={`${AppConfig.baseImageUrl}${slide.BannerImagenMovil || slide.Imagen}`} 
-                      alt={slide.Titulo} 
+                      alt={slide.Titulo || "Suministros de limpieza Disdel"} 
                       fetchpriority={index === 0 ? "high" : "auto"}
                     />
                     {route && (
@@ -102,14 +103,20 @@ const HeroSlider = () => {
           <div className="slider-container">
             <div className="carousel-wrapper">
               {banners.sliderPrincipal?.length > 0 && (
-                <Carousel showArrows={false} showThumbs={false} showStatus={false} infiniteLoop autoPlay interval={4000}>
-                  {banners.sliderPrincipal.map((slide) => {
+                <Carousel
+                  showArrows={false} showThumbs={false} showStatus={false}
+                  infiniteLoop={true} autoPlay={true} interval={4000} stopOnHover={true}
+                >
+                  {banners.sliderPrincipal.map((slide, index) => {
                     const route = getBannerRoute(slide);
                     return (
                       <div key={slide.EntityID} className="desktop-slide-wrapper">
                         <img 
                           src={`${AppConfig.baseImageUrl}${slide.Imagen || slide.BannerImagenMovil}`} 
-                          alt={slide.Titulo} 
+                          alt={slide.Titulo || "Catálogo Disdel"} 
+                          fetchpriority={index === 0 ? "high" : "low"}
+                          loading={index === 0 ? "eager" : "lazy"}
+                          decoding={index === 0 ? "sync" : "async"}
                         />
                         {route && (
                           <Link to={route} className="banner-view-btn">Ver productos</Link>

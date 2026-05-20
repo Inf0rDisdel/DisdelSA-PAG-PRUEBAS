@@ -108,12 +108,12 @@ const CategoryPage = () => {
     url: `https://disdelsa.com/categoria/${slug}${cat ? '/' + cat : ''}${subcat ? '/' + subcat : ''}`,
     image: catBanner.desktop || defaultImage
     };
-  }, [categorySeo, activeCategoryData, currentSegment, slug, cat, catBanner, defaultImage, activeSubCatId]);
+  }, [categorySeo, activeCategoryData, currentSegment, slug, cat, subcat, catBanner, defaultImage, activeSubCatId]);
 
   const fullSchema = useMemo(() => {
     if (!currentSegment) return null;
-    const schemaUrl = `https://disdelsa.com/categoria/${slug}${cat ? '/' + cat : ''}`;
-    
+    const schemaUrl = seoData.url;
+
     return {
         "@context": "https://schema.org",
         "@graph": [
@@ -121,11 +121,13 @@ const CategoryPage = () => {
             getBreadcrumbs([
                 { name: "Inicio", item: "https://disdelsa.com/" },
                 { name: currentSegment.NombreSegmento, item: `https://disdelsa.com/categoria/${slug}` },
-                ...(cat ? [{ name: activeCategoryData?.NombreCategoria || cat, item: `https://disdelsa.com/categoria/${slug}/${cat}` }] : [])
+                ...(cat ? [{ name: activeCategoryData?.NombreCategoria || cat, item: `https://disdelsa.com/categoria/${slug}/${cat}` }] : []),
+
+                ...(subcat ? [{ name: activeCategoryData?.SubCategorias?.find(s => createSlug(s.NombreSubCategoria) === subcat)?.NombreSubCategoria || subcat, item: schemaUrl }] : [])
             ])
         ]
     };
-  }, [currentSegment, filteredProducts, seoData, slug, cat, activeCategoryData]);  
+  }, [currentSegment, filteredProducts, seoData, slug, cat, subcat, activeCategoryData]);  
 
    useEffect(() => {
     if (!currentSegment?.Categorias) return;

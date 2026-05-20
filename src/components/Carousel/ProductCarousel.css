@@ -15,13 +15,25 @@
   will-change: transform;
 }
 
+.carousel-skeleton-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 15px;
+  padding: 0 20px;
+  overflow: hidden;
+  height: 400px;
+}
+
 .carousel-item-padding {
-  padding: 5px; /* Espacio entre tarjetas */
+  padding: 10px 8px;
+  display: flex;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 /* 🔥 FIX MAESTRO: Evita que el carrusel corte los botones abajo */
-.product-carousel-container .slick-list {/*-------PARA COREJIR------*/
-  padding-bottom: 30px !important; 
+.product-carousel-container .slick-list {
+  padding: 10px 28px 28px 16px !important; 
   margin: 0 -8px;
 }
 
@@ -78,6 +90,7 @@
   color: #96c121 !important;
   opacity: 1;
 }
+
 
 .slick-track {
 display: flex !important;
