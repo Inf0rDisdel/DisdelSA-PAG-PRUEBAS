@@ -126,7 +126,7 @@ export const getProductSchema = (product, currentUrl, productImages, legacySeo =
           "url": currentUrl,
           "priceCurrency": "GTQ",
           "price": product.Precio && product.Precio !== "0" ? product.Precio : undefined,
-          "availability": "https://schema.org/InStock",
+          "availability": product.Stock > 0 ? "https://schema.org/InStock" : "https://schema.org",
           "itemCondition": "https://schema.org/NewCondition",
           "seller": {
             "@type": "Organization",

@@ -181,9 +181,9 @@ const Header = () => {
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -10 }}
                   >
-                    {suggestions.map(p => (
+                    {suggestions.map((p, index) => (
                       <div 
-                        key={p.IdProducto} 
+                        key={`${p.IdProducto}-${index}`}
                         className={styles.suggestionItem}
                         onClick={() => handleSuggestionClick(p)}
                       >

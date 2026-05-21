@@ -208,14 +208,14 @@ const CategoryPage = () => {
         </div>
 
         <div className="cat-content-layout">
-           <aside className="cat-sidebar-left">
+           <aside className="cat-sidebar-left" aria-label="Menú de categorías">
             <div className="cat-sidebar-header-mobile">
                 <div className="cat-sidebar-label">CATEGORÍAS</div>
             </div>
              <div className="cat-sidebar-nav" ref={scrollRef}>
-              {currentSegment.Categorias?.map((catItem) => (
+              {currentSegment.Categorias?.map((catItem, index) => (
                 <Link
-                  key={catItem.IdCategoria}
+                  key={`sidebar-cat-${catItem.IdCategoria}-${index}`}
                   to={`/categoria/${canonicalSlug}/${createSlug(catItem.NombreCategoria)}`}
                   className={`cat-nav-item ${norm(activeCatId) === norm(catItem.IdCategoria) ? 'active-filter' : ''}`}
                 >
@@ -228,7 +228,7 @@ const CategoryPage = () => {
             </div>
           </aside>
 
-          <main className="cat-right-column">
+          <section className="cat-right-column" aria-label="Listado de productos">
             {activeCategoryData?.SubCategorias?.length > 0 && (
                 <div className="cat-subcategories-bar">
                     {activeCategoryData.SubCategorias.map(sub => (
@@ -260,11 +260,11 @@ const CategoryPage = () => {
                 </div>
               )}
             </div>
-          </main>
+          </section>
         </div>
       </div>
 
-      <section className="cat-expert-content">
+      <section className="cat-expert-content" aria-label="Información adicional de categoría">
         <div className="cat-container">
           <hr className="pdp-divider" />
           <h2>{categorySeo?.t || `Guía de Selección: ${seoData.title}`}</h2>

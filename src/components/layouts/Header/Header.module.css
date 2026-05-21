@@ -544,7 +544,7 @@
 
   /* 1. LOGO (Fila 1 - Izquierda) */
   .logo { 
-    height: 60px; /* Reducimos el alto para móvil */
+    height: 55px; /* Reducimos el alto para móvil */
     width: auto !important; /* 🚀 REPARACIÓN: Forzamos que el ancho sea automático */
     margin-left: 0;
     max-width: 120px; /* 🚀 OPCIONAL: Un límite de seguridad para que no tape los iconos */
@@ -576,7 +576,8 @@
   }
 
   .actionIcon { 
-    height: 27px; /* Bajamos un poquito el tamaño del icono para que el texto quepa mejor */
+    height: 27px; 
+    width: auto !important; /* 🚀 REPARACIÓN: Ignora el width="35" inline para no estirarse */
     filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
   }
 
@@ -585,7 +586,8 @@
     display: flex;
     justify-content: flex-end;
   }
-  .cartIcon { height: 35px; }
+  .cartIcon { height: 35px;
+  width: auto !important; }
 
   /* 4. BOTÓN HAMBURGUESA (Fila 2 - Inicio) */
   .hamburgerButton {

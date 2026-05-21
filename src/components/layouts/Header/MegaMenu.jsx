@@ -23,17 +23,6 @@ const MegaMenu = () => {
         return fileName ? `${AppConfig.baseImageUrl}${fileName}` : '';
     }, [bannerData]);
 
-    // Helper para Slugs
-    const createSlug = useCallback((text) => {
-        if (!text) return '';
-        return text.toString().toLowerCase().trim()
-            .normalize("NFD").replace(/[\u0300-\u036f]/g, "") 
-            .replace(/ñ/g, 'n') // Sincronizado
-            .replace(/[^a-z0-9 -]/g, '') 
-            .replace(/\s+/g, '-')
-            .replace(/-+/g, '-');
-    }, []);
-
     const menuStructure = useMemo(() => {
         if (!menuData) return [];
 

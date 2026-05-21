@@ -31,12 +31,10 @@ export const useProductDetail = (productId) => {
         staleTime: 1000 * 60 * 30, // 30 minutos en caché
         retry: 1, 
         refetchOnWindowFocus: false ,
-        initialData: () => {
+        placeholderData: () => {
             return queryClient.getQueryData(['productos-lista'])?.find(
                 p => String(p.IdProducto) === String(productId)
             );
-        },
-        initialDataUpdatedAt: () => 
-            queryClient.getQueryState(['productos-lista'])?.dataUpdatedAt,
+        }
     });
 };

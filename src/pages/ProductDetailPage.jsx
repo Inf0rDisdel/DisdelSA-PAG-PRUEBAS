@@ -182,7 +182,7 @@ const ProductDetailPage = () => {
   // const seoKeywords = legacySeoInfo?.keywords || `${product.Categoria}, ${product.Marca}, Disdel Guatemala`;
 
   return (
-    <div className="pdp-container">
+    <main className="pdp-container" itemScope itemType="https://schema.org/Product">
     <Helmet>
     <title>{seoTitle}</title>
     <meta name="description" content={seoLongDescription} />
@@ -223,8 +223,8 @@ const ProductDetailPage = () => {
         <FiChevronLeft /> Volver al catálogo
       </button>
 
-       <div className="pdp-main-grid">
-        <section className="pdp-gallery-wrapper">
+       <article className="pdp-main-grid">
+        <section className="pdp-gallery-wrapper" aria-label="Galería de imágenes del producto">
           
           {/* 1. MINIATURAS (Lado izquierdo) */}
           <div className="pdp-thumbnails-vertical">
@@ -234,7 +234,7 @@ const ProductDetailPage = () => {
                 className={`pdp-thumb-item ${selectedImage === img ? 'active' : ''}`} 
                 onMouseEnter={() => setSelectedImage(img)}
               >
-                <img src={getImageUrl(img)} alt={`Vista ${index}`} loading='lazy' />
+                <img src={getImageUrl(img)} alt={`Vista miniatura ${index + 1} de ${product.Descripcion}`} loading='lazy' />
               </div>
             ))}
           </div>
@@ -252,20 +252,21 @@ const ProductDetailPage = () => {
               className={`pdp-main-img ${zoomPos.show ? 'is-zoomed' : ''}`}
               style={{ transformOrigin: `${zoomPos.x}% ${zoomPos.y}%` }}
               fetchpriority="high" // 🚀 Prioridad máxima para la imagen del producto
+              itemProp="image"
             />
           </div>
         </section>
         
-        <section className="pdp-info-section">
+        <section className="pdp-info-section" aria-label="Información comercial del producto">
           <header className="pdp-header-info">
               <div className="pdp-meta-top">
                   {product.Marca && <span className="pdp-brand-tag">{product.Marca}</span>}
                   <span className="pdp-category-badge">{product.Categoria}</span>
               </div>
       
-              <h1 className="pdp-title">{product.Descripcion}</h1>
+              <h1 className="pdp-title" itemProp="name">{product.Descripcion}</h1>
               <div className="pdp-sku-row">
-              <span className="pdp-sku">Código: <strong>{product.IdProducto}</strong></span>
+              <span className="pdp-sku">Código: <strong itemProp="sku">{product.IdProducto}</strong></span>
               <span className="pdp-stock-status in-stock">
                 <FiCheckCircle className="pdp-check-icon" /> Disponible 
               </span>
@@ -315,10 +316,10 @@ const ProductDetailPage = () => {
               <p className="pdp-action-note">La unidad seleccionada aparecerá en su solicitud.</p>
           </div>
         </section>
-      </div>
+      </article>
 
       {/* --- SECCIÓN DE ESPECIFICACIONES TÉCNICAS --- */}
-      <section className="pdp-specs-section">
+      <section className="pdp-specs-section" aria-label="Especificaciones técnicas">
         <div className="pdp-specs-header">
           <span className="pdp-specs-emoji">📌</span>
           <h2>Especificaciones</h2>
@@ -373,12 +374,14 @@ const ProductDetailPage = () => {
       </section>
 
       {product && (
-        <RelatedProducts 
+        <aside aria-label='Productos relacionados'>
+          <RelatedProducts 
           category={product.Categoria} 
           currentProductId={product.IdProducto} 
           />
+        </aside>
         )}
-    </div>
+    </main>
   );
 };
 
