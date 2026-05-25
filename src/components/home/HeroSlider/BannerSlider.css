@@ -1,7 +1,7 @@
 /* --- ESTILOS BASE (Escritorio) --- */
 .banner-slider-container {
   width: 100%;
-  max-width: 1315px; 
+  max-width: var(--site-max-width) !important; 
   height: 100%;
   margin: 20px auto;    
   padding: 0 10px; 
@@ -44,13 +44,13 @@
   100% { background-position: -200% 0; }
 }
 
-/* --- ESTILOS PARA MÓVILES Y TABLETS (Optimizado) --- */
-@media (max-width: 768px) {
+/* --- ESTILOS PARA TABLETS (Optimizado) --- */
+@media (max-width: 780px) {
   
   .banner-slider-container {
     /* Reducimos márgenes para que no flote tanto */
-    margin: 5px auto !important; 
-    padding: 0 0 !important; /* Un poquito de margen a los lados para que no tope al borde */
+    margin: 15px auto !important; 
+    padding: 0 15px !important; /* Un poquito de margen a los lados para que no tope al borde */
     max-width: 100%;
     width: 100%;
     box-sizing: border-box;
@@ -58,7 +58,7 @@
   }
 
   .banner-slider-container .slick-list {
-    border-radius: 10px;
+    border-radius: 12px;
   }
 
   .banner-slider-container .slick-slide {

@@ -16,12 +16,12 @@ const PromoLayout = () => {
   // "catId": Es el ID numérico de la categoría que quieres activar.
   const LINK_MAP = {
       // Estos van para MARCA
-      "Paños de Limpieza": { type: "marca", segment: "kimberly-clark-professional", catId: 2266 },
-      "Esponjas 3M":       { type: "marca", segment: "3m", catId: 2275 },
+      "Paños de Limpieza": { type: "marca", segment: "kimberly-clark-professional/panos-wypall-kcp", catId: 2266 },
+      "Esponjas 3M":       { type: "marca", segment: "3m/esponjas-de-limpieza-3m", catId: 2275 },
       
       // Estos van para CATEGORIA normal
-      "Reciclaje":         { type: "categoria", segment: "herramientas-para-limpieza", catId: 2153 },
-      "Alfombras":         { type: "categoria", segment: "herramientas-para-limpieza", catId: 2151 },
+      "Reciclaje":         { type: "categoria", segment: "herramientas-para-limpieza/basura-y-reciclaje", catId: 2153 },
+      "Alfombras":         { type: "categoria", segment: "herramientas-para-limpieza/alfombras", catId: 2151 },
   };
 
   const handleItemClick = (title) => {

@@ -6,7 +6,7 @@
 }
 
 .brand-hero {
-  max-width: 1300px; margin: 20px auto; width: 95%; height: 250px;
+  width: 100%; max-width: var(--site-max-width) !important;  margin: 20px auto; width: 95%; height: 250px;
   border-radius: 16px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.08);
   transition: height 0.3s ease;
 }
@@ -16,7 +16,7 @@
 
 
 .brand-layout {
-  max-width: 1300px; margin: 0 auto; padding: 0 20px;
+  width: 100%; max-width: var(--site-max-width) !important;  margin: 0 auto; padding: 0 20px;
   display: grid; grid-template-columns: 300px 1fr; gap: 30px;
 }
 
@@ -185,10 +185,33 @@
   from { opacity: 0; }
   to { opacity: 1; }
 }
+
+
 /* ======================================================= */
 /*  1. TABLETS (Hasta 1024px) - 3 PRODUCTOS               */
 /* ======================================================= */
 @media (max-width: 768px) {
+  /* 🚀 REPARACIÓN PADRE: Sincroniza al 100% con la estructura limpia de CategoryPage */
+  .brand-container,
+  .brand-layout,
+  .products-area {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    margin: 0 auto !important;
+    box-sizing: border-box !important;
+  }
+
+  /* 🚀 COLCHÓN DE SEGURIDAD UNIFICADO: El mismo aire seguro de 15px de toda la web */
+  .brand-container {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 0 15px !important; 
+    margin: 0 auto !important;
+    box-sizing: border-box !important;
+  }
+
   .brand-layout { 
     display: flex !important; 
     flex-direction: column !important; 
@@ -200,39 +223,57 @@
     top: 100px !important; 
     width: 100% !important; 
     padding: 10px 0 !important;
+    background-color: #ffffff;
+    box-sizing: border-box !important;
   }
-  /*BANNER PARA MOVIL*/
+  
+  /* BANNER PARA MOVIL (Se ve alineado con curvas perfectas de 12px) */
   .brand-hero {
     height: auto !important; /* Altura ajustada para banners de celular */
     width: 100%;
     max-width: 100% !important;
-    margin: 0 auto 15px auto;
-    border-radius: 0; /* En móvil se ve mejor de orilla a orilla */
+    margin: 10px auto 20px auto !important; /* Sincronizado con CategoryPage */
+    border-radius: 12px !important; /* Curvatura limpia idéntica al de categorías */
+    overflow: hidden;
     box-shadow: none;
   }
   
   .brand-hero img {
     height: auto !important;
     width: 100% !important;
-    object-fit: contain !important;
+    object-fit: cover !important;
     display: block;
   }
 
-
-  .cat-sidebar-header-mobile { display: flex !important; justify-content: space-between; align-items: center; padding: 0 15px 5px 15px; }
+  .cat-sidebar-header-mobile { 
+    display: flex !important; 
+    justify-content: space-between; 
+    align-items: center; 
+    padding: 0 0px 5px 0px !important; /* Sincronizado: 0 lateral */
+  }
   
   /* 🔥 ACTIVAMOS FLECHAS SOLO EN RESPONSIVE */
   .cat-nav-arrows { display: flex !important; gap: 10px; }
-  .scroll-arrow { background: #f5f5f5; border: none; border-radius: 50%; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; color: var(--brand-color); font-size: 18px; }
+  .scroll-arrow { 
+    background: #f5f5f5; border: none; border-radius: 50%; 
+    width: 30px; height: 30px; 
+    display: flex; align-items: center; justify-content: center; 
+    color: var(--brand-color); font-size: 18px; 
+    cursor: pointer;
+  }
 
   .categories-stack {
-    flex-direction: row !important; flex-wrap: nowrap !important;
-    overflow-x: auto !important; padding: 5px 15px !important; gap: 12px !important;
+    display: flex !important;
+    flex-direction: row !important; 
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important; 
+    padding: 5px 0px !important; /* Sincronizado: 0 lateral para heredar los 15px del padre */
+    gap: 12px !important;
     scrollbar-width: none;
   }
   .categories-stack::-webkit-scrollbar { display: none; }
 
-  /* CAJITAS MÁS BAJAS (Ajuste de altura solicitado) */
+  /* CAJITAS MÁS BAJAS */
   .category-card-btn {
     flex: 0 0 105px !important; 
     flex-direction: column !important; 
@@ -241,22 +282,30 @@
     text-align: center !important; 
     padding: 5px !important;
     margin-bottom: 0 !important; 
-    
-    /* Cambiamos el 1px solid #eee por none si quieres quitarlo del todo en móvil */
     border: none !important; 
-    border-bottom: 2px solid transparent !important; /* Si quieres el indicador abajo */
+    border-bottom: 2px solid transparent !important; 
+    border-radius: 8px;
   }
 
   .category-card-btn.active-filter {
     border-bottom-color: var(--brand-color) !important;
-    border-left-color: transparent !important; /* Quitamos el de la izquierda en móvil */
+    border-left-color: transparent !important; 
   }
+  
   .cat-img-box { margin-right: 0 !important; margin-bottom: 5px !important; height: 32px !important; width: 100% !important; }
   .cat-text { font-size: 10px !important; line-height: 1.1 !important; display: block !important; }
 
-  /* 🔥 3 PRODUCTOS POR FILA PARA TABLET */
-  .grid-container { grid-template-columns: repeat(3, 1fr) !important; gap: 15px; padding: 10px !important; }
-
+  /* 🚀 REPARACIÓN DE GRID: 3 Columnas perfectamente centradas, simétricas y sin desvíos */
+  .grid-container { 
+    display: grid !important;
+    grid-template-columns: repeat(3, 1fr) !important; /* Tres columnas perfectas */
+    gap: 15px !important; /* Espacio simétrico idéntico */
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 auto !important; /* Centrado de forma nativa */
+    padding: 15px 0 !important; /* 0 lateral para heredar los 15px del padre */
+    box-sizing: border-box !important;
+  }
 }
 
 /* ======================================================= */
@@ -264,8 +313,19 @@
 /* ======================================================= */
 @media (max-width: 468px) {
   
+  /* 🚀 REPARACIÓN PADRE: Limpiamos los contenedores de marca para que no tengan herencias */
+  .brand-container,
+  .brand-layout,
+  .products-area {
+    width: 100% !important;
+    padding-left: 0 !important;  /* 👈 Cero paddings heredados de escritorio */
+    padding-right: 0 !important; /* 👈 Cero paddings heredados de escritorio */
+    margin: 0 auto !important;
+    box-sizing: border-box !important;
+  }
+
   .brand-hero {
-    height: auto !important; /* Permitimos que la imagen dicte la altura */
+    height: auto !important; 
     width: 100% !important;
     margin: 0 auto 10px auto;
     border-radius: 0;
@@ -273,32 +333,53 @@
   }
   
   .brand-hero img {
-    height: auto !important; /* Altura automática para no estirar */
+    height: auto !important; 
     width: 100% !important;
-    object-fit: contain !important; /* Muestra el banner móvil COMPLETO */
+    object-fit: contain !important; 
     display: block;
   }
 
-  /* Ajustamos el skeleton para que coincida con el banner móvil */
+  /* Ajustamos el esqueleto para que coincida con el banner móvil */
   .skeleton-shimmer.banner-sk {
     height: 180px !important;
   }
 
-  .grid-container { grid-template-columns: repeat(2, 1fr) !important; gap: 10px !important; }
-  .product-card { padding: 10px !important; }
+  /* 🚀 REPARACIÓN DE GRID: Centrado natural, sin hacks de márgenes negativos */
+  .grid-container { 
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important; /* Dos columnas perfectas */
+    gap: 12px !important; /* Espacio simétrico entre tarjetas */
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 auto !important; /* 👈 Centrado de forma nativa */
+    padding: 0 15px !important; /* 👈 Espacio seguro y limpio de 15px en los bordes */
+    box-sizing: border-box !important;
+  }
+
+  /* Aseguramos que las tarjetas ocupen el 100% de su carril */
+  .product-card { 
+    padding: 10px !important; 
+    width: 100% !important;
+    box-sizing: border-box !important;
+    margin: 0 !important;
+  }
 
   .prod-img-container {
-  aspect-ratio: 1 / 1;
-  max-height: 110px !important;
+    aspect-ratio: 1 / 1;
+    max-height: 110px !important;
   } 
 
   .prod-img-container img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-}
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
 
-  .prod-title-text { font-size: 12px !important; height: 32px; overflow: hidden; }
+  .prod-title-text { 
+    font-size: 12px !important; 
+    height: 32px; 
+    overflow: hidden; 
+  }
 }
 
 /* Animación de carga */

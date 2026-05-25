@@ -1,5 +1,5 @@
 .pdp-container {
-  max-width: 1300px;
+  max-width: 1350px;
   margin: 0 auto;
   padding: 30px 20px;
   font-family: 'Poppins', sans-serif;
@@ -357,6 +357,73 @@
   color: #666;
 }
 .pdp-add-btn:hover { background: #0d4480; transform: translateY(-2px); }
+
+
+
+
+
+/* ======================================================= */
+/* 🚀 SECCIÓN DE PRODUCTOS RELACIONADOS (PDP)              */
+/* ======================================================= */
+
+.pdp-related-section {
+  margin-top: 60px;
+  border-top: 1px solid #eee;
+  padding-top: 40px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.pdp-related-title {
+  margin-bottom: 25px; 
+  font-size: 1.4rem; 
+  font-weight: 700; 
+  color: #333;
+  text-align: left;
+}
+
+/* Rejilla controlada */
+.related-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr); /* 🚀 4 Columnas perfectas en Escritorio */
+  gap: 20px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* --- AJUSTES RESPONSIVOS --- */
+@media (max-width: 1024px) {
+  .pdp-related-section {
+    padding-left: 15px;
+    padding-right: 15px;
+  }
+  .related-grid {
+    grid-template-columns: repeat(3, 1fr); /* 🚀 3 Columnas en Tablets */
+    gap: 15px;
+  }
+}
+
+@media (max-width: 480px) {
+  .pdp-related-section {
+    margin-top: 35px;
+    padding-top: 25px;
+    padding-left: 10px;
+    padding-right: 22px;
+  }
+  
+  .pdp-related-title {
+    font-size: 1.15rem; /* Ajuste de título para móviles */
+    margin-bottom: 15px;
+  }
+
+  .related-grid {
+    grid-template-columns: repeat(2, 1fr) !important; /* 🚀 2 Columnas perfectas en móviles */
+    gap: 12px !important;
+  }
+}
+
+
+
 
 /* --- ANIMACIÓN SHIMMER (EFECTO BRILLO) --- */
 @keyframes shimmer {

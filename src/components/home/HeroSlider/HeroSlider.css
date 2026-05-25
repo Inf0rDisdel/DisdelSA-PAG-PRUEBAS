@@ -1,10 +1,12 @@
 .main-container {
-  max-width: 1300px;
+  width: 100%;
+  max-width: var(--site-max-width) !important; /* 🚀 REEMPLAZA EL 1300px */
   margin: 10px auto;
   display: flex;
   gap: 20px; 
   min-height: 320px; 
   contain: paint;
+  transition: max-width 0.3s ease; /* Transición suave */
 }
 
 .banners-container {

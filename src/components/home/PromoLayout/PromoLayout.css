@@ -9,7 +9,8 @@
 }
 
 .pl-grid-container {
-  max-width: 1290px;
+  width: 100%;
+  max-width: var(--site-max-width) !important; 
   margin: 0 auto;
   
   /* --- CONFIGURACIÓN POR DEFECTO (PC y TABLET) --- */

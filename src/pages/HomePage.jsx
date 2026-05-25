@@ -23,7 +23,7 @@ const HomeSkeleton = () => (
   <div style={{ minHeight: '100vh', background: '#f8f9fa', padding: '10px 0' }}>
     <div className="skeleton-animation" style={{ 
       maxWidth: '1300px', 
-      width: '100%', 
+      width: '95%', // 🚀 Previene desbordamiento en móviles
       height: '320px', 
       background: 'linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%)',
       backgroundSize: '200% 100%',

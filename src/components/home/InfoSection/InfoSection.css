@@ -5,7 +5,8 @@
   align-items: flex-start;
   padding: 40px 20px;
   background-color: #ffffff;
-  max-width: 1400px;
+  width: 100%;
+  max-width: var(--site-max-width) !important; 
   margin: 0 auto;
 }
 

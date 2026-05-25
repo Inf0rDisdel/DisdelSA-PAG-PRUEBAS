@@ -2,11 +2,13 @@
   text-align: left; 
   padding: 10px 20px 0; 
   padding-bottom: 5px;
-  max-width: 1300px;
+  width: 100%;
+  max-width: var(--site-max-width) !important; /* 🚀 REEMPLAZA EL 1300px */
   margin: auto; 
   margin-top: 10px;
   min-height: unset;
   contain: layout;
+  transition: max-width 0.3s ease;
 }
 
 .cgs-skeleton-grid {
@@ -120,7 +122,7 @@
 /* Imagen de la categoría */
 .cgs-image {
   width: 100%; /* Cambiado a 100% para que el aspect-ratio mande */
-  max-width: 260px;
+  max-width: 270px;
   aspect-ratio: 260 / 240; /* 🚀 CRÍTICO: El navegador reserva el espacio exacto */
   border-radius: 20px;
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.04);

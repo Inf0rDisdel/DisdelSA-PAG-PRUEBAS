@@ -1,5 +1,6 @@
 .featured-brands-section {
-  max-width: 1300px;
+  width: 100%;
+  max-width: var(--site-max-width) !important; 
   margin: 0 auto;
   margin-top: -15px !important;
   padding: -10px;

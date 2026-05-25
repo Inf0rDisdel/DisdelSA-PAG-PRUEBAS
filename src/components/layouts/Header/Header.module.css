@@ -11,7 +11,7 @@
 
 .headerContainer {
   width: 100%;
-  max-width: 1310px; 
+  max-width: var(--site-max-width) !important; /* 🚀 REEMPLAZA EL 1310px */
   margin: 0 auto;    
   padding: 0 15px;
   display: flex;
@@ -19,6 +19,7 @@
   justify-content: space-between;
   gap: 10px;
   box-sizing: border-box;
+  transition: max-width 0.3s ease;
 }
 
 /* --- IZQUIERDA: LOGO + HAMBURGUESA --- */

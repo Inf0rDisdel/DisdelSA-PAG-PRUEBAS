@@ -7,7 +7,8 @@
 }
 
 .newsletter-container {
-    max-width: 1200px;
+    width: 100%;
+    max-width: var(--site-max-width) !important; 
     margin: 0 auto;
     display: flex;
     align-items: center;
@@ -104,71 +105,149 @@
 /* ======================================================= */
 @media (max-width: 668px) {
     .newsletter-wrapper {
-        padding: 40px 15px;
-        background-color: #ffffff; 
+        padding: 25px 15px !important; /* Espaciado de seguridad en los bordes del móvil */
+        background-color: #f8f9fa; /* Fondo gris claro para que la tarjeta blanca resalte */
     }
 
     .newsletter-container {
-        flex-direction: column;
-        background: #ffffff;
-        padding: 30px 20px;
-        border-radius: 25px;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
-        border: 1px solid #f0f0f0;
-        text-align: center;
+        flex-direction: column !important;
+        background: #ffffff !important;
+        display: flex !important;
+        justify-content: center !important;
+        align-items: center !important;
+        border-radius: 20px !important;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04) !important;
+        border: 1px solid #f0f0f0 !important;
+        text-align: center !important;
+        padding: 30px 20px !important; /* Padding interno proporcional */
+        box-sizing: border-box !important;
+        width: 100% !important;
     }
 
     .newsletter-info {
-        flex-direction: column;
-        gap: 12px;
-        margin-bottom: 5px;
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        gap: 12px !important;
+        margin-bottom: 15px !important;
+        width: 100% !important;
     }
 
     .newsletter-icon-box {
-        background-color: #f0f9eb;
-        width: 70px;
-        height: 70px;
-        border-radius: 50%;
-        display: flex;
-        justify-content: center;
-        align-items: center;
+        background-color: #f0f9eb !important;
+        margin-top: 0 !important;
+        width: 65px !important;
+        height: 65px !important;
+        border-radius: 50% !important;
+        display: flex !important;
+        justify-content: center !important;
+        align-items: center !important;
     }
 
     .newsletter-icon {
-        font-size: 35px;
+        font-size: 30px !important;
+        color: #96c121 !important; /* Verde Disdel para el icono */
+    }
+
+    .newsletter-text-content {
+        width: 100% !important;
     }
 
     .newsletter-text-content strong {
-        font-size: 1.1rem;
-        color: #1e5f9e; 
+        font-size: 1.15rem !important;
+        color: #135eab !important; /* Azul oficial de tu marca */
+        display: block !important;
+        line-height: 1.3 !important;
+        margin-bottom: 6px !important;
     }
 
-    .newsletter-form {
-        width: 100%;
-        flex-direction: column;
-        gap: 10px;
-        margin-top: 15px;
-    }
-
-    .newsletter-input {
-        width: 90%;
-        text-align: center;
-        padding: 15px;
-        font-size: 0.95rem;
-    }
-
-    .newsletter-button {
-        width: 100%;
-        padding: 15px;
+    .newsletter-text-content p {
+        font-size: 0.85rem !important;
+        color: #666666 !important;
+        margin: 0 !important;
+        letter-spacing: 0.3px;
     }
 
     .newsletter-action-column {
-        width: 100%;
-        align-items: center; 
+        width: 100% !important;
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
     }
 
-   .newsletter-acceptance {
-        text-align: center;
-        margin-top: 15px;
+    .newsletter-form {
+        width: 100% !important;
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 12px !important; /* Espaciado simétrico entre elementos */
+        margin-top: 15px !important;
+        box-sizing: border-box !important;
+    }
+
+    /* 🚀 REPARACIÓN: Input y Botón con anchos idénticos y simétricos */
+    .newsletter-input {
+        width: 100% !important; /* Ocupa todo el ancho de la tarjeta */
+        max-width: 100% !important;
+        box-sizing: border-box !important;
+        padding: 14px 15px !important;
+        font-size: 0.95rem !important;
+        border: 1px solid #dcdcdc !important;
+        border-radius: 10px !important;
+        outline: none !important;
+        text-align: center !important;
+        transition: border-color 0.3s ease !important;
+    }
+
+    .newsletter-input:focus {
+        border-color: #135eab !important; /* Foco azul Disdel */
+    }
+
+    .newsletter-button {
+        width: 100% !important; /* Ocupa exactamente el mismo ancho que el input */
+        max-width: 100% !important;
+        box-sizing: border-box !important;
+        padding: 14px !important;
+        font-size: 0.95rem !important;
+        font-weight: 700 !important;
+        border-radius: 10px !important;
+        background-color: #96c121 !important; /* Verde Disdel */
+        color: white !important;
+        border: none !important;
+        cursor: pointer !important;
+        transition: background-color 0.3s ease !important;
+    }
+
+    .newsletter-button:active {
+        background-color: #82a81c !important; /* Oscurece sutilmente al presionar */
+    }
+
+    /* 🚀 REPARACIÓN CRÍTICA: Alineación del Checkbox y texto (Estilo Premium) */
+    .newsletter-acceptance {
+        display: flex !important;
+        align-items: flex-start !important; /* Alinea arriba para textos que ocupen más de 1 línea */
+        gap: 10px !important;
+        text-align: left !important; /* Texto alineado ordenadamente a la izquierda */
+        margin-top: 15px !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
+        padding: 0 5px !important;
+    }
+
+    .newsletter-acceptance input[type="checkbox"] {
+        margin-top: 3px !important; /* Alinea el cuadro del checkbox con el inicio del texto */
+        cursor: pointer !important;
+        flex-shrink: 0 !important; /* Evita que el checkbox se encoja en pantallas angostas */
+    }
+
+    .newsletter-acceptance label {
+        font-size: 0.8rem !important; /* Fuente legible y compacta */
+        color: #555555 !important;
+        line-height: 1.4 !important;
+        cursor: pointer !important;
+    }
+
+    .newsletter-acceptance a {
+        color: #135eab !important;
+        text-decoration: underline !important;
     }
 }

@@ -35,8 +35,8 @@ const RelatedProducts = ({ category, currentProductId }) => {
         <h2 style={{ marginBottom: '25px', fontSize: '1.4rem', fontWeight: '600', color: '#333'}}>
           Buscando productos relacionados...
         </h2>
-        <div className='related-grid' style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, ninmax(220px, 1fr))', gap:'20px'}}>
-          {[1,2,3,4].map(n=> <ProductCardSkeleton key={n} />)}
+        <div className='related-grid'>
+          {[1, 2, 3, 4].map(n => <ProductCardSkeleton key={`related-sk-${n}`} />)}
         </div>
       </section>
     )
@@ -46,18 +46,14 @@ const RelatedProducts = ({ category, currentProductId }) => {
   if (relatedList.length === 0) return null;
 
   return (
-    <section className="pdp-related-section" style={{ marginTop: '50px', borderTop: '1px solid #eee', paddingTop: '30px' }}>
-      <h2 style={{ marginBottom: '25px', fontSize: '1.4rem', fontWeight: '600', color: '#333' }}>
+    <section className="pdp-related-section">
+      <h2 className="pdp-related-title">
         Productos que te pueden interesar
       </h2>
-      <div className="related-grid" style={{ 
-        display: 'grid', 
-        gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', 
-        gap: '20px' 
-      }}>
+      <div className="related-grid">
         {relatedList.map((prod) => (
           <ProductCard 
-            key={`${prod.IdProducto}-${category}`} // 🚀 KEY UNICA COMPUESTA
+            key={`${prod.IdProducto}-${category}`} 
             product={prod} 
           />
         ))}

@@ -4,15 +4,16 @@
   background-size: cover;
   background-position: center;
   width: 100%;
-  max-width: 1305px;
+  max-width: var(--site-max-width) !important; /* 🚀 REEMPLAZA EL 1305px */
   margin: 20px auto;
-  padding: 10px 15px; /* Bajamos el padding lateral de 40px a 15px */
+  padding: 10px 15px; 
   box-sizing: border-box;
   background-color: #ffffff;
   border-radius: 10px;
-  overflow: hidden; /* Evita que el carrusel cause scroll horizontal en toda la página */
+  overflow: hidden; 
   contain: content;
   will-change: transform;
+  transition: max-width 0.3s ease;
 }
 
 .carousel-skeleton-grid {
@@ -25,7 +26,7 @@
 }
 
 .carousel-item-padding {
-  padding: 10px 8px;
+  padding: 10px 10px;
   display: flex;
   width: 100%;
   box-sizing: border-box;
@@ -33,7 +34,7 @@
 
 /* 🔥 FIX MAESTRO: Evita que el carrusel corte los botones abajo */
 .product-carousel-container .slick-list {
-  padding: 10px 28px 28px 16px !important; 
+  padding: 10px 28px 25px 0 !important; 
   margin: 0 -8px;
 }
 

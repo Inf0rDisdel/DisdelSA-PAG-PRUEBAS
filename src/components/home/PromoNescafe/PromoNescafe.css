@@ -9,7 +9,7 @@
   text-align: left;
   margin-bottom: 25px;
   color: #333;
-  max-width: 1300px;
+  max-width: var(--site-max-width) !important; 
   margin-left: auto;
   margin-right: auto;
   padding: 0 20px;
@@ -18,7 +18,8 @@
 
 .promo-nescafe-container {
   display: flex;
-  max-width: 1340px;
+  width: 100%;
+  max-width: var(--site-max-width) !important; 
   margin: 0 auto;
   gap: 20px;
   padding: 0 20px;

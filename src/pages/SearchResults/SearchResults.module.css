@@ -5,7 +5,8 @@
 }
 
 .container {
-  max-width: 1300px;
+  width: 100%;
+  max-width: var(--site-max-width) !important; 
   margin: 0 auto;
   padding: 0 15px;
 }
@@ -81,57 +82,124 @@
 /* 1. TABLETS (Hasta 992px)                               */
 /* ====================================================== */
 @media (max-width: 992px) {
+  
+  /* 🚀 REPARACIÓN PADRE: Limpiamos contenedores intermedios para evitar desvíos */
+  .container,
+  .searchContentLayout,
+  .resultsContent {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    margin: 0 auto !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Colchón de seguridad de 15px en tabletas */
+  .container {
+    padding: 0 15px !important;
+  }
+
   .searchContentLayout {
     flex-direction: column; /* Apilamos Sidebar arriba y productos abajo */
     gap: 20px;
   }
 
+  /* Filtros horizontales en tablet */
   .filterSidebar {
     width: 100%;
     position: relative;
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 20px;
+    box-sizing: border-box !important;
   }
+  
   .filterGroup {
     margin-bottom: 0;
   }
 
+  /* 🚀 REPARACIÓN DE GRID TABLET: 3 Columnas perfectas con la sintaxis corregida */
   .productGrid {
-    .productGrid { grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); }
-}
+    display: grid !important;
+    grid-template-columns: repeat(3, 1fr) !important; /* 👈 Corregido con la coma obligatoria */
+    gap: 15px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    padding: 10px 0 !important;
+  }
 }
 
 /* ====================================================== */
-/* 2. MÓVILES (Hasta 768px)                               */
+/* 2. TABLETS MEDIANAS (Hasta 768px)                      */
 /* ====================================================== */
 @media (max-width: 768px) {
-  .productGrid {
-    grid-template-columns: repeat(2, 1fr); /* 2 columnas en móvil para que las fotos se vean grandes */
-    gap: 15px;
-  }
-
+  /* Mantenemos las 3 columnas y ajustamos la cabecera */
   .searchHeader h1 {
-    font-size: 24px;
+    font-size: 22px;
   }
 }
 
-/* ====================================================== */
-/* 3. MÓVILES PEQUEÑOS (Hasta 480px)                      */
-/* ====================================================== */
+
+/* ============================================================
+   🚀 RESPONSIVO MÓVIL (BÚSQUEDAS - CORRECCIÓN DE ALINEACIÓN)
+   ============================================================ */
 @media (max-width: 480px) {
+  
+  /* 🚀 REPARACIÓN ANCESTRAL: Reseteamos TODOS los contenedores padres 
+     para eliminar paddings fantasmas que empujan el diseño */
+  .searchPageWrapper,
+  .container,
+  .searchContentLayout,
+  .resultsContent {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding-left: 0 !important;  /* 👈 Cero paddings laterales intermedios */
+    padding-right: 0 !important; /* 👈 Cero paddings laterales intermedios */
+    margin: 0 auto !important;
+    box-sizing: border-box !important;
+  }
+
   .searchPageWrapper {
-    padding: 20px 0;
+    padding: 15px 0 !important; /* Espaciado vertical seguro */
   }
 
+  /* Alineamos la cabecera del buscador (Se encontraron X coincidencias) */
+  .searchHeader {
+    width: 100% !important;
+    padding: 0 12px !important; /* Alineado al ras de seguridad */
+    box-sizing: border-box !important;
+    margin-bottom: 12px !important;
+  }
+
+  .searchHeader p {
+    margin: 0;
+    font-size: 13px;
+    color: #666;
+    text-align: left;
+  }
+
+  /* Caja de filtros superior en móvil */
   .filterSidebar {
-    grid-template-columns: 1fr; /* Filtros en 1 columna en móvil pequeño */
-    padding: 15px;
+    width: 100% !important;
+    grid-template-columns: 1fr;
+    padding: 10px 12px !important; /* Alineación limpia */
+    box-sizing: border-box !important;
+    border-bottom: 1px solid #f0f0f0;
+    margin-bottom: 15px !important;
   }
 
+  /* 🚀 REPARACIÓN DE GRID: Bajamos el colchón a 10px para pegar las tarjetas 
+     más al borde izquierdo y derecho de forma simétrica */
   .productGrid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 12px;
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 10px !important; /* Espacio interno uniforme */
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 auto !important;
+    padding: 0 10px !important; /* 👈 Espacio exacto de 10px a los lados */
+    box-sizing: border-box !important;
   }
 
   .searchHeader h1 {
@@ -140,31 +208,6 @@
 
   .noResults {
     padding: 40px 20px;
+    box-sizing: border-box !important;
   }
-}
-
-/* --- ESTILOS EXTRA PARA BOTONES Y CARGA --- */
-.btnBack {
-  background: #135eab;
-  color: white;
-  border: none;
-  padding: 12px 25px;
-  border-radius: 8px;
-  cursor: pointer;
-  margin-top: 20px;
-  font-weight: 600;
-  transition: all 0.3s ease;
-}
-
-.btnBack:hover {
-  background: #0d4a8a;
-  transform: translateY(-2px);
-}
-
-.loading {
-  text-align: center;
-  padding: 100px 20px;
-  font-size: 18px;
-  color: #135eab;
-  font-weight: 600;
 }

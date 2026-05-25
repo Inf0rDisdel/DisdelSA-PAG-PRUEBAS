@@ -124,14 +124,30 @@ export const getProductSchema = (product, currentUrl, productImages, legacySeo =
         "offers": {
           "@type": "Offer",
           "url": currentUrl,
-          "priceCurrency": "GTQ",
-          "price": product.Precio && product.Precio !== "0" ? product.Precio : undefined,
           "availability": product.Stock > 0 ? "https://schema.org/InStock" : "https://schema.org",
           "itemCondition": "https://schema.org/NewCondition",
           "seller": {
             "@type": "Organization",
             "@id": "https://disdelsa.com/#organization",
             "name": "Disdel, S.A."
+          },
+          "shippingDetails": {
+            "@type": "OfferShippingDetails",
+            "@id": `${currentUrl}#shipping`,
+            "shippingDestination": {
+              "@type": "DefinedRegion",
+              "addressCountry": "GT" // Guatemala
+            }
+          },
+          // Política de Devoluciones
+          "hasMerchantReturnPolicy": {
+            "@type": "MerchantReturnPolicy",
+            "@id": `${currentUrl}#return-policy`,
+            "applicableCountry": "GT",
+            "returnPolicyCategory": "https://schema.org/MerchantReturnFiniteReturnPeriod",
+            "merchantReturnDays": "30",
+            "returnMethod": "https://schema.org/ReturnByMail",
+            "returnFees": "https://schema.org/FreeReturn"
           }
         }
       },
@@ -173,13 +189,31 @@ export const getCollectionSchema = (title, description, url, products) => {
         "mainEntity": {
           "@type": "ItemList",
           "numberOfItems": products.length,
-          "itemListElement": products.slice(0, 40).map((prod, index) => ({
-            "@type": "ListItem",
-            "position": index + 1,
-            "url": `https://disdelsa.com/producto/${String(prod.IdProducto).toLowerCase()}/${createSlug(prod.Descripcion)}`,
-            "name": prod.Descripcion,
-            "image": `${AppConfig.baseImageUrl}productos/${prod.Imagen}`
-          }))
+          "itemListElement": products.slice(0, 30).map((prod, index) => {
+            const productUrl = `https://disdelsa.com/producto/${String(prod.IdProducto).toLowerCase()}/${createSlug(prod.Descripcion)}`;
+            const imageUrl = `${AppConfig.baseImageUrl}productos/${prod.Imagen}`;
+
+            return {
+              "@type": "ListItem",
+              "position": index + 1,
+              "item": {
+                "@type": "Product",
+                "url": productUrl,
+                "name": prod.Descripcion,
+                "image": imageUrl,
+                "sku": prod.IdProducto,
+                "brand": {
+                  "@type": "Brand",
+                  "name": prod.Marca || "Disdel"
+                },
+                // 🚀 B2B FIX: Declaramos la oferta de stock pero sin enviar valores de precios
+                "offers": {
+                  "@type": "Offer",
+                  "availability": "https://schema.org/InStock"
+                }
+              }
+            };
+          })
         }
       },
       getBreadcrumbs([

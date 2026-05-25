@@ -14,7 +14,20 @@ html, body {
 
 #root {
   overflow: visible !important;
-  --site-max-width: 1700px;
+  --site-max-width: 1400px;
+}
+
+@media (min-width: 1600px) {
+  :root {
+    --site-max-width: 1200px; 
+  }
+}
+
+/* 🚀 Escala para monitores Ultra-Wide de alta resolución (27" para arriba) */
+@media (min-width: 1920px) {
+  :root {
+    --site-max-width: 1600px; 
+  }
 }
 
 html, body {
@@ -38,6 +51,36 @@ body {
   display: flex;
   flex-direction: column;
 }
+
+/* Shimmer antiguo (lo mantenemos por si lo usas en componentes viejos) */
+@keyframes shimmer {
+  0% { background-position: -468px 0; }
+  100% { background-position: 468px 0; }
+}
+
+.skeleton-box {
+  background: #f6f7f8;
+  background-image: linear-gradient(to right, #f6f7f8 0%, #edeef1 20%, #f6f7f8 40%, #f6f7f8 100%);
+  background-repeat: no-repeat;
+  background-size: 800px 104px;
+  animation: shimmer 1.2s linear infinite forwards;
+  border-radius: 4px;
+}
+
+/* 🚀 NUEVA ANIMACIÓN DE ALTO RENDIMIENTO PARA SKELETONS PRINCIPALES */
+@keyframes loading-shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+.skeleton-animation {
+  animation: loading-shimmer 1.5s infinite linear;
+}
+
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
