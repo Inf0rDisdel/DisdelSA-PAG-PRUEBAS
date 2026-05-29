@@ -15,9 +15,17 @@ export const useFilterProducts = (productsData, currentSegment, activeCatId, act
   return useMemo(() => {
     if (!productsData || !currentSegment) return [];
 
+    const brandNameClean = norm(currentSegment.NombreSegmento).toLocaleLowerCase();
+
     // 1. Filtrado Lógico
     const filtered = productsData.filter(prod => {
-      if (norm(prod.IdSegmento) !== norm(currentSegment.IdSegmento)) return false;
+      const productBrandClean = norm(prod.Marca).toLowerCase();
+      
+      // 🚀 CLAVE SENIOR: Coincidencia por ID de Segmento o por Nombre de la Marca (Flexibilidad B2B)
+      const isSegmentMatch = norm(prod.IdSegmento) === norm(currentSegment.IdSegmento);
+      const isBrandMatch = productBrandClean && (brandNameClean.includes(productBrandClean) || productBrandClean.includes(brandNameClean));
+
+      if (!isSegmentMatch && !isBrandMatch) return false;
       if (activeCatId && norm(prod.IdCategoria) !== norm(activeCatId)) return false;
       if (activeSubCatId && norm(prod.IdSubCategoria) !== norm(activeSubCatId)) return false;
       return true;

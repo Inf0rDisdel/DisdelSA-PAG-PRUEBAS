@@ -67,22 +67,108 @@ const BrandPage = () => {
   }, [bannerData, canonicalSlug]);
 
   const currentBrandSegment = useMemo(() => {
-    if (!menuData) return null;
+    if (!menuData || canonicalSlug === "silver") return null;
 
-    return menuData.find(seg => createSlug(seg.NombreSegmento).includes(cleanSlug) || cleanSlug.includes(createSlug(seg.NombreSegmento)));
-  }, [menuData, cleanSlug]);
+    return menuData.find(seg => 
+      createSlug(seg.NombreSegmento).includes(cleanSlug) || cleanSlug.includes(createSlug(seg.NombreSegmento))
+    );
+  }, [menuData, canonicalSlug]);
+
+
+  // --- 3. COMPILADOR EXCLUSIVO PARA LA MARCA SILVER ---
+  // Extraemos todos los productos activos de Silver directamente desde la base de datos
+  const silverProductsRaw = useMemo(() => {
+    if (!productsData || canonicalSlug !== "silver") return [];
+
+    return productsData.filter(prod => {
+      const brandField = String(prod.Marca || prod.brand || '').toLowerCase().trim();
+      const descField = String(prod.Descripcion || prod.name || '').toLowerCase().trim();
+      return brandField.includes("silver") || descField.includes("silver");
+    });
+  }, [productsData, canonicalSlug]);
+
+  // Generamos las categorías dinámicas para Silver basadas en sus productos reales
+  const silverCategories = useMemo(() => {
+    if (canonicalSlug !== "silver" || silverProductsRaw.length === 0) return [];
+
+    //FUNCION AUXILIAR PARA BUSCAR EL ICONO DE CADA CATEGORIA
+    const findOfficialIcon = (catName) => {
+      if (!menuData) return null;
+      const targetName = catName.toLowerCase().trim();
+
+      for (const segment of menuData) {
+        if (segment.Categorias) {
+          const matchedCat = segment.Categorias.find(
+            c => c.NombreCategoria && c.NombreCategoria.toLowerCase().trim() === targetName
+          );
+          if (matchedCat && matchedCat.Imagen) {
+            return matchedCat.Imagen;
+          }
+        }
+      }
+      return null;
+    };
+
+    const categoriesMap = {};
+    silverProductsRaw.forEach(prod => {
+      const catName = prod.Categoria || "Otros";
+      const catId = prod.IdCategoria || catName;
+      if (!categoriesMap[catId]) {
+        categoriesMap[catId] = {
+          IdCategoria: catId,
+          NombreCategoria: catName,
+          Imagen: findOfficialIcon(catName) || null
+        };
+      }
+    });
+
+    return Object.values(categoriesMap);
+  }, [silverProductsRaw, canonicalSlug, menuData]);
+
+  const silverFilteredProducts = useMemo(() => {
+    if (canonicalSlug !== "silver" || silverProductsRaw.length === 0) return [];
+
+    let result = silverProductsRaw;
+    if (activeCatId) {
+      result = silverProductsRaw.filter(prod => norm(prod.IdCategoria) === norm(activeCatId));
+    }
+
+    const seenIds = new Set();
+    return result.filter(prod => {
+      const id = norm(prod.IdProducto || prod.id);
+      if (!id || seenIds.has(id)) return false;
+      seenIds.add(id);
+      return true;
+    });
+  }, [silverProductsRaw, activeCatId, canonicalSlug]);
+
+  // --- 4. CONVERGENCIA DE LÓGICAS (Silver Dinámico vs Estándar) ---
+  const displayCategories = useMemo(() => {
+    if (canonicalSlug === "silver") {
+      return silverCategories;
+    }
+    return currentBrandSegment?.Categorias || [];
+  }, [canonicalSlug, silverCategories, currentBrandSegment]);
+
+  const standardFilteredProducts = useFilterProducts(productsData, currentBrandSegment, activeCatId, null);
+
+  const filteredProducts = useMemo(() => {
+    if (canonicalSlug === "silver") {
+      return silverFilteredProducts;
+    }
+    return standardFilteredProducts;
+  }, [canonicalSlug, silverFilteredProducts, standardFilteredProducts]);
   
   const brandNameOfficial = useMemo(() => {
+    if (canonicalSlug === "silver") return "Silver";
     return currentBrandSegment?.NombreSegmento || slug.replace(/-/g, ' ');
-  }, [currentBrandSegment, slug]);
-
-  const filteredProducts = useFilterProducts(productsData, currentBrandSegment, activeCatId, null);
+  }, [currentBrandSegment, slug, canonicalSlug]);
 
   // --- SCHEMA DINÁMICO ---
   const fullSchema = useMemo(() => {
-    if (!currentBrandSegment) return null;
+    if (!currentBrandSegment && canonicalSlug !== "silver") return null;
     const baseUrl = `https://disdelsa.com/marca/${canonicalSlug}`;
-    const activeCategory = currentBrandSegment?.Categorias?.find(c => norm(c.IdCategoria) === norm(activeCatId));
+    const activeCategory = displayCategories?.find(c => norm(c.IdCategoria) === norm(activeCatId));
 
     const seoTitle = activeCategory 
         ? `${activeCategory.NombreCategoria} ${brandNameOfficial} Guatemala` 
@@ -103,23 +189,26 @@ const BrandPage = () => {
             ])
         ]
     };
-  }, [currentBrandSegment, brandNameOfficial, filteredProducts, canonicalSlug, activeCatId]);
+  }, [currentBrandSegment, displayCategories, brandNameOfficial, filteredProducts, canonicalSlug, activeCatId]);
 
+  // --- 6. EFECTOS DE NAVEGACIÓN Y FILTROS ---
   useEffect(() => {
-    if (currentBrandSegment?.Categorias?.length > 0) {
+    if (displayCategories.length > 0) {
       const preId = location.state?.preSelectedCatId;
       if (preId) {
-        const exists = currentBrandSegment.Categorias.some(c => norm(c.IdCategoria) === norm(preId));
+        const exists = displayCategories.some(c => norm(c.IdCategoria) === norm(preId));
         setActiveCatId(exists ? preId : null);
       }
     }
-  }, [currentBrandSegment, location.state]);
+  }, [displayCategories, location.state]);
 
   useEffect(() => {
-    if (!subcat || !currentBrandSegment?.Categorias) return;
-    const foundCat = currentBrandSegment.Categorias.find(cat => createSlug(cat.NombreCategoria) === subcat);
-    if (foundCat) setActiveCatId(foundCat.IdCategoria);
-  }, [subcat, currentBrandSegment]);
+    if (!subcat || displayCategories.length === 0) return;
+    const foundCat = displayCategories.find(cat => createSlug(cat.NombreCategoria) === subcat);
+    if (foundCat) {
+      setActiveCatId(foundCat.IdCategoria);
+    }
+  }, [subcat, displayCategories]);
 
   const handleScroll = (direction) => {
     if (scrollRef.current) {
@@ -141,26 +230,26 @@ const BrandPage = () => {
     );
   }
 
-  if (!currentBrandSegment) {
-    const activeBanner = isMobile && visualConfig.bannerMob ? visualConfig.bannerMob : visualConfig.banner;
-    return (
-      <div className="brand-container">
-          <div className="brand-hero">
-              {activeBanner ? (
-                <img src={activeBanner} alt="Banner" className='banner-fade-in' />
-              ) : (
-                <div className="brand-hero-fallback" style={{ background: visualConfig.color }}>
-                  <h1>{slug.replace(/-/g, ' ')}</h1>
-                </div>
-              )}
-          </div>
-          <div style={{textAlign:'center', padding:'80px 20px'}}>
-              <h2 style={{color: '#135eab', textTransform: 'capitalize'}}>Estamos actualizando el catálogo de {slug.replace(/-/g, ' ')}</h2>
-              <Link to="/" style={{color: '#135eab', textDecoration: 'underline'}}>Volver al inicio</Link>
-          </div>
-      </div>
-    );
-  }
+  // if (!currentBrandSegment) {
+  //   const activeBanner = isMobile && visualConfig.bannerMob ? visualConfig.bannerMob : visualConfig.banner;
+  //   return (
+  //     <div className="brand-container">
+  //         <div className="brand-hero">
+  //             {activeBanner ? (
+  //               <img src={activeBanner} alt="Banner" className='banner-fade-in' />
+  //             ) : (
+  //               <div className="brand-hero-fallback" style={{ background: visualConfig.color }}>
+  //                 <h1>{slug.replace(/-/g, ' ')}</h1>
+  //               </div>
+  //             )}
+  //         </div>
+  //         {/* <div style={{textAlign:'center', padding:'80px 20px'}}>
+  //             <h2 style={{color: '#135eab', textTransform: 'capitalize'}}>Estamos actualizando el catálogo de {slug.replace(/-/g, ' ')}</h2>
+  //             <Link to="/" style={{color: '#135eab', textDecoration: 'underline'}}>Volver al inicio</Link>
+  //         </div> */}
+  //     </div>
+  //   );
+  // }
  
   return (
     <div className="brand-container" style={{ '--brand-color': visualConfig.color }}>
@@ -220,7 +309,7 @@ const BrandPage = () => {
               <span className="cat-text">Ver Todo</span>
             </Link>
           
-            {currentBrandSegment?.Categorias?.map((cat) => (
+            {displayCategories.map((cat) => (
                 <Link
                   key={cat.IdCategoria}
                   to={`/marca/${canonicalSlug}/${createSlug(cat.NombreCategoria)}`}
