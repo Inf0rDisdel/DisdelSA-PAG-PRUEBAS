@@ -7,7 +7,7 @@ const path = require('path');
 const BASE_URL = 'https://disdelsa.com'; 
 const API_PRODUCTOS = 'https://www.disdelsagt.com/MyWsMobil/api/PaginaWeb/GetProductos'; 
 const API_MENU = 'https://www.disdelsagt.com/MyWsMobil/api/PaginaWeb/GetMenu';
-const OUTPUT_FILE = path.join(__dirname, 'public', 'sitemap.xml'); 
+const OUTPUT_FILE = path.join(__dirname, 'sitemap.xml'); 
 const IMG_BASE_URL = 'https://disdelsa.com/imagenes/productos/';
 
 const MARCAS_TOP = ['KIMBERLY CLARK', '3M', 'WIESE', 'SILVER', 'LEONCITO'];
