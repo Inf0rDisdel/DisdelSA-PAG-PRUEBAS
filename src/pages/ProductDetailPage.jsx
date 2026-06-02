@@ -17,7 +17,7 @@ import { optimizedSeoData } from 'utils/SEO/optimizedSeo';
 import RelatedProducts from 'components/products/RelatedProducts';
 
 const ProductDetailPage = () => {
-  const { id } = useParams();
+  const { id, slug } = useParams();
   const cleanIdFromUrl = id ? String(id).trim().toLowerCase() : "";
   const canonicalId = cleanIdFromUrl; 
  
@@ -30,6 +30,10 @@ const ProductDetailPage = () => {
   const [selectedUnit, setSelectedUnit] = useState(''); 
   const [selectedType, setSelectedType] = useState('Y');
   const [zoomPos, setZoomPos] = useState({ x: 0, y: 0, show: false });
+
+  const professionalInsight = useMemo(() => 
+    generateProductInsight(product), 
+  [product]);
 
   const legacySeoInfo = useMemo(() => {
     if (!product) return null;
@@ -45,10 +49,6 @@ const ProductDetailPage = () => {
       ld: match.ld
     };
   }, [product]);
-
-  const professionalInsight = useMemo(() => 
-    generateProductInsight(product), 
-  [product]);
 
   const seoLongDescription = useMemo(() => 
   generateProductSeoDescription(product, legacySeoInfo),
@@ -71,10 +71,15 @@ const ProductDetailPage = () => {
       return product.Imagenes?.length > 0 ? product.Imagenes.filter(img => img.Imagen).map(img => img.Imagen) : [product.Imagen];
   }, [product]);
 
+  const defaultImage = useMemo(() => {
+    const found = bannerData?.ImagenPredeterminado?.find(i => i.Titulo?.trim() === "ImagenDefault3");
+    return found ? `${AppConfig.baseImageUrl}${found.BannerImagenMovil || found.Imagen}` : '';
+  }, [bannerData]);
+
   const fullSchema = useMemo(() => {
     if (!product) return null;
-    return getProductSchema(product, currentUrl, productImages, legacySeoInfo);
-  }, [product, currentUrl, productImages, legacySeoInfo]);
+    return getProductSchema(product, currentUrl, productImages, legacySeoInfo, defaultImage);
+  }, [product, currentUrl, productImages, legacySeoInfo, defaultImage]);
 
   //---HANDLERS---
   const handleMouseMove = (e) => {
@@ -93,12 +98,6 @@ const ProductDetailPage = () => {
     });
   };
 
-
-  const defaultImage = useMemo(() => {
-    const found = bannerData?.ImagenPredeterminado?.find(i => i.Titulo?.trim() === "ImagenDefault3");
-    return found ? `${AppConfig.baseImageUrl}${found.BannerImagenMovil || found.Imagen}` : '';
-  }, [bannerData]);
-
   const getImageUrl = useCallback((imgName) => (imgName && imgName.trim() !== "") 
     ? `${AppConfig.baseImageUrl}productos/${imgName}` 
     : defaultImage, [defaultImage]);
@@ -109,23 +108,35 @@ const ProductDetailPage = () => {
   }, [product]);
 
   useEffect(() => {
-  // Solo actuamos si el objeto 'product' existe y tiene datos
-  if (product) {
-    // 1. Reset de Imagen: Forzamos la imagen principal del nuevo producto
-    setSelectedImage(product.Imagen);
+    // Solo actuamos si el objeto 'product' existe y tiene datos
+    if (product) {
+      // 1. Reset de Imagen: Forzamos la imagen principal del nuevo producto
+      setSelectedImage(product.Imagen);
 
-    // 2. Reset de Unidades: Calculamos la unidad inicial del nuevo producto
-    const initialUnit = product.Unidad || product.Empaque || 'Unidad';
-    setSelectedUnit(initialUnit);
-    setSelectedType(product.Unidad ? 'Y' : 'N');
+      // 2. Reset de Unidades: Calculamos la unidad inicial del nuevo producto
+      const initialUnit = product.Unidad || product.Empaque || 'Unidad';
+      setSelectedUnit(initialUnit);
+      setSelectedType(product.Unidad ? 'Y' : 'N');
 
-    // 3. 🚀 EXPERIENCIA SENIOR: Scroll al inicio
-    // Como venimos de hacer clic en un producto que estaba abajo (relacionados),
-    // debemos subir al usuario al inicio de la página para que vea el nuevo detalle.
-    window.scrollTo(0, 0);
-  }
-}, [product]); 
+      // 3. 🚀 EXPERIENCIA SENIOR: Scroll al inicio
+      // Como venimos de hacer clic en un producto que estaba abajo (relacionados),
+      // debemos subir al usuario al inicio de la página para que vea el nuevo detalle.
+      window.scrollTo(0, 0);
+    }
+  }, [product]); 
 
+  useEffect(() => {
+    if (product) {
+      const correctSlug = createSlug(product.Descripcion);
+
+      //REEDIRECCIÓN AUTOMATICA SEO: si el slug en la URL no existe o es diferente al correcto.
+      //Reedirigimos al isntante a la URL mejorada y limpia. Esto sana las URLs de Google.
+      if (!slug || slug !== correctSlug) {
+        navigate(`/producto/${String(product.IdProducto).trim().toLowerCase()}/${correctSlug}`, { replace: true });
+      }
+    }
+  },[product, slug, navigate])
+ 
   // if (isLoading) return <div>Cargando Producto...</div>;
   // if (isError || !product) return <div>Error al cargar producto</div>;
 
