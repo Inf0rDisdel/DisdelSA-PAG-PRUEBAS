@@ -5,6 +5,7 @@ import { toast } from 'react-hot-toast';
 import { useProducts } from 'hooks/useProducts';
 import { useBanners } from 'hooks/useBanners'; 
 import { AppConfig } from 'config/AppConfig'; 
+import { useCompanyData } from 'hooks/useCompanyData';
 import { getMainGraphSchema } from 'utils/schemas/mainSchemas';
 
 import FeaturedBrands from 'components/home/ComercialAllies/FeaturedBrands';
@@ -22,7 +23,7 @@ import { optimizedSeoData } from 'utils/SEO/optimizedSeo';
 const HomeSkeleton = () => (
   <div style={{ minHeight: '100vh', background: '#f8f9fa', padding: '10px 0' }}>
     <div className="skeleton-animation" style={{ 
-      maxWidth: '1300px', 
+      maxWidth: 'var(--site-max-width)', 
       width: '95%', // 🚀 Previene desbordamiento en móviles
       height: '320px', 
       background: 'linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%)',
@@ -38,21 +39,38 @@ const HomePage = () => {
   const addItem = useCartStore((state) => state.addItem);
   const { data: allProducts, isLoading } = useProducts();
   const { data: bannerData} = useBanners();
+  const { data: companyInfo } = useCompanyData();
 
   const homeSeo = useMemo(() => optimizedSeoData['home'] || null, []);
-  const fullGraphSchema = useMemo(() => getMainGraphSchema(), []);
+  const fullGraphSchema = useMemo(() => getMainGraphSchema(companyInfo), [companyInfo]);
 
   const cleanBaseUrl = useMemo(() => 
     AppConfig.baseImageUrl.endsWith('/') ? AppConfig.baseImageUrl : `${AppConfig.baseImageUrl}/`
   , []);
 
+ // Título y Descripción dinámicos desde Base de Datos
+  const seoTitle = useMemo(() => {
+    return homeSeo?.t || (companyInfo ? `${companyInfo.NombreEmpresa} | Líder en Suministros de Limpieza` : "Disdel Guatemala | Líder en Suministros");
+  }, [homeSeo, companyInfo]);
+
+  const seoDesc = useMemo(() => {
+    return homeSeo?.d || companyInfo?.DescripcionCorta || "Disdel, S.A. líder en Guatemala en suministros...";
+  }, [homeSeo, companyInfo]);
+
   const firstHeroImage = useMemo(() => {
-    const firstSlide = bannerData?.sliderPrincipal?.[0];
-    if (!firstSlide) return '';
-    const isMobile = window.innerWidth <= 480;
-    const imgPath = isMobile ? (firstSlide.BannerImagenMovil || firstSlide.Imagen) : firstSlide.BannerImagenMovil;
-    return imgPath ? `${cleanBaseUrl}${imgPath}` : '';
-  }, [bannerData, cleanBaseUrl]);
+  const firstSlide = bannerData?.sliderPrincipal?.[0];
+  if (!firstSlide) return '';
+  
+  const isMobile = window.innerWidth <= 480;
+  
+  // En móvil pre-cargamos la de móvil (y si no hay, la de PC)
+  // En escritorio pre-cargamos la de PC (y si no hay, la de móvil)
+  const imgPath = isMobile 
+    ? (firstSlide.BannerImagenMovil || firstSlide.Imagen) 
+    : (firstSlide.Imagen || firstSlide.BannerImagenMovil);
+    
+  return imgPath ? `${cleanBaseUrl}${imgPath}` : '';
+}, [bannerData, cleanBaseUrl]);
 
   const handleAddToCart = (product) => {
     addItem({
@@ -100,10 +118,10 @@ const HomePage = () => {
     <main>
       <Helmet>
         {/* --- 🚀 SEO TÉCNICO B2B --- */}
-        <title> {homeSeo?.t || "Disdel Guatemala | Lider en Suministros de Limpieza y Mantenimiento"} </title>
+        <title> {seoTitle} </title>
         <meta
         name="description"
-        content={homeSeo?.d || "Disdel, S.A. líder en Guatemala en suministros de limpieza profesional, mantenimiento institucional, higiene, cafetería y productos para empresas."}
+        content={seoDesc}
         />
 
         <meta name="keywords" content={homeSeo?.k || "limpieza, suministros, guatemala"} />
@@ -115,8 +133,8 @@ const HomePage = () => {
 
         {/* --- OPEN GRAPH (Facebook, WhatsApp, LinkedIn) --- */}
         <meta property="og:type" content="website" />
-        <meta property="og:title" content="Disdel | Soluciones Integrales para Empresas en Guatemala" />
-        <meta property="og:description" content="Encuentra marcas líderes como Kimberly Clark, 3M y Wiese. Cotización inmediata para suministros institucionales." />
+        <meta property="og:title" content={seoTitle} />
+        <meta property="og:description" content={seoDesc}/>
         <meta property="og:image" content="https://disdelsa.com/og-image.jpg" />
         <meta property="og:url" content="https://disdelsa.com/" />
         <meta property="og:site_name" content="Disdel, S.A." />

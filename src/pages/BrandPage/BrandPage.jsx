@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react'; 
-import { useParams, Link, useLocation } from 'react-router-dom';
+import { useParams, Link, useLocation, Navigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { FiChevronLeft, FiChevronRight } from 'react-icons/fi';
 import './BrandPage.css';
@@ -72,7 +72,7 @@ const BrandPage = () => {
     return menuData.find(seg => 
       createSlug(seg.NombreSegmento).includes(cleanSlug) || cleanSlug.includes(createSlug(seg.NombreSegmento))
     );
-  }, [menuData, canonicalSlug]);
+  }, [menuData, canonicalSlug, cleanSlug]);
 
 
   // --- 3. COMPILADOR EXCLUSIVO PARA LA MARCA SILVER ---
@@ -218,6 +218,11 @@ const BrandPage = () => {
     }
   };
 
+  //SI NO EXISTE LA MARCA, RETORNA AL INICIO EVITANDO EL ERROR 404
+  if (!loadingProducts && !currentBrandSegment && !loadingMenu && canonicalSlug !== "silver") {
+    return <Navigate to="/" replace />; 
+  }
+
   if (loadingMenu || loadingProducts) {
     return (
       <div className="brand-container">
@@ -324,13 +329,13 @@ const BrandPage = () => {
           </nav>
         </aside>
 
-         <main className="products-area">
-            <div className="grid-container">
-              {filteredProducts.map((prod, index) => (
-                <ProductCard key={prod.IdProducto} product={prod} index={index} />
-              ))}
-            </div>
-          </main>
+        <main className="products-area">
+          <div className="grid-container">
+            {filteredProducts.map((prod, index) => (
+              <ProductCard key={prod.IdProducto} product={prod} index={index} />
+            ))}
+          </div>
+        </main>
       </div>
     </div>
   );

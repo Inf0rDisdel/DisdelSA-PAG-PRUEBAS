@@ -1,7 +1,15 @@
 import { createSlug } from '../slugify';
 import { AppConfig } from 'config/AppConfig';
 
-export const getMainGraphSchema = () => {
+export const getMainGraphSchema = (companyInfo = {}) => {
+
+  const name = companyInfo.NombreEmpresa || "Disdel, S.A.";
+  const alternate = companyInfo.NombreAlternativo ? [companyInfo.NombreAlternativo] : ["Disdel", "Disdelsa", "Disdel Guatemala"];
+  const description = companyInfo.DescripcionCorta || "Empresa líder en Guatemala especializada en suministros de limpieza profesional, mantenimiento institucional, higiene, cafetería y equipo de protección personal para empresas.";
+  const telephone = companyInfo.Telefono ? String(companyInfo.Telefono) : "+502-2422-6120";
+  const email = companyInfo.Correo || "infor@disdelsa.com";
+  const addres = companyInfo.Direccion || "15 Calle 16-30 Zona 1";
+
   return {
     "@context": "https://schema.org",
     "@graph": [
@@ -9,14 +17,10 @@ export const getMainGraphSchema = () => {
         "@type": ["Organization", "LocalBusiness", "WholesaleStore"],
         "@id": "https://disdelsa.com/#organization",
 
-        "name": "Disdel, S.A.",
-        "alternateName": [
-          "Disdel",
-          "Disdelsa",
-          "Disdel Guatemala"
-        ],
+        "name": name,
+        "alternateName": alternate,
 
-        "url": "https://disdelsa.com/",
+        "url": companyInfo.URL || "https://disdelsa.com/",
         "logo": {
           "@type": "ImageObject",
           "url": "https://disdelsa.com/logo-disdel.png"
@@ -24,7 +28,9 @@ export const getMainGraphSchema = () => {
 
         "image": "https://disdelsa.com/og-image.jpg",
 
-        "description": "Empresa líder en Guatemala especializada en suministros de limpieza profesional, mantenimiento institucional, higiene, cafetería y equipo de protección personal para empresas.",
+        "description": description,
+        "telephone": telephone,
+        "email": email,
 
         "keywords": [
           "Disdel",
@@ -37,17 +43,15 @@ export const getMainGraphSchema = () => {
           "Disdel Guatemala"
         ],
 
-        "telephone": "+502-2422-6120",
-
         "priceRange": "$$",
 
         "address": {
           "@type": "PostalAddress",
-          "streetAddress": "15 Calle 16-30 Zona 1",
-          "addressLocality": "Ciudad de Guatemala",
+          "streetAddress": addres,
+          "addressLocality": companyInfo.Ciudad || "Ciudad de Guatemala",
           "addressRegion": "Guatemala",
-          "postalCode": "01001",
-          "addressCountry": "GT"
+          "postalCode": companyInfo.CodigoPostal || "01001",
+          "addressCountry":companyInfo.Pais || "GT"
         },
 
         "areaServed": {
@@ -57,7 +61,7 @@ export const getMainGraphSchema = () => {
 
         "contactPoint": {
           "@type": "ContactPoint",
-          "telephone": "+502-2422-6120",
+          "telephone": telephone,
           "contactType": "Ventas",
           "availableLanguage": ["Spanish"]
         },
@@ -205,11 +209,6 @@ export const getCollectionSchema = (title, description, url, products) => {
                 "brand": {
                   "@type": "Brand",
                   "name": prod.Marca || "Disdel"
-                },
-                // 🚀 B2B FIX: Declaramos la oferta de stock pero sin enviar valores de precios
-                "offers": {
-                  "@type": "Offer",
-                  "availability": "https://schema.org/InStock"
                 }
               }
             };
