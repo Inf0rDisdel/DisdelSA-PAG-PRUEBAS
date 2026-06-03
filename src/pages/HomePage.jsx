@@ -50,7 +50,7 @@ const HomePage = () => {
 
  // Título y Descripción dinámicos desde Base de Datos
   const seoTitle = useMemo(() => {
-    return homeSeo?.t || (companyInfo ? `${companyInfo.NombreEmpresa} | Líder en Suministros de Limpieza` : "Disdel Guatemala | Líder en Suministros");
+    return homeSeo?.t || (companyInfo ? `${companyInfo.NombreEmpresa} | Líder en Suministros de Limpieza` : "Disdel Guatemala | Líder en Suministros de Limpieza y mantenimiento");
   }, [homeSeo, companyInfo]);
 
   const seoDesc = useMemo(() => {
