@@ -44,9 +44,9 @@ export const suscribiNewsLetter = async (datosSuscripcion) => {
 };
 
 //DATOS COMPANIA EN GENERAL
-export const DatosCompania = async () => {
+export const CompaniaWeb = async () => {
     try{
-        const response = await apiVentas.get('api/PaginaWeb/GetDatosCompania/1007');
+        const response = await apiVentas.get('api/DatosPagina/GetDatosCompania/1007');
         return response.data;
     } catch (error) {
         console.error("Error al obtener la iformación de la empresa:" , error.response?.data || error.message);
