@@ -3,12 +3,57 @@ import { AppConfig } from 'config/AppConfig';
 
 export const getMainGraphSchema = (companyInfo = {}) => {
 
-  const name = companyInfo.NombreEmpresa || "Disdel, S.A.";
-  const alternate = companyInfo.NombreAlternativo ? [companyInfo.NombreAlternativo] : ["Disdel", "Disdelsa", "Disdel Guatemala"];
-  const description = companyInfo.DescripcionCorta || "Empresa líder en Guatemala especializada en suministros de limpieza profesional.";
-  const telephone = companyInfo.Telefono ? String(companyInfo.Telefono) : "+502-2422-6120";
-  const email = companyInfo.Correo || "infor@disdelsa.com";
-  const addres = companyInfo.Direccion || "15 Calle 16-30 Zona 1";
+  const name = companyInfo.nombreEmpresa || companyInfo.NombreEmpresa || "Disdel, S.A.";
+  const alternate = (companyInfo.nombreAlternativo || companyInfo.NombreAlternativo) 
+    ? [companyInfo.nombreAlternativo || companyInfo.NombreAlternativo] 
+    : ["Disdel", "Disdelsa", "Disdel Guatemala"];
+  
+  const description = companyInfo.descripcionCorta || companyInfo.DescripcionCorta || "Empresa líder en Guatemala especializada en suministros de limpieza profesional.";
+  const telephone = (companyInfo.telefono || companyInfo.Telefono) 
+    ? String(companyInfo.telefono || companyInfo.Telefono) 
+    : "+502-2422-6120";
+    
+  const email = companyInfo.correo || companyInfo.Correo || "info@disdelsa.com";
+  const addres = companyInfo.direccion || companyInfo.Direccion || "15 Calle 16-30 Zona 1";
+  const url = companyInfo.url || companyInfo.URL || "https://disdelsa.com/";
+  const locality = companyInfo.ciudad || companyInfo.Ciudad || "Ciudad de Guatemala";
+  const postalCode = companyInfo.codigoPostal || companyInfo.CodigoPostal || "01001";
+  const country = companyInfo.pais || companyInfo.Pais || "GT";
+
+  // --- ESTRUCTURA DE SUCURSALES (Multi-Location) ---
+  // Sucursal 1: Oficina Central (Zona 1) - Traída dinámicamente de tu Base de Datos
+  const sucursalZona1 = {
+    "@type": "WholesaleStore",
+    "@id": "https://disdelsa.com/#store-zona1",
+    "name": name,
+    "telephone": telephone,
+    "email": email,
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": addres,
+      "addressLocality": locality,
+      "addressRegion": "Guatemala",
+      "postalCode": postalCode,
+      "addressCountry": country
+    }
+  };
+
+  // Sucursal 2: Sucursal Zona 3 - Configurada de forma segura
+  const sucursalZona3 = {
+    "@type": "WholesaleStore",
+    "@id": "https://disdelsa.com/#store-zona3",
+    "name": "Disdel - Zona 3",
+    "telephone": "+502 2247-1620", 
+    "email": email,
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "27 Calle 1-41 Zona 3",
+      "addressLocality": "Ciudad de Guatemala",
+      "addressRegion": "Guatemala",
+      "postalCode": "01003",
+      "addressCountry": "GT"
+    }
+  };
 
   return {
     "@context": "https://schema.org",
@@ -20,7 +65,7 @@ export const getMainGraphSchema = (companyInfo = {}) => {
         "name": name,
         "alternateName": alternate,
 
-        "url": companyInfo.URL || "https://disdelsa.com/",
+        "url": url,
         "logo": {
           "@type": "ImageObject",
           "url": "https://disdelsa.com/logo-disdel.png"
@@ -45,13 +90,18 @@ export const getMainGraphSchema = (companyInfo = {}) => {
 
         "priceRange": "$$",
 
+        "location": [
+          sucursalZona1,
+          sucursalZona3
+        ],
+
         "address": {
           "@type": "PostalAddress",
           "streetAddress": addres,
-          "addressLocality": companyInfo.Ciudad || "Ciudad de Guatemala",
+          "addressLocality": locality,
           "addressRegion": "Guatemala",
-          "postalCode": companyInfo.CodigoPostal || "01001",
-          "addressCountry":companyInfo.Pais || "GT"
+          "postalCode": postalCode,
+          "addressCountry": country
         },
 
         "areaServed": {

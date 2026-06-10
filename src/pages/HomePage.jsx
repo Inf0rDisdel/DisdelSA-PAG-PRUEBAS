@@ -50,11 +50,18 @@ const HomePage = () => {
 
  // Título y Descripción dinámicos desde Base de Datos
   const seoTitle = useMemo(() => {
-    return homeSeo?.t || (companyInfo ? `${companyInfo.NombreEmpresa} | Líder en Suministros de Limpieza` : "Disdel Guatemala | Líder en Suministros de Limpieza y mantenimiento");
+
+    const nombre = companyInfo?.nombreEmpresa || companyInfo?.NombreEmpresa;
+  
+    return homeSeo?.t || (nombre 
+      ? `${nombre} | Líder en Suministros de Limpieza` 
+      : "Disdel Guatemala | Líder en Suministros de Limpieza y mantenimiento"
+    );
   }, [homeSeo, companyInfo]);
 
   const seoDesc = useMemo(() => {
-    return homeSeo?.d || companyInfo?.DescripcionCorta || "Disdel, S.A. líder en Guatemala en suministros...";
+    const descripcion = companyInfo?.descripcionCorta || companyInfo?.DescripcionCorta;
+    return homeSeo?.d || descripcion || "Disdel, S.A. líder en Guatemala en suministros...";
   }, [homeSeo, companyInfo]);
 
   const firstHeroImage = useMemo(() => {
