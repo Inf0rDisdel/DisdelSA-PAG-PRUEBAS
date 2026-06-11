@@ -35,24 +35,49 @@ const ProductDetailPage = () => {
     generateProductInsight(product), 
   [product]);
 
-  const legacySeoInfo = useMemo(() => {
+  const activeSeoInfo = useMemo(() => {
     if (!product) return null;
-    // Buscamos directamente por el ID en minúsculas (llave del objeto)
+
+    // Leemos de forma segura el objeto de metadatos devuelto por la API
+    const dbSeo = product.seo || product.Seo;
+
+    // Si la base de datos ya tiene metadatos configurados, los usamos
+    if (dbSeo && (dbSeo.titlePage || dbSeo.typePage || dbSeo.keywords || dbSeo.Tags || dbSeo.tags)) {
+      return {
+        title: dbSeo.titlePage || "",
+        description: dbSeo.typePage || "",
+        keywords: dbSeo.keywords || "",
+        tags: dbSeo.Tags || dbSeo.tags || ""
+      };
+    }
+
+    // Si la base de datos no tiene datos de SEO aún, caemos en el respaldo estático
     const match = optimizedSeoData[String(product.IdProducto).toLowerCase()];
-    if (!match) return null;
-    
-    // Mapeamos las llaves cortas (k, t, d) a nombres legibles
+    if (match) {
+      return {
+        title: match.t,
+        description: match.d,
+        keywords: match.k,
+        tags: ""
+      };
+    }
+
+    // Fallback de seguridad por defecto para productos nuevos sin configurar
     return {
-      keywords: match.k,
-      title: match.t,
-      description: match.d,
-      ld: match.ld
+      title: `Compra ${product.Descripcion} en Guatemala ${product.Marca ? '| ' + product.Marca : ''} | Disdel`,
+      description: product.DescripcionAux || product.DescripcionLarga || product.Descripcion,
+      keywords: `${product.Categoria}, ${product.Marca}, Disdel Guatemala`,
+      tags: ""
     };
   }, [product]);
 
-  const seoLongDescription = useMemo(() => 
-  generateProductSeoDescription(product, legacySeoInfo),
-  [product, legacySeoInfo]);
+  const seoTitle = useMemo(() => {
+    return activeSeoInfo?.title || `Compra ${product?.Descripcion} en Guatemala ${product?.Marca ? '| ' + product.Marca : ''} | Disdel`;
+  }, [activeSeoInfo, product]);
+
+  const seoLongDescription = useMemo(() => {
+    return activeSeoInfo?.description || generateProductSeoDescription(product, { description: activeSeoInfo?.description });
+  }, [product, activeSeoInfo]);
 
   const currentSlug = useMemo(() => product ? createSlug(product.Descripcion) : '', [product]);
   const currentUrl = `https://disdelsa.com/producto/${canonicalId}/${currentSlug}`;
@@ -61,9 +86,13 @@ const ProductDetailPage = () => {
   const seoKeywords = useMemo(() => {
     if (!product) return "";
     const base = `${product.Categoria}, ${product.Marca}, Disdel Guatemala`;
-    const extra = legacySeoInfo?.keywords || "";
+    const dbKeywords = activeSeoInfo?.keywords || "";
+    const dbTags = activeSeoInfo?.tags || "";
+
+    // Concatenamos las Keywords base de la base de datos con los nuevos Tags químicos/industriales
+    const extra = [dbKeywords, dbTags].filter(Boolean).join(", ");
     return extra ? `${base}, ${extra}` : base;
-  }, [product, legacySeoInfo]);
+  }, [product, activeSeoInfo]);
 
   // 4. GENERACIÓN DEL SCHEMA
   const productImages = useMemo(() => {
@@ -77,9 +106,17 @@ const ProductDetailPage = () => {
   }, [bannerData]);
 
   const fullSchema = useMemo(() => {
-    if (!product) return null;
-    return getProductSchema(product, currentUrl, productImages, legacySeoInfo, defaultImage);
-  }, [product, currentUrl, productImages, legacySeoInfo, defaultImage]);
+    if (!product || activeSeoInfo) return null;
+
+    // Mapeamos los datos al formato que espera tu función getProductSchema (t, d, k)
+    const legacyFormat = {
+      t: seoTitle,
+      d: seoLongDescription,
+      k: seoKeywords
+    };
+
+    return getProductSchema(product, currentUrl, productImages, legacyFormat, defaultImage);
+  }, [product, currentUrl, productImages, activeSeoInfo, seoTitle, seoLongDescription, seoKeywords, defaultImage]);
 
   //---HANDLERS---
   const handleMouseMove = (e) => {
@@ -188,7 +225,6 @@ const ProductDetailPage = () => {
     );
   }
 
-  const seoTitle = legacySeoInfo?.title || `Compra ${product.Descripcion} en Guatemala ${product.Marca ? '| ' + product.Marca : ''} | Disdel`;
   const mainImg = getImageUrl(selectedImage || product.Imagen);
   // const seoKeywords = legacySeoInfo?.keywords || `${product.Categoria}, ${product.Marca}, Disdel Guatemala`;
 
