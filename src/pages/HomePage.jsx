@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { Helmet } from 'react-helmet-async';
 import useCartStore from 'store/useCartStore';
 import { toast } from 'react-hot-toast'; 
@@ -7,6 +7,7 @@ import { useBanners } from 'hooks/useBanners';
 import { AppConfig } from 'config/AppConfig'; 
 import { useCompanyData } from 'hooks/useCompanyData';
 import { getMainGraphSchema } from 'utils/schemas/mainSchemas';
+import HomeSkeleton from 'components/ui/Skeleton/HomeSkeleton';
 
 import FeaturedBrands from 'components/home/ComercialAllies/FeaturedBrands';
 import CategoryGrid from 'components/home/FeaturedCategories/CategoryGrid';
@@ -19,21 +20,6 @@ import PromoLayout from 'components/home/PromoLayout/PromoLayout';
 import ProductCarousel from 'components/Carousel/ProductCarousel';
 
 import { optimizedSeoData } from 'utils/SEO/optimizedSeo';
-
-const HomeSkeleton = () => (
-  <div style={{ minHeight: '100vh', background: '#f8f9fa', padding: '10px 0' }}>
-    <div className="skeleton-animation" style={{ 
-      maxWidth: 'var(--site-max-width)', 
-      width: '95%', // 🚀 Previene desbordamiento en móviles
-      height: '320px', 
-      background: 'linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%)',
-      backgroundSize: '200% 100%',
-      animation: 'loading-shimmer 1.5s infinite',
-      borderRadius: '15px',
-      margin: '0 auto'
-    }}></div>
-  </div>
-);
 
 const HomePage = () => {
   const addItem = useCartStore((state) => state.addItem);
@@ -68,7 +54,8 @@ const HomePage = () => {
   const firstSlide = bannerData?.sliderPrincipal?.[0];
   if (!firstSlide) return '';
   
-  const isMobile = window.innerWidth <= 480;
+  //Compatibilidad con SSR/ PRE-RENDER: Evita caídas si 'window' es undefined
+  const isMobile = typeof window !== 'undefined' ? window.innerWidth <= 480 : false;
   
   // En móvil pre-cargamos la de móvil (y si no hay, la de PC)
   // En escritorio pre-cargamos la de PC (y si no hay, la de móvil)
@@ -77,9 +64,10 @@ const HomePage = () => {
     : (firstSlide.Imagen || firstSlide.BannerImagenMovil);
     
   return imgPath ? `${cleanBaseUrl}${imgPath}` : '';
-}, [bannerData, cleanBaseUrl]);
+  }, [bannerData, cleanBaseUrl]);
 
-  const handleAddToCart = (product) => {
+  //OPTIMIZADO DE MEMORIA Y RE-RENDERS
+  const handleAddToCart = useCallback((product) => {
     addItem({
       ...product,
       presentationSelected: product.Unidad || 'Unidad',
@@ -89,7 +77,7 @@ const HomePage = () => {
       position: 'bottom-right',
       style: { background: '#135eab', color: '#fff' }
     });
-  };
+  }, [addItem]);    
 
   const carruseles = useMemo(() => {
     if (!allProducts || !Array.isArray(allProducts)) {

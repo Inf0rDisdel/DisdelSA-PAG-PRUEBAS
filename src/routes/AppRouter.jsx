@@ -1,5 +1,8 @@
 import React, { Suspense, lazy, Component } from 'react';
 import { Routes, Route, Navigate, useParams } from 'react-router-dom';
+import HomeSkeleton from 'components/ui/Skeleton/HomeSkeleton';
+import CatalogSkeleton from 'components/ui/Skeleton/CatalogSkeleton';
+import ProductCardSkeleton from 'components/ui/ProductCard/ProductCardSkeleton';
 
 const HomePage = lazy(() => import('../pages/HomePage'));
 const ProductDetailPage = lazy(() => import('pages/ProductDetailPage'));
@@ -31,7 +34,11 @@ class ChunkErrorBoundary extends Component {
 
   componentDidCatch(error, errorInfo) {
     if (this.state.hasError) {
-      console.warn("Fallo de carga de archivo JS de React. Forzando recarga de página.");
+      console.warn("Fallo de carga de archivo JS de REACT. Forzando recarga de página.");
+      
+      // 🚀 PRÁCTICA SENIOR: Registramos el error y el rastreo exacto antes de limpiar la pantalla con el reload
+      console.error("Detalles del fallo de Chunk:", error, errorInfo); 
+      
       window.location.reload(true);
     }
   }
@@ -41,35 +48,19 @@ class ChunkErrorBoundary extends Component {
   }
 }
 
-const HomeSkeleton = () => (
-  <div style={{ minHeight: '100vh', background: '#f8f9fa', padding: '10px 0' }}>
-    {/* 🚀 SKELETON INTEGRADO: Mismo alto y ancho en Router y HomePage */}
-    <div style={{ 
-      maxWidth: '1300px', 
-      width: '95%', 
-      height: '320px', 
-      background: 'linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%)',
-      backgroundSize: '200% 100%',
-      animation: 'loading-shimmer 1.5s infinite',
-      borderRadius: '15px',
-      margin: '0 auto'
-    }}></div>
-  </div>
-);
-
 const AppRouter = () => {
   return (
     <ChunkErrorBoundary >
-      <Suspense fallback={<HomeSkeleton />}>
         <Routes>
 
-        <Route path="/" element={<HomePage />} />
+        {/* SUSPENSE INDEPENDIENTES: Cada página carga su esqueleto exacto al descargar el JS */}
+        <Route path="/" element={<Suspense fallback={<HomeSkeleton />}><HomePage /></Suspense>} />
 
-        <Route path="/producto/:id/:slug?" element={<ProductDetailPage />} />
-        <Route path="/categoria/:slug/:cat?/:subcat?" element={<CategoryPage />} />
-        <Route path="/marca/:slug/:subcat?" element={<BrandPage />} />
+        <Route path="/producto/:id/:slug?" element={<Suspense fallback={<ProductCardSkeleton />}><ProductDetailPage /></Suspense>} />
+        <Route path="/categoria/:slug/:cat?/:subcat?" element={<Suspense fallback={<CatalogSkeleton />}><CategoryPage/></Suspense>} />
+        <Route path="/marca/:slug/:subcat?" element={<Suspense fallback={<CatalogSkeleton />}><BrandPage /></Suspense>} />
           
-        <Route path="/buscar" element={<SearchResultsPage />} />
+        <Route path="/buscar" element={<Suspense fallback={<CatalogSkeleton />}><SearchResultsPage /></Suspense>} />
 
         {/* 3. REDIRECCIONES DE CATEGORÍAS (SEO) */}
         {['botiquin', 'papeleria', 'ferreteria', 'pisos-y-superficies'].map(cat => (
@@ -110,17 +101,18 @@ const AppRouter = () => {
         
         {/* Rescate genérico para cualquier otra subcategoría vieja */}
         <Route path="/subcategoria/:slug" element={<LegacyRedirect />} />
-          <Route path="/carrito" element={<CartPage />} />
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/my-business" element={<MyBusinessPage />} />
-          <Route path="/politicas-de-privacidad" element={<PrivacyPolicy /> } />
-          <Route path="/quienes-somos" element={<AboutUs/>} />
-          <Route path="/ayuda" element={<Ayuda/>} />
-          <Route path="/ubicaciones" element={<Locations/>} />
+        
+        {/* 🚀 Envolvemos con un Suspense y un fallback mínimo (un div vacío)*/}
+        <Route path="/carrito" element={<Suspense fallback={<div />}><CartPage /></Suspense>} />
+        <Route path="/login" element={<Suspense fallback={<div />}><LoginPage /></Suspense>} />
+        <Route path="/my-business" element={<Suspense fallback={<div />}><MyBusinessPage /></Suspense>} />
+        <Route path="/politicas-de-privacidad" element={<Suspense fallback={<div />}><PrivacyPolicy /></Suspense>} />
+        <Route path="/quienes-somos" element={<Suspense fallback={<div />}><AboutUs /></Suspense>} />
+        <Route path="/ayuda" element={<Suspense fallback={<div />}><Ayuda /></Suspense>} />
+        <Route path="/ubicaciones" element={<Suspense fallback={<div />}><Locations /></Suspense>} />
 
-          <Route path="*" element={<Navigate to="/" replace />} />
-        </Routes>
-      </Suspense>
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
     </ChunkErrorBoundary>
   );
 };

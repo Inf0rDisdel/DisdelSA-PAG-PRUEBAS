@@ -11,10 +11,8 @@ import { useProducts } from 'hooks/useProducts';
 import { useBanners } from 'hooks/useBanners';
 import { useFilterProducts } from 'hooks/useFilterProducts';
 import { createSlug } from 'utils/slugify';
-import { getCollectionSchema, getBreadcrumbs } from 'utils/schemas/mainSchemas';
-
-import Skeleton from 'components/ui/Skeleton/Skeleton';
-import ProductCardSkeleton from 'components/ui/ProductCard/ProductCardSkeleton';
+import { getCollectionSchema } from 'utils/schemas/mainSchemas';
+import CatalogSkeleton from 'components/ui/Skeleton/CatalogSkeleton';
 
 const BrandPage = () => {
   const { slug, subcat } = useParams();
@@ -25,14 +23,14 @@ const BrandPage = () => {
 
   const [activeCatId, setActiveCatId] = useState(null);
   const scrollRef = useRef(null);
-  const [isMobile, setIsMobile] = useState(window.innerWidth <= 468);
+  const [isMobile, setIsMobile] = useState(typeof window !== 'undefined' ? window.innerWidth <= 468 : false);
 
   const cleanSlug = slug ? slug.replace(/\/$/, "").trim() : '';
   const canonicalSlug = cleanSlug.toLowerCase(); 
   const norm = (id) => (id === null || id === undefined) ? '' : String(id).trim();
 
   useEffect(() => {
-    const handleResize = () => setIsMobile(window.innerWidth <= 468);
+    const handleResize = () => setIsMobile(typeof window !== 'undefined' ? window.innerWidth <= 468 : false);
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
@@ -144,18 +142,14 @@ const BrandPage = () => {
 
   // --- 4. CONVERGENCIA DE LÓGICAS (Silver Dinámico vs Estándar) ---
   const displayCategories = useMemo(() => {
-    if (canonicalSlug === "silver") {
-      return silverCategories;
-    }
+    if (canonicalSlug === "silver") return silverCategories;
     return currentBrandSegment?.Categorias || [];
   }, [canonicalSlug, silverCategories, currentBrandSegment]);
 
   const standardFilteredProducts = useFilterProducts(productsData, currentBrandSegment, activeCatId, null);
 
   const filteredProducts = useMemo(() => {
-    if (canonicalSlug === "silver") {
-      return silverFilteredProducts;
-    }
+    if (canonicalSlug === "silver") return silverFilteredProducts;
     return standardFilteredProducts;
   }, [canonicalSlug, silverFilteredProducts, standardFilteredProducts]);
   
@@ -178,17 +172,8 @@ const BrandPage = () => {
         ? `Compra ${activeCategory.NombreCategoria} de ${brandNameOfficial} con distribución institucional.`
         : `Catálogo institucional de ${brandNameOfficial}. Suministros con garantía oficial.`;
 
-    return {
-        "@context": "https://schema.org",
-        "@graph": [
-            getCollectionSchema(seoTitle, seoDesc, baseUrl, filteredProducts),
-            getBreadcrumbs([
-                { name: "Inicio", item: "https://disdelsa.com/" },
-                { name: brandNameOfficial, item: baseUrl },
-                ...(activeCategory ? [{ name: activeCategory.NombreCategoria, item: `${baseUrl}/${createSlug(activeCategory.NombreCategoria)}` }] : [])
-            ])
-        ]
-    };
+    // 🚀 FIX: getCollectionSchema ya genera la estructura correcta de @graph con sus Breadcrumbs integrados de forma limpia.
+    return getCollectionSchema(seoTitle, seoDesc, baseUrl, filteredProducts);
   }, [currentBrandSegment, displayCategories, brandNameOfficial, filteredProducts, canonicalSlug, activeCatId]);
 
   // --- 6. EFECTOS DE NAVEGACIÓN Y FILTROS ---
@@ -224,15 +209,7 @@ const BrandPage = () => {
   }
 
   if (loadingMenu || loadingProducts) {
-    return (
-      <div className="brand-container">
-        <Skeleton width="100%" height={isMobile ? "180px" : "280px"} style={{ marginBottom: '30px' }} />
-        <div className="brand-layout">
-          <aside className="sidebar-filters"><Skeleton width="100%" height="250px" /></aside>
-          <main className="products-area"><div className="grid-container">{[1, 2, 3, 4].map(n => <ProductCardSkeleton key={n} />)}</div></main>
-        </div>
-      </div>
-    );
+    return <CatalogSkeleton />; // 🚀 Reutilización de código limpia y eficiente
   }
 
   // if (!currentBrandSegment) {
@@ -293,6 +270,11 @@ const BrandPage = () => {
             fetchpriority="high" 
             loading="eager"
         />
+        <div className="brand-header-overlay-pdp">
+            <h1 className="brand-segment-title">
+              {brandNameOfficial} en Guatemala
+            </h1>
+        </div>
       </section>
 
       <div className="brand-layout">
@@ -337,6 +319,24 @@ const BrandPage = () => {
           </div>
         </main>
       </div>
+
+      {/* 🚀 NUEVA SECCIÓN DE CONTENIDO EXPERTO DE MARCA */}
+      <section className="brand-expert-content" aria-label="Información adicional de marca">
+        <div className="brand-expert-container">
+          <hr className="pdp-divider" />
+          <h2>Distribución y Venta Mayorista de {brandNameOfficial} en Guatemala</h2>
+          <p className="brand-expert-text">
+            En Disdel somos distribuidores autorizados de productos {brandNameOfficial} [2]. Abastecemos a oficinas, industrias, 
+            hospitales y el sector Horeca con un catálogo de alta resistencia y estándares técnicos [2]. Cotiza tu pedido 
+            por volumen y recibe de forma segura asesoría técnica personalizada con cobertura de entrega en toda la república de Guatemala [2].
+          </p>
+          <div className="brand-benefits-grid">
+            <div className="benefit-item">✅ Suministros 100% Originales</div>
+            <div className="benefit-item">✅ Asesoría y Cotización Técnica B2B [2]</div>
+            <div className="benefit-item">✅ Stock Garantizado por Volumen</div>
+          </div>
+        </div>
+      </section>
     </div>
   );
 };

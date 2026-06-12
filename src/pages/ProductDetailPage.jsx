@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useMemo, useCallback, } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async'; 
-import Skeleton from 'components/ui/Skeleton/Skeleton';
+import './ProductDetailPage.css';
+import ProductDetailSkeleton from 'components/ui/Skeleton/ProductDetailSkeleton';
 
 import { AppConfig } from 'config/AppConfig';
 import { useBanners } from 'hooks/useBanners';
@@ -11,7 +12,7 @@ import { generateProductInsight, generateProductSeoDescription } from 'utils/SEO
 
 import { FiCheckCircle, FiPackage, FiChevronLeft, FiTarget, FiTruck, FiAward } from 'react-icons/fi';
 import { createSlug } from 'utils/slugify';
-import './ProductDetailPage.css';
+
 import { getProductSchema } from 'utils/schemas/mainSchemas';
 import { optimizedSeoData } from 'utils/SEO/optimizedSeo';
 import RelatedProducts from 'components/products/RelatedProducts';
@@ -178,42 +179,7 @@ const ProductDetailPage = () => {
   // if (isError || !product) return <div>Error al cargar producto</div>;
 
   if (isLoading) {
-    return (
-      <div className="pdp-container pdp-skeleton-active">
-        {/* Esqueleto del botón volver */}
-        <Skeleton width="150px" height="20px" style={{ marginBottom: '25px' }} />
-        
-        <div className="pdp-main-grid">
-          {/* Esqueleto de la Galería (Debe medir exactamente 600px de alto para evitar CLS) */}
-          <div className="pdp-gallery-wrapper" style={{ display: 'flex', gap: '15px' }}>
-            <div className="pdp-thumbnails-vertical" style={{ width: '75px' }}>
-              {[1, 2, 3].map(i => (
-                <Skeleton key={i} width="75px" height="75px" style={{ marginBottom: '12px' }} />
-              ))}
-            </div>
-            <div style={{ flex: 1, height: '600px' }}> {/* 🚀 CLAVE: 600px exactos */}
-              <Skeleton width="100%" height="600px" style={{ borderRadius: '15px' }} />
-            </div>
-          </div>
-          
-          {/* Esqueleto de la Info Técnica */}
-          <div className="pdp-info-section">
-            <Skeleton width="30%" height="20px" style={{ marginBottom: '15px' }} />
-            <Skeleton width="80%" height="45px" style={{ marginBottom: '15px' }} />
-            <Skeleton width="40%" height="20px" style={{ marginBottom: '25px' }} />
-            
-            {/* Tarjeta comercial */}
-            <Skeleton width="100%" height="120px" style={{ borderRadius: '12px', marginBottom: '25px' }} />
-            
-            {/* Selector de presentación */}
-            <Skeleton width="100%" height="90px" style={{ borderRadius: '12px', marginBottom: '25px' }} />
-            
-            {/* Botón cotizar */}
-            <Skeleton width="100%" height="50px" style={{ borderRadius: '10px' }} />
-          </div>
-        </div>
-      </div>
-    );
+    return <ProductDetailSkeleton />; // 🚀 Reutilización limpia de código
   }
 
   if (isError || !product) {

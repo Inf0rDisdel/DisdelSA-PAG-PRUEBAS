@@ -1,4 +1,4 @@
-import { useLocation, Link, useParams, useNavigate } from 'react-router-dom';
+import { Link, useParams, useNavigate } from 'react-router-dom';
 import React, { useState, useMemo, useEffect, useRef } from 'react'; 
 import { Helmet } from 'react-helmet-async';
 import './CategoryPage.css';
@@ -11,9 +11,8 @@ import { useProducts } from 'hooks/useProducts';
 import { useFilterProducts } from 'hooks/useFilterProducts';
 import { createSlug } from 'utils/slugify';
 
-import Skeleton from 'components/ui/Skeleton/Skeleton';
-import ProductCardSkeleton from 'components/ui/ProductCard/ProductCardSkeleton';
-import { getCollectionSchema, getBreadcrumbs } from 'utils/schemas/mainSchemas';
+import CatalogSkeleton from 'components/ui/Skeleton/CatalogSkeleton';
+import { getCollectionSchema } from 'utils/schemas/mainSchemas';
 import { optimizedSeoData } from 'utils/SEO/optimizedSeo';
 
 const CategoryPage = () => {
@@ -28,11 +27,11 @@ const CategoryPage = () => {
 
   const [activeCatId, setActiveCatId] = useState(null);
   const [activeSubCatId, setActiveSubCatId] = useState(null);
-  const [isMobile, setIsMobile] = useState(window.innerWidth <= 468);
+  const [isMobile, setIsMobile] = useState(typeof window !== 'undefined' ? window.innerWidth <= 468 : false);
   const scrollRef = useRef(null);
 
   useEffect(() => {
-    const handleResize = () => setIsMobile(window.innerWidth <= 468);
+    const handleResize = () => setIsMobile(typeof window !== 'undefined' ? window.innerWidth <= 468 : false);
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
@@ -114,20 +113,8 @@ const CategoryPage = () => {
     if (!currentSegment) return null;
     const schemaUrl = seoData.url;
 
-    return {
-        "@context": "https://schema.org",
-        "@graph": [
-            getCollectionSchema(seoData.title, seoData.description, schemaUrl, filteredProducts),
-            getBreadcrumbs([
-                { name: "Inicio", item: "https://disdelsa.com/" },
-                { name: currentSegment.NombreSegmento, item: `https://disdelsa.com/categoria/${slug}` },
-                ...(cat ? [{ name: activeCategoryData?.NombreCategoria || cat, item: `https://disdelsa.com/categoria/${slug}/${cat}` }] : []),
-
-                ...(subcat ? [{ name: activeCategoryData?.SubCategorias?.find(s => createSlug(s.NombreSubCategoria) === subcat)?.NombreSubCategoria || subcat, item: schemaUrl }] : [])
-            ])
-        ]
-    };
-  }, [currentSegment, filteredProducts, seoData, slug, cat, subcat, activeCategoryData]);  
+    return getCollectionSchema(seoData.title, seoData.description, schemaUrl, filteredProducts);
+  }, [currentSegment, filteredProducts, seoData]);   
 
    useEffect(() => {
     if (!currentSegment?.Categorias) return;
@@ -148,22 +135,8 @@ const CategoryPage = () => {
     }
   }, [cat, subcat, currentSegment]);
   
-   if (loadingMenu || loadingProducts) {
-    return (
-      <div className="cat-master-wrapper">
-        <div className="cat-container">
-          <Skeleton width="100%" height={isMobile ? "150px" : "300px"} style={{ marginBottom: '20px' }} />
-          <div className="cat-content-layout">
-             <aside className="cat-sidebar-left"><Skeleton width="100%" height="400px" /></aside>
-             <main className="cat-right-column">
-                <div className="cat-grid-products">
-                  {[1, 2, 3, 4, 5, 6].map(n => <ProductCardSkeleton key={n} />)}
-                </div>
-             </main>
-          </div>
-        </div>
-      </div>
-    );
+  if (loadingMenu || loadingProducts) {
+    return <CatalogSkeleton />; // 🚀 Reutilización de código limpia y eficiente
   }
 
   if (!currentSegment) return <div className="no-products-msg">Categoría no encontrada</div>;
@@ -198,13 +171,11 @@ const CategoryPage = () => {
               width="1300" height="280"
               decoding="async"
             />
-            {!isMobile && (
-              <div className="cat-header-overlay">
-                  <h1 className="cat-segment-title">
-                    {activeCategoryData?.NombreCategoria || currentSegment.NombreSegmento} en Guatemala
-                  </h1>
-              </div>
-            )}
+            <div className="cat-header-overlay">
+                <h1 className="cat-segment-title">
+                  {activeCategoryData?.NombreCategoria || currentSegment.NombreSegmento} en Guatemala
+                </h1>
+            </div>
         </div>
 
         <div className="cat-content-layout">

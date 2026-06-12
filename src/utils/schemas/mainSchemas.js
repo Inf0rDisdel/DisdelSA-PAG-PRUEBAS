@@ -163,8 +163,13 @@ export const getProductSchema = (product, currentUrl, productImages, legacySeo =
     ? productImages.map(img => img.includes('http') ? img : `${AppConfig.baseImageUrl}productos/${img}`)
     : [fallback];
 
-  // Verificamos si el producto realmente tiene precio
-  const hasPrice = product.Precio && product.Precio !== "0" && product.Precio !== 0;
+  // 🚀 CORRECCIÓN CLAVE B2B: Conversión matemática segura del precio
+  const numericPrice = parseFloat(product.Precio);
+  const hasPrice = !isNaN(numericPrice) && numericPrice > 0;
+
+  // 🚀 SANEAMIENTO DE CÓDIGOS DE BARRA (GTIN / UPC): Si es "0", vacío o "N/A", se omiten para evitar advertencias de formato incorrecto
+  const cleanGtin = product.CodigoBarras && product.CodigoBarras.trim() !== "" && product.CodigoBarras.trim() !== "0" && product.CodigoBarras.trim().toLowerCase() !== "n/a" ? product.CodigoBarras.trim() : undefined;
+  const cleanUpc = product.UPC && product.UPC.trim() !== "" && product.UPC.trim() !== "0" && product.UPC.trim().toLowerCase() !== "n/a" ? product.UPC.trim() : undefined;
 
   return {
     "@context": "https://schema.org/",
@@ -178,8 +183,8 @@ export const getProductSchema = (product, currentUrl, productImages, legacySeo =
         "sku": product.IdProducto,
         "mpn": product.SkuCaja || product.IdProducto,
         "keywords": finalKeywords,
-        "gtin13": product.CodigoBarras || undefined,
-        "gtin": product.UPC || undefined,
+        "gtin13": cleanGtin,
+        "gtin": cleanUpc,
         "brand": { "@type": "Brand", "name": brandName },
         "weight": product.Peso && product.Peso !== "0" ? { "@type": "QuantitativeValue", "value": product.Peso, "unitCode": "KGM" } : undefined,
         "height": product.Altura && product.Altura !== "0" ? { "@type": "QuantitativeValue", "value": product.Altura, "unitCode": "CMT" } : undefined,
