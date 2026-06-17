@@ -17,6 +17,9 @@ const HeroSlider = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
+  // 🚀 FALLBACK SEGURO: Evita el error "disdelsa.com/imagenes/undefined" de Google
+  const defaultImageFallback = `${AppConfig.baseImageUrl}logo-disdel.png`;
+
   const getBannerRoute = (ban) => {
     if (!ban) return null;
     const id = String(ban.EntityID);
@@ -50,11 +53,16 @@ const HeroSlider = () => {
 
   const renderBannerItem = (ban) => {
     const route = getBannerRoute(ban);
+    const validImg = ban?.Imagen && ban.Imagen.trim() !== "" ? ban.Imagen.trim() : null;
+    const imgUrl = validImg ? `${AppConfig.baseImageUrl}${validImg}` : defaultImageFallback;
+
     return (
       <div className="banner-item" key={ban.EntityID}>
         <img 
-          src={`${AppConfig.baseImageUrl}${ban.Imagen}`} 
+          src={imgUrl} 
           alt={ban.Titulo || "Promoción Disdel"} 
+          width="660" height="155" //CLAVE: El navegador reserva el espacio exacto del banner en escritorio
+          style={{ width: '100%', height: '100%', objectFit: 'cover' }}
         />
         {route && (
           <Link to={route} className="banner-view-btn">
@@ -74,10 +82,16 @@ const HeroSlider = () => {
               infiniteLoop={true} autoPlay={true} interval={3500} stopOnHover={false}>
               {banners.sliderPrincipal.map((slide, index) => {
                 const route = getBannerRoute(slide);
+
+                //SANEAMIENTO: Validación de imagen para moviles
+                const slideImg = slide?.BannerImagenMovil || slide?.Imagen;
+                const validImg = slideImg && slideImg.trim() !== "" ? slideImg.trim() : null;
+                const imgUrl = validImg ? `${AppConfig.baseImageUrl}${validImg}` : defaultImageFallback;
+
                 return (
                   <div key={slide.EntityID} className="mobile-slide-wrapper">
                     <img 
-                      src={`${AppConfig.baseImageUrl}${slide.BannerImagenMovil || slide.Imagen}`} 
+                      src={imgUrl} 
                       alt={slide.Titulo || "Suministros de limpieza Disdel"} 
                       fetchpriority={index === 0 ? "high" : "auto"}
                     />
@@ -109,11 +123,19 @@ const HeroSlider = () => {
                 >
                   {banners.sliderPrincipal.map((slide, index) => {
                     const route = getBannerRoute(slide);
+
+                    //SANEAMIENTO: Validación de imagen para escritorio
+                    const slideImg = slide?.Imagen || slide?.BannerImagenMovil;
+                    const validImg = slideImg && slideImg.trim() !== "" ? slideImg.trim() : null;
+                    const imgUrl = validImg ? `${AppConfig.baseImageUrl}${validImg}` : defaultImageFallback;
+
                     return (
                       <div key={slide.EntityID} className="desktop-slide-wrapper">
                         <img 
-                          src={`${AppConfig.baseImageUrl}${slide.Imagen || slide.BannerImagenMovil}`} 
+                          src={imgUrl} 
                           alt={slide.Titulo || "Catálogo Disdel"} 
+                          width="540" height="320" // 🚀 CLAVE: El navegador reserva el espacio exacto del slider en escritorio
+                          style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                           fetchpriority={index === 0 ? "high" : "low"}
                           loading={index === 0 ? "eager" : "lazy"}
                           decoding={index === 0 ? "sync" : "async"}

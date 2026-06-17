@@ -163,9 +163,17 @@ export const getProductSchema = (product, currentUrl, productImages, legacySeo =
     ? productImages.map(img => img.includes('http') ? img : `${AppConfig.baseImageUrl}productos/${img}`)
     : [fallback];
 
+    //SANEAMIENTO DE PRECIOS
+    //Remueve símbolos de moneda y espacios en blanco
+    //Remueve comas ( u otros separadores de miles) para que paseFloat no se corte en el primer millar.
+    const cleanPriceString = product.Precio 
+    ? String(product.Precio).replace(/[Q$\s]/gi, '').replace(/,/g, '') 
+    : "";
+
   // 🚀 CORRECCIÓN CLAVE B2B: Conversión matemática segura del precio
-  const numericPrice = parseFloat(product.Precio);
+  const numericPrice = parseFloat(cleanPriceString);
   const hasPrice = !isNaN(numericPrice) && numericPrice > 0;
+  const finalPrice = hasPrice ? numericPrice.toFixed(2) : undefined;
 
   // 🚀 SANEAMIENTO DE CÓDIGOS DE BARRA (GTIN / UPC): Si es "0", vacío o "N/A", se omiten para evitar advertencias de formato incorrecto
   const cleanGtin = product.CodigoBarras && product.CodigoBarras.trim() !== "" && product.CodigoBarras.trim() !== "0" && product.CodigoBarras.trim().toLowerCase() !== "n/a" ? product.CodigoBarras.trim() : undefined;
@@ -191,11 +199,12 @@ export const getProductSchema = (product, currentUrl, productImages, legacySeo =
         "width": product.Ancho && product.Ancho !== "0" ? { "@type": "QuantitativeValue", "value": product.Ancho, "unitCode": "CMT" } : undefined,
         "depth": product.Longitud && product.Longitud !== "0" ? { "@type": "QuantitativeValue", "value": product.Longitud, "unitCode": "CMT" } : undefined,
 
+        //Si tiene precio valido (mayor a cero) intectamos "offers" con el precio limpio (finalPrice)
         "offers": hasPrice ? {
           "@type": "Offer",
           "url": currentUrl,
           "priceCurrency": "GTQ",
-          "price": product.Precio,
+          "price": finalPrice,
           "availability": product.Stock > 0 ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
           "itemCondition": "https://schema.org/NewCondition",
           "seller": {

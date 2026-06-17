@@ -1,10 +1,11 @@
+/* Contenedor base del carrusel */
 .product-carousel-container {
   min-height: 520px;
   contain: layout;
   background-size: cover;
   background-position: center;
   width: 100%;
-  max-width: var(--site-max-width) !important; /* 🚀 REEMPLAZA EL 1305px */
+  max-width: var(--site-max-width) !important; 
   margin: 20px auto;
   padding: 10px 15px; 
   box-sizing: border-box;
@@ -16,15 +17,36 @@
   transition: max-width 0.3s ease;
 }
 
+/* 🚀 FIX DE RESPONSIVIDAD PARA EL GRID DE CARGA: Evita deformación y CLS */
 .carousel-skeleton-grid {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: repeat(5, 1fr); /* 5 Columnas en Escritorio */
   gap: 15px;
   padding: 0 20px;
   overflow: hidden;
   height: 400px;
 }
 
+/* --- AJUSTE RESPONSIVO SKELETON (TABLETS) --- */
+@media (max-width: 1024px) {
+  .carousel-skeleton-grid {
+    grid-template-columns: repeat(3, 1fr); /* 3 Columnas en Tableta */
+    padding: 0 10px;
+    height: 410px;
+  }
+}
+
+/* --- AJUSTE RESPONSIVO SKELETON (MÓVILES) --- */
+@media (max-width: 480px) {
+  .carousel-skeleton-grid {
+    grid-template-columns: repeat(2, 1fr); /* 2 Columnas perfectas e idénticas al Slider real en celular */
+    padding: 0 5px;
+    gap: 10px;
+    height: auto;
+  }
+}
+
+/* Resto de tus estilos existentes sin modificar... */
 .carousel-item-padding {
   padding: 10px 10px;
   display: flex;
@@ -32,7 +54,6 @@
   box-sizing: border-box;
 }
 
-/* 🔥 FIX MAESTRO: Evita que el carrusel corte los botones abajo */
 .product-carousel-container .slick-list {
   padding: 10px 28px 25px 0 !important; 
   margin: 0 -8px;
@@ -42,115 +63,92 @@
   position: relative;
   display: inline-flex;
   align-items: center;
-
   padding: 10px 20px;
   margin-bottom: 22px;
-
   font-size: 1.2rem;
   font-weight: 700;
   letter-spacing: -0.5px;
-
   color: #135eab !important;
-
   background: rgba(255, 255, 255, 0.75);
-
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-
   border: 1px solid rgba(255,255,255,0.45);
-
   border-radius: 18px;
-
-  box-shadow:
-    0 8px 25px rgba(15, 23, 42, 0.05),
-    inset 0 1px 0 rgba(255,255,255,0.7);
-
+  box-shadow: 0 8px 25px rgba(15, 23, 42, 0.05), inset 0 1px 0 rgba(255,255,255,0.7);
   overflow: hidden;
-
-  transition:
-    transform 0.35s ease,
-    box-shadow 0.35s ease,
-    border-color 0.35s ease;
+  transition: transform 0.35s ease, box-shadow 0.35s ease, border-color 0.35s ease;
 }
 
 .carousel-title::before {
   content: "";
 }
 
-/* --- FLECHAS VERDES (Z-INDEX ALTO) ---COREJIR */
 .slick-prev, .slick-next {
   width: 45px;
   height: 45px;
-  z-index: 100 !important; /* 🔥 Súper alto para que las tarjetas no la tapen */
+  z-index: 100 !important;
   top: 45%;
 }
 
 .slick-prev:before, .slick-next:before {
   font-family: 'slick';
-  font-size: 28px; /* Flechas más imponentes */
+  font-size: 28px;
   color: #96c121 !important;
   opacity: 1;
 }
 
-
 .slick-track {
-display: flex !important;
-align-items: stretch;
-will-change: transform;
+  display: flex !important;
+  align-items: stretch;
+  will-change: transform;
 }
+
 .slick-slide {
-height: inherit !important;
-display: flex !important;
-justify-content: center;
+  height: inherit !important;
+  display: flex !important;
+  justify-content: center;
 }
+
 .slick-slide > div {
-width: 100%;
-display: flex;
-padding: 0 8px;
+  width: 100%;
+  display: flex;
+  padding: 0 8px;
 }
-
-
-/* --- RESPONSIVO --- */
 
 @media (max-width: 800px) {
   .product-carousel-container {
     padding: 10px 20px;
-    min-height: 460px; /* 👈 Subimos de 380 a 460 para que quepa todo */
+    min-height: 460px;
   }
   .slick-prev { left: -10px; }
   .slick-next { right: -10px; }
 }
 
 @media (max-width: 480px) {
-  /* 🔥 ANULAMOS LA GUILLOTINA DE SLICK */
   .product-carousel-container .slick-list {
     height: auto !important;
-    overflow: visible !important; /* Permite que el botón "se asome" si hace falta */
-    padding-bottom: 25px !important; /* Espacio para que respire la sombra */
+    overflow: visible !important;
+    padding-bottom: 25px !important;
   }
   .product-carousel-container {
-    padding: 10px 5px; /* Aún menos padding en móviles muy pequeños */
+    padding: 10px 5px;
   }
-
   .slick-track {
     display: flex !important;
-    align-items: stretch !important; /* 🔥 Hace que todas las tarjetas de la fila midan lo mismo */
+    align-items: stretch !important;
   }
-
   .slick-slide {
     height: auto !important;
     display: flex !important;
   }
-
   .carousel-item-padding {
     height: 100%;
     display: flex;
     width: 100%;
   }
   .carousel-title {
-    font-size: 0.9rem; /* Título un poco más pequeño para que no se corte */
+    font-size: 0.9rem;
     padding: 6px 15px;
     margin-bottom: 15px;
   }
-  
 }

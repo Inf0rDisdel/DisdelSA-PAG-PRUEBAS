@@ -12,9 +12,11 @@ import Skeleton from 'components/ui/Skeleton/Skeleton';
 const ProductCarousel = ({ title, products = [], isLoading, variant = '' }) => {
   const{data: bannerData} = useBanners();
 
+  const isMobile = typeof window !== 'undefined' ? window.innerWidth <= 480 : false;
+  const isTablet = typeof window !== 'undefined' ? window.innerWidth <= 1024 : false;
+
   const images = useMemo(() => {
     const getUrl = (imgName) => imgName? `${AppConfig.baseImageUrl}${imgName}` : '';
-
     const fondoImagen = bannerData?.ImagenPredeterminado?.find(i=> i.Titulo?.trim() === "FondoCarousel")?.Imagen;
 
     return {
@@ -22,15 +24,18 @@ const ProductCarousel = ({ title, products = [], isLoading, variant = '' }) => {
     };
   }, [bannerData]);
 
+  // 🚀 SKELETON RESPONSIVO: Dibuja únicamente las tarjetas visibles según el dispositivo
   if (isLoading) {
+    const skeletonCount = isMobile ? 2 : (isTablet ? 3 : 5);
+
     return (
       <div className="product-carousel-container">
-        <div style={{ padding: '0 20px' }}>
-          <Skeleton width="250px" height="30px" style={{ marginBottom: '25px' }} />
+        <div style={{ padding: isMobile ? '0 10px' : '0 20px' }}>
+          <Skeleton width="220px" height="36px" style={{ borderRadius: '18px', marginBottom: '22px' }} />
         </div>
         <div className="carousel-skeleton-grid">
-          {[1, 2, 3, 4, 5].map((n) => (
-            <ProductCardSkeleton key={n} />
+          {Array.from({ length: skeletonCount }).map((_, index) => (
+            <ProductCardSkeleton key={`pdp-sk-${index}`} />
           ))}
         </div>
       </div>

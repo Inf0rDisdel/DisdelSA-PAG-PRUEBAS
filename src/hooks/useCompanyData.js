@@ -3,7 +3,7 @@ import { apiVentas } from "api/apiInstance";
 
 const fetchCompanyData = async () => {
     //Consumimos el puerto de venta 60839 
-    const { data } = await apiVentas.get('api/PaginaWeb/GetDatosCompania/1007');
+    const { data } = await apiVentas.get('api/DatosPagina/GetDatosCompania/1007');
     return data;
 };
 
