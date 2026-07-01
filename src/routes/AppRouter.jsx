@@ -2,7 +2,7 @@ import React, { Suspense, lazy, Component } from 'react';
 import { Routes, Route, Navigate, useParams } from 'react-router-dom';
 import HomeSkeleton from 'components/ui/Skeleton/HomeSkeleton';
 import CatalogSkeleton from 'components/ui/Skeleton/CatalogSkeleton';
-import ProductCardSkeleton from 'components/ui/ProductCard/ProductCardSkeleton';
+import ProductDetailSkeleton from 'components/ui/Skeleton/ProductDetailSkeleton';
 
 const HomePage = lazy(() => import('../pages/HomePage'));
 const ProductDetailPage = lazy(() => import('pages/ProductDetailPage'));
@@ -56,7 +56,7 @@ const AppRouter = () => {
         {/* SUSPENSE INDEPENDIENTES: Cada página carga su esqueleto exacto al descargar el JS */}
         <Route path="/" element={<Suspense fallback={<HomeSkeleton />}><HomePage /></Suspense>} />
 
-        <Route path="/producto/:id/:slug?" element={<Suspense fallback={<ProductCardSkeleton />}><ProductDetailPage /></Suspense>} />
+        <Route path="/producto/:id/:slug?" element={<Suspense fallback={<ProductDetailSkeleton />}><ProductDetailPage /></Suspense>} />
         <Route path="/categoria/:slug/:cat?/:subcat?" element={<Suspense fallback={<CatalogSkeleton />}><CategoryPage/></Suspense>} />
         <Route path="/marca/:slug/:subcat?" element={<Suspense fallback={<CatalogSkeleton />}><BrandPage /></Suspense>} />
           

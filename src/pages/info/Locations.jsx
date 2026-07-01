@@ -1,4 +1,5 @@
 import React, { useMemo } from 'react';
+import { Helmet } from 'react-helmet-async';
 import { FiClock, FiMapPin, FiCheckCircle, FiPhone } from 'react-icons/fi';
 import './Locations.css'; 
 
@@ -87,6 +88,13 @@ const Locations = () => {
 
   return (
     <div className="loc-page-wrapper">
+      
+      <Helmet>
+        <title>Nuestras Ubicaciones y Teléfonos | Disdel Guatemala</title>
+        <meta name="description" content="Encuentra los números de teléfono, direcciones y horarios de atención de nuestras oficinas de Zona 1, sala de ventas de Zona 3 y laboratorio en Ciudad de Guatemala." />
+        <link rel="canonical" href="https://disdelsa.com/ubicaciones" />
+      </Helmet>
+
       {storesData.map((store, index) => (
         <section key={store.id} className={`loc-showcase-section ${index % 2 !== 0 ? 'loc-reverse' : ''}`}>
           <div className="loc-container">

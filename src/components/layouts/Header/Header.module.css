@@ -111,14 +111,16 @@
 }
 
 .headerCenter {
+  height: 80px;
   flex-grow: 1; 
   display: flex;
   flex-direction: column;
   
   /* CAMBIO CLAVE: Alineamos todo a la IZQUIERDA en lugar del centro */
   align-items: flex-start !important; 
+  justify-content: center;
   
-  gap: 10px;
+  gap: 8px;
   margin-left: 40px !important; /* Ajusta este número si lo quieres más cerca o lejos */
 }
 
@@ -328,13 +330,18 @@
 
 .mainNav {
   display: flex;
-  gap: 15px;
+  gap: 20px;
   
   /* CAMBIO CLAVE: Alineamos los botones a la IZQUIERDA */
   justify-content: flex-start !important; 
   
   width: 100%;
 }
+
+.categoriesContainer {
+  position: relative; /* 🚀 CRÍTICO: Permite que el MegaMenu se posicione exactamente debajo sin deformar el header */
+}
+
 /* --- DERECHA: ACCIONES Y CARRITO --- */
 .headerRight {
   display: flex;

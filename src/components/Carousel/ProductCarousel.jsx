@@ -1,4 +1,4 @@
-import React,{useMemo} from 'react';
+import React,{useMemo, useState, useEffect} from 'react';
 import Slider from 'react-slick';
 import "slick-carousel/slick/slick.css"; 
 import "slick-carousel/slick/slick-theme.css";
@@ -12,13 +12,21 @@ import Skeleton from 'components/ui/Skeleton/Skeleton';
 const ProductCarousel = ({ title, products = [], isLoading, variant = '' }) => {
   const{data: bannerData} = useBanners();
 
-  const isMobile = typeof window !== 'undefined' ? window.innerWidth <= 480 : false;
-  const isTablet = typeof window !== 'undefined' ? window.innerWidth <= 1024 : false;
+  const [isMobile, setIsMobile] = useState(typeof window !== 'undefined' ? window.innerWidth <= 480 : false);
+  const [isTablet, setIsTablet] = useState(typeof window !== 'undefined' ? window.innerWidth <= 1024 : false);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(typeof window !== 'undefined' ? window.innerWidth <= 480 : false);
+      setIsTablet(typeof window !== 'undefined' ? window.innerWidth <= 1024 : false);
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const images = useMemo(() => {
-    const getUrl = (imgName) => imgName? `${AppConfig.baseImageUrl}${imgName}` : '';
-    const fondoImagen = bannerData?.ImagenPredeterminado?.find(i=> i.Titulo?.trim() === "FondoCarousel")?.Imagen;
-
+    const getUrl = (imgName) => imgName ? `${AppConfig.baseImageUrl}${imgName}` : '';
+    const fondoImagen = bannerData?.ImagenPredeterminado?.find(i => i.Titulo?.trim() === "FondoCarousel")?.Imagen;
     return {
       fondoImagen: getUrl(fondoImagen)
     };
@@ -86,7 +94,8 @@ const ProductCarousel = ({ title, products = [], isLoading, variant = '' }) => {
    return (
     <section 
       className={`product-carousel-container ${variant}`}
-      style={{ backgroundImage: `url(${images.fondoImagen})` }}
+      // 🚀 PROGRAMACIÓN DEFENSIVA: Solo aplicamos el fondo si la imagen ha sido cargada con éxito de la API
+      style={images.fondoImagen ? { backgroundImage: `url(${images.fondoImagen})` } : undefined}
       aria-label={title}
     >
       <div className="carousel-header">

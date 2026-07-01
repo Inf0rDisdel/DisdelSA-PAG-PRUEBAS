@@ -7,9 +7,6 @@
   RewriteCond %{HTTP_HOST} ^www\. [NC]
   RewriteRule ^(.*)$ https://disdelsa.com/$1 [L,R=301]
 
-  # 2. REDIRIGIR LINKS VIEJOS (Mantenemos tu lógica pero limpia)
-  RewriteRule ^subcategoria/(.*)$ https://disdelsa.com/ [L,R=301,NC]
-
   # 3. QUITAR SLASH FINAL (Para evitar contenido duplicado)
   RewriteCond %{REQUEST_FILENAME} !-d
   RewriteRule ^(.*)/$ /$1 [L,R=301]

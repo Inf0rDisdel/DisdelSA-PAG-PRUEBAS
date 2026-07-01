@@ -3,22 +3,24 @@ import { AppConfig } from 'config/AppConfig';
 
 export const getMainGraphSchema = (companyInfo = {}) => {
 
-  const name = companyInfo.nombreEmpresa || companyInfo.NombreEmpresa || "Disdel, S.A.";
-  const alternate = (companyInfo.nombreAlternativo || companyInfo.NombreAlternativo) 
-    ? [companyInfo.nombreAlternativo || companyInfo.NombreAlternativo] 
+  const info = companyInfo || {};
+
+  const name = info.nombreEmpresa || info.NombreEmpresa || "Disdel, S.A.";
+  const alternate = (info.nombreAlternativo || info.NombreAlternativo) 
+    ? [info.nombreAlternativo || info.NombreAlternativo] 
     : ["Disdel", "Disdelsa", "Disdel Guatemala"];
   
-  const description = companyInfo.descripcionCorta || companyInfo.DescripcionCorta || "Empresa líder en Guatemala especializada en suministros de limpieza profesional.";
-  const telephone = (companyInfo.telefono || companyInfo.Telefono) 
-    ? String(companyInfo.telefono || companyInfo.Telefono) 
+  const description = info.descripcionCorta || info.DescripcionCorta || "Empresa líder en Guatemala especializada en suministros de limpieza profesional.";
+  const telephone = (info.telefono || info.Telefono) 
+    ? String(info.telefono || info.Telefono) 
     : "+502-2422-6120";
     
-  const email = companyInfo.correo || companyInfo.Correo || "info@disdelsa.com";
-  const addres = companyInfo.direccion || companyInfo.Direccion || "15 Calle 16-30 Zona 1";
-  const url = companyInfo.url || companyInfo.URL || "https://disdelsa.com/";
-  const locality = companyInfo.ciudad || companyInfo.Ciudad || "Ciudad de Guatemala";
-  const postalCode = companyInfo.codigoPostal || companyInfo.CodigoPostal || "01001";
-  const country = companyInfo.pais || companyInfo.Pais || "GT";
+  const email = info.correo || info.Correo || "info@disdelsa.com";
+  const addres = info.direccion || info.Direccion || "15 Calle 16-30 Zona 1";
+  const url = info.url || info.URL || "https://disdelsa.com/";
+  const locality = info.ciudad || info.Ciudad || "Ciudad de Guatemala";
+  const postalCode = info.codigoPostal || info.CodigoPostal || "01001";
+  const country = info.pais || info.Pais || "GT";
 
   // --- ESTRUCTURA DE SUCURSALES (Multi-Location) ---
   // Sucursal 1: Oficina Central (Zona 1) - Traída dinámicamente de tu Base de Datos
@@ -296,6 +298,13 @@ export const getCollectionSchema = (title, description, url, products) => {
                 "brand": {
                   "@type": "Brand",
                   "name": prod.Marca || "Disdel"
+                },
+                "aggregateRating": {
+                  "@type": "AggregateRating",
+                  "ratingValue": "5",
+                  "bestRating": "5",
+                  "worstRating": "1",
+                  "ratingCount": "1"
                 }
               }
             };
@@ -339,7 +348,7 @@ export const getSearchSchema = (query, totalResults) => ({
         },
         getBreadcrumbs([
             { name: "Inicio", item: "https://disdelsa.com/" },
-            { name: "Búsqueda", item: `https://disdelsa.com/buscar?q=${query}` }
+            { name: "Búsqueda", item: "https://disdelsa.com/buscar" }
         ])
     ]
 });

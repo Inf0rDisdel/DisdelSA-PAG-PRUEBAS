@@ -9,9 +9,9 @@ const SearchResultsPage = () => {
   const location = useLocation();
   const { data: productos, isLoading } = useProducts();
   
-  const queryParams = new URLSearchParams(location.search);
-  const query = queryParams.get('q') || '';
-  const decodedQuery = decodeURIComponent(query);
+  // 🚀 LEEMOS LA BÚSQUEDA INVISIBLE DESDE EL STATE DE MANERA SEGURA (Con fallback vacío)
+  const query = location.state?.q || '';
+  const decodedQuery = query; // Al venir en memoria, ya viene decodificado automáticamente
 
   const [selectedBrands, setSelectedBrands] = useState([]);
   const [selectedCats, setSelectedCats] = useState([]);
@@ -95,39 +95,41 @@ const SearchResultsPage = () => {
   return (
     <main className={styles.searchPageWrapper}>
       <Helmet>
-        {/* --- 1. SEO ESTÁNDAR --- */}
-        <title>{`Comprar ${decodedQuery} en Guatemala | Disdel`}</title>
-        <meta name="description" content={`Resultados de búsqueda para ${decodedQuery}. Encuentra suministros institucionales de alta calidad con entrega en toda Guatemala.`} />
-        <link rel="canonical" href={`https://disdelsa.com/buscar?q=${query}`} />
-        <meta name="robots" content="index, follow" /> {/* Indica a Google que indexe esta página */}
+        {/* --- 1. SEO ESTÁNDAR (CON 'NOINDEX' PARA PROTEGER TU CRAWL BUDGET) --- */}
+        <title>{decodedQuery ? `Comprar ${decodedQuery} en Guatemala | Disdel` : "Buscar Suministros | Disdel"}</title>
+        <meta name="description" content={decodedQuery ? `Resultados de búsqueda para ${decodedQuery}. Encuentra suministros institucionales de alta calidad con entrega en toda Guatemala.` : "Buscador de suministros industriales y de limpieza profesional en Guatemala."} />
+        
+        {/* 🚀 CANÓNICA LIMPIA: Apunta a la URL base de búsqueda sin parámetros de consulta */}
+        <link rel="canonical" href="https://disdelsa.com/buscar" />
+        <meta name="robots" content="noindex, nofollow" /> {/* Indica a Google que no gaste rastreo en búsquedas dinámicas */}
 
         {/* --- 2. OPTIMIZACIÓN DE CARGA (Core Web Vitals) --- */}
-        {/* Preconecta al servidor de imágenes para ganar velocidad (LCP) */}
         <link rel="preconnect" href="https://disdelsa.com" />
         <link rel="dns-prefetch" href="https://disdelsa.com" />
 
         {/* --- 3. SEO LOCAL (Guatemala) --- */}
-        <meta name="geo.region" content="GT-GU" /> {/* Guatemala, Ciudad */}
+        <meta name="geo.region" content="GT-GU" />
         <meta name="geo.placename" content="Guatemala" />
         <meta name="geo.position" content="14.6349;-90.5069" />
         <meta name="ICBM" content="14.6349, -90.5069" />
 
         {/* --- 4. REDES SOCIALES (Open Graph) --- */}
         <meta property="og:type" content="website" />
-        <meta property="og:title" content={`Resultados para "${decodedQuery}" en Disdel`} />
-
+        <meta property="og:title" content={decodedQuery ? `Resultados para "${decodedQuery}" en Disdel` : "Buscador de Suministros | Disdel"} />
         <meta property="og:description" content="Encuentra los mejores suministros industriales y de limpieza profesional en nuestra tienda online." />
-        <meta property="og:image" content="https://www.disdelsa.com/logo-social.jpg" /> {/* URL de una imagen de marca */}
-        <meta property="og:url" content={`https://www.disdelsa.com/buscar?q=${query}`} />
+        <meta property="og:image" content="https://www.disdelsa.com/logo-social.jpg" />
+        
+        {/* 🚀 URL OG CANÓNICA LIMPIA */}
+        <meta property="og:url" content="https://disdelsa.com/buscar" />
         <meta property="og:site_name" content="Disdel" />
 
         {/* --- 5. TWITTER CARD --- */}
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content={`Catálogo Disdel: ${decodedQuery}`} />
+        <meta name="twitter:title" content={decodedQuery ? `Catálogo Disdel: ${decodedQuery}` : "Catálogo Disdel"} />
         <meta name="twitter:image" content="https://www.disdelsa.com/logo-social.jpg" />
 
         {/* --- 6. ESTILO DEL NAVEGADOR (Mobile) --- */}
-        <meta name="theme-color" content="#135eab" /> {/* Color azul Disdel para la barra del navegador en Android */}
+        <meta name="theme-color" content="#135eab" />
 
         {/* --- 7. SCHEMA (JSON-LD) --- */}
         <script type="application/ld+json">

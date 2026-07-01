@@ -10,10 +10,10 @@ import { useBanners } from '../../../hooks/useBanners';
 
 const BannerSlider = () => {
   const { data: banners, isLoading, isError } = useBanners();
-  const [isPhone, setIsPhone] = useState(window.innerWidth <= 480);
+  const [isPhone, setIsPhone] = useState(typeof window !== 'undefined' ? window.innerWidth <= 480 : false);
 
   useEffect(() => {
-    const handleResize = () => setIsPhone(window.innerWidth <= 480);
+    const handleResize = () => setIsPhone(typeof window !== 'undefined' ? window.innerWidth <= 480 : false);
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
@@ -77,6 +77,8 @@ const BannerSlider = () => {
                   src={`${AppConfig.baseImageUrl}${rutaFinal}`} 
                   alt={ban.Titulo || "Promoción Disdel"} 
                   className="banner-img"
+                  width="1400" 
+                  height="270"
                   // SEO y Performance: El primero carga de una, los demás después
                   loading={index === 0 ? "eager" : "lazy"}
                   decoding={index === 0 ? "sync" : "async"}

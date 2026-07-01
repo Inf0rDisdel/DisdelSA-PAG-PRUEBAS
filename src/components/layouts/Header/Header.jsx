@@ -83,14 +83,17 @@ const Header = () => {
   const { logoMain, logoSplash, iconUser, iconBuilding, iconCart } = assets;
 
   const handleSearchSubmit = (e) => {
-    e.preventDefault(); 
-    if (searchTerm.trim()) {
-      navigate(`/buscar?q=${encodeURIComponent(searchTerm.trim())}`);
-      setSearchTerm(''); 
-      setShowSuggestions(false);
-      setIsMobileMenuOpen(false); 
-    }
-  };
+  e.preventDefault(); 
+  const cleanTerm = searchTerm.trim();
+  
+  if (cleanTerm) {
+    // 🚀 ENVIAMOS LA BÚSQUEDA DE FORMA INVISIBLE EN EL STATE
+    navigate('/buscar', { state: { q: cleanTerm } });
+    setSearchTerm(''); 
+    setShowSuggestions(false);
+    setIsMobileMenuOpen(false); 
+  }
+};
 
   const handleSuggestionClick = (p) => {
     setSearchTerm('');

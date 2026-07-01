@@ -13,6 +13,7 @@ import { useFilterProducts } from 'hooks/useFilterProducts';
 import { createSlug } from 'utils/slugify';
 import { getCollectionSchema } from 'utils/schemas/mainSchemas';
 import CatalogSkeleton from 'components/ui/Skeleton/CatalogSkeleton';
+import { useCatalogSeo } from 'hooks/useCatalogSeo';
 
 const BrandPage = () => {
   const { slug, subcat } = useParams();
@@ -28,6 +29,25 @@ const BrandPage = () => {
   const cleanSlug = slug ? slug.replace(/\/$/, "").trim() : '';
   const canonicalSlug = cleanSlug.toLowerCase(); 
   const norm = (id) => (id === null || id === undefined) ? '' : String(id).trim();
+
+  //Mapeo de IDs de marcas estáticos para la API de C#
+  const seoParams = useMemo(() => {
+    if (activeCatId) return { idCategoria: activeCatId }; // Si filtran por categoría dentro de la marca
+    
+    // Si están en la raíz de la marca, mandamos el ID de la marca correspondiente
+    const brandMapping = {
+      "wiese": 3238,
+      "kimberly-clark-professional": 29, 
+      "3m": 28,
+      "silver": 27
+    };
+    const mappedId = brandMapping[canonicalSlug];
+    if (mappedId) return { idMarca: mappedId };
+
+    return {};
+  }, [activeCatId, canonicalSlug]);
+
+  const { data: dbSeo } = useCatalogSeo(seoParams);
 
   useEffect(() => {
     const handleResize = () => setIsMobile(typeof window !== 'undefined' ? window.innerWidth <= 468 : false);
@@ -164,17 +184,19 @@ const BrandPage = () => {
     const baseUrl = `https://disdelsa.com/marca/${canonicalSlug}`;
     const activeCategory = displayCategories?.find(c => norm(c.IdCategoria) === norm(activeCatId));
 
-    const seoTitle = activeCategory 
+    // Si hay SEO de base de datos, lo usamos, si no, aplicamos los fallbacks
+    const activeSeo = dbSeo || {};
+    const seoTitle = activeSeo.MetaTitle || activeSeo.metaTitle || (activeCategory 
         ? `${activeCategory.NombreCategoria} ${brandNameOfficial} Guatemala` 
-        : `Distribuidor Autorizado ${brandNameOfficial} en Guatemala`;
+        : `Distribuidor Autorizado ${brandNameOfficial} en Guatemala`);
     
-    const seoDesc = activeCategory
+    const seoDesc = activeSeo.MetaDescription || activeSeo.metaDescription || (activeCategory
         ? `Compra ${activeCategory.NombreCategoria} de ${brandNameOfficial} con distribución institucional.`
-        : `Catálogo institucional de ${brandNameOfficial}. Suministros con garantía oficial.`;
+        : `Catálogo institucional de ${brandNameOfficial}. Suministros con garantía oficial.`);
 
-    // 🚀 FIX: getCollectionSchema ya genera la estructura correcta de @graph con sus Breadcrumbs integrados de forma limpia.
+    // 🚀 FIX SENIOR: Retornamos getCollectionSchema directo sin volver a envolverlo en otro array @graph
     return getCollectionSchema(seoTitle, seoDesc, baseUrl, filteredProducts);
-  }, [currentBrandSegment, displayCategories, brandNameOfficial, filteredProducts, canonicalSlug, activeCatId]);
+  }, [currentBrandSegment, displayCategories, brandNameOfficial, filteredProducts, canonicalSlug, activeCatId, dbSeo]);
 
   // --- 6. EFECTOS DE NAVEGACIÓN Y FILTROS ---
   useEffect(() => {
@@ -269,6 +291,9 @@ const BrandPage = () => {
             className='banner-fade-in' 
             fetchpriority="high" 
             loading="eager"
+            width="1330" 
+            height="250"
+            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
         />
         <div className="brand-header-overlay-pdp">
             <h1 className="brand-segment-title">
@@ -324,11 +349,9 @@ const BrandPage = () => {
       <section className="brand-expert-content" aria-label="Información adicional de marca">
         <div className="brand-expert-container">
           <hr className="pdp-divider" />
-          <h2>Distribución y Venta Mayorista de {brandNameOfficial} en Guatemala</h2>
+          <h2>{dbSeo?.H1 || dbSeo?.h1 || `Distribución y Venta de ${brandNameOfficial} en Guatemala`}</h2>
           <p className="brand-expert-text">
-            En Disdel somos distribuidores autorizados de productos {brandNameOfficial} [2]. Abastecemos a oficinas, industrias, 
-            hospitales y el sector Horeca con un catálogo de alta resistencia y estándares técnicos [2]. Cotiza tu pedido 
-            por volumen y recibe de forma segura asesoría técnica personalizada con cobertura de entrega en toda la república de Guatemala [2].
+            {dbSeo?.SeoContent || dbSeo?.seoContent || `En Disdel somos distribuidores de productos ${brandNameOfficial} [2]. Abastecemos a oficinas, industrias, hospitales y el sector Horeca con un catálogo de alta resistencia y estándares técnicos [2]. Cotiza tu pedido por volumen y recibe de forma segura asesoría técnica personalizada con cobertura de entrega en toda la república de Guatemala [2].`}
           </p>
           <div className="brand-benefits-grid">
             <div className="benefit-item">✅ Suministros 100% Originales</div>

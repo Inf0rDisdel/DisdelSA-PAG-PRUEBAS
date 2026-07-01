@@ -1,5 +1,5 @@
-import { Link, useParams, useNavigate } from 'react-router-dom';
 import React, { useState, useMemo, useEffect, useRef } from 'react'; 
+import { Link, useParams, useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import './CategoryPage.css';
 import ProductCard from 'components/ui/ProductCard/ProductCard';
@@ -14,29 +14,21 @@ import { createSlug } from 'utils/slugify';
 import CatalogSkeleton from 'components/ui/Skeleton/CatalogSkeleton';
 import { getCollectionSchema } from 'utils/schemas/mainSchemas';
 import { optimizedSeoData } from 'utils/SEO/optimizedSeo';
+import { useCatalogSeo } from 'hooks/useCatalogSeo';
 
 const CategoryPage = () => {
   const { slug, cat, subcat } = useParams();
   const navigate = useNavigate();
 
   const { data: bannerData } = useBanners();
-  // const addItem = useCartStore((state) => state.addItem);
-  // const location = useLocation(); 
   const { data: menuData, isLoading: loadingMenu } = useMenu();
   const { data: productsData, isLoading: loadingProducts } = useProducts();
 
+  // 1. Declaración de Estados primero (Evita errores de inicialización de variables)
   const [activeCatId, setActiveCatId] = useState(null);
   const [activeSubCatId, setActiveSubCatId] = useState(null);
   const [isMobile, setIsMobile] = useState(typeof window !== 'undefined' ? window.innerWidth <= 468 : false);
   const scrollRef = useRef(null);
-
-  useEffect(() => {
-    const handleResize = () => setIsMobile(typeof window !== 'undefined' ? window.innerWidth <= 468 : false);
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
-
-  useEffect(() => { window.scrollTo(0, 0); }, [slug, cat, subcat]);
 
   const cleanSlug = slug ? slug.replace(/\/$/, "").trim() : '';
   const canonicalSlug = cleanSlug.toLowerCase();
@@ -46,6 +38,25 @@ const CategoryPage = () => {
       if (!menuData) return null;
       return menuData.find(seg => createSlug(seg.NombreSegmento) === cleanSlug) || null;
   }, [menuData, cleanSlug, createSlug]);
+
+  // 2. Cálculo del ID más específico activo (Nivel 3 ➡️ Nivel 2 ➡️ Nivel 1)
+  const seoParams = useMemo(() => {
+    if (activeSubCatId) return { idSubCategoria: activeSubCatId }; // Corregida la variable y camelCase para C#
+    if (activeCatId) return { idCategoria: activeCatId };         // Corregido a camelCase para C#
+    if (currentSegment?.IdSegmento) return { idSegmento: currentSegment.IdSegmento }; // Corregido a camelCase para C#
+    return {};
+  }, [activeSubCatId, activeCatId, currentSegment]);
+
+  // 3. Consulta dinámica a la API de C# utilizando tu nuevo controlador
+  const { data: dbSeo } = useCatalogSeo(seoParams);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(typeof window !== 'undefined' ? window.innerWidth <= 468 : false);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  useEffect(() => { window.scrollTo(0, 0); }, [slug, cat, subcat]);
 
   const activeCategoryData = useMemo(() => {
       if (!currentSegment || !activeCatId) return null;
@@ -83,6 +94,22 @@ const CategoryPage = () => {
       s => norm(s.IdSubCategoria) === norm(activeSubCatId)
     )?.NombreSubCategoria;
 
+    const cleanCanonicalUrl = `https://disdelsa.com/categoria/${slug}${cat ? '/' + cat : ''}${subcat ? '/' + subcat : ''}`;
+
+    // 🚀 SOLUCIÓN: Usamos 'activeSeo' para evitar sombrear la variable externa 'dbSeo' de la API
+    const activeSeo = dbSeo || {};
+    if (dbSeo) {
+      return {
+        title: activeSeo.MetaTitle || activeSeo.metaTitle || `${categoryName || segmentName} en Guatemala`,
+        description: activeSeo.MetaDescription || activeSeo.metaDescription || "",
+        url: activeSeo.CanonicalUrl || activeSeo.canonicalUrl || window.location.href,
+        image: activeSeo.OgImage || activeSeo.ogImage || catBanner.desktop || defaultImage,
+        h1: activeSeo.H1 || activeSeo.h1 || `${categoryName || segmentName} en Guatemala`,
+        h2: activeSeo.H2Principal || activeSeo.h2Principal || "",
+        content: activeSeo.SeoContent || activeSeo.seoContent || ""
+      };
+    }
+
     // 🚀 FIX: Usamos "let" para permitir la construcción del título dinámico
     let dynamicTitle = categorySeo?.t || categoryName || segmentName;
 
@@ -96,18 +123,20 @@ const CategoryPage = () => {
       }
     }
 
-  const finalTitle = dynamicTitle.includes("Disdel") 
-    ? dynamicTitle 
-    : `${dynamicTitle} en Guatemala | Mayoreo y Unidad | Disdel`;
+    const finalTitle = dynamicTitle.includes("Disdel") 
+      ? dynamicTitle 
+      : `${dynamicTitle} en Guatemala | Mayoreo y Unidad | Disdel`;
 
-  return {
-    // Título Híbrido: Genérico + Profesional + Marca
-    title: finalTitle,
-    description: categorySeo?.d || `Distribución líder de ${dynamicTitle} institucional en Guatemala. Soluciones de alta concentración para empresas, hospitales y hogares. Cotización inmediata y envíos a todo el país.`,
-    url: `https://disdelsa.com/categoria/${slug}${cat ? '/' + cat : ''}${subcat ? '/' + subcat : ''}`,
-    image: catBanner.desktop || defaultImage
+    return {
+      title: finalTitle,
+      description: categorySeo?.d || `Distribución líder de ${dynamicTitle} institucional en Guatemala. Soluciones de alta concentración para empresas, hospitales y hogares.`,
+      url: `https://disdelsa.com/categoria/${slug}${cat ? '/' + cat : ''}${subcat ? '/' + subcat : ''}`,
+      image: catBanner.desktop || defaultImage,
+      h1: `${categoryName || segmentName} en Guatemala`,
+      h2: categorySeo?.t || `Guía de Selección: ${finalTitle}`,
+      content: categorySeo?.d || `En Disdel somos expertos en la distribución de ${currentSegment?.NombreSegmento}.`
     };
-  }, [categorySeo, activeCategoryData, currentSegment, slug, cat, subcat, catBanner, defaultImage, activeSubCatId]);
+  }, [categorySeo, activeCategoryData, currentSegment, slug, cat, subcat, catBanner, defaultImage, activeSubCatId, dbSeo]);
 
   const fullSchema = useMemo(() => {
     if (!currentSegment) return null;
@@ -139,7 +168,18 @@ const CategoryPage = () => {
     return <CatalogSkeleton />; // 🚀 Reutilización de código limpia y eficiente
   }
 
-  if (!currentSegment) return <div className="no-products-msg">Categoría no encontrada</div>;
+  if (!currentSegment) {
+    return (
+      <div className="no-products-msg" style={{ textAlign: 'center', padding: '100px' }}>
+        {/* 🚀 SOLUCIÓN SOFT 404: Le indicamos a Google que no indexe esta categoría inexistente */}
+        <Helmet>
+          <meta name="robots" content="noindex, nofollow" />
+          <title>Categoría no encontrada | Disdel</title>
+        </Helmet>
+        Categoría no encontrada
+      </div>
+    );
+  }
 
   return (
     <div className="cat-master-wrapper">
@@ -191,7 +231,17 @@ const CategoryPage = () => {
                   className={`cat-nav-item ${norm(activeCatId) === norm(catItem.IdCategoria) ? 'active-filter' : ''}`}
                 >
                   <div className="cat-nav-icon">
-                    <img src={catItem.Imagen ? `${AppConfig.baseImageUrl}${catItem.Imagen}` : defaultImage} alt={catItem.NombreCategoria} width="24" height="24" loading="lazy" />
+                    <img 
+                      src={catItem.Imagen ? `${AppConfig.baseImageUrl}${catItem.Imagen}` : defaultImage} 
+                      alt={catItem.NombreCategoria} 
+                      width="24" height="24" 
+                      loading="lazy" 
+                      // 🚀 SANEAMIENTO EXTRA: Previene iconos rotos de categorías secundarias en el sidebar
+                      onError={(e) => {
+                        e.target.onerror = null;
+                        e.target.src = defaultImage;
+                      }}
+                    />
                  </div>
                   <span>{catItem.NombreCategoria}</span>
                 </Link>
@@ -238,10 +288,11 @@ const CategoryPage = () => {
       <section className="cat-expert-content" aria-label="Información adicional de categoría">
         <div className="cat-container">
           <hr className="pdp-divider" />
-          <h2>{categorySeo?.t || `Guía de Selección: ${seoData.title}`}</h2>
+          {/* H2 Dinámico de Base de Datos */}
+          <h2>{seoData.h2 || `Guía de Selección: ${seoData.title}`}</h2>
+          {/* Párrafo dinámico de Base de Datos */}
           <p className="cat-expert-text">
-            {categorySeo?.d || `En Disdel somos expertos en la distribución de ${currentSegment?.NombreSegmento}. 
-            Nuestro catálogo está diseñado para cumplir con los estándares de higiene más exigentes en Guatemala.`}
+            {seoData.content}
           </p>
           
           <div className="cat-benefits-grid">

@@ -17,6 +17,16 @@ import { getProductSchema } from 'utils/schemas/mainSchemas';
 import { optimizedSeoData } from 'utils/SEO/optimizedSeo';
 import RelatedProducts from 'components/products/RelatedProducts';
 
+const isValidImage = (imgName) => {
+  if (!imgName) return false;
+  const cleanName = String(imgName).trim().toLowerCase();
+  return cleanName !== "" &&
+        cleanName !== "" &&
+        cleanName !== "undefined" &&
+        cleanName !== "0" &&
+        cleanName !== "n/a";
+};
+
 const ProductDetailPage = () => {
   const { id, slug } = useParams();
   const cleanIdFromUrl = id ? String(id).trim().toLowerCase() : "";
@@ -95,21 +105,29 @@ const ProductDetailPage = () => {
     return extra ? `${base}, ${extra}` : base;
   }, [product, activeSeoInfo]);
 
-  // 4. GENERACIÓN DEL SCHEMA
-  const productImages = useMemo(() => {
-      if (!product) return [];
-      return product.Imagenes?.length > 0 ? product.Imagenes.filter(img => img.Imagen).map(img => img.Imagen) : [product.Imagen];
-  }, [product]);
-
   const defaultImage = useMemo(() => {
     const found = bannerData?.ImagenPredeterminado?.find(i => i.Titulo?.trim() === "ImagenDefault3");
     return found ? `${AppConfig.baseImageUrl}${found.BannerImagenMovil || found.Imagen}` : '';
   }, [bannerData]);
 
+  // 4. GENERACIÓN DEL SCHEMA
+  const productImages = useMemo(() => {
+      if (!product) return [];
+      
+      const validAdditions = product.Imagenes?.length > 0 
+        ? product.Imagenes.filter(img => isValidImage(img.Imagen)).map(img => img.Imagen) 
+        : [];
+
+      if (validAdditions.length > 0) {
+        return validAdditions;
+      }
+
+      return isValidImage(product.Imagen) ? [product.Imagen] : [];
+  }, [product]);
+
   const fullSchema = useMemo(() => {
     if (!product || activeSeoInfo) return null;
 
-    // Mapeamos los datos al formato que espera tu función getProductSchema (t, d, k)
     const legacyFormat = {
       t: seoTitle,
       d: seoLongDescription,
@@ -136,9 +154,11 @@ const ProductDetailPage = () => {
     });
   };
 
-  const getImageUrl = useCallback((imgName) => (imgName && imgName.trim() !== "") 
-    ? `${AppConfig.baseImageUrl}productos/${imgName}` 
-    : defaultImage, [defaultImage]);
+  const getImageUrl = useCallback((imgName) => {
+    return isValidImage(imgName)
+      ? `${AppConfig.baseImageUrl}productos/${imgName}`
+      : defaultImage;
+  }, [defaultImage]);
 
   const hasDifferentOptions = useMemo(() => {
     if (!product || !product.Unidad || !product.Empaque) return false;
@@ -146,22 +166,16 @@ const ProductDetailPage = () => {
   }, [product]);
 
   useEffect(() => {
-    // Solo actuamos si el objeto 'product' existe y tiene datos
     if (product) {
-      // 1. Reset de Imagen: Forzamos la imagen principal del nuevo producto
-      setSelectedImage(product.Imagen);
+      // 🚀 Inicializamos solo si la imagen principal es válida
+      setSelectedImage(isValidImage(product.Imagen) ? product.Imagen : null);
 
-      // 2. Reset de Unidades: Calculamos la unidad inicial del nuevo producto
       const initialUnit = product.Unidad || product.Empaque || 'Unidad';
       setSelectedUnit(initialUnit);
       setSelectedType(product.Unidad ? 'Y' : 'N');
-
-      // 3. 🚀 EXPERIENCIA SENIOR: Scroll al inicio
-      // Como venimos de hacer clic en un producto que estaba abajo (relacionados),
-      // debemos subir al usuario al inicio de la página para que vea el nuevo detalle.
       window.scrollTo(0, 0);
     }
-  }, [product]); 
+  }, [product]);
 
   useEffect(() => {
     if (product) {
@@ -185,6 +199,11 @@ const ProductDetailPage = () => {
   if (isError || !product) {
     return (
       <div className="pdp-container" style={{ textAlign: 'center', padding: '100px' }}>
+        {/* 🚀 SOLUCIÓN SOFT 404: Le indicamos a Google que no indexe ni siga este enlace roto */}
+        <Helmet>
+          <meta name="robots" content="noindex, nofollow" />
+          <title>Producto no disponible | Disdel</title>
+        </Helmet>
         <h2>Producto no disponible actualmente</h2>
         <button className="pdp-back-btn" onClick={() => navigate('/')}>Volver al inicio</button>
       </div>
@@ -240,17 +259,28 @@ const ProductDetailPage = () => {
         <section className="pdp-gallery-wrapper" aria-label="Galería de imágenes del producto">
           
           {/* 1. MINIATURAS (Lado izquierdo) */}
-          <div className="pdp-thumbnails-vertical">
-            {productImages.map((img, index) => (
-              <div 
-                key={`${product.IdProducto}-${index}`} // 👈 Usar el ID aquí ayuda a React a no confundirse
-                className={`pdp-thumb-item ${selectedImage === img ? 'active' : ''}`} 
-                onMouseEnter={() => setSelectedImage(img)}
-              >
-                <img src={getImageUrl(img)} alt={`Vista miniatura ${index + 1} de ${product.Descripcion}`} loading='lazy' />
-              </div>
-            ))}
-          </div>
+          {productImages.length > 0 && (
+            <div className="pdp-thumbnails-vertical">
+              {productImages.map((img, index) => (
+                <div 
+                  key={`${product.IdProducto}-${index}`} 
+                  className={`pdp-thumb-item ${selectedImage === img ? 'active' : ''}`} 
+                  onMouseEnter={() => setSelectedImage(img)}
+                >
+                  <img 
+                    src={getImageUrl(img)} 
+                    alt={`Vista miniatura ${index + 1} de ${product.Descripcion}`} 
+                    loading='lazy' 
+                    // 🚀 AGREGA ESTE BLOQUE AQUÍ TAMBIÉN:
+                    onError={(e) => {
+                      e.target.onerror = null; // Previene bucles infinitos de recarga
+                      e.target.src = defaultImage;
+                    }}
+                  />
+                </div>
+              ))}
+            </div>
+          )}
 
           {/* 2. IMAGEN PRINCIPAL (Lado derecho de las miniaturas) */}
           <div 
@@ -266,6 +296,11 @@ const ProductDetailPage = () => {
               style={{ transformOrigin: `${zoomPos.x}% ${zoomPos.y}%` }}
               fetchpriority="high" // 🚀 Prioridad máxima para la imagen del producto
               itemProp="image"
+
+              onError={(e) =>{
+                e.target.onerror = null;
+                e.target.src = defaultImage;
+              }}
             />
           </div>
         </section>

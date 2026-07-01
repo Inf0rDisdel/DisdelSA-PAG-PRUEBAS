@@ -1,4 +1,5 @@
 import React, { useMemo } from 'react';
+import { Helmet } from 'react-helmet-async';
 import './AboutUs.css'; 
 
 // 1. Importamos Configuración y Hook
@@ -32,6 +33,19 @@ const AboutUs = () => {
 
   return (
     <div className="about-page-container">
+
+      <Helmet>
+        <title>Quiénes Somos | Disdel Guatemala</title>
+        <meta name="description" content="Conoce la historia, misión y visión de Disdel, S.A., empresa líder en la distribución de suministros de limpieza y mantenimiento profesional en Guatemala desde 1975." />
+        <link rel="canonical" href="https://disdelsa.com/quienes-somos" />
+        
+        {/* Open Graph de respaldo para redes sociales */}
+        <meta property="og:title" content="Orgullosos de nuestra historia | Disdel S.A." />
+        <meta property="og:description" content="Conoce la historia de Distribuidora de León (Disdel) fundada por Silverio de León." />
+        <meta property="og:image" content={images.historia} />
+        <meta property="og:url" content="https://disdelsa.com/quienes-somos" />
+      </Helmet>
+  
       <div className="main-layout-container">
         
         {/* 1. TÍTULO */}

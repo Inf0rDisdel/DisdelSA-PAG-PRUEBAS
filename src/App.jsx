@@ -4,7 +4,6 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'; // 1. 
 import { persistQueryClient } from '@tanstack/react-query-persist-client';
 import { createSyncStoragePersister } from '@tanstack/query-sync-storage-persister';
 
-import WelcomeSplash from 'components/ui/WelcomeSplash/WelcomeSplash';
 import ScrollToTop from 'components/ui/Button/ScrollToTop';
 import AppRouter from './routes/AppRouter';
 import Header from './components/layouts/Header/Header';
@@ -48,8 +47,6 @@ function App() {
           <Header /> 
           
           <ScrollToTop/>
-          <WelcomeSplash />
-          
           <main role='main'>
             <AppRouter />
           </main>

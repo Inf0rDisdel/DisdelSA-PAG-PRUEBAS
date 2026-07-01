@@ -1,4 +1,5 @@
 import React,{useMemo} from "react";
+import { Helmet } from "react-helmet-async";
 import './Ayuda.css';
 
 import { AppConfig } from "config/AppConfig";
@@ -8,6 +9,9 @@ import { useBanners } from "hooks/useBanners";
 const Ayuda = () => {
 
     const {data: bannerData} = useBanners();
+
+    // Logotipo de respaldo predeterminado de Disdel para evitar /undefined en iconos
+    const defaultIconFallback = `${AppConfig.baseImageUrl}logo-disdel.png`;
 
     const images = useMemo(()=> {
         const getUrl = (imgName) => imgName? `${AppConfig.baseImageUrl}${imgName}` : '';
@@ -23,6 +27,18 @@ const Ayuda = () => {
 
     return (
         <div className="ayuda-container">
+            <Helmet>
+                <title>Centro de Ayuda y Líneas de Asistencia | Disdel Guatemala</title>
+                <meta name="description" content="¿Necesitas soporte técnico o cotizar suministros de limpieza al por mayor? Contacta a nuestro departamento de mercadeo y asistencia técnica en Guatemala." />
+                <link rel="canonical" href="https://disdelsa.com/ayuda" />
+                
+                {/* Protocolo Open Graph de respaldo para compartir el enlace */}
+                <meta property="og:title" content="Centro de Ayuda y Líneas de Asistencia | Disdel" />
+                <meta property="og:description" content="Contacta a nuestro equipo técnico de suministros y mercadeo." />
+                <meta property="og:image" content={images.ayuda || defaultIconFallback} />
+                <meta property="og:url" content="https://disdelsa.com/ayuda" />
+            </Helmet>
+
             {/* Header alineado a la izquierda */}
             <div className="ayuda-header">
                 <h1 className="ayuda-title">Centro de Ayuda</h1>
@@ -34,7 +50,14 @@ const Ayuda = () => {
                 {/* TARJETA 1: MERCADEO */}
                 <div className="ayuda-card">
                     <div className="icon-wrapper">
-                        <img src={images.ayuda} alt="Ayuda Soporte" />
+                        <img 
+                          src={images.ayuda || defaultIconFallback} 
+                          alt="Ayuda Soporte" 
+                          onError={(e) => {
+                            e.target.onerror = null;
+                            e.target.src = defaultIconFallback;
+                          }}
+                        />
                     </div>
                     
                     <div className="card-info">
@@ -52,7 +75,14 @@ const Ayuda = () => {
                 {/* TARJETA 2: SOPORTE TÉCNICO */}
                 <div className="ayuda-card">
                     <div className="icon-wrapper">
-                        <img src={images.mercadeo} alt="Icono Mercadeo Soporte" />
+                        <img 
+                          src={images.mercadeo || defaultIconFallback} 
+                          alt="Icono Mercadeo Soporte" 
+                          onError={(e) => {
+                            e.target.onerror = null;
+                            e.target.src = defaultIconFallback;
+                          }}
+                        />
                     </div>
 
                     <div className="card-info">

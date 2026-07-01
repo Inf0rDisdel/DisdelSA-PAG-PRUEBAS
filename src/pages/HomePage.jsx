@@ -27,28 +27,46 @@ const HomePage = () => {
   const { data: bannerData} = useBanners();
   const { data: companyInfo } = useCompanyData();
 
+  const activeCompanyInfo = useMemo(() => {
+    return Array.isArray(companyInfo) && companyInfo.length > 0 ? companyInfo[0] : {};
+  }, [companyInfo]);
+
   const homeSeo = useMemo(() => optimizedSeoData['home'] || null, []);
-  const fullGraphSchema = useMemo(() => getMainGraphSchema(companyInfo), [companyInfo]);
+  const fullGraphSchema = useMemo(() => getMainGraphSchema(activeCompanyInfo), [activeCompanyInfo]);
 
   const cleanBaseUrl = useMemo(() => 
     AppConfig.baseImageUrl.endsWith('/') ? AppConfig.baseImageUrl : `${AppConfig.baseImageUrl}/`
   , []);
 
- // Título y Descripción dinámicos desde Base de Datos
+  // Título y Descripción dinámicos desde Base de Datos
   const seoTitle = useMemo(() => {
-
-    const nombre = companyInfo?.nombreEmpresa || companyInfo?.NombreEmpresa;
+    // Intentamos leer de tu nueva columna MetaTitle, luego del archivo estático y finalmente del fallback
+    const dbTitle = activeCompanyInfo?.metaTitle || activeCompanyInfo?.MetaTitle;
+    const nombre = activeCompanyInfo?.nombreEmpresa || activeCompanyInfo?.NombreEmpresa;
   
-    return homeSeo?.t || (nombre 
+    return dbTitle || homeSeo?.t || (nombre 
       ? `${nombre} | Líder en Suministros de Limpieza` 
       : "Disdel Guatemala | Líder en Suministros de Limpieza y mantenimiento"
     );
-  }, [homeSeo, companyInfo]);
+  }, [homeSeo, activeCompanyInfo]);
 
   const seoDesc = useMemo(() => {
-    const descripcion = companyInfo?.descripcionCorta || companyInfo?.DescripcionCorta;
-    return homeSeo?.d || descripcion || "Disdel, S.A. líder en Guatemala en suministros...";
-  }, [homeSeo, companyInfo]);
+    // Intentamos leer de tu nueva columna MetaDescription, luego del archivo estático y finalmente del fallback
+    const dbDesc = activeCompanyInfo?.metaDescription || activeCompanyInfo?.MetaDescription;
+    const descripcion = activeCompanyInfo?.descripcionCorta || activeCompanyInfo?.DescripcionCorta;
+    
+    return dbDesc || homeSeo?.d || descripcion || "Disdel, S.A. líder en Guatemala en suministros...";
+  }, [homeSeo, activeCompanyInfo]);
+
+  // 🚀 NUEVA UNIFICACIÓN DE KEYWORDS Y TAGS DINÁMICOS DEL HOME (Invisibles para humanos)
+  const seoKeywords = useMemo(() => {
+    const dbKeywords = activeCompanyInfo?.metaKeyword || activeCompanyInfo?.MetaKeyword;
+    const dbTags = activeCompanyInfo?.metaTags || activeCompanyInfo?.MetaTags;
+    
+    const base = homeSeo?.k || "limpieza, suministros, guatemala";
+    const extra = [dbKeywords, dbTags].filter(Boolean).join(", ");
+    return extra ? `${base}, ${extra}` : base;
+  }, [homeSeo, activeCompanyInfo]);
 
   const firstHeroImage = useMemo(() => {
   const firstSlide = bannerData?.sliderPrincipal?.[0];
@@ -113,13 +131,10 @@ const HomePage = () => {
     <main>
       <Helmet>
         {/* --- 🚀 SEO TÉCNICO B2B --- */}
-        <title> {seoTitle} </title>
-        <meta
-        name="description"
-        content={seoDesc}
-        />
+        <title>{seoTitle}</title>
+        <meta name="description" content={seoDesc} />
 
-        <meta name="keywords" content={homeSeo?.k || "limpieza, suministros, guatemala"} />
+        <meta name="keywords" content={seoKeywords} />
         <link rel="canonical" href="https://disdelsa.com/" />
 
         {firstHeroImage && (

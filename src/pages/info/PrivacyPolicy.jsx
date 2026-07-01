@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from "react"; 
+import { Helmet } from "react-helmet-async";
 import { FiShield, FiLock, FiMail, FiCheckCircle, FiChevronDown, FiChevronUp, FiTrash2 } from "react-icons/fi";
 import './PrivacyPolicy.css';
 
@@ -22,6 +23,13 @@ const PrivacyPolicy = () => {
 
     return (
         <div className="privacy-container">
+
+            <Helmet>
+                <title>Políticas de Privacidad | Disdel Guatemala</title>
+                <meta name="description" content="Lea las políticas de privacidad y protección de datos de Disdel, S.A. Conozca cómo protegemos su información de grado industrial y cómo solicitar la eliminación de datos." />
+                <link rel="canonical" href="https://disdelsa.com/politicas-de-privacidad" />
+            </Helmet>
+
             <div className="privacy-card">
                 
                 {/* ENCABEZADO PRINCIPAL: Icono + Logo */}
