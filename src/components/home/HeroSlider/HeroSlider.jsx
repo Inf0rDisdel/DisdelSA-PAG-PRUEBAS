@@ -56,19 +56,36 @@ const HeroSlider = () => {
     const validImg = ban?.Imagen && ban.Imagen.trim() !== "" ? ban.Imagen.trim() : null;
     const imgUrl = validImg ? `${AppConfig.baseImageUrl}${validImg}` : defaultImageFallback;
 
-    return (
-      <div className="banner-item" key={ban.EntityID}>
+    const bannerContent = (
+      <>
         <img 
           src={imgUrl} 
           alt={ban.Titulo || "Promoción Disdel"} 
-          width="660" height="155" //CLAVE: El navegador reserva el espacio exacto del banner en escritorio
+          width="660" height="155"
           style={{ width: '100%', height: '100%', objectFit: 'cover' }}
         />
         {route && (
-          <Link to={route} className="banner-view-btn">
+          // Cambiado de Link a span para evitar anidación de enlaces inválida en HTML
+          <span className="banner-view-btn">
             Ver productos
-          </Link>
+          </span>
         )}
+      </>
+    );
+
+    // Si tiene ruta configurada, todo el bloque se convierte en un Link clickeable
+    if (route) {
+      return (
+        <Link to={route} className="banner-item" key={ban.EntityID} style={{ display: 'block', textDecoration: 'none' }}>
+          {bannerContent}
+        </Link>
+      );
+    }
+
+    // Si no tiene ruta, se muestra como un div estático normal
+    return (
+      <div className="banner-item" key={ban.EntityID}>
+        {bannerContent}
       </div>
     );
   };
@@ -88,18 +105,33 @@ const HeroSlider = () => {
                 const validImg = slideImg && slideImg.trim() !== "" ? slideImg.trim() : null;
                 const imgUrl = validImg ? `${AppConfig.baseImageUrl}${validImg}` : defaultImageFallback;
 
-                return (
-                  <div key={slide.EntityID} className="mobile-slide-wrapper">
+                const slideContent = (
+                  <>
                     <img 
                       src={imgUrl} 
                       alt={slide.Titulo || "Suministros de limpieza Disdel"} 
                       fetchpriority={index === 0 ? "high" : "auto"}
                     />
                     {route && (
-                      <Link to={route} className="banner-view-btn-mini">Ver</Link>
+                      <span className="banner-view-btn-mini">Ver</span>
                     )}
+                  </>
+                );
+
+                if (route) {
+                  return (
+                    <Link key={slide.EntityID} to={route} className="mobile-slide-wrapper" style={{ display: 'block', textDecoration: 'none' }}>
+                      {slideContent}
+                    </Link>
+                  );
+                }
+
+                return (
+                  <div key={slide.EntityID} className="mobile-slide-wrapper">
+                    {slideContent}
                   </div>
                 );
+                
               })}
             </Carousel>
           </div>
@@ -129,20 +161,35 @@ const HeroSlider = () => {
                     const validImg = slideImg && slideImg.trim() !== "" ? slideImg.trim() : null;
                     const imgUrl = validImg ? `${AppConfig.baseImageUrl}${validImg}` : defaultImageFallback;
 
-                    return (
-                      <div key={slide.EntityID} className="desktop-slide-wrapper">
+                    const slideContent = (
+                      <>
                         <img 
                           src={imgUrl} 
                           alt={slide.Titulo || "Catálogo Disdel"} 
-                          width="540" height="320" // 🚀 CLAVE: El navegador reserva el espacio exacto del slider en escritorio
+                          width="540" height="320" 
                           style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                           fetchpriority={index === 0 ? "high" : "low"}
                           loading={index === 0 ? "eager" : "lazy"}
                           decoding={index === 0 ? "sync" : "async"}
                         />
                         {route && (
-                          <Link to={route} className="banner-view-btn">Ver productos</Link>
+                          <span className="banner-view-btn">Ver productos</span>
                         )}
+                      </>
+                    );
+
+                    // 🚀 Slider de escritorio 100% clickeable
+                    if (route) {
+                      return (
+                        <Link key={slide.EntityID} to={route} className="desktop-slide-wrapper" style={{ display: 'block', textDecoration: 'none' }}>
+                          {slideContent}
+                        </Link>
+                      );
+                    }
+
+                    return (
+                      <div key={slide.EntityID} className="desktop-slide-wrapper">
+                        {slideContent}
                       </div>
                     );
                   })}

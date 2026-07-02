@@ -421,6 +421,16 @@
     display: block;
   }
 
+  .brand-segment-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #222;
+    margin: 0 auto;
+    text-align:start;
+    letter-spacing: -0.3px;
+    line-height: 1.2;
+  }
+
   /* Ajustamos el esqueleto para que coincida con el banner móvil */
   .skeleton-shimmer.banner-sk {
     height: 180px !important;
