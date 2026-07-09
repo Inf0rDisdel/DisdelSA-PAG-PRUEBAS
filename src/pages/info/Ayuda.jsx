@@ -1,23 +1,21 @@
-import React,{useMemo} from "react";
+import React, { useMemo } from "react";
 import { Helmet } from "react-helmet-async";
 import './Ayuda.css';
 
 import { AppConfig } from "config/AppConfig";
 import { useBanners } from "hooks/useBanners";
 
-
 const Ayuda = () => {
-
-    const {data: bannerData} = useBanners();
+    const { data: bannerData } = useBanners();
 
     // Logotipo de respaldo predeterminado de Disdel para evitar /undefined en iconos
     const defaultIconFallback = `${AppConfig.baseImageUrl}logo-disdel.png`;
 
-    const images = useMemo(()=> {
-        const getUrl = (imgName) => imgName? `${AppConfig.baseImageUrl}${imgName}` : '';
+    const images = useMemo(() => {
+        const getUrl = (imgName) => imgName ? `${AppConfig.baseImageUrl}${imgName}` : '';
 
-        const iconAyuda = bannerData?.Iconos?.find(i=> i.Titulo?.trim() === "IconosAyuda")?.Imagen;
-        const iconAyuda2=bannerData?.Iconos?.find(i=> i.Titulo?.trim()=== "iconoAyuda2")?.Imagen;
+        const iconAyuda = bannerData?.Iconos?.find(i => i.Titulo?.trim() === "IconosAyuda")?.Imagen;
+        const iconAyuda2 = bannerData?.Iconos?.find(i => i.Titulo?.trim() === "iconoAyuda2")?.Imagen;
 
         return {
             ayuda: getUrl(iconAyuda),
@@ -50,9 +48,11 @@ const Ayuda = () => {
                 {/* TARJETA 1: MERCADEO */}
                 <div className="ayuda-card">
                     <div className="icon-wrapper">
+                        {/* 🚀 FIX DISEÑO: Agregada la clase 'ayuda-icon' para limitar el tamaño en la rejilla */}
                         <img 
                           src={images.ayuda || defaultIconFallback} 
                           alt="Ayuda Soporte" 
+                          className="ayuda-icon"
                           onError={(e) => {
                             e.target.onerror = null;
                             e.target.src = defaultIconFallback;
@@ -75,9 +75,11 @@ const Ayuda = () => {
                 {/* TARJETA 2: SOPORTE TÉCNICO */}
                 <div className="ayuda-card">
                     <div className="icon-wrapper">
+                        {/* 🚀 FIX DISEÑO: Agregada la clase 'ayuda-icon' para limitar el tamaño en la rejilla */}
                         <img 
                           src={images.mercadeo || defaultIconFallback} 
                           alt="Icono Mercadeo Soporte" 
+                          className="ayuda-icon"
                           onError={(e) => {
                             e.target.onerror = null;
                             e.target.src = defaultIconFallback;

@@ -5,18 +5,42 @@ export const ProductDetailSkeleton = () => {
   const isMobile = typeof window !== 'undefined' ? window.innerWidth <= 468 : false;
 
   return (
-    <div className="pdp-container pdp-skeleton-active" style={{ padding: isMobile ? '10px' : '20px', maxWidth: 'var(--site-max-width)', margin: '0 auto', boxSizing: 'border-box' }}>
+    // 🚀 FIX CLS 1: Agregamos width: '100%' para evitar que Flexbox lo encoja hacia el centro
+    <div 
+      className="pdp-container pdp-skeleton-active" 
+      style={{ 
+        padding: isMobile ? '10px' : '20px', 
+        width: '100%', 
+        maxWidth: 'var(--site-max-width)', 
+        margin: '0 auto', 
+        boxSizing: 'border-box' 
+      }}
+    >
       {/* Esqueleto del botón volver */}
       <Skeleton width="150px" height="20px" style={{ marginBottom: '25px' }} />
       
-      <div className="pdp-main-grid" style={{ display: isMobile ? 'block' : 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: isMobile ? '15px' : '40px' }}>
+      {/* 🚀 FIX CLS 2: Estilos inline de rejilla para que se posicione correctamente antes de descargar el CSS de la página */}
+      <div 
+        className="pdp-main-grid" 
+        style={{ 
+          display: isMobile ? 'block' : 'grid', 
+          gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', 
+          gap: isMobile ? '20px' : '40px' 
+        }}
+      >
         
-        {/* Esqueleto de la Galería (Debe medir exactamente 600px de alto en escritorio para evitar CLS) */}
-        <div className="pdp-gallery-wrapper" style={{ display: 'flex', gap: '15px' }}>
+        {/* Esqueleto de la Galería */}
+        <div 
+          className="pdp-gallery-wrapper" 
+          style={{ display: 'flex', gap: '15px', width: '100%' }}
+        >
           {!isMobile && (
-            <div className="pdp-thumbnails-vertical" style={{ width: '75px' }}>
+            <div 
+              className="pdp-thumbnails-vertical" 
+              style={{ display: 'flex', flexDirection: 'column', gap: '12px', width: '75px', flexShrink: 0 }}
+            >
               {[1, 2, 3].map(i => (
-                <Skeleton key={i} width="75px" height="75px" style={{ marginBottom: '12px' }} />
+                <Skeleton key={`thumb-sk-${i}`} width="75px" height="75px" style={{ marginBottom: '12px' }} />
               ))}
             </div>
           )}
@@ -26,7 +50,10 @@ export const ProductDetailSkeleton = () => {
         </div>
         
         {/* Esqueleto de la Info Técnica */}
-        <div className="pdp-info-section" style={{ marginTop: isMobile ? '20px' : '0' }}>
+        <div 
+          className="pdp-info-section" 
+          style={{ display: 'flex', flexDirection: 'column', gap: '15px', marginTop: isMobile ? '20px' : '0' }}
+        >
           <Skeleton width="30%" height="20px" style={{ marginBottom: '15px' }} className="skeleton-animation" />
           <Skeleton width="85%" height="45px" style={{ marginBottom: '15px' }} className="skeleton-animation" />
           <Skeleton width="40%" height="20px" style={{ marginBottom: '25px' }} className="skeleton-animation" />

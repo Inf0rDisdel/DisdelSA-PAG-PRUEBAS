@@ -22,10 +22,10 @@ const BannerSlider = () => {
   const listado = banners?.BannersMarcasInternos || [];
 
     const validTitles = [
-      "banner kcp", 
+      "leoncito", 
       "banner silver", 
       "bannerguantes", 
-      "3m"
+      "sanizol"
     ];
 
     return listado.filter(ban => {

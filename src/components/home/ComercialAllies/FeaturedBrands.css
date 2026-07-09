@@ -181,7 +181,7 @@
 @media (min-width: 481px) and (max-width: 1024px) {
   .featured-brands-section {
     /* 🚀 Subimos la sección agresivamente para cerrar el hueco */
-    margin-top: -60px !important; 
+    margin-top: -80px !important; 
     padding: 0 10px !important;
     min-height: auto !important;
   }
@@ -195,7 +195,7 @@
 
   .featured-brands-section .section-title {
     font-size: 1.1rem;
-    padding: 8px 18px;
+    padding: 8px 15px;
     margin-top: 0 !important;
     margin-bottom: 15px !important; /* Reducimos espacio entre título y logos */
   }

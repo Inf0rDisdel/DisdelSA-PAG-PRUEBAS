@@ -1,10 +1,11 @@
-/* --- CONTENEDOR PRINCIPAL --- */
+/* --- CONTENEDOR PRINCIPAL CORREGIDO (Fuerza el ancho en PC) --- */
 .ayuda-container {
-    max-width: 1000px; /* Ancho máximo para que no se estire demasiado */
+    width: 100%;       /* 🚀 FIX CLS / ANCHO: Evita que Flexbox encoja la página al centro */
+    max-width: 1400px; /* Ancho máximo para que no se estire demasiado */
     margin: 0 auto;    /* Centrado en la pantalla */
     padding: 60px 20px;
     min-height: 80vh;  /* Para que ocupe buen alto de pantalla */
-    background-color: #ffffff;
+    box-sizing: border-box; /* 🚀 SEGURIDAD: Evita que el padding deforme el ancho total */
 }
 
 /* --- HEADER (Alineado a la izquierda) --- */
@@ -55,6 +56,12 @@
     transform: translateY(-5px); /* Efecto de elevación al pasar el mouse */
     box-shadow: 0 10px 20px rgba(0,0,0,0.1);
     border-color: #135eab;
+}
+
+.ayuda-icon {
+    width: 35px;
+    height: 35px;
+    object-fit: contain;
 }
 
 /* --- ICONO --- */

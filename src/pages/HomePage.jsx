@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback, useMemo, lazy, Suspense } from 'react';
 import { Helmet } from 'react-helmet-async';
 import useCartStore from 'store/useCartStore';
 import { toast } from 'react-hot-toast'; 
@@ -8,31 +8,44 @@ import { AppConfig } from 'config/AppConfig';
 import { useCompanyData } from 'hooks/useCompanyData';
 import { getMainGraphSchema } from 'utils/schemas/mainSchemas';
 import HomeSkeleton from 'components/ui/Skeleton/HomeSkeleton';
-
-import FeaturedBrands from 'components/home/ComercialAllies/FeaturedBrands';
-import CategoryGrid from 'components/home/FeaturedCategories/CategoryGrid';
-import BannerSlider from 'components/home/HeroSlider/BannerSlider';
-import PromoNescafe from 'components/home/PromoNescafe/PromoNescafe';
-import HeroSlider from 'components/home/HeroSlider/HeroSlider';
-import NewsletterSignup from 'components/home/InfoSection/NewsLetterSignup';
-import InfoSection from 'components/home/InfoSection/InfoSection';
-import PromoLayout from 'components/home/PromoLayout/PromoLayout';
-import ProductCarousel from 'components/Carousel/ProductCarousel';
-
 import { optimizedSeoData } from 'utils/SEO/optimizedSeo';
+import { normalizeCompanyInfo } from 'utils/companyMapper';
+
+//CARGA INMEDIATA: Lo que el usuario ve sin hacer scroll (Arriba)
+const BannerSlider = lazy(() => import('components/home/HeroSlider/BannerSlider'));
+const PromoNescafe = lazy(() => import('components/home/PromoNescafe/PromoNescafe'));
+const HeroSlider = lazy(() => import('components/home/HeroSlider/HeroSlider'));
+
+//CARGA PEREZOSA : Componentes pesados que están más abajo
+const ProductCarousel = lazy(() => import('components/Carousel/ProductCarousel'));
+const CategoryGrid = lazy(() => import('components/home/FeaturedCategories/CategoryGrid'));
+const FeaturedBrands = lazy(() => import('components/home/ComercialAllies/FeaturedBrands'));
+const PromoLayout = lazy(() => import('components/home/PromoLayout/PromoLayout'));
+const InfoSection = lazy(() => import('components/home/InfoSection/InfoSection'));
+const NewsletterSignup = lazy(() => import('components/home/InfoSection/NewsLetterSignup'));
 
 const HomePage = () => {
+  
   const addItem = useCartStore((state) => state.addItem);
   const { data: allProducts, isLoading } = useProducts();
   const { data: bannerData} = useBanners();
   const { data: companyInfo } = useCompanyData();
 
   const activeCompanyInfo = useMemo(() => {
-    return Array.isArray(companyInfo) && companyInfo.length > 0 ? companyInfo[0] : {};
-  }, [companyInfo]);
+  if (!Array.isArray(companyInfo) || companyInfo.length === 0) {
+    return {};
+    }
 
+    return normalizeCompanyInfo(companyInfo[0]);
+  }, [companyInfo]);
+  
   const homeSeo = useMemo(() => optimizedSeoData['home'] || null, []);
   const fullGraphSchema = useMemo(() => getMainGraphSchema(activeCompanyInfo), [activeCompanyInfo]);
+
+  const schemaJson = useMemo(
+    () => JSON.stringify(fullGraphSchema),
+    [fullGraphSchema]
+  );
 
   const cleanBaseUrl = useMemo(() => 
     AppConfig.baseImageUrl.endsWith('/') ? AppConfig.baseImageUrl : `${AppConfig.baseImageUrl}/`
@@ -40,33 +53,35 @@ const HomePage = () => {
 
   // Título y Descripción dinámicos desde Base de Datos
   const seoTitle = useMemo(() => {
-    // Intentamos leer de tu nueva columna MetaTitle, luego del archivo estático y finalmente del fallback
-    const dbTitle = activeCompanyInfo?.metaTitle || activeCompanyInfo?.MetaTitle;
-    const nombre = activeCompanyInfo?.nombreEmpresa || activeCompanyInfo?.NombreEmpresa;
-  
-    return dbTitle || homeSeo?.t || (nombre 
-      ? `${nombre} | Líder en Suministros de Limpieza` 
-      : "Disdel Guatemala | Líder en Suministros de Limpieza y mantenimiento"
+  return (
+    activeCompanyInfo.metaTitle ||
+    homeSeo?.t ||
+    "Disdel Guatemala | Líder en Suministros de Limpieza"
     );
-  }, [homeSeo, activeCompanyInfo]);
+  }, [activeCompanyInfo, homeSeo]);
 
   const seoDesc = useMemo(() => {
-    // Intentamos leer de tu nueva columna MetaDescription, luego del archivo estático y finalmente del fallback
-    const dbDesc = activeCompanyInfo?.metaDescription || activeCompanyInfo?.MetaDescription;
-    const descripcion = activeCompanyInfo?.descripcionCorta || activeCompanyInfo?.DescripcionCorta;
-    
-    return dbDesc || homeSeo?.d || descripcion || "Disdel, S.A. líder en Guatemala en suministros...";
-  }, [homeSeo, activeCompanyInfo]);
+  return (
+    activeCompanyInfo.metaDescription ||
+    homeSeo?.d ||
+    activeCompanyInfo.descripcionCorta ||
+    "Disdel, S.A. líder en Guatemala en suministros..."
+    );
+  }, [activeCompanyInfo, homeSeo]);
 
   // 🚀 NUEVA UNIFICACIÓN DE KEYWORDS Y TAGS DINÁMICOS DEL HOME (Invisibles para humanos)
   const seoKeywords = useMemo(() => {
-    const dbKeywords = activeCompanyInfo?.metaKeyword || activeCompanyInfo?.MetaKeyword;
-    const dbTags = activeCompanyInfo?.metaTags || activeCompanyInfo?.MetaTags;
-    
-    const base = homeSeo?.k || "limpieza, suministros, guatemala";
-    const extra = [dbKeywords, dbTags].filter(Boolean).join(", ");
-    return extra ? `${base}, ${extra}` : base;
-  }, [homeSeo, activeCompanyInfo]);
+  const base = homeSeo?.k || "limpieza, suministros, guatemala";
+
+  const extra = [
+    activeCompanyInfo.metaKeyword,
+    activeCompanyInfo.metaTags,
+  ]
+    .filter(Boolean)
+    .join(", ");
+
+  return extra ? `${base}, ${extra}` : base;
+  }, [activeCompanyInfo, homeSeo]);
 
   const firstHeroImage = useMemo(() => {
   const firstSlide = bannerData?.sliderPrincipal?.[0];
@@ -93,7 +108,6 @@ const HomePage = () => {
     });
     toast.success(`${product.Descripcion.substring(0, 20)}... añadido`, {
       position: 'bottom-right',
-      style: { background: '#135eab', color: '#fff' }
     });
   }, [addItem]);    
 
@@ -102,30 +116,56 @@ const HomePage = () => {
         return { higiene: [], coffee: [], cotizados: [] };
     }
 
-    const format = (p) => ({ ...p, id: p.IdProducto, name: p.Descripcion, image: `${AppConfig.baseImageUrl}productos/${p.Imagen}` });
+    const formatProduct = (p) => ({
+      ...p,
+      id: p.IdProducto,
+      name: p.Descripcion,
+      image: `${AppConfig.baseImageUrl}productos/${p.Imagen}`
+    });
 
     const seenHigiene = new Set(); const seenCoffee = new Set(); const seenCotizados = new Set();
     const higiene = []; const coffee = []; const cotizados = [];
 
-    allProducts.forEach(p => {
-        const pid = String(p.IdProducto);
-        if (String(p.IdSegmento) === AppConfig.HOME_SEGMENTS.HIGIENE && !seenHigiene.has(pid)) {
-            if (higiene.length < 15) { higiene.push(format(p)); seenHigiene.add(pid); }
+    allProducts.forEach((p) => {
+    const pid = String(p.IdProducto);
+
+    if (
+        String(p.IdSegmento) === AppConfig.HOME_SEGMENTS.HIGIENE &&
+        !seenHigiene.has(pid)
+    ) {
+        if (higiene.length < 15) {
+            higiene.push(formatProduct(p));
+            seenHigiene.add(pid);
         }
-        if (String(p.IdCategoria) === AppConfig.HOME_SEGMENTS.COFFEE_BREAK && !seenCoffee.has(pid)) {
-            if (coffee.length < 15) { coffee.push(format(p)); seenCoffee.add(pid); }
+    }
+
+    if (
+        String(p.IdCategoria) === AppConfig.HOME_SEGMENTS.COFFEE_BREAK &&
+        !seenCoffee.has(pid)
+    ) {
+        if (coffee.length < 15) {
+            coffee.push(formatProduct(p));
+            seenCoffee.add(pid);
         }
-        if (cotizados.length < 12 && !seenCotizados.has(pid)) {
-            cotizados.push(format(p)); seenCotizados.add(pid);
-        }
+    }
+
+    if (cotizados.length < 12 && !seenCotizados.has(pid)) {
+        cotizados.push(formatProduct(p));
+        seenCotizados.add(pid);
+    }
     });
 
     return { cotizados, higiene, coffee };
   }, [allProducts]);
 
-  const showSkeletons = isLoading && (!allProducts || allProducts.length === 0);
+  const hasProducts =
+    Array.isArray(allProducts) &&
+    allProducts.length > 0;
 
-  if (showSkeletons) return <HomeSkeleton />;
+  const showSkeleton =
+      isLoading && !hasProducts;
+
+  if (showSkeleton) return <HomeSkeleton />;
 
   return (
     <main>
@@ -155,7 +195,9 @@ const HomePage = () => {
         <meta name="twitter:description" content="Abastecimiento técnico para empresas de limpieza y mantenimiento." />
 
         {/* --- SCHEMAS --- */}
-        <script type="application/ld+json">{JSON.stringify(fullGraphSchema)}</script>
+        <script type="application/ld+json">
+          {schemaJson}
+        </script>
       </Helmet>
 
       <h1 style={{
@@ -172,11 +214,18 @@ const HomePage = () => {
       </h1>
 
       <HeroSlider />
-      <CategoryGrid /> 
-      <FeaturedBrands />
-      <BannerSlider />
 
-      {/* Condición ajustada: Si está cargando O tiene productos, muestra el componente */}
+      <Suspense fallback={null}>
+        <CategoryGrid /> 
+        <FeaturedBrands />
+      </Suspense>
+
+      <Suspense fallback={null}>
+        <BannerSlider />
+      </Suspense>
+
+    {/* 3. BLOQUE DE CAROUSELES (Como usan el mismo componente ProductCarousel, se envuelven juntos) */}
+    <Suspense fallback={null}>
       {(isLoading || carruseles.cotizados.length > 0) && (
         <div className="carousel-wrapper">
           <ProductCarousel
@@ -200,9 +249,14 @@ const HomePage = () => {
           />
         </div>
       )}
+    </Suspense>
 
-      <PromoNescafe />
+      <Suspense fallback={null}>
+        <PromoNescafe />
+      </Suspense>
 
+    {/* 4. ÚLTIMO BLOQUE DE LA PÁGINA (Componentes del pie de página) */}
+    <Suspense fallback={null}>
       {(isLoading || carruseles.coffee.length > 0) && (
         <div className="carousel-wrapper">
           <ProductCarousel
@@ -218,8 +272,9 @@ const HomePage = () => {
       <PromoLayout />
       <NewsletterSignup />
       <InfoSection />
+    </Suspense>
     </main>
   );
 };
 
-export default HomePage;
+export default React.memo(HomePage);

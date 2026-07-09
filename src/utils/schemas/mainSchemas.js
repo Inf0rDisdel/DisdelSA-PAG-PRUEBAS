@@ -5,22 +5,59 @@ export const getMainGraphSchema = (companyInfo = {}) => {
 
   const info = companyInfo || {};
 
-  const name = info.nombreEmpresa || info.NombreEmpresa || "Disdel, S.A.";
+  const name =
+    info.nombreEmpresa ||
+    info.NombreEmpresa ||
+    "Disdel, S.A.";
+
+  const metaTitle =
+    info.metaTitle ||
+    info.MetaTitle ||
+    "Disdel Guatemala";
+
+  const metaDescription =
+    info.metaDescription ||
+    info.MetaDescription ||
+    info.descripcionCorta ||
+    info.DescripcionCorta ||
+    "Empresa líder en Guatemala especializada en suministros de limpieza profesional.";
+
+    const opening =
+    info.horaApertura ||
+    info.HoraApertura ||
+    "07:00";
+
+    const closing =
+    info.horaCierre ||
+    info.HoraCierre ||
+    "17:00";
+
   const alternate = (info.nombreAlternativo || info.NombreAlternativo) 
     ? [info.nombreAlternativo || info.NombreAlternativo] 
     : ["Disdel", "Disdelsa", "Disdel Guatemala"];
   
-  const description = info.descripcionCorta || info.DescripcionCorta || "Empresa líder en Guatemala especializada en suministros de limpieza profesional.";
+  const description = info.metaDescription || info.MetaDescription || info.descripcionCorta || info.DescripcionCorta || "Empresa líder en Guatemala especializada en suministros de limpieza profesional.";
+  
   const telephone = (info.telefono || info.Telefono) 
     ? String(info.telefono || info.Telefono) 
-    : "+502-2422-6120";
+    : "2422-6120";
     
   const email = info.correo || info.Correo || "info@disdelsa.com";
-  const addres = info.direccion || info.Direccion || "15 Calle 16-30 Zona 1";
+  const address = info.direccion || info.Direccion || "15 Calle 16-30 Zona 1";
   const url = info.url || info.URL || "https://disdelsa.com/";
   const locality = info.ciudad || info.Ciudad || "Ciudad de Guatemala";
   const postalCode = info.codigoPostal || info.CodigoPostal || "01001";
   const country = info.pais || info.Pais || "GT";
+
+  const keywords = [
+    info.metaKeyword,
+    info.MetaKeyword,
+    info.metaTags,
+    info.MetaTags
+  ]
+    .filter(Boolean)
+    .join(", ");
+
 
   // --- ESTRUCTURA DE SUCURSALES (Multi-Location) ---
   // Sucursal 1: Oficina Central (Zona 1) - Traída dinámicamente de tu Base de Datos
@@ -32,7 +69,7 @@ export const getMainGraphSchema = (companyInfo = {}) => {
     "email": email,
     "address": {
       "@type": "PostalAddress",
-      "streetAddress": addres,
+      "streetAddress": address,
       "addressLocality": locality,
       "addressRegion": "Guatemala",
       "postalCode": postalCode,
@@ -76,10 +113,11 @@ export const getMainGraphSchema = (companyInfo = {}) => {
         "image": "https://disdelsa.com/og-image.jpg",
 
         "description": description,
-        "telephone": telephone,
+        "telephone": `+502${telephone}`,
         "email": email,
 
         "keywords": [
+          ...keywords.split(",").map(k => k.trim()).filter(Boolean),
           "Disdel",
           "Suministros de limpieza",
           "Productos de limpieza Guatemala",
@@ -92,28 +130,40 @@ export const getMainGraphSchema = (companyInfo = {}) => {
 
         "priceRange": "$$",
 
-        "location": [
+        "departament": [
           sucursalZona1,
           sucursalZona3
         ],
 
         "address": {
           "@type": "PostalAddress",
-          "streetAddress": addres,
+          "streetAddress": address,
           "addressLocality": locality,
           "addressRegion": "Guatemala",
           "postalCode": postalCode,
           "addressCountry": country
         },
 
+        "hasMap":
+          "https://maps.google.com/?q=15+Calle+16-30+Zona+1+Ciudad+de+Guatemala",
+
         "areaServed": {
           "@type": "Country",
           "name": "Guatemala"
         },
 
+        "openingHours": [
+          `Mo-Fr ${opening}-${closing}`
+        ],
+
+        "foundingLocation": {
+          "@type": "Place",
+          "name": "Ciudad de Guatemala"
+        },
+
         "contactPoint": {
           "@type": "ContactPoint",
-          "telephone": telephone,
+          "telephone": `+502${telephone}`,
           "contactType": "Ventas",
           "availableLanguage": ["Spanish"]
         },
@@ -128,22 +178,43 @@ export const getMainGraphSchema = (companyInfo = {}) => {
       {
         "@type": "WebSite",
         "@id": "https://disdelsa.com/#website",
+
         "url": "https://disdelsa.com/",
-        "name": "Disdel Guatemala",
+
+        "name": metaTitle,
+
+        "description": metaDescription,
+
         "publisher": {
           "@id": "https://disdelsa.com/#organization"
         },
 
         "potentialAction": {
           "@type": "SearchAction",
-          "target": "https://disdelsa.com/buscar?q={search_term_string}",
-          "query-input": "required name=search_term_string"
+          "target":
+            "https://disdelsa.com/buscar?q={search_term_string}",
+          "query-input":
+            "required name=search_term_string"
+        }
+      },
+
+      {
+        "@type": "WebPage",
+        "@id": "https://disdelsa.com/#webpage",
+
+        "url": "https://disdelsa.com/",
+
+        "name": metaTitle,
+
+        "description": metaDescription,
+
+        "isPartOf": {
+          "@id": "https://disdelsa.com/#website"
         },
-        "sameAs": [
-        "https://www.facebook.com/disdelsagt",
-        "https://www.instagram.com/disdelsagt",
-        "https://www.linkedin.com/company/disdelsa"
-        ]
+
+        "about": {
+          "@id": "https://disdelsa.com/#organization"
+        }
       }
     ]
   };

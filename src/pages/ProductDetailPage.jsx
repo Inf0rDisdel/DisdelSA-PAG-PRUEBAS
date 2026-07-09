@@ -192,9 +192,9 @@ const ProductDetailPage = () => {
   // if (isLoading) return <div>Cargando Producto...</div>;
   // if (isError || !product) return <div>Error al cargar producto</div>;
 
-  if (isLoading) {
-    return <ProductDetailSkeleton />; // 🚀 Reutilización limpia de código
-  }
+  if (isLoading || !product || !product.IdProducto) {
+  return <ProductDetailSkeleton />;
+}
 
   if (isError || !product) {
     return (

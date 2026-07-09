@@ -124,10 +124,28 @@ const Footer = () => {
                     </div>
                     {/* Caja de logos de pago blanca con sombra sutil */}
                     <div className="payment-logos-card">
-                        {imgVisa && <img src={imgVisa} alt="Métodos de pago aceptados" width="120" height="40" />}
+                    {imgVisa ? (
+                        <img
+                        src={imgVisa}
+                        alt="Métodos de pago aceptados"
+                        width="120"
+                        height="40"
+                        />
+                        ) : (
+                        <div style={{ width: 120, height: 40 }} />
+                    )}
                     </div>
                     <div className="mascot">
-                       {imgMascota && <img src={imgMascota} alt="Mascota Disdel" width="180" height="340" />}
+                        {imgMascota ? (
+                            <img
+                            src={imgMascota}
+                            alt="Mascota Disdel"
+                            width="310"
+                            height="340"
+                            />
+                            ) : (
+                            <div style={{ width: 180, height: 340 }} />
+                        )}
                     </div>
                     <div className="footer-copyright">
                         <p>© 2026 Disdel S.A. Todos los derechos reservados.</p>

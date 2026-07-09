@@ -3,15 +3,15 @@
   width: 100%;
   max-width: var(--site-max-width) !important; 
   height: 100%;
-  margin: 20px auto;    
-  padding: 0 10px; 
+  margin: 30px auto;    
+  padding: 10px 0; 
   aspect-ratio: 1300 / 270;
   contain: layout;  
 }
 
 .banner-img {
   width: 100%;
-  height: 270px; /* Altura fija en desktop para orden */
+  height: 100%; /* Altura fija en desktop para orden */
   object-fit: cover;
   border-radius: 15px !important;
   display: block;
@@ -49,7 +49,7 @@
   
   .banner-slider-container {
     /* Reducimos márgenes para que no flote tanto */
-    margin: 15px auto !important; 
+    margin: 20px auto !important; 
     padding: 0 15px !important; /* Un poquito de margen a los lados para que no tope al borde */
     max-width: 100%;
     width: 100%;
@@ -109,11 +109,11 @@
 
   .banner-slider-container .slick-slide {
     max-height: none !important;
-    height: auto !important; /* 🔥 Permite que la imagen dicte su altura original 🔥 */
+    height: 250px !important; /* 🔥 Permite que la imagen dicte su altura original 🔥 */
   }
 
   .banner-img {
-    height: auto !important;      /* 🔥 Mantiene la proporción original 🔥 */
+    height: 100% !important;      /* 🔥 Mantiene la proporción original 🔥 */
     width: 100% !important;       /* 🔥 Ocupa todo el ancho de la pantalla 🔥 */
     border-radius: 0 !important;  /* 🔥 Quitamos bordes redondeados para look de banner completo 🔥 */
     object-fit: contain !important; 
