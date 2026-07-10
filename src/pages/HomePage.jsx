@@ -32,11 +32,20 @@ const HomePage = () => {
   const { data: companyInfo } = useCompanyData();
 
   const activeCompanyInfo = useMemo(() => {
-  if (!Array.isArray(companyInfo) || companyInfo.length === 0) {
-    return {};
+    if (!Array.isArray(companyInfo) || companyInfo.length === 0) {
+      return {};
     }
+    
+    const rawInfo = companyInfo[0];
+    const mappedInfo = normalizeCompanyInfo(rawInfo);
 
-    return normalizeCompanyInfo(companyInfo[0]);
+    // 🚀 FUSIÓN DE SEGURIDAD: Mezclamos el mapeador con el objeto bruto de la base de datos
+    // Esto asegura que tengamos acceso directo a los backing fields ("<MetaTitle>k__BackingField")
+    // incluso si 'normalizeCompanyInfo' no los mapeó explícitamente en el archivo de utilidades.
+    return {
+      ...rawInfo,
+      ...mappedInfo
+    };
   }, [companyInfo]);
   
   const homeSeo = useMemo(() => optimizedSeoData['home'] || null, []);

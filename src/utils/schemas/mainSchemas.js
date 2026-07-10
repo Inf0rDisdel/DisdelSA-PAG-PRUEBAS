@@ -2,7 +2,6 @@ import { createSlug } from '../slugify';
 import { AppConfig } from 'config/AppConfig';
 
 export const getMainGraphSchema = (companyInfo = {}) => {
-
   const info = companyInfo || {};
 
   const name =
@@ -49,6 +48,8 @@ export const getMainGraphSchema = (companyInfo = {}) => {
   const postalCode = info.codigoPostal || info.CodigoPostal || "01001";
   const country = info.pais || info.Pais || "GT";
 
+  const cleanPhone = telephone.startsWith("+502") ? telephone : `+502-${telephone}`;
+
   const keywords = [
     info.metaKeyword,
     info.MetaKeyword,
@@ -65,7 +66,7 @@ export const getMainGraphSchema = (companyInfo = {}) => {
     "@type": "WholesaleStore",
     "@id": "https://disdelsa.com/#store-zona1",
     "name": name,
-    "telephone": telephone,
+    "telephone": cleanPhone,
     "email": email,
     "address": {
       "@type": "PostalAddress",
@@ -103,8 +104,8 @@ export const getMainGraphSchema = (companyInfo = {}) => {
 
         "name": name,
         "alternateName": alternate,
-
         "url": url,
+
         "logo": {
           "@type": "ImageObject",
           "url": "https://disdelsa.com/logo-disdel.png"
@@ -113,7 +114,7 @@ export const getMainGraphSchema = (companyInfo = {}) => {
         "image": "https://disdelsa.com/og-image.jpg",
 
         "description": description,
-        "telephone": `+502${telephone}`,
+        "telephone": cleanPhone,
         "email": email,
 
         "keywords": [
@@ -130,7 +131,7 @@ export const getMainGraphSchema = (companyInfo = {}) => {
 
         "priceRange": "$$",
 
-        "departament": [
+        "department": [
           sucursalZona1,
           sucursalZona3
         ],
@@ -163,7 +164,7 @@ export const getMainGraphSchema = (companyInfo = {}) => {
 
         "contactPoint": {
           "@type": "ContactPoint",
-          "telephone": `+502${telephone}`,
+          "telephone":cleanPhone,
           "contactType": "Ventas",
           "availableLanguage": ["Spanish"]
         },
