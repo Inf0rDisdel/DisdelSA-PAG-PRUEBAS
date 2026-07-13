@@ -17,6 +17,22 @@
   display: block;
 }
 
+.banner-slider-container.loading-state {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.banner-skeleton {
+  width: 100%;
+  height: 100%;
+  aspect-ratio: 1300 / 270; /* Mismo aspect ratio que el slider final */
+  background: linear-gradient(90deg, #f0f2f5 25%, #e2e8f0 50%, #f0f2f5 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 15px;
+}
+
 /* Este es el límite en escritorio */
 .banner-slider-container .slick-slide {
   max-height: 270px; 
@@ -27,15 +43,6 @@
   height: 100%;
   object-fit: cover; 
   display: block;
-  border-radius: 15px;
-}
-
-.skeleton-banner {
-  width: 100%;
-  height: 270px;
-  background: linear-gradient(90deg, #f0f2f5 25%, #e2e8f0 50%, #f0f2f5 75%);
-  background-size: 200% 100%;
-  animation: shimmer 1.5s infinite;
   border-radius: 15px;
 }
 
@@ -55,6 +62,10 @@
     width: 100%;
     box-sizing: border-box;
     overflow: hidden;
+  }
+
+  .banner-skeleton {
+    aspect-ratio: 16 / 9; /* Ajuste para tablets */
   }
 
   .banner-slider-container .slick-list {
@@ -84,17 +95,18 @@
     bottom: 5px !important; 
     position: relative; /* Esto quita el espacio vacío de abajo */
   }
-}
 
-.banner-slider-container .slick-dots li button:before {
-  font-size: 8px; 
-  color: #135eab; 
-  opacity: 0.3;
-}
+  .banner-slider-container .slick-dots li button:before {
+    font-size: 8px; 
+    color: #135eab; 
+    opacity: 0.3;
+  }
 
-.banner-slider-container .slick-dots li.slick-active button:before {
-  opacity: 1;
-  color: #135eab;
+  .banner-slider-container .slick-dots li.slick-active button:before {
+    opacity: 1;
+    color: #135eab;
+  }
+
 }
 
 /* --- SOLO PARA MOVILES (≤ 480px) --- */
@@ -105,6 +117,11 @@
     margin-top: 0;
     max-width: 100%;
     aspect-ratio: 16 / 9; 
+  }
+
+  .banner-skeleton {
+    aspect-ratio: 16 / 9; /* Forzamos la relación móvil para que el skeleton no salte */
+    border-radius: 0;
   }
 
   .banner-slider-container .slick-slide {

@@ -21,18 +21,57 @@ const BannerSlider = () => {
   const displayBanners = useMemo(() => {
   const listado = banners?.BannersMarcasInternos || [];
 
-    const validTitles = [
-      "leoncito", 
-      "banner silver", 
-      "bannerguantes", 
+    const desktopTitles = [
+      "leoncito",
+      "banner silver",
+      "bannerguantes",
       "sanizol"
     ];
+
+    const mobileTitles = [
+      "banner kcp",
+      "banner silver",
+      "bannerguantes",
+      "3m"
+    ];
+
+    const validTitles = isPhone ? mobileTitles : desktopTitles;
 
     return listado.filter(ban => {
       const tituloNormalizado = ban.Titulo?.toLowerCase().trim() || "";
       return validTitles.includes(tituloNormalizado);
     });
-  }, [banners]);
+  }, [banners, isPhone]);
+
+  useEffect(() => {
+    if (displayBanners && displayBanners.length > 0) {
+      const primerBanner = displayBanners[0];
+      const imgMovil = primerBanner.ImagenMovil || primerBanner.BannerImagenMovil;
+      const imgDesktop = primerBanner.Imagen;
+      const rutaImagen = (isPhone && imgMovil) ? imgMovil : imgDesktop;
+
+      if (rutaImagen) {
+        const urlFinal = `${AppConfig.baseImageUrl}${rutaImagen}`;
+
+        // Verificamos si ya existe el preload para no duplicarlo en el head
+        const existePreload = document.querySelector(`link[rel="preload"][href="${urlFinal}"]`);
+        if (!existePreload) {
+          const link = document.createElement('link');
+          link.rel = 'preload';
+          link.as = 'image';
+          link.href = urlFinal;
+          document.head.appendChild(link);
+
+          // Limpieza al desmontar el componente o cambiar de banner
+          return () => {
+            if (document.head.contains(link)) {
+              document.head.removeChild(link);
+            }
+          };
+        }
+      }
+    }
+  }, [displayBanners, isPhone]);
 
   const settings = {
     dots: false,
@@ -45,7 +84,7 @@ const BannerSlider = () => {
     arrows: false,
     fade: true, 
     pauseOnHover: false,
-    lazyLoad: 'progressive'
+    lazyLoad: 'ondemand'
   };
 
   if (isLoading) {

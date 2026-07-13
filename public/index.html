@@ -14,7 +14,8 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
     <!-- 2. FUENTES (Carga prioritaria) -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" media="print" onload="this.media='all'" />
     
     <!-- 3. FAVICONS -->
     <link rel="icon" type="image/png" href="%PUBLIC_URL%/logo-disdel.png?v=2" />

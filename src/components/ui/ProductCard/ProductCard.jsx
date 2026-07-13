@@ -57,7 +57,17 @@ const ProductCard = memo(({ product, index }) => {
       <meta itemProp="brand" content={Marca || "Disdel"} />
 
       <div className="product-brand-badge">
-        {badgeLogo && <img src={badgeLogo} alt="Disdel" className="badge-logo-img" loading="lazy" />}
+        {badgeLogo && (
+          <img 
+            src={badgeLogo} 
+            alt="Disdel" 
+            className="badge-logo-img" 
+            loading="lazy" 
+            decoding="async" 
+            width="50" 
+            height="16" 
+          />
+        )}
       </div>
       <div className="product-id-badge">ID: {IdProducto}</div>
 

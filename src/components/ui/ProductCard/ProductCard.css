@@ -14,6 +14,12 @@
   will-change: transform;
 }
 
+.product-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 12px 30px rgba(19, 94, 171, 0.12);
+  border-color: #135eab;
+}
+
 /* --- 1. EL BADGE DEL LOGO (Aseguramos visibilidad) --- */
 .product-brand-badge {
   position: absolute;
@@ -49,12 +55,6 @@ font-size: 2rem;
 transition: transform 0.2s;
 }
 
-.product-card:hover {
-  transform: translateY(-8px);
-  box-shadow: 0 12px 30px rgba(19, 94, 171, 0.12);
-  border-color: #135eab;
-}
-
 .product-status-indicator {
 position: absolute;
 top: 15px;
@@ -79,6 +79,7 @@ color: #135eab;
 z-index: 2;
 display: none;
 }
+
 .product-link {/*--------PARA COREEJIR------*/
   text-decoration: none;
   color: inherit;
@@ -94,9 +95,10 @@ display: none;
   align-items: center;
   justify-content: center;
   margin-bottom: 15px;
-  background-color: #f9f9f9;
+  background-color: #ffffff;
   border-radius: 10px;
   overflow: hidden;
+  z-index: 1;
 }
 
 .product-image {/*----PRARA COREJIR-------*/
@@ -105,7 +107,7 @@ max-height: 100%;
 object-fit: contain;
 transition: opacity 0.3s ease;
 aspect-ratio: 1 / 1 ;
-background-color: #f5f5f5;
+background-color: #ffffff;
 }
 
 .brand-tag {/*-----PARA ACOREJIR*/
@@ -137,8 +139,9 @@ letter-spacing: 0.5px;
 }
 
 .product-card-footer {
-margin-top: 15px;
+margin-top: auto;
 width: 100%;
+padding-top: 15px;
 }
 
 .sold-by {
@@ -166,15 +169,18 @@ font-size: 14px;
   gap: 8px;
   transition: all 0.3s ease;
 }
+
 .cart-icon-btn {
 font-size: 16px;
 color: white;
 }
+
 .quote-button:hover {
 background-color: #0d4a86;
 transform: scale(1.03); /* Efecto de crecimiento pro al pasar el mouse */
 box-shadow: 0 5px 15px rgba(19, 94, 171, 0.4);
 }
+
 .product-status-indicator { display: none; }
 /* --- IMAGEN --- */
 .product-image-container {
@@ -210,7 +216,6 @@ margin-top: auto;
   }
 
   .product-image-container { 
-    height: 100px !important; 
     margin-bottom: 8px; 
   }
 
