@@ -5,6 +5,8 @@ import ProductCardSkeleton from 'components/ui/ProductCard/ProductCardSkeleton';
 export const CatalogSkeleton = () => {
   const isMobile = typeof window !== 'undefined' ? window.innerWidth <= 468 : false;
 
+  const skeletonCount = isMobile ? 8 : 12;
+
   return (
     <div style={{ background: '#f9fafb', minHeight: '100vh', paddingBottom: '40px' }}>
       <div style={{ width: '100%', maxWidth: 'var(--site-max-width)', margin: '0 auto', padding: isMobile ? '0 10px' : '0 20px', boxSizing: 'border-box' }}>
@@ -33,8 +35,8 @@ export const CatalogSkeleton = () => {
           {/* Grid de productos */}
           <main style={{ width: '100%' }}>
             <div style={{ display: 'grid', gridTemplateColumns: isMobile ? 'repeat(2, 1fr)' : 'repeat(auto-fill, minmax(220px, 1fr))', gap: isMobile ? '10px' : '25px' }}>
-              {[1, 2, 3, 4, 5, 6].map(n => (
-                <ProductCardSkeleton key={n} />
+              {Array.from({ length: skeletonCount }).map((_, index) => (
+                <ProductCardSkeleton key={`cat-sk-${index}`} />
               ))}
             </div>
           </main>

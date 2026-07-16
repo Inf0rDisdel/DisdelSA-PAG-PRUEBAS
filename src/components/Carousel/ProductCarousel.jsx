@@ -1,5 +1,6 @@
 import React,{useMemo, useState, useEffect} from 'react';
 import Slider from 'react-slick';
+import { Link } from 'react-router-dom';
 import "slick-carousel/slick/slick.css"; 
 import "slick-carousel/slick/slick-theme.css";
 import './ProductCarousel.css';
@@ -9,7 +10,7 @@ import ProductCard from 'components/ui/ProductCard/ProductCard';
 import ProductCardSkeleton from 'components/ui/ProductCard/ProductCardSkeleton';
 import Skeleton from 'components/ui/Skeleton/Skeleton';
 
-const ProductCarousel = ({ title, products = [], isLoading, variant = '' }) => {
+const ProductCarousel = ({ title, products = [], isLoading, variant = '' , viewAllUrl}) => {
   const{data: bannerData} = useBanners();
 
   const [isMobile, setIsMobile] = useState(typeof window !== 'undefined' ? window.innerWidth <= 480 : false);
@@ -55,8 +56,8 @@ const ProductCarousel = ({ title, products = [], isLoading, variant = '' }) => {
     infinite: products.length > 5, 
     speed: 800,
     slidesToShow: 5, 
-    slidesToScroll: 1,
-    autoplay: true,       // ACTIVADO
+    slidesToScroll: 4,
+    autoplay: false,       // ACTIVADO
     autoplaySpeed: 3500,  // 3.5 segundos (el punto dulce del marketing)
     pauseOnHover: true,   // Crucial para UX: detiene el scroll al interactuar
     cssEase: "cubic-bezier(0.25, 0.46, 0.45, 0.94)",
@@ -91,7 +92,7 @@ const ProductCarousel = ({ title, products = [], isLoading, variant = '' }) => {
     return null; 
   }
 
-   return (
+  return (
     <section 
       className={`product-carousel-container ${variant}`}
       // 🚀 PROGRAMACIÓN DEFENSIVA: Solo aplicamos el fondo si la imagen ha sido cargada con éxito de la API
@@ -100,6 +101,11 @@ const ProductCarousel = ({ title, products = [], isLoading, variant = '' }) => {
     >
       <div className="carousel-header">
         <h2 className="carousel-title">{title}</h2>
+        {viewAllUrl && (
+          <Link to={viewAllUrl} className='carousel-view-all-btn'>
+            Ver todo &rarr;
+          </Link>
+        )}
       </div>
       
       <Slider {...settings}>

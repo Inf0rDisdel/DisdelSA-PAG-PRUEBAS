@@ -17,6 +17,15 @@
   transition: max-width 0.3s ease;
 }
 
+.carousel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 22px;
+  padding: 0 10px;
+}
+
 /* 🚀 FIX DE RESPONSIVIDAD PARA EL GRID DE CARGA: Evita deformación y CLS */
 .carousel-skeleton-grid {
   display: grid;
@@ -63,8 +72,8 @@
   position: relative;
   display: inline-flex;
   align-items: center;
-  padding: 10px 20px;
-  margin-bottom: 22px;
+  padding: 6px 12px;
+  margin-bottom: 0;
   font-size: 1.2rem;
   font-weight: 700;
   letter-spacing: -0.5px;
@@ -79,21 +88,51 @@
   transition: transform 0.35s ease, box-shadow 0.35s ease, border-color 0.35s ease;
 }
 
+.carousel-view-all-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #135eab;
+  background-color: transparent;
+  border: 1.5px solid #135eab;
+  border-radius: 20px;
+  text-decoration: none;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.02, 1);
+}
+
+.carousel-view-all-btn:hover {
+  background-color: #135eab;
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(19, 94, 171, 0.15);
+  transform: translateY(-1px);
+}
+
 .carousel-title::before {
   content: "";
 }
 
 .slick-prev, .slick-next {
-  width: 45px;
-  height: 45px;
+  width: 48px;
+  height: 48px;
   z-index: 100 !important;
   top: 45%;
+
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+  opacity: 0.4;
 }
 
 .slick-prev:before, .slick-next:before {
   font-family: 'slick';
   font-size: 28px;
   color: #96c121 !important;
+  opacity: 1;
+}
+
+.slick-slider:hover .slick-prev,
+.slick-slider:hover .slick-next {
   opacity: 1;
 }
 
@@ -150,5 +189,15 @@
     font-size: 0.9rem;
     padding: 6px 15px;
     margin-bottom: 15px;
+  }
+
+  .carousel-header {
+    margin-bottom: 15px;
+    padding: 0 5px;
+  }
+  .carousel-view-all-btn {
+    font-size: 0.65rem;
+    padding: 5px 12px;
+    border-radius: 15px;
   }
 }

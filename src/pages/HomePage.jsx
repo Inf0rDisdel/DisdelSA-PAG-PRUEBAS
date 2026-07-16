@@ -255,6 +255,7 @@ const HomePage = () => {
             addToCart={handleAddToCart} 
             variant="carousel-higiene"
             isLoading={isLoading}
+            viewAllUrl="/categoria/banos-e-higiene/dispensadores-y-accesorios"
           />
         </div>
       )}
@@ -274,6 +275,7 @@ const HomePage = () => {
             addToCart={handleAddToCart} 
             variant="carousel-coffe"
             isLoading={isLoading}
+            viewAllUrl="/categoria/cafeteria/cafe-y-complementos" 
           />
         </div>
       )}

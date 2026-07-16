@@ -96,7 +96,7 @@ const HeroSlider = () => {
         <>
           <div className="mobile-hero-carousel">
             <Carousel showArrows={false} showThumbs={false} showStatus={false}
-              infiniteLoop={true} autoPlay={true} interval={3500} stopOnHover={false}>
+              infiniteLoop={true} autoPlay={true} interval={4000} stopOnHover={false}>
               {banners.sliderPrincipal.map((slide, index) => {
                 const route = getBannerRoute(slide);
 

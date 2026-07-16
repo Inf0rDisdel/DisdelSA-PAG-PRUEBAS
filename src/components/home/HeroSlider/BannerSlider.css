@@ -56,7 +56,7 @@
   
   .banner-slider-container {
     /* Reducimos márgenes para que no flote tanto */
-    margin: 20px auto !important; 
+    margin: 10px auto !important; 
     padding: 0 15px !important; /* Un poquito de margen a los lados para que no tope al borde */
     max-width: 100%;
     width: 100%;

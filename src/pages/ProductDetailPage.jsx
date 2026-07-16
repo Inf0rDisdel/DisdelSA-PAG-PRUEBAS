@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo, useCallback, } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async'; 
 import './ProductDetailPage.css';
 import ProductDetailSkeleton from 'components/ui/Skeleton/ProductDetailSkeleton';
@@ -10,7 +10,7 @@ import useCartStore from 'store/useCartStore';
 import { useProductDetail } from 'hooks/useProductDetail';
 import { generateProductInsight, generateProductSeoDescription } from 'utils/SEO/productDescriptions';
 
-import { FiCheckCircle, FiPackage, FiChevronLeft, FiTarget, FiTruck, FiAward } from 'react-icons/fi';
+import { FiCheckCircle, FiChevronRight, FiPackage, FiTarget, FiTruck, FiAward, FiFolder, FiShoppingCart, FiSend } from 'react-icons/fi';
 import { createSlug } from 'utils/slugify';
 
 import { getProductSchema } from 'utils/schemas/mainSchemas';
@@ -41,6 +41,13 @@ const ProductDetailPage = () => {
   const [selectedUnit, setSelectedUnit] = useState(''); 
   const [selectedType, setSelectedType] = useState('Y');
   const [zoomPos, setZoomPos] = useState({ x: 0, y: 0, show: false });
+
+  //ESTADO DEL MODAL DEL CATÁLOGO (SIMULADO)
+  const [showCatalogModal, setShowCatalogModal] = useState(false);
+  const [catalogStep, setCatalogStep] = useState(1); //1:Formulario, 2:Mensaje SMS, 3: Ingreso al Catalogo
+  const [nit, setNit] = useState('');
+  const [usuario, setUsuario] = useState('');
+  const [codigo, setCodigo] = useState('');
 
   const professionalInsight = useMemo(() => 
     generateProductInsight(product), 
@@ -154,6 +161,12 @@ const ProductDetailPage = () => {
     });
   };
 
+  //Handler para abrir el modal del catálogo
+  const handleOpenCatalogModal = () => {
+    setCatalogStep(1); //Iniciamos siempre en el paso 1
+    setShowCatalogModal(true);
+  };
+
   const getImageUrl = useCallback((imgName) => {
     return isValidImage(imgName)
       ? `${AppConfig.baseImageUrl}productos/${imgName}`
@@ -251,11 +264,20 @@ const ProductDetailPage = () => {
         )}
       </Helmet>
 
-      <button className="pdp-back-btn" onClick={() => navigate(-1)} aria-label="Regresar al catálogo">
-        <FiChevronLeft /> Volver al catálogo
-      </button>
+      <div className="pdp-top-nav">
+        <nav className="pdp-breadcrumbs" aria-label="Breadcrumb">
+          <Link to="/">Inicio</Link> <FiChevronRight size={12} />
+          <Link to={`/categoria/${createSlug(product.Segmento || '')}`}>{product.Segmento || product.Categoria}</Link> <FiChevronRight size={12} />
+          {product.Categoria && (
+            <>
+              <Link to={`/categoria/${createSlug(product.Segmento || '')}/${createSlug(product.Categoria || '')}`}>{product.Categoria}</Link> <FiChevronRight size={12} />
+            </>
+           )}
+          <span className="pdp-current-breadcrumb">{product.Descripcion}</span>
+        </nav>
+      </div>
 
-       <article className="pdp-main-grid">
+      <article className="pdp-main-grid">
         <section className="pdp-gallery-wrapper" aria-label="Galería de imágenes del producto">
           
           {/* 1. MINIATURAS (Lado izquierdo) */}
@@ -360,8 +382,20 @@ const ProductDetailPage = () => {
           )}
 
           <div className="pdp-action-box">
-              <button className="pdp-add-btn" onClick={handleAddToCart}>AGREGAR A COTIZACIÓN</button>
-              <p className="pdp-action-note">La unidad seleccionada aparecerá en su solicitud.</p>
+              <div className='pdp-action-buttons-row'>
+
+                {/* ----- BOTON DE "AGREGAR A CATALOGO ---  DESCOMENTAR CUANDO YA ESTE LISTO" -----*/}
+
+                {/* <button className='pdp-catalog-btn' onClick={handleOpenCatalogModal}>
+                  <FiFolder className='pdp-btn-icon' /> AGREGAR A CATÁLOGO
+                </button> */}
+
+                
+                <button className='pdp-catalog-btn-new' onClick={handleAddToCart}>
+                  <FiShoppingCart className='pdp-btn-icon' /> AGREGAR A COTIZACIÓN
+                </button>
+              </div>
+              <p className='pdp-action-note'>La unidad seleccionada aparecerá en su solicitud.</p>
           </div>
         </section>
       </article>
@@ -429,8 +463,104 @@ const ProductDetailPage = () => {
           />
         </aside>
         )}
+        {showCatalogModal && (
+        <div className="pdp-modal-overlay" onClick={() => setShowCatalogModal(false)}>
+          <div className="pdp-modal-content" onClick={(e) => e.stopPropagation()}>
+            <button 
+              className="pdp-modal-close" 
+              onClick={() => setShowCatalogModal(false)} 
+              aria-label="Cerrar modal"
+            >
+              &times;
+            </button>
+            
+            {/* 🚀 PASO 1: Formulario NIT y Usuario */}
+            {catalogStep === 1 && (
+              <div className="pdp-modal-step">
+                <h3 className="pdp-modal-title">Agregar a Catálogo</h3>
+                <p className="pdp-modal-subtitle">Vincula este artículo a tu catálogo completando los siguientes campos.</p>
+                
+                <div className="pdp-form-group">
+                  <label htmlFor="pdp-nit">NIT:</label>
+                  <input 
+                    id="pdp-nit"
+                    type="text" 
+                    placeholder="Escribe tu NIT" 
+                    value={nit}
+                    onChange={(e) => setNit(e.target.value)}
+                  />
+                </div>
+                
+                <div className="pdp-form-group">
+                  <label htmlFor="pdp-user">Usuario:</label>
+                  <input 
+                    id="pdp-user"
+                    type="text" 
+                    placeholder="Escribe tu Usuario" 
+                    value={usuario}
+                    onChange={(e) => setUsuario(e.target.value)}
+                  />
+                </div>
+                
+                <button 
+                  className="pdp-modal-btn" 
+                  onClick={() => setCatalogStep(2)}
+                >
+                  <FiSend /> Enviar datos
+                </button>
+              </div>
+            )}
+
+            {/* 🚀 PASO 2: Confirmación de envío de SMS + Validación del código en la misma vista */}
+            {catalogStep === 2 && (
+              <div className="pdp-modal-step text-center">
+                <div className="pdp-success-icon-wrapper animate-pop">
+                  <FiCheckCircle size={56} className="pdp-success-check-icon" />
+                </div>
+                
+                <h3 className="pdp-modal-title-success">¡Datos Enviados!</h3>
+                
+                <p className="pdp-success-msg">
+                  Se ha enviado un código de validación por mensaje de texto (SMS) al número registrado terminado en <strong>*****150</strong>.
+                </p>
+                
+                <p className="pdp-validation-instruction">
+                  Ingresa el código a continuación para autorizar la compra y guardarlo en tu catálogo:
+                </p>
+
+                <div className="pdp-form-group">
+                  <label htmlFor="pdp-code">Código de Validación:</label>
+                  <input 
+                    id="pdp-code"
+                    type="text" 
+                    placeholder="Introduce el código de 6 dígitos" 
+                    value={codigo}
+                    onChange={(e) => setCodigo(e.target.value)}
+                  />
+                </div>
+                
+                <button 
+                  className="pdp-modal-btn pdp-confirm-btn" 
+                  onClick={() => {
+                    alert(`Simulación exitosa.\nNIT: ${nit}\nUsuario: ${usuario}\nCódigo: ${codigo}\nProducto guardado en tu catálogo.`);
+                    setShowCatalogModal(false);
+                    setCatalogStep(1);
+                    setNit('');
+                    setUsuario('');
+                    setCodigo('');
+                  }}
+                >
+                  Confirmar Código
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </main>
   );
 };
 
 export default ProductDetailPage;
+    
+    

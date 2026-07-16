@@ -26,7 +26,7 @@ const RelatedProducts = ({ category, currentProductId }) => {
         }
         return false;
       })
-      .slice(0, 4); // Limitamos a 4
+      .slice(0, 5); // Limitamos a 4
   }, [allProducts, category, currentProductId]);
 
   if (isLoading) {
@@ -36,7 +36,7 @@ const RelatedProducts = ({ category, currentProductId }) => {
           Buscando productos relacionados...
         </h2>
         <div className='related-grid'>
-          {[1, 2, 3, 4].map(n => <ProductCardSkeleton key={`related-sk-${n}`} />)}
+          {[1, 2, 3, 4, 5].map(n => <ProductCardSkeleton key={`related-sk-${n}`} />)}
         </div>
       </section>
     )
