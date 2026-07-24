@@ -57,7 +57,7 @@ const ProductCarousel = ({ title, products = [], isLoading, variant = '' , viewA
     speed: 800,
     slidesToShow: 5, 
     slidesToScroll: 4,
-    autoplay: false,       // ACTIVADO
+    autoplay: false,       // DESACTIVO
     autoplaySpeed: 3500,  // 3.5 segundos (el punto dulce del marketing)
     pauseOnHover: true,   // Crucial para UX: detiene el scroll al interactuar
     cssEase: "cubic-bezier(0.25, 0.46, 0.45, 0.94)",

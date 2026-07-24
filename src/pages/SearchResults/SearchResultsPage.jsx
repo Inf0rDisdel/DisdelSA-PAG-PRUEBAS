@@ -3,15 +3,19 @@ import { useLocation } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { useProducts } from 'hooks/useProducts'; 
 import ProductCard from 'components/ui/ProductCard/ProductCard';
+import CatalogSkeleton from 'components/ui/Skeleton/CatalogSkeleton';
+import { getSearchSchema } from 'utils/schemas/searchSchema';
 import styles from './SearchResults.module.css';
 
 const SearchResultsPage = () => {
   const location = useLocation();
   const { data: productos, isLoading } = useProducts();
   
-  // 🚀 LEEMOS LA BÚSQUEDA INVISIBLE DESDE EL STATE DE MANERA SEGURA (Con fallback vacío)
-  const query = location.state?.q || '';
-  const decodedQuery = query; // Al venir en memoria, ya viene decodificado automáticamente
+  const searchParams = useMemo(() => new URLSearchParams(location.search), [location.search]);
+  const urlQuery = searchParams.get('q') || '';
+
+  const query = location.state?.q || urlQuery;
+  const decodedQuery = query.trim();
 
   const [selectedBrands, setSelectedBrands] = useState([]);
   const [selectedCats, setSelectedCats] = useState([]);
@@ -65,32 +69,15 @@ const SearchResultsPage = () => {
     });
   }, [matchedByText, selectedBrands, selectedCats]);
 
-  const fullSchema = useMemo(() => ({
-    "@context": "https://schema.org",
-    "@graph": [
-      {
-        "@type": "BreadcrumbList",
-        "itemListElement": [
-          { "@type": "ListItem", "position": 1, "name": "Inicio", "item": "https://www.disdelsa.com/" },
-          { "@type": "ListItem", "position": 2, "name": "Búsqueda", "item": `https://www.disdelsa.com/buscar?q=${encodeURIComponent(query)}` }
-        ]
-      },
-      {
-        "@type": "SearchResultsPage",
-        "mainEntity": {
-          "@type": "ItemList",
-          "name": `Resultados para ${decodedQuery}`,
-          "numberOfItems": resultadosFinales.length 
-        }
-      }
-    ]
-  }), [query, decodedQuery, resultadosFinales.length]);
+  const fullSchema = useMemo(() => {
+    return getSearchSchema(decodedQuery || "Catálogo", resultadosFinales.length);
+  }, [decodedQuery, resultadosFinales.length]);
 
- const handleToggleFilter = (value, list, setList) => {
+  const handleToggleFilter = (value, list, setList) => {
     setList(prev => prev.includes(value) ? prev.filter(i => i !== value) : [...prev, value]);
   };
 
-  if (isLoading) return <div className={styles.loading}>Buscando suministros en Disdel...</div>;
+  if (isLoading) return <CatalogSkeleton />;
   
   return (
     <main className={styles.searchPageWrapper}>
@@ -117,9 +104,7 @@ const SearchResultsPage = () => {
         <meta property="og:type" content="website" />
         <meta property="og:title" content={decodedQuery ? `Resultados para "${decodedQuery}" en Disdel` : "Buscador de Suministros | Disdel"} />
         <meta property="og:description" content="Encuentra los mejores suministros industriales y de limpieza profesional en nuestra tienda online." />
-        <meta property="og:image" content="https://www.disdelsa.com/logo-social.jpg" />
-        
-        {/* 🚀 URL OG CANÓNICA LIMPIA */}
+        <meta property="og:image" content="https://disdelsa.com/logo-disdel.png" />
         <meta property="og:url" content="https://disdelsa.com/buscar" />
         <meta property="og:site_name" content="Disdel" />
 
@@ -143,61 +128,63 @@ const SearchResultsPage = () => {
         </header>
 
         <div className={styles.searchContentLayout}>
-          {/* 🔥 SIDEBAR DE FILTROS (Mantenemos coherencia visual) */}
+          {/* SIDEBAR DE FILTROS */}
           {matchedByText.length > 0 && (
             <aside className={styles.filterSidebar}>
-              <div className={styles.filterGroup}>
-                <h4>Marcas</h4>
-                <ul>
-                  {facets.brands.slice(0, 15).map(([name, count]) => (
-                    <li key={name}>
-                      <label>
-                        <input 
-                          type="checkbox" 
-                          checked={selectedBrands.includes(name)}
-                          onChange={() => handleToggleFilter(name, selectedBrands, setSelectedBrands)}
-                        />
-                        <span>{name} ({count})</span>
-                      </label>
-                    </li>
-                  ))}
-                </ul>
-              </div>
+              {facets.brands.length > 0 && (
+                <div className={styles.filterGroup}>
+                  <h4>Marcas</h4>
+                  <ul>
+                    {facets.brands.slice(0, 15).map(([name, count]) => (
+                      <li key={name}>
+                        <label>
+                          <input 
+                            type="checkbox" 
+                            checked={selectedBrands.includes(name)}
+                            onChange={() => handleToggleFilter(name, selectedBrands, setSelectedBrands)}
+                          />
+                          <span>{name} ({count})</span>
+                        </label>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
 
-              <div className={styles.filterGroup}>
-                <h4>Categorías</h4>
-                <ul>
-                  {facets.categories.slice(0, 15).map(([name, count]) => (
-                    <li key={name}>
-                      <label>
-                        <input 
-                          type="checkbox" 
-                          checked={selectedCats.includes(name)}
-                          onChange={() => handleToggleFilter(name, selectedCats, setSelectedCats)}
-                        />
-                        <span>{name} ({count})</span>
-                      </label>
-                    </li>
-                  ))}
-                </ul>
-              </div>
+              {facets.categories.length > 0 && (
+                <div className={styles.filterGroup}>
+                  <h4>Categorías</h4>
+                  <ul>
+                    {facets.categories.slice(0, 15).map(([name, count]) => (
+                      <li key={name}>
+                        <label>
+                          <input 
+                            type="checkbox" 
+                            checked={selectedCats.includes(name)}
+                            onChange={() => handleToggleFilter(name, selectedCats, setSelectedCats)}
+                          />
+                          <span>{name} ({count})</span>
+                        </label>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
             </aside>
           )}
 
-        <div className={styles.resultsContent} style={{ minHeight: '60vh', flex: 1 }}>
+          <div className={styles.resultsContent} style={{ minHeight: '60vh', flex: 1 }}>
             {resultadosFinales.length > 0 ? (
               <div className={styles.productGrid}>
                 {resultadosFinales.slice(0, 80).map((p, index) => (
                   <ProductCard 
                     key={p.IdProducto} 
                     index={index} 
-                    // 🔥 Simplificamos: Pasamos 'p' directamente. 
-                    // Tu ProductCard ya sabe leer IdProducto, Descripcion, etc.
                     product={p} 
                   />
                 ))}
               </div>
-          ) : (
+            ) : (
               <div className={styles.noResults}>
                 <div className={styles.icon}>🔍</div>
                 <h2>No hay resultados para tu búsqueda</h2>

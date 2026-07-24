@@ -1,50 +1,106 @@
 import React from 'react';
-import Skeleton from './Skeleton'; // 🚀 Importación relativa correcta al componente base
+import ProductCardSkeleton from 'components/ui/ProductCard/ProductCardSkeleton';
+import './HomeSkeleton.css';
 
 export const HomeSkeleton = () => {
-
   const isMobile = typeof window !== 'undefined' ? window.innerWidth <= 480 : false;
-  // Reutilizamos tus clases CSS existentes para garantizar acoplamiento del 100% en anchos y alturas
+  const productCount = isMobile ? 2 : 5;
+  const brandCount = isMobile ? 2 : 4;
+
   return (
-    <div style={{ minHeight: '100vh', background: '#f8f9fa' }}>
+    <div className="home-skeleton-wrapper" aria-hidden="true">
       
-      {/* 1. MOCK DEL HERO SLIDER */}
-      <section className="main-container skeleton-hero" aria-hidden="true">
-        <div className="banners-container-skeleton skeleton-animation"></div>
-        <div className="slider-container-skeleton skeleton-animation"></div>
-      </section>
-
-      {/* 2. MOCK DE CATEGORÍAS */}
-      <section className="cgs-section" aria-hidden="true">
-        <div style={{ marginBottom: '12px' }}>
-          <Skeleton width="220px" height="42px" style={{ borderRadius: '18px' }} />
+      {/* 1. HERO SLIDER (Banners Superiores) */}
+      <div className="skeleton-container">
+        <div className="skeleton-hero-grid">
+          <div className="skeleton-banner-column">
+            <div className="skeleton-box hero-banner-item"></div>
+            <div className="skeleton-box hero-banner-item"></div>
+          </div>
+          <div className="skeleton-box hero-slider-main"></div>
         </div>
+      </div>
 
-        <div className="cgs-skeleton-grid"> 
+      {/* 2. CATEGORÍAS DESTACADAS (5 Tarjetas) */}
+      <div className="skeleton-container">
+        <div className="skeleton-title-pill"></div>
+        <div className="skeleton-categories-grid">
           {[1, 2, 3, 4, 5].map((i) => (
-            <div key={i} className="cgs-item-skeleton" style={{ textAlign: 'center' }}>
-              <Skeleton width="100%" height="240px" style={{ borderRadius: '20px' }} className="skeleton-animation" />
-              <Skeleton width="60%" height="20px" style={{ marginTop: '16px', margin: '16px auto 0' }} className="skeleton-animation" />
+            <div key={`cat-sk-${i}`} className="skeleton-category-card">
+              <div className="skeleton-box cat-img-sk"></div>
+              <div className="skeleton-box cat-text-sk"></div>
             </div>
           ))}
         </div>
-      </section>
+      </div>
 
-      {/* 🚀 3. MOCK DE ALIADOS COMERCIALES (Reutiliza tus clases de FeaturedBrands.css) */}
-      <section className="featured-brands-section" aria-hidden="true" style={{ marginTop: '30px' }}>
-        <div style={{ marginBottom: '12px', padding: '0 20px' }}>
-          <Skeleton width="220px" height="42px" style={{ borderRadius: '18px' }} />
-        </div>
-        <div className="brands-container-skeleton">
-          {[1, 2, 3, 4, 5].map((i) => (
-            <div 
-              key={i} 
-              className="brand-item-skeleton skeleton-animation" 
-              style={{ height: isMobile ? '140px' : '250px', borderRadius: isMobile ? '0' : '35px' }}
-            ></div>
+      {/* 3. ALIADOS COMERCIALES (4 Marcas) */}
+      <div className="skeleton-container">
+        <div className="skeleton-title-pill"></div>
+        <div className="skeleton-brands-grid">
+          {Array.from({ length: brandCount }).map((_, i) => (
+            <div key={`brand-sk-${i}`} className="skeleton-box brand-card-sk"></div>
           ))}
         </div>
-      </section>
+      </div>
+
+      {/* 4. BANNER SANISOL (Ancho completo) */}
+      <div className="skeleton-container">
+        <div className="skeleton-box middle-banner-sk"></div>
+      </div>
+
+      {/* 5. CARRUSEL 1: LOS MÁS COTIZADOS */}
+      <div className="skeleton-container">
+        <div className="skeleton-title-pill"></div>
+        <div className="skeleton-products-grid">
+          {Array.from({ length: productCount }).map((_, i) => (
+            <ProductCardSkeleton key={`p1-sk-${i}`} />
+          ))}
+        </div>
+      </div>
+
+      {/* 6. CARRUSEL 2: SOLUCIONES INTEGRALES DE HIGIENE (+ Botón Ver Todo) */}
+      <div className="skeleton-container">
+        <div className="skeleton-header-row">
+          <div className="skeleton-title-pill"></div>
+          <div className="skeleton-button-pill"></div>
+        </div>
+        <div className="skeleton-products-grid">
+          {Array.from({ length: productCount }).map((_, i) => (
+            <ProductCardSkeleton key={`p2-sk-${i}`} />
+          ))}
+        </div>
+      </div>
+
+      {/* 7. PROMO NESCAFÉ (2 Banners lado a lado) */}
+      <div className="skeleton-container">
+        <div className="skeleton-promo-grid">
+          <div className="skeleton-box promo-item-sk"></div>
+          <div className="skeleton-box promo-item-sk"></div>
+        </div>
+      </div>
+
+      {/* 8. CARRUSEL 3: TODO PARA EL COFFEE BREAK (+ Botón Ver Todo) */}
+      <div className="skeleton-container">
+        <div className="skeleton-header-row">
+          <div className="skeleton-title-pill"></div>
+          <div className="skeleton-button-pill"></div>
+        </div>
+        <div className="skeleton-products-grid">
+          {Array.from({ length: productCount }).map((_, i) => (
+            <ProductCardSkeleton key={`p3-sk-${i}`} />
+          ))}
+        </div>
+      </div>
+
+      {/* 9. PROMO LAYOUT (Grid de 4 Categorías Inferiores) */}
+      <div className="skeleton-container">
+        <div className="skeleton-promo-layout-grid">
+          {[1, 2, 3, 4].map((i) => (
+            <div key={`promo-lay-${i}`} className="skeleton-box promo-category-card"></div>
+          ))}
+        </div>
+      </div>
 
     </div>
   );

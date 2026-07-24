@@ -108,6 +108,11 @@ const HomePage = () => {
   return imgPath ? `${cleanBaseUrl}${imgPath}` : '';
   }, [bannerData, cleanBaseUrl]);
 
+  const ogImage = useMemo(() => (
+    firstHeroImage ||
+    "https://disdelsa.com/og-image.jpg"
+  ), [firstHeroImage]);
+
   //OPTIMIZADO DE MEMORIA Y RE-RENDERS
   const handleAddToCart = useCallback((product) => {
     addItem({
@@ -184,24 +189,41 @@ const HomePage = () => {
         <meta name="description" content={seoDesc} />
 
         <meta name="keywords" content={seoKeywords} />
+        <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"/>
+        <meta name="author" content="Disdel, S.A."/>
+        <meta name="generator" content="React" />
         <link rel="canonical" href="https://disdelsa.com/" />
 
+
+        {/* PERFORMANCE */}
+        <link rel="preconnect" href="https://www.disdelsagt.com"/>
+        <link rel="dns-prefetch" href="//www.disdelsagt.com"/>
+
         {firstHeroImage && (
-          <link rel="preload" as="image" href={firstHeroImage} fetchpriority="high" />
+          <link
+            rel="preload"
+            as="image"
+            href={firstHeroImage}
+            fetchPriority="high"
+          />
         )}
 
         {/* --- OPEN GRAPH (Facebook, WhatsApp, LinkedIn) --- */}
         <meta property="og:type" content="website" />
         <meta property="og:title" content={seoTitle} />
         <meta property="og:description" content={seoDesc}/>
-        <meta property="og:image" content="https://disdelsa.com/og-image.jpg" />
+        <meta property="og:image" content={ogImage} />
         <meta property="og:url" content="https://disdelsa.com/" />
+
+        <meta property="og:image:width" content="1200"/>
+        <meta property="og:image:height" content="630" />
         <meta property="og:site_name" content="Disdel, S.A." />
 
         {/* --- TWITTER CARD --- */}
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="Disdel Guatemala - Suministros Mayoristas" />
-        <meta name="twitter:description" content="Abastecimiento técnico para empresas de limpieza y mantenimiento." />
+        <meta name="twitter:title" content={seoTitle} />
+        <meta name="twitter:description" content={seoDesc}/>
+        <meta name="twitter:image" content={ogImage}/>
 
         {/* --- SCHEMAS --- */}
         <script type="application/ld+json">
@@ -227,9 +249,7 @@ const HomePage = () => {
       <Suspense fallback={null}>
         <CategoryGrid /> 
         <FeaturedBrands />
-      </Suspense>
 
-      <Suspense fallback={null}>
         <BannerSlider />
       </Suspense>
 
@@ -261,9 +281,9 @@ const HomePage = () => {
       )}
     </Suspense>
 
-      <Suspense fallback={null}>
-        <PromoNescafe />
-      </Suspense>
+    <Suspense fallback={null}>
+      <PromoNescafe />
+    </Suspense>
 
     {/* 4. ÚLTIMO BLOQUE DE LA PÁGINA (Componentes del pie de página) */}
     <Suspense fallback={null}>

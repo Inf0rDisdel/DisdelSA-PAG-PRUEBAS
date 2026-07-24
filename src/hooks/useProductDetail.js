@@ -1,13 +1,11 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { ApiMobil } from '../api/apiInstance'; // Tu instancia axios
 
-const fetchProductDetail = async (id) => {
+export const fetchProductDetail = async (id) => {
     // 1. Verificamos que el ID no sea undefined
     if (!id) throw new Error("ID de producto inválido");
 
     const idLimpioParaAPI = String(id).trim().toUpperCase();
-
-    console.log("📡 Enviando petición para ID:", id); // Debug para ti
 
     // 2. Enviamos el objeto JSON exacto que espera C#
     const { data } = await ApiMobil.post('/api/PaginaWeb/GetProductoDetalle', 
@@ -32,8 +30,14 @@ export const useProductDetail = (productId) => {
         retry: 1, 
         refetchOnWindowFocus: false ,
         placeholderData: () => {
-            return queryClient.getQueryData(['productos-lista'])?.find(
-                p => String(p.IdProducto) === String(productId)
+            const products = queryClient.getQueryData(['productos-all']);
+
+            if (!products) return undefined;
+
+            return products.find(
+                (p) =>
+                    String(p.IdProducto).trim().toLowerCase() ===
+                    String(productId).trim().toLowerCase()
             );
         }
     });

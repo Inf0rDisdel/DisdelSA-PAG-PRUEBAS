@@ -6,6 +6,40 @@
   font-family: 'Poppins', sans-serif;
 }
 
+.breadcumb-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: 'Poppins', sans-serif;
+  font-size: 13px;
+  color: #64748b;
+  margin-bottom: 22px;
+  flex-wrap: wrap;
+}
+
+.breadcumb-container a {
+  color: #475569;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s ease;
+}
+
+.breadcumb-container a:hover {
+  color: #135eab;
+  text-decoration: underline;
+}
+
+.breadcumb-container span {
+  color: #cbd5e1;
+  user-select: none;
+}
+
+/* El último elemento es la categoría actual, resalta en azul */
+.breadcumb-container span:last-child {
+  color: #135eab;
+  font-weight: 700;
+}
+
 .cat-container {
   width: 100%;
   max-width: var(--site-max-width) !important; 
@@ -36,7 +70,7 @@
   left: 0;
   width: 100%;
   background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);
-  padding: 40px;
+  padding: 10px 20px;
   color: white;
 }
 
@@ -139,6 +173,76 @@
   border-color: var(--cat-color);
   box-shadow: 0 4px 12px rgba(19, 94, 171, 0.2);
 }
+
+
+
+/* ======================================================= */
+/* 🚀 2. ESTILOS TOOLBAR DEL CATÁLOGO                       */
+/* ======================================================= */
+.catalog-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 18px;
+  background-color: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  margin-bottom: 25px;
+  font-family: 'Poppins', sans-serif;
+}
+
+.toolbar-product-count {
+  font-size: 14px;
+  color: #475569;
+}
+
+.toolbar-product-count strong {
+  color: #135eab;
+  font-weight: 700;
+}
+
+.toolbar-sort-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.toolbar-sort-wrapper label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #64748b;
+}
+
+/* Selector estilizado sin apariencia nativa del navegador */
+.toolbar-select {
+  padding: 8px 32px 8px 12px;
+  font-family: 'Poppins', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: #1e293b;
+  background-color: #ffffff;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  cursor: pointer;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  
+  /* Icono de flecha responsiva SVG inyectada en background */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23475569' stroke-width='2.5'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M19.5 8.25l-7.5 7.5-7.5-7.5'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 14px;
+}
+
+.toolbar-select:focus {
+  border-color: #135eab;
+  box-shadow: 0 0 0 3px rgba(19, 94, 171, 0.1);
+}
+
 
 /* --- TARJETAS DE PRODUCTO --- */
 .cat-grid-products {
@@ -260,6 +364,78 @@
   box-shadow: 0 4px 12px rgba(13, 74, 134, 0.2);
 }
 
+
+/* ======================================================= */
+/* 🚀 3. ESTILOS BANNER CTA (Cotizar por WhatsApp B2B)     */
+/* ======================================================= */
+.category-cta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24px 32px;
+  background: linear-gradient(135deg, #f0f7ff 0%, #e6f2ff 100%);
+  border: 1px solid #cbd5e1;
+  border-left: 5px solid #135eab; /* Acento azul Disdel */
+  border-radius: 12px;
+  gap: 24px;
+  box-sizing: border-box;
+
+  /* 🔥 CORRECCIÓN CLAVE: Control de ancho y centrado automático directamente por CSS */
+  width: calc(100% - 40px);          /* Deja 20px de espacio a los lados en pantallas medianas */
+  max-width: var(--site-max-width);  /* Se alinea con el ancho máximo del catálogo (ej. 1300px o 1350px) */
+  margin: 40px auto 20px;            /* Centra el bloque horizontalmente gracias al valor 'auto' */
+}
+
+.cta-content {
+  flex: 1;
+}
+
+.category-cta h2 {
+  font-size: 18px;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0 0 6px 0;
+  letter-spacing: -0.01em;
+}
+
+.category-cta p {
+  font-size: 14px;
+  color: #475569;
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* Botón flotante de WhatsApp */
+.cta-whatsapp-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 24px;
+  background-color: #25d366; /* Verde oficial WhatsApp */
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 12px rgba(37, 211, 102, 0.2);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.cta-whatsapp-btn:hover {
+  background-color: #20ba5a;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(37, 211, 102, 0.3);
+}
+
+.whatsapp-icon {
+  flex-shrink: 0;
+}
+
+
 /*.cat-btn {
   width: 100%; padding: 12px;
   background: white; border: 1.5px solid var(--cat-color);
@@ -307,6 +483,36 @@
     border-radius: 12px !important;
   }
 
+
+  .catalog-toolbar {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 12px 15px;
+  }
+  
+  .toolbar-sort-wrapper {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .toolbar-select {
+    flex-grow: 1;
+    max-width: 200px;
+  }
+
+  .category-cta {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 20px;
+    text-align: center;
+    gap: 18px;
+    margin: 30px 0 15px;
+  }
+
+  .cta-whatsapp-btn {
+    width: 100%;
+  }
 
   .cat-main-banner{
     height: 180px !important;

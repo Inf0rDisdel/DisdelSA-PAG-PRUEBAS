@@ -12,7 +12,7 @@ import { useFilterProducts } from 'hooks/useFilterProducts';
 import { createSlug } from 'utils/slugify';
 
 import CatalogSkeleton from 'components/ui/Skeleton/CatalogSkeleton';
-import { getCollectionSchema } from 'utils/schemas/mainSchemas';
+import { getCategorySchema } from 'utils/schemas/categorySchema';
 import { optimizedSeoData } from 'utils/SEO/optimizedSeo';
 import { useCatalogSeo } from 'hooks/useCatalogSeo';
 
@@ -28,6 +28,8 @@ const CategoryPage = () => {
   const [activeCatId, setActiveCatId] = useState(null);
   const [activeSubCatId, setActiveSubCatId] = useState(null);
   const [isMobile, setIsMobile] = useState(typeof window !== 'undefined' ? window.innerWidth <= 468 : false);
+
+  const [sortBy, setSortBy] = useState('default');
   const scrollRef = useRef(null);
 
   const cleanSlug = slug ? slug.replace(/\/$/, "").trim() : '';
@@ -70,6 +72,30 @@ const CategoryPage = () => {
     activeSubCatId
   );
 
+  const sortedProducts = useMemo(() => {
+    if (!filteredProducts) return [];
+
+    const productsCopy = [...filteredProducts];
+
+    if (sortBy === 'az') {
+      return productsCopy.sort((a, b) => {
+        const descA = a.Descripcion?.toLowerCase().trim() || "";
+        const descB = b.Descripcion?.toLowerCase().trim() || "";
+        return descA.localeCompare(descB, 'es', { sensitivity: 'base' });
+      });
+    }
+
+    if (sortBy === 'za') {
+      return productsCopy.sort((a, b) => {
+        const descA = a.Descripcion?.toLowerCase().trim() || "";
+        const descB = b.Descripcion?.toLowerCase().trim() || "";
+        return descB.localeCompare(descA, 'es', { sensitivity: 'base' });
+      });
+    }
+
+    return productsCopy;
+  }, [filteredProducts, sortBy]);
+
   const defaultImage = useMemo(() => {
     const found = bannerData?.ImagenPredeterminado?.find(i => i.Titulo?.trim() === "ImagenDefault3");
     return found ? `${AppConfig.baseImageUrl}${found.BannerImagenMovil || found.Imagen}` : '';
@@ -87,6 +113,14 @@ const CategoryPage = () => {
     return optimizedSeoData[canonicalSlug] || null;
   }, [canonicalSlug]);
 
+  const handleWhatsAppClick = () => {
+    const phoneNumber = "50231094985"; // Teléfono de Disdel
+    const categoryName = activeCategoryData?.NombreCategoria || currentSegment?.NombreSegmento || 'Cafetería';
+    const message = `Hola Disdel, me interesa solicitar una cotización personalizada para abastecer mi empresa con productos de la categoría de *${categoryName}*.`;
+    const url = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
+    window.open(url, '_blank', 'noopener,noreferrer');
+  };
+
   const seoData = useMemo(() => {
     const segmentName = currentSegment?.NombreSegmento || "Categoría";
     const categoryName = activeCategoryData?.NombreCategoria;
@@ -102,7 +136,7 @@ const CategoryPage = () => {
       return {
         title: activeSeo.MetaTitle || activeSeo.metaTitle || `${categoryName || segmentName} en Guatemala`,
         description: activeSeo.MetaDescription || activeSeo.metaDescription || "",
-        url: activeSeo.CanonicalUrl || activeSeo.canonicalUrl || window.location.href,
+        url: activeSeo.CanonicalUrl || activeSeo.canonicalUrl || cleanCanonicalUrl,
         image: activeSeo.OgImage || activeSeo.ogImage || catBanner.desktop || defaultImage,
         h1: activeSeo.H1 || activeSeo.h1 || `${categoryName || segmentName} en Guatemala`,
         h2: activeSeo.H2Principal || activeSeo.h2Principal || "",
@@ -139,11 +173,23 @@ const CategoryPage = () => {
   }, [categorySeo, activeCategoryData, currentSegment, slug, cat, subcat, catBanner, defaultImage, activeSubCatId, dbSeo]);
 
   const fullSchema = useMemo(() => {
-    if (!currentSegment) return null;
-    const schemaUrl = seoData.url;
+  if (!currentSegment) return null;
 
-    return getCollectionSchema(seoData.title, seoData.description, schemaUrl, filteredProducts);
-  }, [currentSegment, filteredProducts, seoData]);   
+  // Obtenemos el nombre de la subcategoría activa si el usuario seleccionó una
+  const subCategoryName = activeCategoryData?.SubCategorias?.find(
+    s => norm(s.IdSubCategoria) === norm(activeSubCatId)
+  )?.NombreSubCategoria;
+
+  return getCategorySchema({
+    title: seoData.title,
+    description: seoData.description,
+    url: seoData.url,
+    products: sortedProducts, // Conserva la lista ordenada activa
+    segmentName: currentSegment?.NombreSegmento || "",
+    categoryName: activeCategoryData?.NombreCategoria || "",
+    subCategoryName: subCategoryName || ""
+  });
+  }, [currentSegment, activeCategoryData, activeSubCatId, sortedProducts, seoData]);  
 
    useEffect(() => {
     if (!currentSegment?.Categorias) return;
@@ -201,6 +247,21 @@ const CategoryPage = () => {
       </Helmet>
       
       <div className="cat-container">
+
+        <div className="breadcumb-container">
+          <Link to="/">Inicio</Link>
+          <span>/</span>
+          <Link to={`/categoria/${canonicalSlug}`}>
+            {currentSegment?.NombreSegmento}
+          </Link>
+          {activeCategoryData && (
+            <>
+              <span>/</span>
+              <span>{activeCategoryData.NombreCategoria}</span>
+            </>
+          )}
+        </div>
+
         <div className="cat-header-section">
             <img 
               src={isMobile ? (catBanner.mobile || catBanner.desktop) : catBanner.desktop} 
@@ -215,6 +276,9 @@ const CategoryPage = () => {
                 <h1 className="cat-segment-title">
                   {activeCategoryData?.NombreCategoria || currentSegment.NombreSegmento} en Guatemala
                 </h1>
+                <p className='category-subtitle'>
+                Soluciónes para empresas, industria, hoteles y hospitales.
+              </p>
             </div>
         </div>
 
@@ -264,11 +328,30 @@ const CategoryPage = () => {
                 </div>
             )}
 
+            <div className="catalog-toolbar">
+              <div className="toolbar-product-count">
+                Mostrando <strong>{sortedProducts.length}</strong> productos
+              </div>
+              <div className="toolbar-sort-wrapper">
+                <label htmlFor="sort-select">Ordenar por:</label>
+                {/* 🔥 CORREGIDO: Agregamos value y onChange para controlar el estado sortBy */}
+                <select 
+                  id="sort-select" 
+                  className="toolbar-select"
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value)}
+                >
+                  <option value="default">Más cotizados</option>
+                  <option value="az">A-Z</option>
+                  <option value="za">Z-A</option>
+                </select>
+              </div>
+            </div>
+
            <div className="cat-grid-products"> 
-              {filteredProducts.length > 0 ? (
-                filteredProducts.map((prod, index) => (
-                  /* 🔥 Usamos el componente único. 
-                    Esto hereda automáticamente el SEO y el diseño Pro */
+              {sortedProducts.length > 0 ? (
+                // 🔥 CORREGIDO: Mapeamos sobre la lista ordenada 'sortedProducts' en lugar de 'filteredProducts'
+                sortedProducts.map((prod, index) => (
                   <ProductCard 
                     key={prod.IdProducto} 
                     product={prod} 
@@ -283,6 +366,20 @@ const CategoryPage = () => {
             </div>
           </section>
         </div>
+
+        <section className="category-cta">
+          <div className="cta-content">
+            <h2>¿Busca abastecer su empresa?</h2>
+            <p>Nuestros asesores comerciales pueden ayudarle a seleccionar los productos ideales para su negocio con tarifas preferenciales por volumen.</p>
+          </div>
+          <button className="cta-whatsapp-btn" onClick={handleWhatsAppClick}>
+            {/* SVG Icono oficial de WhatsApp */}
+            <svg className="whatsapp-icon" viewBox="0 0 24 24" fill="currentColor" width="18" height="18">
+              <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.056 11.948.056c3.174.001 6.157 1.238 8.4 3.483 2.243 2.245 3.479 5.228 3.479 8.402 0 6.549-5.337 11.841-11.886 11.841a11.9 11.9 0 01-5.724-1.472L0 24zm6.542-4.177l.385.228a9.907 9.907 0 005.021 1.378c5.461 0 9.905-4.405 9.908-9.823.003-2.624-1.017-5.093-2.871-6.951-1.854-1.857-4.325-2.88-6.953-2.881-5.462 0-9.906 4.404-9.91 9.822-.001 2.016.521 3.99 1.514 5.73l.26.455-1.01 3.687 3.766-.988zm11.455-6.113c-.301-.15-1.78-.874-2.056-.974-.276-.101-.476-.15-.676.15-.199.3-.774.974-.95 1.174-.175.2-.351.224-.652.075a8.219 8.219 0 01-2.435-1.498 9.07 9.07 0 01-1.683-2.091c-.176-.301-.019-.462.132-.612.135-.135.301-.351.451-.526.15-.175.2-.3.301-.5.1-.201.05-.376-.025-.526-.075-.15-.676-1.629-.926-2.229-.244-.599-.513-.518-.676-.52-.159-.001-.341-.001-.522-.001-.182 0-.476.068-.724.385-.249.317-.95 1.025-.95 2.5s1.074 2.9 1.224 3.1c.15.2 2.11 3.224 5.112 4.522.714.309 1.272.494 1.707.632.717.227 1.37.195 1.885.118.574-.085 1.78-.724 2.03-1.424.25-.699.25-1.3.175-1.424-.075-.101-.275-.15-.576-.3z" />
+            </svg>
+            Cotizar por WhatsApp
+          </button>
+        </section>
       </div>
 
       <section className="cat-expert-content" aria-label="Información adicional de categoría">
@@ -296,9 +393,9 @@ const CategoryPage = () => {
           </p>
           
           <div className="cat-benefits-grid">
-            <div className="benefit-item">✅ Entrega en 24-48 horas</div>
-            <div className="benefit-item">✅ Precios de Distribuidor</div>
-            <div className="benefit-item">✅ Soporte Técnico Especializado</div>
+            <div className="benefit-item">🏢 Atención para empresas e instituciones</div>
+            <div className="benefit-item">📦 Compra por volumen y abastecimiento continuo</div>
+            <div className="benefit-item">👨‍💼 Asesoría técnica especializada</div>
           </div>
         </div>
       </section>

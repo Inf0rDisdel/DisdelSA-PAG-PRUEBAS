@@ -1,0 +1,200 @@
+/* ======================================================= */
+/* 🚀 ESTILOS SKELETON HOME PAGE (0 CLS)                   */
+/* ======================================================= */
+.home-skeleton-wrapper {
+  width: 100%;
+  min-height: 100vh;
+  background-color: #f8fafc;
+  padding-top: 15px;
+  padding-bottom: 50px;
+  box-sizing: border-box;
+}
+
+/* Contenedor centralizado que respeta la variable global del sitio */
+.skeleton-container {
+  width: 100%;
+  max-width: var(--site-max-width) !important;
+  margin: 0 auto 35px auto;
+  padding: 0 15px;
+  box-sizing: border-box;
+}
+
+/* Animación Shimmer en tonos grises suaves */
+.skeleton-box {
+  background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%);
+  background-size: 200% 100%;
+  animation: homeShimmer 1.5s infinite linear;
+  border-radius: 12px;
+}
+
+@keyframes homeShimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* FILA DE ENCABEZADO CON BOTÓN */
+.skeleton-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.skeleton-title-pill {
+  width: 220px;
+  height: 38px;
+  background: #e2e8f0;
+  border-radius: 18px;
+  margin-bottom: 20px;
+}
+
+.skeleton-header-row .skeleton-title-pill {
+  margin-bottom: 0;
+}
+
+.skeleton-button-pill {
+  width: 100px;
+  height: 32px;
+  background: #e2e8f0;
+  border-radius: 16px;
+}
+
+/* 1. HERO SLIDER */
+.skeleton-hero-grid {
+  display: flex;
+  gap: 20px;
+  min-height: 345px;
+  width: 100%;
+}
+
+.skeleton-banner-column {
+  width: 55%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.hero-banner-item {
+  flex: 1;
+  height: 162px;
+}
+
+.hero-slider-main {
+  width: 45%;
+  height: 345px;
+}
+
+/* 2. CATEGORÍAS DESTACADAS (5 COLUMNAS) */
+.skeleton-categories-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 15px;
+}
+
+.skeleton-category-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.cat-img-sk {
+  width: 100%;
+  height: 180px;
+  border-radius: 16px;
+}
+
+.cat-text-sk {
+  width: 65%;
+  height: 16px;
+  border-radius: 6px;
+}
+
+/* 3. ALIADOS COMERCIALES (4 MARCAS) */
+.skeleton-brands-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+}
+
+.brand-card-sk {
+  width: 100%;
+  height: 180px;
+  border-radius: 20px;
+}
+
+/* 4. BANNER SANISOL / INTERMEDIO */
+.middle-banner-sk {
+  width: 100%;
+  aspect-ratio: 1300 / 270;
+  min-height: 200px;
+}
+
+/* 5, 6, 8. CARRUSELES DE PRODUCTOS */
+.skeleton-products-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 15px;
+}
+
+/* 7. PROMO NESCAFÉ (2 BANNERS) */
+.skeleton-promo-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.promo-item-sk {
+  width: 100%;
+  height: 280px;
+  border-radius: 16px;
+}
+
+/* 9. PROMO LAYOUT (4 CATEGORÍAS INFERIORES) */
+.skeleton-promo-layout-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+}
+
+.promo-category-card {
+  width: 100%;
+  height: 180px;
+  border-radius: 16px;
+}
+
+/* ======================================================= */
+/* 🚀 RESPONSIVIDAD PARA MÓVILES (480px)                    */
+/* ======================================================= */
+@media (max-width: 480px) {
+  .skeleton-hero-grid {
+    flex-direction: column;
+    min-height: auto;
+  }
+
+  .skeleton-banner-column,
+  .hero-slider-main {
+    width: 100%;
+    height: 210px;
+  }
+
+  .skeleton-categories-grid,
+  .skeleton-brands-grid,
+  .skeleton-products-grid,
+  .skeleton-promo-grid,
+  .skeleton-promo-layout-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+
+  .cat-img-sk,
+  .brand-card-sk,
+  .promo-item-sk,
+  .promo-category-card {
+    height: 140px;
+  }
+
+  .middle-banner-sk {
+    aspect-ratio: 16 / 9;
+  }
+}

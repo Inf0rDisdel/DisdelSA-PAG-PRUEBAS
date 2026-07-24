@@ -1,10 +1,11 @@
-import React, { memo, useMemo, useRef } from 'react';
+import React, { memo, useMemo, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import useCartStore from 'store/useCartStore';
-import { AppConfig } from 'config/AppConfig';
 import { FiShoppingCart } from 'react-icons/fi';
 import { useQueryClient } from '@tanstack/react-query';
+import useCartStore from 'store/useCartStore';
+import { AppConfig } from 'config/AppConfig';
 import { useBanners } from 'hooks/useBanners';
+import { fetchProductDetail } from 'hooks/useProductDetail';
 import { createSlug } from 'utils/slugify';
 import './ProductCard.css';
 
@@ -15,19 +16,29 @@ const ProductCard = memo(({ product, index }) => {
   const queryClient = useQueryClient();
   const prefetchTimerRef = useRef(null); 
   
-
   const handleMouseEnter = () => {
-    prefetchTimerRef.current = setTimeout(() => {
-      queryClient.prefetchQuery({
-        queryKey: ['product', IdProducto.trim().toUpperCase()],
-        staleTime: 1000 * 60 * 5,
+        prefetchTimerRef.current = setTimeout(() => {
+        const id = String(IdProducto).trim();
+        queryClient.prefetchQuery({
+        queryKey: ['producto-detalle', id],
+        queryFn: () => fetchProductDetail(id),
+        staleTime: 1000 * 60 * 30
       });
     }, 80);
+
   };
 
   const handleMouseLeave = () => {
     if (prefetchTimerRef.current) clearTimeout(prefetchTimerRef.current);
   };
+
+  useEffect(() => {
+    return () => {
+        if (prefetchTimerRef.current) {
+            clearTimeout(prefetchTimerRef.current);
+        }
+    };
+  }, []);
 
   const imageUrl = useMemo(() => {
     const found = bannerData?.ImagenPredeterminado?.find(i => i.Titulo?.trim() === "ImagenDefault3");

@@ -10,10 +10,10 @@ import useCartStore from 'store/useCartStore';
 import { useProductDetail } from 'hooks/useProductDetail';
 import { generateProductInsight, generateProductSeoDescription } from 'utils/SEO/productDescriptions';
 
-import { FiCheckCircle, FiChevronRight, FiPackage, FiTarget, FiTruck, FiAward, FiFolder, FiShoppingCart, FiSend } from 'react-icons/fi';
+import { FiCheckCircle, FiChevronRight, FiPackage, FiTarget, FiTruck, FiAward, FiFolder, FiShoppingCart, FiSend, FiShield, FiHeadphones  } from 'react-icons/fi';
 import { createSlug } from 'utils/slugify';
 
-import { getProductSchema } from 'utils/schemas/mainSchemas';
+import { getProductSchema } from 'utils/schemas/productSchema';
 import { optimizedSeoData } from 'utils/SEO/optimizedSeo';
 import RelatedProducts from 'components/products/RelatedProducts';
 
@@ -30,12 +30,20 @@ const isValidImage = (imgName) => {
 const ProductDetailPage = () => {
   const { id, slug } = useParams();
   const cleanIdFromUrl = id ? String(id).trim().toLowerCase() : "";
-  const canonicalId = cleanIdFromUrl; 
+  const { data: product, isLoading, isError} = useProductDetail(cleanIdFromUrl);
+  
+  const canonicalId = useMemo(() => {
+    if (!product) return cleanIdFromUrl;
+
+    return String(product.IdProducto)
+        .trim()
+        .toLowerCase();
+
+  }, [product, cleanIdFromUrl]);
  
   const navigate = useNavigate();
   const addItem = useCartStore((state) => state.addItem);
   const { data: bannerData } = useBanners();
-  const { data: product, isLoading, isError } = useProductDetail(id);
 
   const [selectedImage, setSelectedImage] = useState(null);
   const [selectedUnit, setSelectedUnit] = useState(''); 
@@ -133,7 +141,7 @@ const ProductDetailPage = () => {
   }, [product]);
 
   const fullSchema = useMemo(() => {
-    if (!product || activeSeoInfo) return null;
+    if (!product) return null;
 
     const legacyFormat = {
       t: seoTitle,
@@ -142,7 +150,7 @@ const ProductDetailPage = () => {
     };
 
     return getProductSchema(product, currentUrl, productImages, legacyFormat, defaultImage);
-  }, [product, currentUrl, productImages, activeSeoInfo, seoTitle, seoLongDescription, seoKeywords, defaultImage]);
+  }, [product, currentUrl, productImages, seoTitle, seoLongDescription, seoKeywords, defaultImage]);
 
   //---HANDLERS---
   const handleMouseMove = (e) => {
@@ -191,34 +199,61 @@ const ProductDetailPage = () => {
   }, [product]);
 
   useEffect(() => {
-    if (product) {
-      const correctSlug = createSlug(product.Descripcion);
 
-      //REEDIRECCIÓN AUTOMATICA SEO: si el slug en la URL no existe o es diferente al correcto.
-      //Reedirigimos al isntante a la URL mejorada y limpia. Esto sana las URLs de Google.
-      if (!slug || slug !== correctSlug) {
-        navigate(`/producto/${String(product.IdProducto).trim().toLowerCase()}/${correctSlug}`, { replace: true });
-      }
+  if (!product) return;
+
+  const correctSlug = createSlug(product.Descripcion);
+  const correctId = String(product.IdProducto)
+    .trim()
+    .toLowerCase();
+
+    if (
+      slug !== correctSlug ||
+      cleanIdFromUrl !== correctId
+    ) {
+      navigate(
+        `/producto/${correctId}/${correctSlug}`,
+        { replace: true }
+      );
     }
-  },[product, slug, navigate])
+
+  }, [
+    product,
+    slug,
+    cleanIdFromUrl,
+    navigate
+  ]);
  
   // if (isLoading) return <div>Cargando Producto...</div>;
   // if (isError || !product) return <div>Error al cargar producto</div>;
 
-  if (isLoading || !product || !product.IdProducto) {
+  if (isLoading) {
   return <ProductDetailSkeleton />;
-}
+  }
 
-  if (isError || !product) {
+  if (isError || !product || !product.IdProducto) {
     return (
-      <div className="pdp-container" style={{ textAlign: 'center', padding: '100px' }}>
-        {/* 🚀 SOLUCIÓN SOFT 404: Le indicamos a Google que no indexe ni siga este enlace roto */}
+      <div
+        className="pdp-container"
+        style={{
+          textAlign: "center",
+          padding: "100px"
+        }}
+      >
         <Helmet>
-          <meta name="robots" content="noindex, nofollow" />
+          <meta name="robots" content="noindex,nofollow" />
           <title>Producto no disponible | Disdel</title>
         </Helmet>
+
         <h2>Producto no disponible actualmente</h2>
-        <button className="pdp-back-btn" onClick={() => navigate('/')}>Volver al inicio</button>
+
+        <button
+          className="pdp-back-btn"
+          onClick={() => navigate("/")}
+        >
+          Volver al inicio
+        </button>
+
       </div>
     );
   }
@@ -233,7 +268,7 @@ const ProductDetailPage = () => {
     <meta name="description" content={seoLongDescription} />
     <meta name="keywords" content={seoKeywords} />
     <link rel="canonical" href={currentUrl} />
-    <link rel="preload" as="image" href={mainImg} fetchpriority="high" />
+    <link rel="preload" as="image" href={mainImg} />
 
     <meta property="og:title" content={seoTitle} />
     <meta property="og:description" content={seoLongDescription} />
@@ -253,6 +288,8 @@ const ProductDetailPage = () => {
     <meta property="product:availability" content="in stock" />
     <meta property="product:brand" content={product.Marca || "Disdel"} />
 
+    <meta name="robots" content="index,follow"/>
+
     {/* --- 3. TWITTER CARD --- */}
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={seoTitle} />
@@ -267,10 +304,18 @@ const ProductDetailPage = () => {
       <div className="pdp-top-nav">
         <nav className="pdp-breadcrumbs" aria-label="Breadcrumb">
           <Link to="/">Inicio</Link> <FiChevronRight size={12} />
-          <Link to={`/categoria/${createSlug(product.Segmento || '')}`}>{product.Segmento || product.Categoria}</Link> <FiChevronRight size={12} />
+          <Link
+            to={`/categoria/${createSlug(product.Segmento || product.Categoria)}`}
+          >
+            {product.Segmento || product.Categoria}
+          </Link><FiChevronRight size={12} />
           {product.Categoria && (
             <>
-              <Link to={`/categoria/${createSlug(product.Segmento || '')}/${createSlug(product.Categoria || '')}`}>{product.Categoria}</Link> <FiChevronRight size={12} />
+              <Link
+              to={`/categoria/${createSlug(product.Segmento || product.Categoria)}/${createSlug(product.Categoria)}`}
+            >
+              {product.Categoria}
+            </Link> <FiChevronRight size={12} />
             </>
            )}
           <span className="pdp-current-breadcrumb">{product.Descripcion}</span>
@@ -399,6 +444,49 @@ const ProductDetailPage = () => {
           </div>
         </section>
       </article>
+
+      {/* SECCIÓN DE BARRAS DE VALOR U GARANTÍA */}
+      <section className='pdp-trust-badges-bar' aria-label='Garantías y sevicios de Disdel'>
+        <div className='pdp-trust-item'>
+          <div className='pdp-trust-icon-box'>
+            <FiShield className='pdp-trust-icon' />
+          </div>
+          <div className='pdp-trust-text'>
+            <h4>Calidad Garantizada</h4>
+            <p>Productos originales con respaldo de fábrica.</p>
+          </div>
+        </div>
+
+        <div className='pdp-trust-item'>
+          <div className='pdp-trust-icon-box'>
+            <FiTruck className='pdp-trust-icon' />
+          </div>
+          <div className='pdp-trust-text'>
+            <h4>Entrega Rápida</h4>
+            <p>Cobertura en toda Guatemala con entregas en 24 a 48 horas.</p>
+          </div>
+        </div>
+
+        <div className='pdp-trust-item'>
+          <div className='pdp-trust-icon-box'>
+            <FiHeadphones className='pdp-trust-icon' />
+          </div>
+          <div className='pdp-trust-text'>
+            <h4>Asesoría Técnica</h4>
+            <p>Nuestro equipo le ayuda a elegir la mejor solución.</p>
+          </div>
+        </div>
+
+        <div className='pdp-trust-item'>
+          <div className='pdp-trust-icon-box'>
+            <FiAward className='pdp-trust-icon' />
+          </div>
+          <div className='pdp-trust-text'>
+            <h4>Precios Competitivos</h4>
+            <p>Cotizaciónes especiales para compras por volumen.</p>
+          </div>
+        </div>
+      </section>
 
       {/* --- SECCIÓN DE ESPECIFICACIONES TÉCNICAS --- */}
       <section className="pdp-specs-section" aria-label="Especificaciones técnicas">

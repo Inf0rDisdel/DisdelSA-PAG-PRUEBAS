@@ -9,16 +9,19 @@ import './HeroSlider.css';
 
 const HeroSlider = () => {
   const { data: banners, isLoading, isError } = useBanners();
-  const [isMobile, setIsMobile] = useState(window.innerWidth <= 480);
+  const [isMobile, setIsMobile] = useState(typeof window !== 'undefined' ? window.innerWidth <= 480 : false);
 
   useEffect(() => {
-    const handleResize = () => setIsMobile(window.innerWidth <= 480);
+    const handleResize = () => setIsMobile(typeof window !== 'undefined' ? window.innerWidth <= 480 : false);
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
   // 🚀 FALLBACK SEGURO: Evita el error "disdelsa.com/imagenes/undefined" de Google
-  const defaultImageFallback = `${AppConfig.baseImageUrl}logo-disdel.png`;
+  const defaultImageFallback = React.useMemo(
+    () => `${AppConfig.baseImageUrl}logo-disdel.png`,
+    []
+  );
 
   const getBannerRoute = (ban) => {
     if (!ban) return null;
@@ -97,7 +100,7 @@ const HeroSlider = () => {
           <div className="mobile-hero-carousel">
             <Carousel showArrows={false} showThumbs={false} showStatus={false}
               infiniteLoop={true} autoPlay={true} interval={4000} stopOnHover={false}>
-              {banners.sliderPrincipal.map((slide, index) => {
+              {banners.sliderPrincipal?.map((slide, index) => {
                 const route = getBannerRoute(slide);
 
                 //SANEAMIENTO: Validación de imagen para moviles

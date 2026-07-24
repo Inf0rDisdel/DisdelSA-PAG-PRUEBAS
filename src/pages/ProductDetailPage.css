@@ -234,7 +234,7 @@
 .pdp-thumb-item img { width: 100%; height: 100%; object-fit: contain; }
 
 .pdp-main-image-zoom-container {
-  flex: 1; max-width: 600px; height: 600px;
+  flex: 1; max-width: 620px; height: 600px;
   background: #fff; border: 1px solid #f2f2f2;
   border-radius: 12px; overflow: hidden;
   display: flex; align-items: center; justify-content: center;
@@ -689,6 +689,60 @@
 }
 
 
+.pdp-trust-badges-bar {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+  padding: 20px 24px;
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  margin: 35px 0;
+  box-shadow: 0 4px 15px rgba(15, 23, 42, 0.02);
+  box-sizing: border-box;
+  width: 100%;
+}
+
+.pdp-trust-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.pdp-trust-icon-box {
+  width: 44px;
+  height: 44px;
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 2px 6px rgba(19, 94, 171, 0.08);
+}
+
+.pdp-trust-icon {
+  font-size: 20px;
+  color: #135eab; /* Azul Disdel */
+}
+
+.pdp-trust-text h4 {
+  font-size: 13px;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0 0 3px 0;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+}
+
+.pdp-trust-text p {
+  font-size: 11.5px;
+  color: #64748b;
+  margin: 0;
+  line-height: 1.35;
+}
+
 
 
 /* ======================================================= */
@@ -827,6 +881,12 @@
     flex-direction: column-reverse;
     align-items: center;
   }
+
+  .pdp-trust-badges-bar {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    padding: 18px 20px;
+  }
   
   .pdp-thumbnails-vertical:has(.skeleton-base) {
     flex-direction: row;
@@ -905,6 +965,30 @@
 
   .spec-value{
       font-size:14px;
+  }
+
+  .pdp-trust-badges-bar {
+    grid-template-columns: 1fr; /* Una sola columna en celulares */
+    gap: 14px;
+    padding: 16px;
+    margin: 25px 0;
+  }
+
+  .pdp-trust-icon-box {
+    width: 38px;
+    height: 38px;
+  }
+
+  .pdp-trust-icon {
+    font-size: 18px;
+  }
+
+  .pdp-trust-text h4 {
+    font-size: 12.5px;
+  }
+
+  .pdp-trust-text p {
+    font-size: 11px;
   }
 
   .pdp-unit-info-single {

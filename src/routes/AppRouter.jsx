@@ -5,11 +5,40 @@ import CatalogSkeleton from 'components/ui/Skeleton/CatalogSkeleton';
 import ProductDetailSkeleton from 'components/ui/Skeleton/ProductDetailSkeleton';
 import { withSuspense } from './routeHelpers';
 
-const HomePage = lazy(() => import('../pages/HomePage'));
-const ProductDetailPage = lazy(() => import('pages/ProductDetailPage'));
-const SearchResultsPage = lazy(() => import('pages/SearchResults/SearchResultsPage'));
-const CategoryPage = lazy(() => import('../pages/CategoryPage'));
-const BrandPage = lazy(() => import('../pages/BrandPage/BrandPage'));
+const HomePage = lazy(() =>
+    import(
+        /* webpackChunkName: "home" */
+        '../pages/HomePage'
+    )
+);
+
+const ProductDetailPage = lazy(() =>
+    import(
+        /* webpackChunkName: "product" */
+        'pages/ProductDetailPage'
+    )
+);
+
+const SearchResultsPage = lazy(() =>
+    import(
+        /* webpackPrefetch: true */
+        'pages/SearchResults/SearchResultsPage'
+    )
+);
+
+const CategoryPage = lazy(() =>
+    import(
+        /* webpackChunkName: "category" */
+        '../pages/CategoryPage'
+    )
+);
+
+const BrandPage = lazy(() => 
+  import(
+    /* webpackChunkName: "brand" */
+    '../pages/BrandPage/BrandPage'
+  )
+);
 
 const LoginPage = lazy(() => import('../pages/login/LoginPage'));
 const MyBusinessPage = lazy(() => import('../pages/my-business/MyBusinessPage'));
@@ -18,8 +47,12 @@ const CartPage = lazy(() => import('pages/cart/CartPages'));
 const AboutUs = lazy(() => import('pages/info/AboutUs'));
 const Ayuda = lazy(() => import('pages/info/Ayuda'));
 const Locations = lazy(() => import('pages/info/Locations'));
-
 const PrivacyPolicy = lazy(() => import('pages/info/PrivacyPolicy'));
+
+const ProductLegacyRedirect = lazy(() => import('pages/Legacy/ProductLegacyRedirect'));
+const CategoryLegacyRedirect = lazy(() => import('pages/Legacy/CategoryLegacyRedirect'));
+const BrandLegacyRedirect = lazy(() => import('pages/Legacy/BrandLegacyRedirect'));
+const NotFoundLegacyRedirect = lazy(() => import('pages/Legacy/NotFoundLegacyRedirect'));
 //import ReviewStats from 'components/reviews/ReviewStats';
 //const ReviewsSection = lazy(() => import('components/reviews/ReviewsSection'));
 
@@ -46,7 +79,7 @@ class ChunkErrorBoundary extends Component {
 
       console.error(error, errorInfo);
 
-      window.location.reload();
+      window.location.reload(window.location.href);
     }
   }
 
@@ -62,12 +95,21 @@ const AppRouter = () => {
 
         <Route path="/" element={<Suspense fallback={<HomeSkeleton />}><HomePage /></Suspense>} />
 
-        <Route path="/producto/:id/:slug?" element={withSuspense(ProductDetailPage,<ProductDetailSkeleton />)}/>
-        {/* CATEGORÍAS */}
-        <Route path="/categoria/:slug/:cat?/:subcat?" element={withSuspense(CategoryPage,<CatalogSkeleton />)}  />
+        <Route path="/producto/:id" element={withSuspense(ProductLegacyRedirect, <ProductDetailSkeleton />)} />
+        {/* Ruta Canónica Oficial */}
+        <Route caseSensitive={false} path="/producto/:id/:slug" element={withSuspense(ProductDetailPage, <ProductDetailSkeleton />)} />
 
-        {/* MARCAS */}
-        <Route path="/marca/:slug/:subcat?"element={withSuspense(BrandPage,<CatalogSkeleton />)} />
+        {/* 🚀 2. REDIRECCIONES LEGACY DE CATEGORÍAS (Atrapa enlaces viejos tipo /category/ o /c/) */}
+        <Route path="/category/:slug" element={withSuspense(CategoryLegacyRedirect, <CatalogSkeleton />)} />
+        <Route path="/c/:slug" element={withSuspense(CategoryLegacyRedirect, <CatalogSkeleton />)} />
+        {/* Ruta Canónica Oficial de Categorías */}
+        <Route path="/categoria/:slug/:cat?/:subcat?" element={withSuspense(CategoryPage, <CatalogSkeleton />)} />
+
+        {/* 🚀 3. REDIRECCIONES LEGACY DE MARCAS (Atrapa enlaces viejos tipo /marcas/ o /m/) */}
+        <Route path="/marcas/:slug" element={withSuspense(BrandLegacyRedirect, <CatalogSkeleton />)} />
+        <Route path="/m/:slug" element={withSuspense(BrandLegacyRedirect, <CatalogSkeleton />)} />
+        {/* Ruta Canónica Oficial de Marcas */}
+        <Route path="/marca/:slug/:subcat?" element={withSuspense(BrandPage, <CatalogSkeleton />)} />
           
         <Route path="/buscar" element={withSuspense(SearchResultsPage, <CatalogSkeleton />)}/>
         
@@ -132,7 +174,7 @@ const AppRouter = () => {
         {/* Rescate genérico para cualquier otra subcategoría vieja */}
         <Route path="/subcategoria/:slug" element={<LegacyRedirect />} />
 
-        <Route path="*" element={<Navigate to="/" replace />} />
+        <Route path="*" element={withSuspense(NotFoundLegacyRedirect)} />
       </Routes>
     </ChunkErrorBoundary>
   );
@@ -140,8 +182,19 @@ const AppRouter = () => {
 
 // Componente para manejar subcategorías que ya no existen mandándolas al buscador
 const LegacyRedirect = () => {
-  const { slug } = useParams();
-  return <Navigate to={`/buscar?q=${slug.replace(/-/g, ' ')}`} replace />;
+
+    const { slug } = useParams();
+
+    if (!slug) {
+        return <Navigate to="/" replace />;
+    }
+
+    return (
+        <Navigate
+            to={`/buscar?q=${slug.replace(/-/g, ' ')}`}
+            replace
+        />
+    );
 };
 
 const LgrepsaLegacyRedirect = () => {

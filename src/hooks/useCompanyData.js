@@ -13,5 +13,8 @@ export const useCompanyData = () => {
         queryFn: fetchCompanyData,
         staleTime: 1000 * 60 * 60 * 24,
         gcTime: 1000 * 60 * 60 * 60 *24,
+        retry:1,
+        refetchOnWindowFocus:false,
+        refetchOnReconnect:false,
     });
 };

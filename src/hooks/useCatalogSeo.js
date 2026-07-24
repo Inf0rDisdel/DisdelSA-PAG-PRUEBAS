@@ -13,7 +13,7 @@ const fetchCatalogSeo = async (params) => {
     }, {});
 
     //Si no hay ID válido, evitamos realizar la petición de red
-    if (Object.key(clearParams).lenght === 0) return null;
+    if (Object.keys(clearParams).length === 0) return null;
 
     //Realizamos la petición GET al controlador de C#
     const { data } = await apiVentas.get('api/CatalogoSEO/GetSeo' ,{
@@ -30,7 +30,7 @@ export const useCatalogSeo = (params = {}) => {
 
     return useQuery({
         //Generamos una queryKey única basada en los parámetros que cambien (ej: idCategoria)
-        queryKey: ['catalog-seo', params],
+        queryKey: ['catalog-seo',JSON.stringify (params)],
         queryFn: () => fetchCatalogSeo(params),
         enabled: hasParams, //Evita disparar la petición si no hay IDs válidos
         staleTime: 1000 * 60 * 60 * 24 , //Conserva en caché por 24 horas para máximo rendimiento
