@@ -299,30 +299,30 @@ const BrandPage = () => {
     <div className="brand-container" style={{ '--brand-color': visualConfig.color }}>
 
       <Helmet>
-      {/* 1. SEO DE BÚSQUEDA - AUTORIDAD DE DISTRIBUIDOR */}
-      {/* El título ahora incluye "Distribuidor Autorizado" y "Suministros", palabras clave para jefes de compras */}
-      <title>{`Distribuidor Autorizado ${brandNameOfficial} en Guatemala | Suministros Disdel`}</title>
-      
-      <meta name="description" content={`Adquiere suministros originales ${brandNameOfficial} al por mayor. Distribución institucional con asesoría técnica y entrega rápida en Guatemala. Calidad garantizada para su empresa.`} />
-      <link rel="canonical" href={`https://disdelsa.com/marca/${canonicalSlug}`} />
+        {/* 1. SEO DE BÚSQUEDA - AUTORIDAD DE DISTRIBUIDOR */}
+        {/* El título ahora incluye "Distribuidor Autorizado" y "Suministros", palabras clave para jefes de compras */}
+        <title>{`Distribuidor Autorizado ${brandNameOfficial} en Guatemala | Suministros Disdel`}</title>
+        
+        <meta name="description" content={`Adquiere suministros originales ${brandNameOfficial} al por mayor. Distribución institucional con asesoría técnica y entrega rápida en Guatemala. Calidad garantizada para su empresa.`} />
+        <link rel="canonical" href={`https://disdelsa.com/marca/${canonicalSlug}`} />
 
-      <meta property="og:title" content={`Catálogo Mayorista ${brandNameOfficial} - Distribución Disdel`} />
-      <meta property="og:description" content={`Adquiere productos originales ${brandNameOfficial} con respaldo institucional. Soluciones integrales para hoteles, hospitales y oficinas en Guatemala.`} />
-      <meta property="og:image" content={visualConfig.banner || defaultImage} />
-      <meta property="og:url" content={`https://disdelsa.com/marca/${canonicalSlug}`} />
+        <meta property="og:title" content={`Catálogo Mayorista ${brandNameOfficial} - Distribución Disdel`} />
+        <meta property="og:description" content={`Adquiere productos originales ${brandNameOfficial} con respaldo institucional. Soluciones integrales para hoteles, hospitales y oficinas en Guatemala.`} />
+        <meta property="og:image" content={visualConfig.banner || defaultImage} />
+        <meta property="og:url" content={`https://disdelsa.com/marca/${canonicalSlug}`} />
 
-      <meta property="og:type" content="website" />
+        <meta property="og:type" content="website" />
 
-      <meta property="og:site_name" content="Disdel" />
+        <meta property="og:site_name" content="Disdel" />
 
-      {/* 4. TWITTER CARD */}
-      <meta name="twitter:card" content="summary_large_image" />
-      <meta name="twitter:title" content={`${brandNameOfficial} Guatemala - Suministros Industriales`} />
-      <meta name="twitter:description" content={`Cotiza por volumen productos ${brandNameOfficial}. Entrega rápida y garantía de fábrica en toda la república.`} />
-      <meta name="twitter:image" content={visualConfig.banner ? visualConfig.banner : defaultImage} />
+        {/* 4. TWITTER CARD */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={`${brandNameOfficial} Guatemala - Suministros Industriales`} />
+        <meta name="twitter:description" content={`Cotiza por volumen productos ${brandNameOfficial}. Entrega rápida y garantía de fábrica en toda la república.`} />
+        <meta name="twitter:image" content={visualConfig.banner ? visualConfig.banner : defaultImage} />
 
-      <script type="application/ld+json">{JSON.stringify(fullSchema)}</script>
-    </Helmet>
+        <script type="application/ld+json">{JSON.stringify(fullSchema)}</script>
+      </Helmet>
 
       <section className="brand-hero">
         <img 

@@ -31,12 +31,6 @@ export const getBrandSchema = ({
             "@id":`${url}#breadcrumb`
         },
 
-        "about":{
-            "@type":"Brand",
-            "name":brandName,
-            "logo":logoUrl || "https://disdelsa.com/og-image.jpg"
-        },
-
         "isPartOf":{
             "@id":"https://disdelsa.com/#website"
         },

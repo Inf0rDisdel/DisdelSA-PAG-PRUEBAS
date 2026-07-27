@@ -1,5 +1,4 @@
 export const getWebPageSchema = (companyInfo = {}) => {
-
    const info = companyInfo || {};
 
    const metaTitle =
@@ -12,7 +11,7 @@ export const getWebPageSchema = (companyInfo = {}) => {
       info.MetaDescription ||
       info.descripcionCorta ||
       info.DescripcionCorta ||
-      "Empresa líder...";
+      "Empresa líder en suministros de limpieza en Guatemala";
 
    return {
 
@@ -37,10 +36,6 @@ export const getWebPageSchema = (companyInfo = {}) => {
       "primaryImageOfPage":{
          "@type":"ImageObject",
          "url":"https://disdelsa.com/og-image.jpg"
-      },
-
-      "breadcrumb":{
-         "@id":"https://disdelsa.com/#breadcrumb"
       },
 
       "publisher":{

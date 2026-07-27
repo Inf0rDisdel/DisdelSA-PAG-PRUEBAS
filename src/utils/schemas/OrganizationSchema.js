@@ -48,7 +48,7 @@ export const getOrganizationSchema = (companyInfo = {}) => {
   // --- ESTRUCTURA DE SUCURSALES (Multi-Location) ---
   // Sucursal 1: Oficina Central (Zona 1) - Traída dinámicamente de tu Base de Datos
   const sucursalZona1 = {
-    "@type": "WholesaleStore",
+    "@type": ["Organization", "LocalBusiness", "WholesaleStore"],
     "@id": "https://disdelsa.com/#store-zona1",
     "name": name,
     "telephone": cleanPhone,
