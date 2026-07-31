@@ -79,36 +79,36 @@ export const getProductSchema = (product = {}, currentUrl = "", productImages = 
         "depth": product.Longitud && product.Longitud !== "0" ? { "@type": "QuantitativeValue", "value": product.Longitud, "unitCode": "CMT" } : undefined,
 
         //Si tiene precio valido (mayor a cero) intectamos "offers" con el precio limpio (finalPrice)
-        "offers": {
-          "@type": "Offer",
-          "url": currentUrl,
-          "priceCurrency": "GTQ",
-          "price": finalPrice,
-          "availability": (product?.Stock > 0 || product?.Stock === undefined) ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
-          "itemCondition": "https://schema.org/NewCondition",
-          "seller": {
-            "@type": "Organization",
-            "@id": "https://disdelsa.com/#organization",
-            "name": "Disdel, S.A."
-          },
-          "shippingDetails": {
-            "@type": "OfferShippingDetails",
-            "@id": `${currentUrl}#shipping`,
-            "shippingDestination": {
-              "@type": "DefinedRegion",
-              "addressCountry": "GT"
-            }
-          },
-          "hasMerchantReturnPolicy": {
-            "@type": "MerchantReturnPolicy",
-            "@id": `${currentUrl}#return-policy`,
-            "applicableCountry": "GT",
-            "returnPolicyCategory": "https://schema.org/MerchantReturnFiniteReturnPeriod",
-            "merchantReturnDays": "30",
-            "returnMethod": "https://schema.org/ReturnByMail",
-            "returnFees": "https://schema.org/FreeReturn"
-          }
-        },
+        // "offers": {
+        //   "@type": "Offer",
+        //   "url": currentUrl,
+        //   "priceCurrency": "GTQ",
+        //   "price": finalPrice,
+        //   "availability": (product?.Stock > 0 || product?.Stock === undefined) ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
+        //   "itemCondition": "https://schema.org/NewCondition",
+        //   "seller": {
+        //     "@type": "Organization",
+        //     "@id": "https://disdelsa.com/#organization",
+        //     "name": "Disdel, S.A."
+        //   },
+        //   "shippingDetails": {
+        //     "@type": "OfferShippingDetails",
+        //     "@id": `${currentUrl}#shipping`,
+        //     "shippingDestination": {
+        //       "@type": "DefinedRegion",
+        //       "addressCountry": "GT"
+        //     }
+        //   },
+        //   "hasMerchantReturnPolicy": {
+        //     "@type": "MerchantReturnPolicy",
+        //     "@id": `${currentUrl}#return-policy`,
+        //     "applicableCountry": "GT",
+        //     "returnPolicyCategory": "https://schema.org/MerchantReturnFiniteReturnPeriod",
+        //     "merchantReturnDays": "30",
+        //     "returnMethod": "https://schema.org/ReturnByMail",
+        //     "returnFees": "https://schema.org/FreeReturn"
+        //   }
+        // },
 
         "isPartOf": {
           "@id": "https://disdelsa.com/#website"

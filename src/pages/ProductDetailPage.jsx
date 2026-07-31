@@ -283,8 +283,6 @@ const ProductDetailPage = () => {
     <meta property="og:image:height" content="630" />
     
     <meta property="product:condition" content="new" />
-    <meta property="product:price:amount" content="0.00" />
-    <meta property="product:price:currency" content="GTQ" />
     <meta property="product:availability" content="in stock" />
     <meta property="product:brand" content={product.Marca || "Disdel"} />
 

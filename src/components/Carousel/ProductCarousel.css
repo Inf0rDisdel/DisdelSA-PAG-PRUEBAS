@@ -143,14 +143,16 @@
 }
 
 .slick-slide {
-  height: inherit !important;
+  height: auto !important;
   display: flex !important;
+  align-items: stretch;
   justify-content: center;
 }
 
 .slick-slide > div {
   width: 100%;
   display: flex;
+  align-items: stretch;
   padding: 0 8px;
 }
 

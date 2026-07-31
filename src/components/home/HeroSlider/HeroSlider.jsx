@@ -113,7 +113,12 @@ const HeroSlider = () => {
                     <img 
                       src={imgUrl} 
                       alt={slide.Titulo || "Suministros de limpieza Disdel"} 
+                      width="392"
+                      height="210"
+                      style={{ width: '100%', height: '210px', objectFit: 'cover'}}
                       fetchpriority={index === 0 ? "high" : "auto"}
+                      loading={index === 0 ? "eager" : "lazy"}
+                      decoding={index === 0 ? "sync" : "async"}
                     />
                     {route && (
                       <span className="banner-view-btn-mini">Ver</span>
