@@ -106,7 +106,9 @@ const ProductDetailPage = () => {
   }, [product, activeSeoInfo]);
 
   const currentSlug = useMemo(() => product ? createSlug(product.Descripcion) : '', [product]);
-  const currentUrl = `https://disdelsa.com/producto/${canonicalId}/${currentSlug}`;
+  const currentUrl = useMemo(() => (
+    `https://disdelsa.com/producto/${canonicalId}/${currentSlug}`
+), [canonicalId, currentSlug]);
 
   // 3. UNIFICACIÓN DE KEYWORDS
   const seoKeywords = useMemo(() => {
@@ -275,6 +277,8 @@ const ProductDetailPage = () => {
     <meta property="og:image" content={mainImg} />
     <meta property="og:url" content={currentUrl} />
     <meta property="og:type" content="product" />
+    <meta property="product:category" content={product.Categoria}/>
+    <meta property="product:brand" content={product.Marca || "Disdel"} />
     <meta property="og:site_name" content="Disdel" />
 
     <meta property="og:image:secure_url" content={mainImg} />
@@ -293,6 +297,8 @@ const ProductDetailPage = () => {
     <meta name="twitter:title" content={seoTitle} />
     <meta name="twitter:description" content={seoLongDescription} />
     <meta name="twitter:image" content={mainImg} />
+
+    <meta name="theme-color" content="#135eab" />
 
     {fullSchema && (
           <script type="application/ld+json">{JSON.stringify(fullSchema)}</script>

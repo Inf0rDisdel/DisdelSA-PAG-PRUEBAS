@@ -19,13 +19,17 @@ export const getBreadcrumbs = (items = []) => {
   const lastItem = validItems[validItems.length - 1];
 
   return {
+    "@context":"https://schema.org",
     "@type": "BreadcrumbList",
     "@id": `${lastItem.item}#breadcrumb`,
     "itemListElement": validItems.map((item, index) => ({
       "@type": "ListItem",
       "position": index + 1,
       "name": item.name,
-      "item": item.item
+      "item":{
+        "@id":item.item,
+        "name":item.name
+      }
     }))
   };
 };

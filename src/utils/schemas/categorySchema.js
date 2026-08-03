@@ -48,9 +48,29 @@ export const getCategorySchema = ({
         "url": url,
         "name": title,
         "description": description,
+        "hasPart":{
+          "@type":"ItemList",
+          "@id":`${url}#products`,
+          "numberOfItems":safeProducts.length
+        },
+
+        "keywords":[
+          title,
+          `${title} Guatemala`,
+          `${title} por mayor`,
+          `${title} mayoreo`,
+          `${title} para empresas`,
+          "productos de limpieza",
+          "suministros de limpieza",
+          "limpieza profesional",
+          "limpieza industrial",
+          "distribuidor de limpieza",
+          "venta por mayor"
+        ].join(", "),
+
         "mainEntityOfPage":{
-    "@type":"WebPage",
-    "@id":url
+          "@type":"WebPage",
+          "@id":url
         },
 
         "breadcrumb":{
@@ -58,9 +78,51 @@ export const getCategorySchema = ({
         },
 
         "about":{
-        "@type":"Thing",
-        "name":title
+          "@type":"DefinedTerm",
+          "name":title,
+          "description":
+          description ||
+          `Encuentra ${title.toLowerCase()} para empresas, industrias, hoteles, restaurantes e instituciones en Guatemala.`,
         },
+
+        "isRelatedTo":[
+        {
+          "@type":"Thing",
+          "name":"Productos de limpieza"
+        },
+        {
+          "@type":"Thing",
+          "name":"Limpieza profesional"
+        },
+        {
+          "@type":"Thing",
+          "name":"Venta por mayor"
+        },
+        {
+          "@type":"Thing",
+          "name":"Higiene institucional"
+        }
+        ],
+
+        "audience":{
+          "@type":"BusinessAudience",
+          "audienceType":"Empresas, hoteles, industrias, restaurantes e instituciones"
+        },
+
+        "mentions":[
+        {
+            "@type":"Thing",
+            "name":"Productos de limpieza"
+        },
+        {
+            "@type":"Thing",
+            "name":"Venta al por mayor"
+        },
+        {
+            "@type":"Thing",
+            "name":"Guatemala"
+        }
+        ],
 
         "isPartOf":{
         "@id":"https://disdelsa.com/#website"
@@ -69,10 +131,14 @@ export const getCategorySchema = ({
         "publisher":{
         "@id":"https://disdelsa.com/#organization"
         },
-        "mainEntity": {
-          "@type": "ItemList",
-          "numberOfItems": safeProducts.length,
-          "itemListElement": safeProducts.slice(0, 30).map((prod, index) => {
+
+        "mainEntity":{
+        "@type":"ItemList",
+        "@id":`${url}#products`,
+        "name":title,
+        "itemListOrder":"https://schema.org/ItemListOrderAscending",
+        "numberOfItems":safeProducts.length,
+        "itemListElement": safeProducts.slice(0, 30).map((prod, index) => {
             const productUrl = `https://disdelsa.com/producto/${String(prod.IdProducto).toLowerCase()}/${createSlug(prod.Descripcion)}`;
             
             // 🚀 VALIDACIÓN DEFENSIVA DE IMÁGENES: Filtra '0', 'undefined' y vacíos
@@ -90,14 +156,16 @@ export const getCategorySchema = ({
               "position": index + 1,
               "item": {
                 "@type": "Product",
+                "category":title,
                 "url": productUrl,
                 "name": prod.Descripcion,
                 "image": imageUrl,
                 "@id":`${productUrl}#product`,
                 "sku": prod.IdProducto,
-                "brand": {
-                  "@type": "Brand",
-                  "name": prod.Marca || "Disdel"
+                "brand":{
+                "@type":"Brand",
+                "@id":`https://disdelsa.com/marca/${createSlug(prod.Marca || "Disdel")}#brand`,
+                "name":prod.Marca || "Disdel"
                 },
                 "aggregateRating":{
                 "@type":"AggregateRating",

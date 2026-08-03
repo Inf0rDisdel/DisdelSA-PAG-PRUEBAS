@@ -26,6 +26,44 @@ export const getWebsiteSchema = (companyInfo = {}) => {
 
       "description":metaDescription,
 
+      "about":{
+      "@type":"Thing",
+      "name":"Productos de limpieza profesional"
+      },
+
+      "audience":{
+      "@type":"BusinessAudience",
+      "audienceType":"Empresas, hoteles, industrias, restaurantes e instituciones"
+      },
+
+      "isPartOf":{
+      "@id":"https://disdelsa.com/#organization"
+      },
+
+      "hasPart":[
+         {
+            "@type":"WebPage",
+            "name":"Categorías"
+         },
+         {
+            "@type":"WebPage",
+            "name":"Marcas"
+         },
+         {
+            "@type":"WebPage",
+            "name":"Productos"
+         }
+      ],
+
+      "keywords":[
+         "productos de limpieza",
+         "limpieza profesional",
+         "venta por mayor",
+         "suministros de limpieza",
+         "empresa de limpieza Guatemala",
+         "Disdel"
+      ].join(", "),
+
       "sameAs":[
       "https://www.facebook.com/disdelsagt",
       "https://www.instagram.com/disdelsagt",
@@ -51,7 +89,11 @@ export const getWebsiteSchema = (companyInfo = {}) => {
 
         "copyrightYear":"2026",
 
-        "alternateName":"Disdelsa"
+        "alternateName":[
+            "Disdel",
+            "Disdelsa",
+            "Disdel Guatemala"
+         ],
 
    };
 

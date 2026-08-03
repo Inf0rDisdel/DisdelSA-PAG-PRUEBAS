@@ -81,7 +81,7 @@ export const getOrganizationSchema = (companyInfo = {}) => {
     };
 
     return {
-        "@type": ["Organization"],
+        "@type": "Organization",
         "@id": "https://disdelsa.com/#organization",
 
         "name": name,
@@ -90,7 +90,8 @@ export const getOrganizationSchema = (companyInfo = {}) => {
 
         "logo": {
           "@type": "ImageObject",
-          "url": "https://disdelsa.com/logo-disdel.png"
+          "@id":"https://disdelsa.com/#logo",
+          "url":"https://disdelsa.com/logo-disdel.png"
         },
 
         "image": "https://disdelsa.com/og-image.jpg",
@@ -98,6 +99,12 @@ export const getOrganizationSchema = (companyInfo = {}) => {
         "description": description,
         "telephone": cleanPhone,
         "email": email,
+
+        "brand":{
+          "@type":"Brand",
+          "@id":"https://disdelsa.com/marca/disdel#brand",
+          "name":"Disdel"
+        },
 
         "keywords": [
           ...keywords.split(",").map(k => k.trim()).filter(Boolean),
@@ -148,6 +155,12 @@ export const getOrganizationSchema = (companyInfo = {}) => {
             }
         }
         ],
+
+        "hasOfferCatalog":{
+          "@type":"OfferCatalog",
+          "name":"Catálogo de productos Disdel",
+          "url":"https://disdelsa.com/"
+        },
 
         "hasMap":
           "https://maps.google.com/?q=15+Calle+16-30+Zona+1+Ciudad+de+Guatemala",
