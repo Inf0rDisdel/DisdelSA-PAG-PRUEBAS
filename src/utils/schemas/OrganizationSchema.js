@@ -20,7 +20,12 @@ export const getOrganizationSchema = (companyInfo = {}) => {
     ? [info.nombreAlternativo || info.NombreAlternativo] 
     : ["Disdel", "Disdelsa", "Disdel Guatemala"];
   
-  const description = info.metaDescription || info.MetaDescription || info.descripcionCorta || info.DescripcionCorta || "Empresa líder en Guatemala especializada en suministros de limpieza profesional.";
+  const description = 
+    info.metaDescription || 
+    info.MetaDescription || 
+    info.descripcionCorta || 
+    info.DescripcionCorta || 
+    "Productos de limpieza profesional, higiene institucional, EPP y suministros empresariales con cobertura en toda Guatemala.";
   
   const telephone = (info.telefono || info.Telefono) 
     ? String(info.telefono || info.Telefono) 

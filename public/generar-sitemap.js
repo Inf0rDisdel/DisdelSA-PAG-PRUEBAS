@@ -7,8 +7,20 @@ const path = require("path");
 const BASE_URL = "https://disdelsa.com"; 
 const API_PRODUCTOS = "https://www.disdelsagt.com/MyWsMobil/api/PaginaWeb/GetProductos";
 const API_MENU = "https://www.disdelsagt.com/MyWsMobil/api/PaginaWeb/GetMenu";
-const OUTPUT_FILE = path.join(__dirname, "public", "sitemap.xml"); // Guarda en public/sitemap.xml
+const OUTPUT_FILE = path.join(__dirname, "sitemap.xml");
 const IMG_BASE_URL = `${BASE_URL}/imagenes/productos/`;
+
+const payload = {
+  IdCompania: 1007,
+  Division: "1",
+};
+
+const config = {
+  headers: {
+    "Content-Type": "application/json",
+  },
+  timeout: 15000,
+};
 
 // ---------------- 2. REGLAS B2B Y SECCIONES DESTACADAS ----------------
 const MARCAS_TOP = [

@@ -7,11 +7,11 @@ export const getWebPageSchema = (companyInfo = {}) => {
       "Disdel Guatemala";
 
    const metaDescription =
-      info.metaDescription ||
-      info.MetaDescription ||
-      info.descripcionCorta ||
-      info.DescripcionCorta ||
-      "Empresa líder en suministros de limpieza en Guatemala";
+    info.metaDescription ||
+    info.MetaDescription ||
+    info.descripcionCorta ||
+    info.DescripcionCorta ||
+    "Productos de limpieza profesional, higiene institucional, EPP y suministros empresariales con cobertura en toda Guatemala.";
 
    return {
 

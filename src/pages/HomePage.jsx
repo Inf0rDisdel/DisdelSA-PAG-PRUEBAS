@@ -70,11 +70,13 @@ const HomePage = () => {
   }, [activeCompanyInfo, homeSeo]);
 
   const seoDesc = useMemo(() => {
-  return (
-    activeCompanyInfo.metaDescription ||
-    homeSeo?.d ||
-    activeCompanyInfo.descripcionCorta ||
-    "Disdel, S.A. líder en Guatemala en suministros..."
+    return (
+      activeCompanyInfo.metaDescription ||
+      activeCompanyInfo.MetaDescription ||
+      activeCompanyInfo.DescripcionCorta || // Campo directo C# SQL de CompaniaWeb
+      activeCompanyInfo.descripcionCorta ||
+      homeSeo?.d ||
+      "Productos de limpieza profesional, higiene institucional, EPP y suministros empresariales con cobertura en toda Guatemala."
     );
   }, [activeCompanyInfo, homeSeo]);
 
