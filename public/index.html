@@ -4,22 +4,22 @@
     <base href="/" />
     <meta charset="utf-8" />
 
-    <link rel="preconnect" href="https://www.disdelsagt.com">
-    <link rel="dns-prefetch" href="https://www.disdelsagt.com">
+    <!-- 1. PRECONNECTS Y DNS-PREFETCH -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 
-    <link rel="preconnect" href="https://disdelsa.com">
-    <link rel="dns-prefetch" href="https://disdelsa.com">
+    <link rel="dns-prefetch" href="https://disdelsa.com" />
+    <link rel="dns-prefetch" href="https://www.disdelsagt.com" />
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
-    <!-- 2. FUENTES (Carga prioritaria) -->
+    <!-- 2. FUENTES ASÍNCRONAS -->
     <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" media="print" onload="this.media='all'" />
     
-    <!-- 3. FAVICONS -->
-    <link rel="icon" type="image/png" href="%PUBLIC_URL%/logo-disdel.png?v=2" />
-    <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo-disdel.png?v=2" />
+    <!-- 3. FAVICONS OFICIALES (Reconocidos por Googlebot-Favicons) -->
+    <link rel="icon" href="%PUBLIC_URL%/favicon.ico" sizes="any" />
+    <link rel="icon" type="image/png" sizes="48x48" href="%PUBLIC_URL%/logo-disdel.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="%PUBLIC_URL%/logo-disdel.png" />
+    <link rel="shortcut icon" href="%PUBLIC_URL%/favicon.ico" />
     <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
     
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
@@ -29,23 +29,23 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="color-scheme" content="light">
 
-    <!-- 4. SEO ESTÁTICO DE RESPALDO (Evita que Google muestre correos del footer) -->
-    <title data-rh="true">Disdel, S.A. | Suministros de Limpieza y Mantenimiento Profesional</title>
+    <!-- 4. SEO ESTÁTICO DE RESPALDO -->
+    <title data-rh="true">Disdel Guatemala | Líder en Suministros de Limpieza</title>
     <meta
       data-rh="true"
       name="description"
-      content="Distribuidor líder en Guatemala de productos de limpieza profesional, higiene institucional, cafetería y suministros industriales."
+      content="Productos de limpieza profesional, higiene institucional, EPP y suministros empresariales con cobertura en toda Guatemala."
     />
-    <meta data-rh="true" name="keywords" content="Disdel, Disdelsa, productos de limpieza, suministros de limpieza, higiene institucional, Guatemala">
+    <meta data-rh="true" name="keywords" content="Disdel, Disdelsa, productos de limpieza, suministros de limpieza, higiene institucional, EPP, Guatemala">
     <meta data-rh="true" name="author" content="Disdel, S.A.">
 
-    <!-- 5. OPEN GRAPH RESPALDO (Para WhatsApp, Facebook, LinkedIn antes de renderizar React) -->
+    <!-- 5. OPEN GRAPH RESPALDO -->
     <meta data-rh="true" property="og:type" content="website" />
-    <meta data-rh="true" property="og:title" content="Disdel, S.A. | Suministros de Limpieza y Mantenimiento Profesional" />
-    <meta data-rh="true" property="og:description" content="Distribuidor líder en Guatemala de productos de limpieza, higiene institucional y suministros industriales." />
-    <meta data-rh="true" property="og:image" content="%PUBLIC_URL%/logo-disdel.png?v=2" />
+    <meta data-rh="true" property="og:title" content="Disdel Guatemala | Líder en Suministros de Limpieza" />
+    <meta data-rh="true" property="og:description" content="Productos de limpieza profesional, higiene institucional, EPP y suministros empresariales con cobertura en toda Guatemala." />
+    <meta data-rh="true" property="og:image" content="%PUBLIC_URL%/logo-disdel.png" />
     <meta data-rh="true" property="og:url" content="https://disdelsa.com/" />
-    <meta property="og:site_name" content="Disdel">
+    <meta property="og:site_name" content="Disdel, S.A.">
     <meta data-rh="true" property="og:locale" content="es_GT" /> 
     <meta data-rh="true" property="og:locale:alternate" content="en_US" />
 
@@ -54,16 +54,23 @@
     <meta
       data-rh="true"
       name="twitter:title"
-      content="Disdel, S.A. | Suministros de Limpieza Profesional"
+      content="Disdel Guatemala | Líder en Suministros de Limpieza"
     />
     <meta
       data-rh="true"
       name="twitter:description"
-      content="Distribuidor líder en Guatemala de productos de limpieza profesional y suministros institucionales."
+      content="Productos de limpieza profesional, higiene institucional, EPP y suministros empresariales con cobertura en toda Guatemala."
     />
 
-    <!-- Para iPhone también -->
-    <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo-disdel.png?v=2" />
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "Disdel, S.A.",
+      "url": "https://disdelsa.com",
+      "logo": "https://disdelsa.com/logo-disdel.png"
+    }
+    </script>
 
     <script async defer src="https://www.googletagmanager.com/gtag/js?id=%REACT_APP_GA_ID%"></script>
     <script>
