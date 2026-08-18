@@ -43,3 +43,14 @@
   ExpiresByType application/javascript "access plus 1 year"
   ExpiresByType application/x-javascript "access plus 1 year"
 </IfModule>
+
+# Los recursos versionados conservan 1 año, pero los iconos de marca deben
+# poder revalidarse pronto cuando se actualicen.
+<IfModule mod_headers.c>
+  <FilesMatch "^(favicon(?:-[0-9]+x[0-9]+)?\.(?:ico|png)|apple-touch-icon\.png)$">
+    Header onsuccess unset Cache-Control
+    Header always set Cache-Control "public, max-age=3600, must-revalidate"
+    Header onsuccess unset Expires
+    Header always unset Expires
+  </FilesMatch>
+</IfModule>
