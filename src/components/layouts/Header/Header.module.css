@@ -30,6 +30,74 @@
   flex-shrink: 0; 
 }
 
+.logoLink {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
+}
+
+.logoTransitionOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 5000;
+  display: grid;
+  place-items: center;
+  background: #ffffff;
+  pointer-events: none;
+  animation: logoTransitionScreen 680ms ease-out both;
+  contain: strict;
+}
+
+.logoTransitionContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: min(280px, 72vw);
+  color: #96c121;
+  animation: logoTransitionContent 680ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.logoTransitionWing {
+  width: 180px;
+  height: 108px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 11;
+  stroke-linecap: round;
+  opacity: 0.13;
+}
+
+.logoTransitionLine {
+  width: 182px;
+  height: 4px;
+  margin-top: 14px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #135eab 0%, #135eab 42%, #96c121 100%);
+}
+
+.logoTransitionText {
+  margin-top: 34px;
+  padding-left: 0.42em;
+  color: #135eab;
+  font-size: 18px;
+  font-weight: 500;
+  letter-spacing: 0.42em;
+  white-space: nowrap;
+}
+
+@keyframes logoTransitionScreen {
+  0% { opacity: 0; }
+  14%, 78% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+@keyframes logoTransitionContent {
+  0% { opacity: 0; transform: translateY(8px) scale(0.98); }
+  22%, 78% { opacity: 1; transform: translateY(0) scale(1); }
+  100% { opacity: 0; transform: translateY(-4px) scale(1); }
+}
+
 .logo {
   height: 90px; /* Mantenemos el alto que elegiste */
   width: auto;  /* 🚀 CLAVE: El ancho se ajusta solo para no estirarse */
@@ -53,50 +121,6 @@
 .logo:active {
   filter: brightness(1.5) drop-shadow(0 0 10px white);
   transition: 0.1s;
-}
-
-/*EFECTO DEL LOGO*/
-/* --- PANTALLA DE TRANSICIÓN (SPLASH) --- */
-.splashOverlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background-color: #ffffff; /* Fondo blanco puro */
-  z-index: 99999; /* Por encima de TODO */
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.splashContent {
-  text-align: center;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.splashContent img {
-  width: 180px; /* Ajusta el tamaño de tu logo verde */
-  height: auto;
-  margin-bottom: 20px;
-}
-
-.splashLine {
-  height: 3px;
-  background: linear-gradient(to right, #135eab, #96c121); /* El azul y verde de tu marca */
-  border-radius: 10px;
-  margin-bottom: 15px;
-}
-
-.splashContent p {
-  font-family: 'Poppins', sans-serif; /* O la que uses */
-  font-size: 14px;
-  letter-spacing: 4px;
-  text-transform: uppercase;
-  color: #135eab;
-  font-weight: 500;
 }
 
 /* El botón de las 3 rayitas (oculto en PC) */
@@ -190,6 +214,16 @@
   margin-top: 2px;
   overflow: hidden;
   border: 1px solid #eee;
+  animation: suggestions-enter 120ms ease-out both;
+}
+
+@keyframes suggestions-enter {
+  from { opacity: 0; transform: translateY(-6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .suggestionsBox { animation: none; }
 }
 
 .suggestionItem {
@@ -306,8 +340,8 @@
 .searchButton:hover { background-color: #e0e0e0; }
 
 .navButton {
-  background-color: #96c121;
-  color: white;
+  background-color: var(--color-brand-green);
+  color: var(--color-on-brand-green);
   border: none;
   border-radius: 5px;
   padding: 5px 15px;
@@ -324,7 +358,7 @@
 }
 
 .navButton:hover {
-  background-color: #82a81c;
+  background-color: var(--color-brand-green-hover);
   transform: translateY(-2px); 
 }
 
@@ -398,7 +432,7 @@
   position: absolute;
   top: -5px;
   right: -5px;
-  background-color: #96c121;
+  background-color: var(--color-brand-green);
   width: 20px;
   height: 20px;
   border-radius: 50%;
@@ -407,7 +441,7 @@
   align-items: center;
   font-size: 11px;
   font-weight: bold;
-  color: white;
+  color: var(--color-on-brand-green);
 }
 
 /* ========================================================= */
@@ -521,6 +555,46 @@
 
 }
 
+@media (min-width: 601px) and (max-width: 1024px) {
+  .headerLeft { order: 1; }
+
+  .headerCenter {
+    order: 2;
+    min-width: 0;
+    margin-left: 12px !important;
+  }
+
+  .desktopUserActions {
+    display: none !important;
+  }
+
+  .hamburgerButton {
+    order: 3;
+    display: flex !important;
+    flex: 0 0 38px;
+    width: 38px;
+    height: 38px;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    border: 0;
+    border-radius: 9px;
+    background: var(--color-brand-green);
+    color: var(--color-on-brand-green);
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+    font-size: 22px;
+  }
+
+  .headerRight {
+    order: 4;
+    gap: 0;
+  }
+
+  .searchBar {
+    max-width: none;
+  }
+}
+
 /* ========================================================= */
 /* ===   RESPONSIVE MÓVIL (CELULARES) - DISEÑO PRO v2   === */
 /* ========================================================= */
@@ -536,7 +610,7 @@
     /* Definimos 3 columnas para la fila superior */
     grid-template-columns: auto 1fr auto; 
     grid-template-areas: 
-      "logo icons cart" 
+      "logo . cart"
       "menu search search"; /* El buscador ocupa 2 columnas */
     gap: 15px 10px; /* Más espacio vertical entre filas */
     padding: 0 15px;
@@ -545,7 +619,7 @@
 
   /* --- ASIGNACIÓN DE ÁREAS --- */
   .headerLeft { grid-area: logo; display: flex; align-items: center; }
-  .desktopUserActions { grid-area: icons; }
+  .desktopUserActions { display: none !important; }
   .headerRight { grid-area: cart; }
   .hamburgerButton { grid-area: menu; }
   .headerCenter { grid-area: search; margin: 0 !important; width: 100%; }
@@ -556,37 +630,6 @@
     width: auto !important; /* 🚀 REPARACIÓN: Forzamos que el ancho sea automático */
     margin-left: 0;
     max-width: 120px; /* 🚀 OPCIONAL: Un límite de seguridad para que no tape los iconos */
-  }
-
-  /* 2. ICONOS DE USUARIO (Fila 1 - Centro) */
-  .desktopUserActions {
-    display: flex !important; 
-    flex-direction: row;
-    justify-content: center; /* Centrados entre el logo y el carrito */
-    gap: 12px;
-    padding: 0 5px;
-  }
-
-  .actionLink {
-    display: flex;
-    align-items: center; /* Alinea icono y texto al centro verticalmente */
-    gap: 4px; /* Espacio entre el icono y su texto */
-    text-decoration: none;
-  }
-  
-  .actionText { 
-    display: block !important; /* Ya no está oculto */
-    font-size: 11px; /* Tamaño pequeño para que no rompa el diseño */
-    color: white;
-    font-weight: 600;
-    line-height: 1;
-    white-space: nowrap; /* Evita que el texto se parta en dos líneas */
-  }
-
-  .actionIcon { 
-    height: 27px; 
-    width: auto !important; /* 🚀 REPARACIÓN: Ignora el width="35" inline para no estirarse */
-    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
   }
 
   /* 3. CARRITO (Fila 1 - Derecha) */
@@ -600,8 +643,8 @@
   /* 4. BOTÓN HAMBURGUESA (Fila 2 - Inicio) */
   .hamburgerButton {
     display: flex !important;
-    background-color: #96c121; /* Verde Disdel */
-    color: white;
+    background-color: var(--color-brand-green);
+    color: var(--color-on-brand-green);
     width: 33px; 
     height: 33px;
     border-radius: 8px;
@@ -637,5 +680,14 @@
   /* OCULTAMOS NAVEGACIÓN DE ESCRITORIO */
   .mainNav {
     display: none !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .logo,
+  .logoTransitionOverlay,
+  .logoTransitionContent {
+    animation: none !important;
+    transition: none !important;
   }
 }

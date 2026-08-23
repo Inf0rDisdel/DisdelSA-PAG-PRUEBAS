@@ -1,15 +1,15 @@
-import React, {  useState, useEffect, useRef, useMemo, useCallback } from 'react'; 
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { Link, useNavigate } from 'react-router-dom'; 
 import useCartStore from 'store/useCartStore';
 import styles from './Header.module.css';
 import MegaMenu from './MegaMenu';
 
-import { motion, AnimatePresence } from "framer-motion";
 import { createSlug } from 'utils/slugify';
 
-import { AppConfig } from 'config/AppConfig';
 import { useBanners } from 'hooks/useBanners';
 import { useProducts } from 'hooks/useProducts';
+import { getDisdelImageUrl } from 'utils/imageUrl';
+import OptimizedImage from 'components/ui/OptimizedImage/OptimizedImage';
 
 import {
   FaSearch, FaAngleDown, FaBars, FaTimes} from 'react-icons/fa';
@@ -21,7 +21,9 @@ const Header = () => {
   const [showSuggestions, setShowSuggestions] = useState(false); // Estado para mostrar/ocultar el panel
   const searchRef = useRef(null); // Referencia para detectar clics fuera del buscador
   const { data: bannerData } = useBanners();
-  const { data: productsData } = useProducts(); // Trae la data de productos
+  // El catálogo completo se solicita al buscar, no durante la carga crítica.
+  const shouldLoadSearchCatalog = searchTerm.trim().length > 2;
+  const { data: productsData } = useProducts({ enabled: shouldLoadSearchCatalog });
   const whatsappUrl = `https://wa.me/50231094985`;
   
   const cart = useCartStore((state) => state.cart);
@@ -31,8 +33,8 @@ const Header = () => {
 
   const [isMegaMenuOpen, setIsMegaMenuOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [btnIsHighlighted, setBtnIsHighlighted] = useState(false); 
-  const [isTransitioning, setIsTransitioning] = useState(false);
+  const [isLogoTransitioning, setIsLogoTransitioning] = useState(false);
+  const logoTransitionTimerRef = useRef(null);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -57,6 +59,8 @@ const Header = () => {
   }, [searchTerm, productsData]);
 
   useEffect(() => {
+    if (!showSuggestions) return undefined;
+
     const handleClickOutside = (e) => {
       if (searchRef.current && !searchRef.current.contains(e.target)) {
         setShowSuggestions(false);
@@ -64,23 +68,26 @@ const Header = () => {
     };
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [showSuggestions]);
+
+  useEffect(() => () => {
+    if (logoTransitionTimerRef.current) {
+      window.clearTimeout(logoTransitionTimerRef.current);
+    }
   }, []);
 
   const assets = useMemo(() => {
     const getIcon = (title) => bannerData?.Iconos?.find(i => i.Titulo?.trim() === title)?.Imagen;
     const logoObj = bannerData?.Logo?.find(i => i.Titulo?.trim() === "LogoDisdel");
-    const splashObj = bannerData?.Iconos?.find(i => i.Titulo?.trim() === "IconoSplash");
-    
     return {
-      logoMain: logoObj ? `${AppConfig.baseImageUrl}${logoObj.Imagen}` : '',
-      logoSplash: splashObj ? `${AppConfig.baseImageUrl}${splashObj.Imagen}` : '',
-      iconUser: getIcon("IconoAsíDLimpio"),
-      iconBuilding: getIcon("IconoMyBussines"),
-      iconCart: getIcon("IconoCarrito"),
+      logoMain: getDisdelImageUrl(logoObj?.Imagen),
+      iconUser: getDisdelImageUrl(getIcon("IconoAsíDLimpio")),
+      iconBuilding: getDisdelImageUrl(getIcon("IconoMyBussines")),
+      iconCart: getDisdelImageUrl(getIcon("IconoCarrito")),
     };
   }, [bannerData]);
 
-  const { logoMain, logoSplash, iconUser, iconBuilding, iconCart } = assets;
+  const { logoMain, iconUser, iconBuilding, iconCart } = assets;
 
   const handleSearchSubmit = (e) => {
   e.preventDefault(); 
@@ -98,59 +105,64 @@ const Header = () => {
   const handleSuggestionClick = (p) => {
     setSearchTerm('');
     setShowSuggestions(false);
-    navigate(`/producto/${p.IdProducto}/${createSlug(p.Descripcion)}`);
+    navigate(`/producto/${String(p.IdProducto).trim().toLowerCase()}/${createSlug(p.Descripcion)}`);
   };
 
-  const handleLogoClick = useCallback((e) => {
-    e.preventDefault();
-    setIsTransitioning(true);
-    setTimeout(() => {
-      navigate("/");
-      setTimeout(() => setIsTransitioning(false), 600);
-    }, 600);
-  }, [navigate]);
-
-  const cartClasses = `${styles.cartLink} ${btnIsHighlighted ? styles.bump : ''}`;
+  const cartClasses = styles.cartLink;
   const handleContactClick = () => window.open(whatsappUrl, '_blank', 'noopener,noreferrer');
+
+  const handleLogoNavigation = (event) => {
+    if (
+      event.button !== 0 ||
+      event.metaKey ||
+      event.ctrlKey ||
+      event.shiftKey ||
+      event.altKey
+    ) {
+      return;
+    }
+
+    event.preventDefault();
+    if (isLogoTransitioning) return;
+
+    const prefersReducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+    if (prefersReducedMotion) {
+      navigate('/');
+      return;
+    }
+
+    setIsLogoTransitioning(true);
+    logoTransitionTimerRef.current = window.setTimeout(() => {
+      navigate('/');
+      setIsMobileMenuOpen(false);
+      setIsLogoTransitioning(false);
+    }, 680);
+  };
 
   return (
   <>
-    <AnimatePresence>
-        {isTransitioning && (
-          <motion.div 
-            className={styles.splashOverlay}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.4 }}
-          >
-            <div className={styles.splashContent}>
-              <motion.img 
-                src={logoSplash} 
-                alt="Disdel S.A. - Cargando Experiencia" 
-                initial={{ y: 20, opacity: 0, scale: 0.8 }}
-                animate={{ y: 0, opacity: 1, scale: 1 }}
-                transition={{ delay: 0.2, duration: 0.5, ease: "easeOut" }}
-              />
-              <motion.div className={styles.splashLine} initial={{ width: 0 }} animate={{ width: "150px" }} transition={{ delay: 0.5, duration: 0.8 }} />
-              <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.7, duration: 0.5 }}>Así de Limpio</motion.p>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
     <header className={styles.header} role="banner">
       <div className={styles.headerContainer}>
 
         {/* 1. LOGO (headerLeft) */}
         <div className={styles.headerLeft}>
-          <Link to="/" onClick={handleLogoClick}>
-            <img 
-              src={logoMain} 
+          <Link
+            to="/"
+            aria-label="Ir al inicio de Disdel"
+            className={styles.logoLink}
+            onClick={handleLogoNavigation}
+          >
+            <OptimizedImage
+              src={logoMain || undefined}
               alt="Disdel S.A. - Expertos en Limpieza y Mantenimiento Institucional" 
               className={styles.logo} 
-              fetchpriority="high" // 🚀 Prioridad máxima
+              widths={[180, 270, 360]}
+              targetWidth={360}
+              quality={82}
+              sizes="180px"
+              fetchPriority="auto" // El Hero es el recurso LCP prioritario
               loading="eager"      // 🚀 Carga inmediata
+              decoding="async"
               width="180"          // 🚀 Dimensiones explícitas
               height="90"  
             />
@@ -172,30 +184,41 @@ const Header = () => {
                   aria-label="Buscar productos"
                 />
               <button type="submit" className={styles.searchButton} aria-label="Ejecutar búsqueda">
-                <FaSearch />
+                <FaSearch aria-hidden="true" />
               </button>
             </form>
 
-            <AnimatePresence>
                 {showSuggestions && suggestions.length > 0 && (
-                  <motion.div 
+                  <div
                     className={styles.suggestionsBox}
-                    initial={{ opacity: 0, y: -10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -10 }}
                   >
                     {suggestions.map((p, index) => (
                       <div 
                         key={`${p.IdProducto}-${index}`}
                         className={styles.suggestionItem}
                         onClick={() => handleSuggestionClick(p)}
+                        onKeyDown={(event) => {
+                          if (event.key === 'Enter' || event.key === ' ') {
+                            event.preventDefault();
+                            handleSuggestionClick(p);
+                          }
+                        }}
+                        role="button"
+                        tabIndex="0"
                       >
-                        <img 
-                          src={p.Imagen ? `${AppConfig.baseImageUrl}productos/${p.Imagen}` : ''} 
+                        <OptimizedImage
+                          src={getDisdelImageUrl(p.Imagen, 'productos')}
                           alt="" 
                           className={styles.suggestImg} 
+                          widths={[48, 72, 96]}
+                          targetWidth={96}
+                          quality={78}
+                          sizes="45px"
                           width="45" // 🚀 Evita CLS interno
                           height="45"
+                          loading="lazy"
+                          decoding="async"
+                          fetchPriority="low"
                         />
                         <div className={styles.suggestInfo}>
                           <span className={styles.suggestTitle}>{p.Descripcion}</span>
@@ -203,12 +226,22 @@ const Header = () => {
                         </div>
                       </div>
                     ))}
-                    <div className={styles.suggestFooter} onClick={handleSearchSubmit}>
+                    <div
+                      className={styles.suggestFooter}
+                      onClick={handleSearchSubmit}
+                      onKeyDown={(event) => {
+                        if (event.key === 'Enter' || event.key === ' ') {
+                          event.preventDefault();
+                          handleSearchSubmit(event);
+                        }
+                      }}
+                      role="button"
+                      tabIndex="0"
+                    >
                       Ver todos los resultados para "{searchTerm}"
                     </div>
-                  </motion.div>
+                  </div>
                 )}
-              </AnimatePresence>
           </div>
           
           <nav className={styles.mainNav} role="navigation" aria-label="Navegación principal">
@@ -217,30 +250,50 @@ const Header = () => {
               onMouseEnter={() => setIsMegaMenuOpen(true)}
               onMouseLeave={() => setIsMegaMenuOpen(false)}
             >
-              <button className={styles.navButton}>Categorias <FaAngleDown /></button>
+              <button
+                className={styles.navButton}
+                type="button"
+                aria-haspopup="true"
+                aria-expanded={isMegaMenuOpen}
+                onClick={() => setIsMegaMenuOpen((open) => !open)}
+              >Categorías <FaAngleDown aria-hidden="true" /></button>
               {isMegaMenuOpen && <MegaMenu />}
             </div>
-            <button className={styles.navButton} onClick={() => navigate('/ayuda')}>Líneas de Asistencia</button>
+            <button type="button" className={styles.navButton} onClick={() => navigate('/ayuda')}>Líneas de Asistencia</button>
           </nav>
         </div>
 
         {/* 3. ICONOS DE USUARIO (desktopUserActions) */}
         <div className={styles.desktopUserActions}>
               <a href="https://asidelimpio.com" target="_blank" rel="noopener noreferrer" className={styles.actionLink}>
-                <img src={`${AppConfig.baseImageUrl}${iconUser}`} 
-                alt="Así de Limpio" 
+                <OptimizedImage src={iconUser}
+                alt="" aria-hidden="true"
                 className={styles.actionIcon} 
+                widths={[48, 64, 96]}
+                targetWidth={64}
+                quality={80}
+                sizes="35px"
                 width="35" // 🚀 Evita CLS
                 height="35"
+                loading="eager"
+                decoding="async"
+                fetchPriority="auto"
                 />
                 <span className={styles.actionText}>Así de Limpio</span>
               </a>
               <a href="https://disdelsagt.com" target="_blank" rel="noopener noreferrer" className={styles.actionLink}>
-                <img src={`${AppConfig.baseImageUrl}${iconBuilding}`} 
-                alt="MyBusiness" 
+                <OptimizedImage src={iconBuilding}
+                alt="" aria-hidden="true"
                 className={styles.actionIcon} 
+                widths={[48, 64, 96]}
+                targetWidth={64}
+                quality={80}
+                sizes="35px"
                 width="35" // 🚀 Evita CLS
                 height="35"
+                loading="eager"
+                decoding="async"
+                fetchPriority="auto"
                 />
                 <span className={styles.actionText}>MyBusiness</span>
               </a>
@@ -249,11 +302,18 @@ const Header = () => {
         {/* 4. CARRITO (headerRight) */}
         <div className={styles.headerRight}>
             <Link to="/carrito" className={cartClasses} aria-label={`Ver mi cotización: ${cartItemCount} artículos`}>
-              <img src={`${AppConfig.baseImageUrl}${iconCart}`} 
+              <OptimizedImage src={iconCart}
               alt="" aria-hidden="true" 
               className={styles.cartIcon} 
+              widths={[48, 64, 96]}
+              targetWidth={64}
+              quality={80}
+              sizes="40px"
               width="40" // 🚀 Evita CLS
               height="40"
+              loading="eager"
+              decoding="async"
+              fetchPriority="auto"
               />
               <span className={styles.cartNotification} aria-hidden="true">{cartItemCount}</span>
             </Link>
@@ -261,11 +321,14 @@ const Header = () => {
 
 
           <button 
+            type="button"
             className={styles.hamburgerButton} 
             onClick={() => setIsMobileMenuOpen(true)}
             aria-label="Abrir menú móvil"
+            aria-expanded={isMobileMenuOpen}
+            aria-controls="mobile-navigation"
           >
-            <FaBars />
+            <FaBars aria-hidden="true" />
           </button>
         </div>
       </header>
@@ -273,23 +336,28 @@ const Header = () => {
     {/* --- MENÚ LATERAL MÓVIL (SIDEBAR) --- */}
     <div className={`${styles.mobileMenuOverlay} ${isMobileMenuOpen ? styles.open : ''}`} onClick={() => setIsMobileMenuOpen(false)}></div>
     
-    <div className={`${styles.mobileMenu} ${isMobileMenuOpen ? styles.open : ''}`}>
+    <div
+      id="mobile-navigation"
+      className={`${styles.mobileMenu} ${isMobileMenuOpen ? styles.open : ''}`}
+      aria-hidden={!isMobileMenuOpen}
+      inert={isMobileMenuOpen ? undefined : ''}
+    >
           <div className={styles.mobileMenuHeader}>
             <h3>Menú Disdel</h3>
-            <button onClick={() => setIsMobileMenuOpen(false)} className={styles.closeButton}><FaTimes /></button>
+            <button type="button" onClick={() => setIsMobileMenuOpen(false)} className={styles.closeButton} aria-label="Cerrar menú móvil"><FaTimes aria-hidden="true" /></button>
           </div>
 
           <nav className={styles.mobileNavLinks}>
             {/* BUSCADOR MÓVIL */}
-            <form className={styles.searchBarMobile} onSubmit={handleSearchSubmit} style={{margin: '10px 20px'}}>
+            <form className={styles.searchBarMobile} onSubmit={handleSearchSubmit} style={{margin: '10px 20px'}} role="search">
                <div className={styles.searchBar} style={{border: '1px solid #ddd'}}>
-                  <input type="text" placeholder="Buscar productos..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
-                  <button type="submit" className={styles.searchButton}><FaSearch /></button>
+                  <input type="text" placeholder="Buscar productos..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} aria-label="Buscar productos" autoComplete="off" />
+                  <button type="submit" className={styles.searchButton} aria-label="Ejecutar búsqueda"><FaSearch aria-hidden="true" /></button>
                </div>
             </form>
 
             <a href="https://asidelimpio.com" target="_blank" rel="noopener noreferrer" className={styles.sidebarLink}>
-              <img src={`${AppConfig.baseImageUrl}${iconUser}`} alt="User" className={styles.sidebarIcon} />
+              <OptimizedImage src={iconUser} alt="" aria-hidden="true" className={styles.sidebarIcon} widths={[32, 48]} targetWidth={48} quality={80} sizes="24px" width="24" height="24" loading="lazy" decoding="async" fetchPriority="low" />
               <div>
                 <span className={styles.sidebarTitle}>Así de Limpio</span>
                 <span className={styles.sidebarSubtitle}>Mi Cuenta</span>
@@ -297,18 +365,37 @@ const Header = () => {
             </a>
 
             <a href="https://disdelsagt.com" target="_blank" rel="noopener noreferrer" className={styles.sidebarLink}>
-              <img src={`${AppConfig.baseImageUrl}${iconBuilding}`} alt="Business" className={styles.sidebarIcon} />
+              <OptimizedImage src={iconBuilding} alt="" aria-hidden="true" className={styles.sidebarIcon} widths={[32, 48]} targetWidth={48} quality={80} sizes="24px" width="24" height="24" loading="lazy" decoding="async" fetchPriority="low" />
               <span>MyBusiness</span>
             </a>
 
             <hr className={styles.divider} />
             <Link to="/" onClick={() => setIsMobileMenuOpen(false)} className={styles.sidebarLinkSimple}>Inicio del Catálogo</Link>
             <Link to="/ayuda" onClick={() => setIsMobileMenuOpen(false)} className={styles.sidebarLinkSimple}>Centro de Ayuda</Link>
-            <button onClick={handleContactClick} className={styles.sidebarLinkSimple} style={{background: 'none', border: 'none', textAlign: 'left', width: '100%', cursor: 'pointer'}}>
+            <button type="button" onClick={handleContactClick} className={styles.sidebarLinkSimple} style={{background: 'none', border: 'none', textAlign: 'left', width: '100%', cursor: 'pointer'}}>
               WhatsApp Ventas
           </button>
           </nav>
       </div>
+
+      {isLogoTransitioning && (
+        <div className={styles.logoTransitionOverlay} aria-hidden="true">
+          <div className={styles.logoTransitionContent}>
+            <svg
+              className={styles.logoTransitionWing}
+              viewBox="0 0 220 130"
+              role="presentation"
+              focusable="false"
+            >
+              <path d="M25 94C83 87 139 55 194 18" />
+              <path d="M38 108C90 100 133 77 174 44" />
+              <path d="M56 119C96 111 127 94 154 70" />
+            </svg>
+            <span className={styles.logoTransitionLine} />
+            <span className={styles.logoTransitionText}>ASÍ DE LIMPIO</span>
+          </div>
+        </div>
+      )}
     </>
   );
 };

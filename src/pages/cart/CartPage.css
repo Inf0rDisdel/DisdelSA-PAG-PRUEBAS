@@ -1,5 +1,3 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
-
 /* 1. CONTENEDOR PRINCIPAL - Ajustado para alinear con el Header */
 .cart-page-container {
   width: 100%;
@@ -21,7 +19,6 @@
 }
 
 .cart-header-flex h1 {
-  font-family: 'Poppins', sans-serif;
   font-weight: 610;
   font-size: 1.5rem;
   margin: 0;
@@ -83,10 +80,13 @@
   box-shadow: 0 4px 10px rgba(221, 51, 51, 0.1);
 }
 
+.cart-jump-to-form-btn {
+  display: none;
+}
+
 
 /*SSWWAALL*/
 .swal2-container {
-    font-family: 'Poppins', sans-serif !important;
 }
 
 /* Cuadro de notificación más pequeño y estético */
@@ -151,6 +151,44 @@
   }
 }
 
+@media (max-width: 1024px) {
+  .cart-jump-to-form-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+    min-height: 44px;
+    margin: -10px 0 18px auto;
+    padding: 10px 16px;
+    border: 1px solid rgba(19, 94, 171, 0.22);
+    border-radius: 10px;
+    background: #f4f9e8;
+    color: #0a2b33;
+    font: inherit;
+    font-size: 0.9rem;
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  .cart-jump-to-form-btn span {
+    color: #5fa307;
+    font-size: 1.15rem;
+    line-height: 1;
+  }
+
+  .cart-jump-to-form-btn:focus-visible {
+    outline: 3px solid rgba(19, 94, 171, 0.28);
+    outline-offset: 3px;
+  }
+
+  .cart-items-scroll-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding-right: 8px;
+  }
+}
+
 @media (max-width: 900px) {
   .cart-content-grid {
     grid-template-columns: 1fr; /* Una sola columna en tablets/móvil */
@@ -163,5 +201,41 @@
   .cart-items-scroll-container {
     max-height: none; /* Quitamos el scroll interno en móvil */
     overflow: visible;
+    padding-right: 0;
+  }
+}
+
+@media (max-width: 600px) {
+  .cart-page-container {
+    width: 100%;
+    padding: 24px 14px 36px;
+  }
+
+  .cart-header-flex {
+    gap: 12px;
+    margin-bottom: 18px;
+    padding-bottom: 12px;
+  }
+
+  .cart-header-flex h1 {
+    font-size: 1.35rem;
+  }
+
+  .clear-all-btn {
+    padding: 9px 12px;
+    font-size: 0.78rem;
+  }
+
+  .cart-jump-to-form-btn {
+    width: 100%;
+    margin: -2px 0 14px;
+  }
+
+  .cart-content-grid {
+    gap: 20px;
+  }
+
+  .cart-items-scroll-container {
+    gap: 6px;
   }
 }

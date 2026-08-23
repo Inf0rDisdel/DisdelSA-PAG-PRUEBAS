@@ -19,10 +19,30 @@
 /* (Este lo tenías antes, es específico de tu app y está bien que esté aquí) */
 .carousel-wrapper {
   width: 100%;
-  height: 500px !important;
+  height: auto !important;
+  min-height: 520px;
   padding: 0 8px;
   box-sizing: border-box;
-  aspect-ratio: 1200 / 320; 
+  aspect-ratio: auto; 
+}
+
+/* Reserva liviana para el chunk de carruseles del home. La altura coincide
+   con ProductCarousel y evita que el contenido inferior cambie de posición. */
+.home-carousel-reservation {
+  width: 100%;
+  max-width: var(--site-max-width);
+  min-height: 520px;
+  margin: 0 auto;
+  background: linear-gradient(90deg, #f8fafc 25%, #eef2f6 50%, #f8fafc 75%);
+  background-size: 200% 100%;
+  animation: home-carousel-reservation-shimmer 1.5s linear infinite;
+}
+
+.home-carousel-reservation--double { min-height: 1040px; }
+
+@keyframes home-carousel-reservation-shimmer {
+  from { background-position: 200% 0; }
+  to { background-position: -200% 0; }
 }
 
 /* ... (Aquí pueden ir tus otros estilos de .App-header, etc.) ... */
@@ -34,8 +54,16 @@
 }
 
 @media (max-width: 768px) {
+  .carousel-wrapper { min-height: 460px; }
+  .home-carousel-reservation { min-height: 460px; }
+  .home-carousel-reservation--double { min-height: 920px; }
+
   .brand-layout, .cat-content-layout {
     display: flex;
     flex-direction: column;
   }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .home-carousel-reservation { animation: none; }
 }

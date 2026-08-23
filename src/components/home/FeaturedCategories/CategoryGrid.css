@@ -7,6 +7,7 @@
   margin: auto; 
   margin-top: 10px;
   min-height: unset;
+  box-sizing: border-box;
   contain: layout;
   transition: max-width 0.3s ease;
 }
@@ -15,6 +16,18 @@
   display: grid;
   grid-template-columns: repeat(5, 1fr);
   gap: 20px;
+}
+
+.cgs-item-skeleton {
+  min-width: 0;
+}
+
+.cgs-image-skeleton {
+  aspect-ratio: 260 / 240;
+}
+
+.cgs-text-skeleton {
+  margin-top: 16px;
 }
 
 .cgs-title {
@@ -80,11 +93,56 @@
   left: 170%;
 }
 
-/* Contenedor del Slider */
-.cgs-slider {
+.cgs-slider-shell {
   position: relative;
-  overflow: hidden; 
+}
+
+.cgs-slider {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: calc((100% - 80px) / 5);
+  gap: 20px;
+  overflow-x: auto;
+  overscroll-behavior-inline: contain;
+  scroll-snap-type: inline mandatory;
+  scrollbar-width: none;
   margin: 5px -12px;
+  padding: 0 12px 8px;
+}
+
+.cgs-slider::-webkit-scrollbar {
+  display: none;
+}
+
+.cgs-native-slide {
+  min-width: 0;
+  scroll-snap-align: start;
+}
+
+.cgs-scroll-button {
+  position: absolute;
+  top: 42%;
+  z-index: 2;
+  width: 35px;
+  height: 35px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: #fff;
+  color: #135eab;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.16);
+  font: inherit;
+  font-size: 28px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.cgs-scroll-prev { left: 2px; }
+.cgs-scroll-next { right: 2px; }
+
+.cgs-scroll-button:focus-visible {
+  outline: 3px solid #96c121;
+  outline-offset: 2px;
 }
 
 /* Item Individual (Cada categoría) */
@@ -102,10 +160,10 @@
 
 /* Texto de la categoría */
 .cgs-item p {
-  margin-top: 16px;
+  margin: 12px 0 0;
   font-size: 1.1rem; 
-  color: #135eab;  
-  height: 10px; 
+  color: #135eab;
+  min-height: 2.4em;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -117,11 +175,14 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  width: 100%;
 }
 
 /* Imagen de la categoría */
 .cgs-image {
+  display: block;
   width: 100%; /* Cambiado a 100% para que el aspect-ratio mande */
+  height: auto;
   max-width: 270px;
   aspect-ratio: 260 / 240; /* 🚀 CRÍTICO: El navegador reserva el espacio exacto */
   border-radius: 20px;
@@ -131,68 +192,11 @@
   transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
 }
 
-/* Efecto Hover */
-.cgs-section .slick-track {
-  display: flex !important;
-  align-items: flex-start;
-}
-
 /* EFECTO PRO EN HOVER */
 .cgs-item:hover .cgs-image {
   transform: translateY(-8px);
   box-shadow: 0 15px 30px rgba(19, 94, 171, 0.15);
   border-color: #135eab;
-}
-
-/* =========================================
-   ESTILOS ESPECÍFICOS DE SLICK CAROUSEL
-   (Solo afectan a este slider gracias a .cgs-section)
-   ========================================= */
-
-/* Solo modificamos las flechas que están DENTRO de .cgs-section */
-.cgs-section .slick-arrow {
-  position: absolute;
-  background-color: white;
-  width: 35px;
-  height: 35px;
-  border-radius: 50%;
-  z-index: 10;
-  display: flex !important;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.15);
-}
-
-.cgs-section .slick-arrow:hover {
-  background-color: white;
-}
-
-.cgs-section .slick-arrow::before {
-  font-family: 'slick'; /* Asegura que cargue la fuente de iconos */
-  font-size: 20px;
-  opacity: 1;
-}
-
-.cgs-section .slick-prev {
-  left: 2px; 
-}
-
-.cgs-section .slick-next {
-  right: 2px; 
-}
-
-.cgs-section .slick-dots {
-  bottom: -5px; 
-}
-
-.cgs-section .slick-dots li button::before {
-  font-size: 12px;
-  color: #8b8b8b;
-  opacity: 1;
-}
-
-.cgs-section .slick-dots li.slick-active button::before {
-  color: #96c121;
 }
 
 /* ============================================================
@@ -201,19 +205,25 @@
    ============================================================ */
 @media (min-width: 481px) and (max-width: 1024px) {
   .cgs-section {
-    padding: 10px 12px 0 !important; /* Quitamos el padding inferior */
-    margin-top: -10px;
-    margin-bottom: 0 !important; /* Eliminamos margen inferior */
+    padding: 16px 12px 24px !important;
+    margin-top: 0;
+    margin-bottom: 0 !important;
     min-height: auto;
   }
   
   .cgs-slider {
-    margin-bottom: 0 !important; /* Evitamos que el slider empuje lo de abajo */
+    margin: 5px -6px 0 !important;
+    grid-auto-columns: calc((100% - 36px) / 4);
+    gap: 12px;
+    padding: 0 6px 8px;
   }
 
-  /* Ajustamos los puntos del slider para que no ocupen espacio extra */
-  .cgs-section .slick-dots {
-    bottom: 0px !important;
+  .cgs-item p {
+    min-height: 2.4em;
+  }
+
+  .cgs-item-skeleton:nth-child(n+5) {
+    display: none;
   }
 }
 
@@ -222,7 +232,7 @@
    ============================================================ */
 @media (max-width: 480px) {
   .cgs-section {
-    padding: 12px 0;
+    padding: 18px 10px 24px;
   }
 
   /* 1. Título centrado y sin bordes (como querías) */
@@ -235,9 +245,14 @@
     box-shadow: none !important; 
   }
 
-  .cgs-section .slick-dots {
-    display: none !important;
+  .cgs-slider {
+    margin: 0 !important;
+    grid-auto-columns: calc((100% - 20px) / 3);
+    gap: 10px;
+    padding: 0 0 6px;
   }
+
+  .cgs-scroll-button { display: none; }
 
   .cgs-item {
     padding: 0 2px !important; 
@@ -247,6 +262,7 @@
   /* 🔥 2. AJUSTE DE ICONOS PARA MÓVIL (Reparación) 🔥 */
   /* Bajamos el tamaño para que quepan 3 sin amontonarse */
   .cgs-image {
+    height: auto !important;
     aspect-ratio: 1 / 1; /* Cuadrados en móvil para que quepan mejor */
     border-radius: 12px;
   }
@@ -254,8 +270,8 @@
   /* Ajustamos el texto para que no choque */
   .cgs-item p {
     font-size: 0.85rem !important;
-    margin-top: 5px !important;
-    height: auto !important; /* Permite que crezca si el nombre es largo */
+    margin: 8px 0 0 !important;
+    min-height: 2.2em !important;
     line-height: 1.1;
   }
 
@@ -270,5 +286,18 @@
   .cgs-skeleton-grid {
     grid-template-columns: repeat(3, 1fr);
     gap: 10px;
+  }
+
+  .cgs-image-skeleton {
+    aspect-ratio: 1 / 1;
+  }
+
+  .cgs-text-skeleton {
+    margin-top: 8px;
+    height: 30px !important;
+  }
+
+  .cgs-item-skeleton:nth-child(n+4) {
+    display: none;
   }
 }

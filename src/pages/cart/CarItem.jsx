@@ -25,6 +25,11 @@ const CartItem = ({ product }) => {
           src={product.Imagen ? `${AppConfig.baseImageUrl}productos/${product.Imagen}` : defaultImage}
           alt={product.Descripcion}
           className="item-image"
+          width="160"
+          height="160"
+          loading="lazy"
+          decoding="async"
+          fetchPriority="low"
           // Evitamos que la imagen se vea estirada
           style={{ objectFit: 'contain' }}
         />
@@ -46,17 +51,17 @@ const CartItem = ({ product }) => {
 
 
       <div className="quantity-control">
-        <button className="quantity-btn" disabled={quantity <= 1} onClick={() => updateQuantity(product.IdProducto, product.unitType, -1)}>
-          <FiMinus />
+        <button type="button" className="quantity-btn" aria-label={`Reducir cantidad de ${product.Descripcion}`} disabled={quantity <= 1} onClick={() => updateQuantity(product.IdProducto, product.unitType, -1)}>
+          <FiMinus aria-hidden="true" />
         </button>
-        <span className="quantity-display">{quantity}</span>
-        <button className="quantity-btn" onClick={() => updateQuantity(product.IdProducto, product.unitType, 1)}>
-          <FiPlus />
+        <span className="quantity-display" aria-live="polite" aria-label={`Cantidad: ${quantity}`}>{quantity}</span>
+        <button type="button" className="quantity-btn" aria-label={`Aumentar cantidad de ${product.Descripcion}`} onClick={() => updateQuantity(product.IdProducto, product.unitType, 1)}>
+          <FiPlus aria-hidden="true" />
         </button>
       </div>
 
-      <button className="delete-btn" onClick={() => removeFromCart(product.IdProducto, product.unitType)}>
-        <FiTrash2 size={18} />
+      <button type="button" className="delete-btn" aria-label={`Eliminar ${product.Descripcion} de la cotización`} onClick={() => removeFromCart(product.IdProducto, product.unitType)}>
+        <FiTrash2 size={18} aria-hidden="true" />
       </button>
     </div>
   );

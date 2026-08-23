@@ -1,21 +1,27 @@
-import React, { useEffect, useMemo, useState } from "react";
-import Slider from "react-slick";
-import "slick-carousel/slick/slick.css"; 
-import "slick-carousel/slick/slick-theme.css";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import "./BannerSlider.css"; 
 
 // 1. Imports necesarios
-import { AppConfig } from '../../../config/AppConfig';
 import { useBanners } from '../../../hooks/useBanners';
+import { getDisdelImageUrl } from 'utils/imageUrl';
+import OptimizedImage from 'components/ui/OptimizedImage/OptimizedImage';
 
 const BannerSlider = () => {
   const { data: banners, isLoading, isError } = useBanners();
-  const [isPhone, setIsPhone] = useState(typeof window !== 'undefined' ? window.innerWidth <= 480 : false);
+  const containerRef = useRef(null);
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [isNearViewport, setIsNearViewport] = useState(false);
+  const [isPhone, setIsPhone] = useState(
+    () => typeof window !== 'undefined' && window.matchMedia('(max-width: 480px)').matches
+  );
 
   useEffect(() => {
-    const handleResize = () => setIsPhone(typeof window !== 'undefined' ? window.innerWidth <= 480 : false);
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+    const phoneQuery = window.matchMedia('(max-width: 480px)');
+    const handleBreakpointChange = (event) => setIsPhone(event.matches);
+
+    setIsPhone(phoneQuery.matches);
+    phoneQuery.addEventListener('change', handleBreakpointChange);
+    return () => phoneQuery.removeEventListener('change', handleBreakpointChange);
   }, []);
 
   const displayBanners = useMemo(() => {
@@ -44,52 +50,40 @@ const BannerSlider = () => {
   }, [banners, isPhone]);
 
   useEffect(() => {
-    if (displayBanners && displayBanners.length > 0) {
-      const primerBanner = displayBanners[0];
-      const imgMovil = primerBanner.ImagenMovil || primerBanner.BannerImagenMovil;
-      const imgDesktop = primerBanner.Imagen;
-      const rutaImagen = (isPhone && imgMovil) ? imgMovil : imgDesktop;
+    setActiveIndex(0);
+  }, [displayBanners]);
 
-      if (rutaImagen) {
-        const urlFinal = `${AppConfig.baseImageUrl}${rutaImagen}`;
-
-        // Verificamos si ya existe el preload para no duplicarlo en el head
-        const existePreload = document.querySelector(`link[rel="preload"][href="${urlFinal}"]`);
-        if (!existePreload) {
-          const link = document.createElement('link');
-          link.rel = 'preload';
-          link.as = 'image';
-          link.href = urlFinal;
-          document.head.appendChild(link);
-
-          // Limpieza al desmontar el componente o cambiar de banner
-          return () => {
-            if (document.head.contains(link)) {
-              document.head.removeChild(link);
-            }
-          };
-        }
-      }
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container || !('IntersectionObserver' in window)) {
+      setIsNearViewport(true);
+      return undefined;
     }
-  }, [displayBanners, isPhone]);
 
-  const settings = {
-    dots: false,
-    infinite: true,
-    speed: 500,
-    slidesToShow: 1,
-    slidesToScroll: 1,
-    autoplay: true,
-    autoplaySpeed: 4000,
-    arrows: false,
-    fade: true, 
-    pauseOnHover: false,
-    lazyLoad: 'ondemand'
-  };
+    const observer = new IntersectionObserver(([entry]) => {
+      setIsNearViewport(entry.isIntersecting);
+    }, { rootMargin: '200px 0px' });
+
+    observer.observe(container);
+    return () => observer.disconnect();
+  }, [isLoading]);
+
+  useEffect(() => {
+    if (!isNearViewport || displayBanners.length < 2) return undefined;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return undefined;
+
+    const timer = window.setInterval(() => {
+      if (!document.hidden) {
+        setActiveIndex((current) => (current + 1) % displayBanners.length);
+      }
+    }, 6000);
+
+    return () => window.clearInterval(timer);
+  }, [displayBanners.length, isNearViewport]);
 
   if (isLoading) {
     return (
-      <div className="banner-slider-container">
+      <div className="banner-slider-container" ref={containerRef}>
         <div className="skeleton-shimmer" style={{ width: '100%', height: isPhone ? '350px' : '270px', borderRadius: '15px' }}></div>
       </div>
     );
@@ -97,38 +91,53 @@ const BannerSlider = () => {
 
   if (isError || displayBanners.length === 0) return null;
 
+  const activeBanner = displayBanners[activeIndex] || displayBanners[0];
+  const mobileImage = activeBanner?.ImagenMovil || activeBanner?.BannerImagenMovil;
+  const mobileUrl = getDisdelImageUrl(mobileImage);
+  const desktopUrl = getDisdelImageUrl(activeBanner?.Imagen);
+  const finalUrl = isPhone ? (mobileUrl || desktopUrl) : (desktopUrl || mobileUrl);
+
+  if (!finalUrl) return null;
+
   return (
-    <div className="banner-slider-container">
-      <Slider {...settings}>
-        {displayBanners.map((ban, index) => {
-          // 3. Selección inteligente de imagen (Escritorio vs Móvil)
-          const imgMovil = ban.ImagenMovil || ban.BannerImagenMovil;
-          const imgDesktop = ban.Imagen;
+    <div className="banner-slider-container" ref={containerRef} aria-roledescription="carrusel" aria-label="Promociones de Disdel">
+      <div className="banner-native-stage" key={activeBanner.EntityID || activeIndex}>
+        <div className="slider-item">
+          <picture>
+            {mobileUrl && <source media="(max-width: 480px)" srcSet={mobileUrl} />}
+            <OptimizedImage
+              src={finalUrl}
+              alt={activeBanner.Titulo || "Promoción Disdel"}
+              className="banner-img"
+              widths={[480, 768, 1024, 1400]}
+              targetWidth={1400}
+              quality={74}
+              sizes="(min-width: 1400px) 1400px, 100vw"
+              width="1400"
+              height="270"
+              loading="lazy"
+              decoding="async"
+              fetchPriority="low"
+            />
+          </picture>
+        </div>
+      </div>
 
-          const rutaFinal = (isPhone && imgMovil) ? imgMovil : imgDesktop;
-
-           return (
-            <div key={ban.IdBanner || index} className="slider-item">
-              <picture>
-                {/* Esto ayuda al navegador a elegir la imagen antes de renderizar */}
-                {imgMovil && <source media="(max-width: 480px)" srcSet={`${AppConfig.baseImageUrl}${imgMovil}`} />}
-                <img 
-                  src={`${AppConfig.baseImageUrl}${rutaFinal}`} 
-                  alt={ban.Titulo || "Promoción Disdel"} 
-                  className="banner-img"
-                  width="1400" 
-                  height="270"
-                  // SEO y Performance: El primero carga de una, los demás después
-                  loading={index === 0 ? "eager" : "lazy"}
-                  decoding={index === 0 ? "sync" : "async"}
-                />
-              </picture>
-            </div>
-          );
-        })}
-      </Slider>
+      {displayBanners.length > 1 && (
+        <div className="banner-native-dots" aria-label="Seleccionar promoción">
+          {displayBanners.map((banner, index) => (
+            <button
+              type="button"
+              key={banner.EntityID || index}
+              className={index === activeIndex ? 'is-active' : ''}
+              onClick={() => setActiveIndex(index)}
+              aria-label={`Ver promoción ${index + 1}`}
+              aria-current={index === activeIndex ? 'true' : undefined}
+            />
+          ))}
+        </div>
+      )}
     </div>
-
   );
 };
 

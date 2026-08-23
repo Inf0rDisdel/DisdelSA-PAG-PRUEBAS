@@ -123,15 +123,15 @@
     /* Cambiamos a solo 2 columnas: Imagen a la izquierda, Info a la derecha */
     grid-template-columns: auto 1fr;
     grid-template-rows: auto;
-    gap: 10px;
-    padding: 1rem;
+    gap: 8px;
+    padding: 0.8rem;
     align-items: start; /* Alineamos todo arriba */
   }
 
   /* 1. La imagen se queda a la izquierda */
   .item-image {
-    width: 70px;
-    height: 70px;
+    width: 66px;
+    height: 66px;
     grid-row: 1 / span 3; /* Ocupa espacio verticalmente */
   }
 
@@ -161,7 +161,7 @@
   .quantity-control {
     grid-column: 2;
     width: fit-content; /* Que no ocupe todo el ancho */
-    margin-top: 5px;
+    margin-top: 2px;
     justify-content: flex-start; /* Alineado a la izquierda */
     background: transparent;
     padding: 0;

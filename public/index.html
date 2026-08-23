@@ -5,30 +5,90 @@
     <meta charset="utf-8" />
 
     <!-- 1. PRECONNECTS Y DNS-PREFETCH -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preconnect" href="https://www.disdelsagt.com" crossorigin />
 
     <link rel="dns-prefetch" href="https://disdelsa.com" />
     <link rel="dns-prefetch" href="https://www.disdelsagt.com" />
 
-    <!-- 2. FUENTES ASÍNCRONAS -->
-    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" media="print" onload="this.media='all'" />
-    
-    <!-- 3. FAVICONS OFICIALES: URLs estables y formatos/tamaños reales para buscadores -->
+    <!-- Inicia temprano la consulta que alimenta el Hero y el Header. React
+         reutiliza esta promesa para no repetir la petición. -->
+    <script>
+      var earlyBannerRequest = typeof window.fetch === 'function'
+        ? window.fetch(
+            'https://www.disdelsagt.com/MyWsMobil/api/PaginaWeb/GetBanners',
+            {
+              method: 'POST',
+              headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({ IdCompania: 1007, Division: '1' })
+            }
+          )
+        : Promise.resolve(null);
+
+      window.__DISDEL_BANNERS_PROMISE__ = earlyBannerRequest
+        .then(function (response) {
+          if (!response) return null;
+          if (!response.ok) throw new Error('No fue posible precargar los banners');
+          return response.json();
+        })
+        .then(function (data) {
+          if (!Array.isArray(data)) return null;
+
+          var firstHero = data.find(function (banner) {
+            return String(banner.IdTipoBanner) === '3';
+          });
+          var heroPath = firstHero && (firstHero.Imagen || firstHero.BannerImagenMovil);
+          var invalidPath = !heroPath || /^(?:0|undefined|null|n\/a)$/i.test(String(heroPath).trim());
+
+          // La URL procede siempre de la API: no se liga el sitio a un banner
+          // específico. La precarga usa exactamente las variantes WebP que
+          // renderiza OptimizedImage, evitando descargar también el original.
+          if (!invalidPath) {
+            var cleanHeroPath = String(heroPath).replace(/^\/+/, '');
+            var heroSizes = window.matchMedia('(max-width: 480px)').matches
+              ? 'calc(100vw - 20px)'
+              : '(min-width: 1400px) 620px, 45vw';
+            var heroWidths = window.matchMedia('(max-width: 480px)').matches
+              ? [360, 480, 640]
+              : [480, 640, 800, 960];
+            var optimizedUrl = function (width) {
+              return '/image-optimizer.php?src=' + encodeURIComponent(cleanHeroPath) +
+                '&w=' + width + '&q=76';
+            };
+            var heroPreload = document.createElement('link');
+            heroPreload.rel = 'preload';
+            heroPreload.as = 'image';
+            heroPreload.type = 'image/webp';
+            heroPreload.fetchPriority = 'high';
+            heroPreload.imageSrcset = heroWidths.map(function (width) {
+              return optimizedUrl(width) + ' ' + width + 'w';
+            }).join(', ');
+            heroPreload.imageSizes = heroSizes;
+            heroPreload.href = optimizedUrl(window.matchMedia('(max-width: 480px)').matches ? 640 : 800);
+            document.head.appendChild(heroPreload);
+            window.__DISDEL_HERO_PRELOAD__ = heroPreload;
+          }
+
+          return data;
+        })
+        .catch(function () { return null; });
+    </script>
+
+    <!-- 2. FAVICONS OFICIALES: URLs estables y formatos/tamaños reales para buscadores -->
     <!-- Una sola URL principal y estable evita selecciones ambiguas en Google Search. -->
     <link rel="icon" type="image/png" sizes="192x192" href="%PUBLIC_URL%/favicon-192x192.png" />
     <link rel="apple-touch-icon" sizes="180x180" href="%PUBLIC_URL%/apple-touch-icon.png" />
     <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
     
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
-    <link rel="canonical" href="https://disdelsa.com/" />
     <meta name="robots" content="index,follow,max-image-preview:large">
     <meta name="theme-color" content="#135eab" />
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="color-scheme" content="light">
 
-    <!-- 4. SEO ESTÁTICO DE RESPALDO -->
+    <!-- 3. SEO ESTÁTICO DE RESPALDO -->
     <title data-rh="true">Disdel Guatemala | Líder en Suministros de Limpieza</title>
     <meta
       data-rh="true"
@@ -38,7 +98,7 @@
     <meta data-rh="true" name="keywords" content="Disdel, Disdelsa, productos de limpieza, suministros de limpieza, higiene institucional, EPP, Guatemala">
     <meta data-rh="true" name="author" content="Disdel, S.A.">
 
-    <!-- 5. OPEN GRAPH RESPALDO -->
+    <!-- 4. OPEN GRAPH RESPALDO -->
     <meta data-rh="true" property="og:type" content="website" />
     <meta data-rh="true" property="og:title" content="Disdel Guatemala | Líder en Suministros de Limpieza" />
     <meta data-rh="true" property="og:description" content="Productos de limpieza profesional, higiene institucional, EPP y suministros empresariales con cobertura en toda Guatemala." />
@@ -48,7 +108,7 @@
     <meta data-rh="true" property="og:locale" content="es_GT" /> 
     <meta data-rh="true" property="og:locale:alternate" content="en_US" />
 
-    <!-- 6. TWITTER CARD RESPALDO -->
+    <!-- 5. TWITTER CARD RESPALDO -->
     <meta data-rh="true" name="twitter:card" content="summary_large_image" />
     <meta
       data-rh="true"
@@ -71,12 +131,23 @@
     }
     </script>
 
-    <script async defer src="https://www.googletagmanager.com/gtag/js?id=%REACT_APP_GA_ID%"></script>
     <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', '%REACT_APP_GA_ID%');
+      (function () {
+        var measurementId = '%REACT_APP_GA_ID%';
+        var isValidMeasurementId = /^G-[A-Z0-9]+$/i.test(measurementId) && measurementId !== 'G-XXXXXXXXXX';
+
+        if (!isValidMeasurementId) return;
+
+        window.dataLayer = window.dataLayer || [];
+        window.gtag = function () { window.dataLayer.push(arguments); };
+        window.gtag('js', new Date());
+        window.gtag('config', measurementId);
+
+        var analyticsScript = document.createElement('script');
+        analyticsScript.async = true;
+        analyticsScript.src = 'https://www.googletagmanager.com/gtag/js?id=' + encodeURIComponent(measurementId);
+        document.head.appendChild(analyticsScript);
+      }());
     </script>
   </head>
   <body style="margin: 0; background-color: #f8f9fa;">

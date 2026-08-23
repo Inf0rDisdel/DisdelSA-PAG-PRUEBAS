@@ -99,7 +99,15 @@ const CategoryDetail = () => { // 2. ELIMINAR prop addToCart
               products.map(prod => (
                 <div key={prod.id} className="cd-product-card">
                   <div className="cd-img-wrapper">
-                    <img src={prod.image} alt={prod.name} />
+                    <img
+                      src={prod.image}
+                      alt={prod.name}
+                      width="200"
+                      height="200"
+                      loading="lazy"
+                      decoding="async"
+                      fetchPriority="low"
+                    />
                   </div>
                   <div className="cd-info-wrapper">
                     <span className="cd-item-category">{prod.category}</span>

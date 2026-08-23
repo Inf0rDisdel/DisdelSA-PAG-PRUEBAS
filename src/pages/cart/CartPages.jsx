@@ -33,6 +33,21 @@ const CartPage = () => {
     });
   };
 
+  const handleJumpToForm = () => {
+    const form = document.getElementById('quote-form');
+    if (!form) return;
+
+    const prefersReducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+    form.scrollIntoView({
+      behavior: prefersReducedMotion ? 'auto' : 'smooth',
+      block: 'start'
+    });
+
+    window.setTimeout(() => {
+      form.focus({ preventScroll: true });
+    }, prefersReducedMotion ? 0 : 420);
+  };
+
   return (
     <div className="cart-page-container">
       <div className="cart-header-flex">
@@ -46,6 +61,18 @@ const CartPage = () => {
           </button>
         )}
       </div>
+
+      {!isEmpty && (
+        <button
+          type="button"
+          className="cart-jump-to-form-btn"
+          onClick={handleJumpToForm}
+          aria-controls="quote-form"
+        >
+          Completar datos de cotización
+          <span aria-hidden="true">↓</span>
+        </button>
+      )}
 
       {isEmpty ? (
         <EmptyCartMessage />

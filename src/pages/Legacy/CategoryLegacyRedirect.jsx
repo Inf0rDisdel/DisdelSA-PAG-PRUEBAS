@@ -19,6 +19,14 @@ const CategoryLegacyRedirect = () => {
 
         const searchSlug = createSlug(slug);
 
+        if (searchSlug === 'decapante') {
+            return '/categoria/quimicos-para-limpieza/removedores-y-solventes';
+        }
+
+        if (searchSlug === 'suavizante') {
+            return '/categoria/quimicos-para-limpieza/lavanderia/para-ropa';
+        }
+
         for (const segmento of menuData) {
 
             const segmentoSlug = createSlug(segmento.NombreSegmento);

@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, lazy, Suspense } from 'react';
+import React, { useCallback, useEffect, useMemo, useState, lazy, Suspense } from 'react';
 import { Helmet } from 'react-helmet-async';
 import useCartStore from 'store/useCartStore';
 import { toast } from 'react-hot-toast'; 
@@ -7,27 +7,59 @@ import { useBanners } from 'hooks/useBanners';
 import { AppConfig } from 'config/AppConfig'; 
 import { useCompanyData } from 'hooks/useCompanyData';
 import { getMainGraphSchema } from 'utils/schemas/mainSchemas';
-import HomeSkeleton from 'components/ui/Skeleton/HomeSkeleton';
 import { optimizedSeoData } from 'utils/SEO/optimizedSeo';
 import { normalizeCompanyInfo } from 'utils/companyMapper';
+import HeroSlider from 'components/home/HeroSlider/HeroSlider';
+import BannerSlider from 'components/home/HeroSlider/BannerSlider';
+import CategoryGrid from 'components/home/FeaturedCategories/CategoryGrid';
+import FeaturedBrands from 'components/home/ComercialAllies/FeaturedBrands';
+import { getDisdelImageUrl } from 'utils/imageUrl';
 
-//CARGA INMEDIATA: Lo que el usuario ve sin hacer scroll (Arriba)
-const BannerSlider = lazy(() => import('components/home/HeroSlider/BannerSlider'));
+// El contenido visible al abrir el home forma parte del paquete crítico.
+// Así evitamos que categorías, marcas y banner aparezcan tarde y provoquen CLS.
 const PromoNescafe = lazy(() => import('components/home/PromoNescafe/PromoNescafe'));
-const HeroSlider = lazy(() => import('components/home/HeroSlider/HeroSlider'));
 
 //CARGA PEREZOSA : Componentes pesados que están más abajo
 const ProductCarousel = lazy(() => import('components/Carousel/ProductCarousel'));
-const CategoryGrid = lazy(() => import('components/home/FeaturedCategories/CategoryGrid'));
-const FeaturedBrands = lazy(() => import('components/home/ComercialAllies/FeaturedBrands'));
 const PromoLayout = lazy(() => import('components/home/PromoLayout/PromoLayout'));
 const InfoSection = lazy(() => import('components/home/InfoSection/InfoSection'));
 const NewsletterSignup = lazy(() => import('components/home/InfoSection/NewsLetterSignup'));
 
 const HomePage = () => {
+  const [loadProducts, setLoadProducts] = useState(false);
+
+  useEffect(() => {
+    let idleId;
+    let timerId;
+
+    const enableProductCatalog = () => {
+      if ('requestIdleCallback' in window) {
+        idleId = window.requestIdleCallback(
+          () => setLoadProducts(true),
+          { timeout: 2000 }
+        );
+      } else {
+        timerId = window.setTimeout(() => setLoadProducts(true), 500);
+      }
+    };
+
+    if (document.readyState === 'complete') {
+      enableProductCatalog();
+    } else {
+      window.addEventListener('load', enableProductCatalog, { once: true });
+    }
+
+    return () => {
+      window.removeEventListener('load', enableProductCatalog);
+      if (idleId !== undefined && 'cancelIdleCallback' in window) {
+        window.cancelIdleCallback(idleId);
+      }
+      if (timerId !== undefined) window.clearTimeout(timerId);
+    };
+  }, []);
   
   const addItem = useCartStore((state) => state.addItem);
-  const { data: allProducts, isLoading } = useProducts();
+  const { data: allProducts, isLoading } = useProducts({ enabled: loadProducts });
   const { data: bannerData} = useBanners();
   const { data: companyInfo } = useCompanyData();
 
@@ -55,10 +87,6 @@ const HomePage = () => {
     () => JSON.stringify(fullGraphSchema),
     [fullGraphSchema]
   );
-
-  const cleanBaseUrl = useMemo(() => 
-    AppConfig.baseImageUrl.endsWith('/') ? AppConfig.baseImageUrl : `${AppConfig.baseImageUrl}/`
-  , []);
 
   // Título y Descripción dinámicos desde Base de Datos
   const seoTitle = useMemo(() => {
@@ -98,17 +126,12 @@ const HomePage = () => {
   const firstSlide = bannerData?.sliderPrincipal?.[0];
   if (!firstSlide) return '';
   
-  //Compatibilidad con SSR/ PRE-RENDER: Evita caídas si 'window' es undefined
-  const isMobile = typeof window !== 'undefined' ? window.innerWidth <= 480 : false;
-  
-  // En móvil pre-cargamos la de móvil (y si no hay, la de PC)
-  // En escritorio pre-cargamos la de PC (y si no hay, la de móvil)
-  const imgPath = isMobile 
-    ? (firstSlide.BannerImagenMovil || firstSlide.Imagen) 
-    : (firstSlide.Imagen || firstSlide.BannerImagenMovil);
+  // `Imagen` ya está optimizada realmente como WebP. Algunas variantes
+  // móviles actuales contienen PNG de varios MB aunque terminen en .webp.
+  const imgPath = firstSlide.Imagen || firstSlide.BannerImagenMovil;
     
-  return imgPath ? `${cleanBaseUrl}${imgPath}` : '';
-  }, [bannerData, cleanBaseUrl]);
+  return getDisdelImageUrl(imgPath) || '';
+  }, [bannerData]);
 
   const ogImage = useMemo(() => (
     firstHeroImage ||
@@ -136,7 +159,7 @@ const HomePage = () => {
       ...p,
       id: p.IdProducto,
       name: p.Descripcion,
-      image: `${AppConfig.baseImageUrl}productos/${p.Imagen}`
+      image: getDisdelImageUrl(p.Imagen, 'productos')
     });
 
     const seenHigiene = new Set(); const seenCoffee = new Set(); const seenCotizados = new Set();
@@ -174,14 +197,9 @@ const HomePage = () => {
     return { cotizados, higiene, coffee };
   }, [allProducts]);
 
-  const hasProducts =
-    Array.isArray(allProducts) &&
-    allProducts.length > 0;
-
-  const showSkeleton =
-      isLoading && !hasProducts;
-
-  if (showSkeleton) return <HomeSkeleton />;
+  // La consulta se activa al quedar libre el hilo principal. Mientras tanto se
+  // conserva el mismo espacio del carrusel final para que el resto del home no salte.
+  const productsPending = !loadProducts || isLoading;
 
   return (
     <main>
@@ -196,19 +214,6 @@ const HomePage = () => {
         <meta name="generator" content="React" />
         <link rel="canonical" href="https://disdelsa.com/" />
 
-
-        {/* PERFORMANCE */}
-        <link rel="preconnect" href="https://www.disdelsagt.com"/>
-        <link rel="dns-prefetch" href="//www.disdelsagt.com"/>
-
-        {firstHeroImage && (
-          <link
-            rel="preload"
-            as="image"
-            href={firstHeroImage}
-            fetchPriority="high"
-          />
-        )}
 
         {/* --- OPEN GRAPH (Facebook, WhatsApp, LinkedIn) --- */}
         <meta property="og:type" content="website" />
@@ -248,35 +253,32 @@ const HomePage = () => {
 
       <HeroSlider />
 
-      <Suspense fallback={null}>
-        <CategoryGrid /> 
-        <FeaturedBrands />
-
-        <BannerSlider />
-      </Suspense>
+      <CategoryGrid /> 
+      <FeaturedBrands />
+      <BannerSlider />
 
     {/* 3. BLOQUE DE CAROUSELES (Como usan el mismo componente ProductCarousel, se envuelven juntos) */}
-    <Suspense fallback={null}>
-      {(isLoading || carruseles.cotizados.length > 0) && (
+    <Suspense fallback={<div className="home-carousel-reservation home-carousel-reservation--double" aria-hidden="true" />}>
+      {(productsPending || carruseles.cotizados.length > 0) && (
         <div className="carousel-wrapper">
           <ProductCarousel
             title="Los más Cotizados"
             products={carruseles.cotizados}
             addToCart={handleAddToCart} 
             variant="carousel-cotizados"
-            isLoading={isLoading} 
+            isLoading={productsPending} 
           />
         </div>
       )}
 
-      {(isLoading || carruseles.higiene.length > 0) && (
+      {(productsPending || carruseles.higiene.length > 0) && (
         <div className="carousel-wrapper">
           <ProductCarousel
             title="Soluciones integrales de higiene"
             products={carruseles.higiene}
             addToCart={handleAddToCart} 
             variant="carousel-higiene"
-            isLoading={isLoading}
+            isLoading={productsPending}
             viewAllUrl="/categoria/banos-e-higiene/dispensadores-y-accesorios"
           />
         </div>
@@ -288,20 +290,22 @@ const HomePage = () => {
     </Suspense>
 
     {/* 4. ÚLTIMO BLOQUE DE LA PÁGINA (Componentes del pie de página) */}
-    <Suspense fallback={null}>
-      {(isLoading || carruseles.coffee.length > 0) && (
+    <Suspense fallback={<div className="home-carousel-reservation" aria-hidden="true" />}>
+      {(productsPending || carruseles.coffee.length > 0) && (
         <div className="carousel-wrapper">
           <ProductCarousel
             title="Todo para el Coffee Break"
             products={carruseles.coffee}
             addToCart={handleAddToCart} 
             variant="carousel-coffe"
-            isLoading={isLoading}
+            isLoading={productsPending}
             viewAllUrl="/categoria/cafeteria/cafe-y-complementos" 
           />
         </div>
       )}
+    </Suspense>
 
+    <Suspense fallback={null}>
       <PromoLayout />
       <NewsletterSignup />
       <InfoSection />

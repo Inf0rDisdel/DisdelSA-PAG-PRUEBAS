@@ -59,8 +59,8 @@
 }
 
 .newsletter-button {
-    background-color: #8dc63f; 
-    color: white;
+    background-color: var(--color-brand-green);
+    color: var(--color-on-brand-green);
     font-weight: bold;
     padding: 12px 25px;
     border: none;
@@ -210,15 +210,15 @@
         font-size: 0.95rem !important;
         font-weight: 700 !important;
         border-radius: 10px !important;
-        background-color: #96c121 !important; /* Verde Disdel */
-        color: white !important;
+        background-color: var(--color-brand-green) !important;
+        color: var(--color-on-brand-green) !important;
         border: none !important;
         cursor: pointer !important;
         transition: background-color 0.3s ease !important;
     }
 
     .newsletter-button:active {
-        background-color: #82a81c !important; /* Oscurece sutilmente al presionar */
+        background-color: var(--color-brand-green-hover) !important;
     }
 
     /* 🚀 REPARACIÓN CRÍTICA: Alineación del Checkbox y texto (Estilo Premium) */

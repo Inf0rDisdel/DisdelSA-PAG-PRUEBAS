@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useEffect, useRef } from 'react'; 
-import { Link, useParams, useNavigate } from 'react-router-dom';
+import { Link, Navigate, useParams } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import './CategoryPage.css';
 import ProductCard from 'components/ui/ProductCard/ProductCard';
@@ -15,31 +15,64 @@ import CatalogSkeleton from 'components/ui/Skeleton/CatalogSkeleton';
 import { getCategorySchema } from 'utils/schemas/categorySchema';
 import { optimizedSeoData } from 'utils/SEO/optimizedSeo';
 import { useCatalogSeo } from 'hooks/useCatalogSeo';
+import NotFoundLegacyRedirect from 'pages/Legacy/NotFoundLegacyRedirect';
 
 const CategoryPage = () => {
   const { slug, cat, subcat } = useParams();
-  const navigate = useNavigate();
 
   const { data: bannerData } = useBanners();
   const { data: menuData, isLoading: loadingMenu } = useMenu();
   const { data: productsData, isLoading: loadingProducts } = useProducts();
 
   // 1. Declaración de Estados primero (Evita errores de inicialización de variables)
-  const [activeCatId, setActiveCatId] = useState(null);
-  const [activeSubCatId, setActiveSubCatId] = useState(null);
   const [isMobile, setIsMobile] = useState(typeof window !== 'undefined' ? window.innerWidth <= 468 : false);
 
   const [sortBy, setSortBy] = useState('default');
   const scrollRef = useRef(null);
 
   const cleanSlug = slug ? slug.replace(/\/$/, "").trim() : '';
-  const canonicalSlug = cleanSlug.toLowerCase();
+  const canonicalSlug = createSlug(cleanSlug);
+  const categoryParamSlug = createSlug(cat || '');
+  const subcategoryParamSlug = createSlug(subcat || '');
   const norm = (id) => (id === null || id === undefined) ? '' : String(id).trim();
 
   const currentSegment = useMemo(() => {
       if (!menuData) return null;
-      return menuData.find(seg => createSlug(seg.NombreSegmento) === cleanSlug) || null;
-  }, [menuData, cleanSlug, createSlug]);
+      return menuData.find(seg => createSlug(seg.NombreSegmento) === canonicalSlug) || null;
+  }, [menuData, canonicalSlug]);
+
+  // Resuelve la selección directamente desde la URL antes del primer pintado.
+  // Así categorías y subcategorías no aparecen un frame después del banner.
+  const { activeCatId, activeSubCatId, hasInvalidHierarchy } = useMemo(() => {
+    const categories = currentSegment?.Categorias || [];
+    const selectedCategory = cat
+      ? categories.find(item => createSlug(item.NombreCategoria) === categoryParamSlug)
+      : null;
+    const resolvedCategory = selectedCategory || null;
+    const selectedSubcategory = subcat
+      ? selectedCategory?.SubCategorias?.find(item => createSlug(item.NombreSubCategoria) === subcategoryParamSlug)
+      : null;
+
+    return {
+      activeCatId: resolvedCategory?.IdCategoria ?? null,
+      activeSubCatId: selectedSubcategory?.IdSubCategoria ?? null,
+      hasInvalidHierarchy: Boolean(
+        (cat && !selectedCategory) ||
+        (subcat && (!selectedCategory || !selectedSubcategory))
+      ),
+    };
+  }, [currentSegment, cat, subcat, categoryParamSlug, subcategoryParamSlug]);
+
+  const canonicalPath = `/categoria/${canonicalSlug}${cat ? `/${categoryParamSlug}` : ''}${subcat ? `/${subcategoryParamSlug}` : ''}`;
+  const needsCanonicalRedirect = Boolean(
+    currentSegment &&
+    !hasInvalidHierarchy &&
+    (
+      cleanSlug !== canonicalSlug ||
+      (cat && cat !== categoryParamSlug) ||
+      (subcat && subcat !== subcategoryParamSlug)
+    )
+  );
 
   // 2. Cálculo del ID más específico activo (Nivel 3 ➡️ Nivel 2 ➡️ Nivel 1)
   const seoParams = useMemo(() => {
@@ -76,6 +109,18 @@ const CategoryPage = () => {
     if (!filteredProducts) return [];
 
     const productsCopy = [...filteredProducts];
+    const text = (value) => String(value || '').trim();
+    const compare = (valueA, valueB) => text(valueA).localeCompare(text(valueB), 'es', {
+      sensitivity: 'base',
+      numeric: true,
+    });
+    const compareWithEmptyLast = (valueA, valueB) => {
+      const cleanA = text(valueA);
+      const cleanB = text(valueB);
+      if (!cleanA && cleanB) return 1;
+      if (cleanA && !cleanB) return -1;
+      return compare(cleanA, cleanB);
+    };
 
     if (sortBy === 'az') {
       return productsCopy.sort((a, b) => {
@@ -93,6 +138,20 @@ const CategoryPage = () => {
       });
     }
 
+    if (sortBy === 'brand-az') {
+      return productsCopy.sort((a, b) => (
+        compareWithEmptyLast(a.Marca || a.Categoria, b.Marca || b.Categoria)
+        || compare(a.Descripcion, b.Descripcion)
+      ));
+    }
+
+    if (sortBy === 'category-az') {
+      return productsCopy.sort((a, b) => (
+        compareWithEmptyLast(a.Categoria || a.NombreCategoria, b.Categoria || b.NombreCategoria)
+        || compare(a.Descripcion, b.Descripcion)
+      ));
+    }
+
     return productsCopy;
   }, [filteredProducts, sortBy]);
 
@@ -100,6 +159,11 @@ const CategoryPage = () => {
     const found = bannerData?.ImagenPredeterminado?.find(i => i.Titulo?.trim() === "ImagenDefault3");
     return found ? `${AppConfig.baseImageUrl}${found.BannerImagenMovil || found.Imagen}` : '';
   }, [bannerData]);
+
+  const iconoInicio = useMemo(() => {
+    const iconDb = bannerData?.Iconos?.find(icon => icon.Titulo?.trim() === "IconoInicio");
+    return iconDb ? `${AppConfig.baseImageUrl}${iconDb.Imagen}` : defaultImage;
+  }, [bannerData, defaultImage]);
 
   const catBanner = useMemo(() => {
     const bannerObj = bannerData?.sliderPrincipal?.[1]; 
@@ -191,40 +255,16 @@ const CategoryPage = () => {
   });
   }, [currentSegment, activeCategoryData, activeSubCatId, sortedProducts, seoData]);  
 
-   useEffect(() => {
-    if (!currentSegment?.Categorias) return;
-    if (cat) {
-      const foundCat = currentSegment.Categorias.find(c => createSlug(c.NombreCategoria) === cat);
-      if (foundCat) {
-        setActiveCatId(foundCat.IdCategoria);
-        if (subcat && foundCat.SubCategorias) {
-          const foundSub = foundCat.SubCategorias.find(s => createSlug(s.NombreSubCategoria) === subcat);
-          setActiveSubCatId(foundSub ? foundSub.IdSubCategoria : null);
-        } else {
-          setActiveSubCatId(null);
-        }
-      }
-    } else {
-      setActiveCatId(currentSegment.Categorias[0]?.IdCategoria);
-      setActiveSubCatId(null);
-    }
-  }, [cat, subcat, currentSegment]);
-  
   if (loadingMenu || loadingProducts) {
-    return <CatalogSkeleton />; // 🚀 Reutilización de código limpia y eficiente
+    return <CatalogSkeleton variant="category" />;
   }
 
-  if (!currentSegment) {
-    return (
-      <div className="no-products-msg" style={{ textAlign: 'center', padding: '100px' }}>
-        {/* 🚀 SOLUCIÓN SOFT 404: Le indicamos a Google que no indexe esta categoría inexistente */}
-        <Helmet>
-          <meta name="robots" content="noindex, nofollow" />
-          <title>Categoría no encontrada | Disdel</title>
-        </Helmet>
-        Categoría no encontrada
-      </div>
-    );
+  if (!currentSegment || hasInvalidHierarchy) {
+    return <NotFoundLegacyRedirect />;
+  }
+
+  if (needsCanonicalRedirect) {
+    return <Navigate to={canonicalPath} replace />;
   }
 
   return (
@@ -267,7 +307,7 @@ const CategoryPage = () => {
               src={isMobile ? (catBanner.mobile || catBanner.desktop) : catBanner.desktop} 
               alt={currentSegment.NombreSegmento} 
               className="cat-main-banner" 
-              fetchpriority="high"
+              fetchPriority="high"
               loading="eager"
               width="1300" height="280"
               decoding="async"
@@ -286,20 +326,43 @@ const CategoryPage = () => {
            <aside className="cat-sidebar-left" aria-label="Menú de categorías">
             <div className="cat-sidebar-header-mobile">
                 <div className="cat-sidebar-label">CATEGORÍAS</div>
-            </div>
+             </div>
              <div className="cat-sidebar-nav" ref={scrollRef}>
+              <Link
+                to={`/categoria/${canonicalSlug}`}
+                className={`cat-nav-item ${!cat ? 'active-filter' : ''}`}
+                aria-current={!cat ? 'page' : undefined}
+              >
+                <div className="cat-nav-icon">
+                  <img
+                    src={iconoInicio}
+                    alt=""
+                    aria-hidden="true"
+                    width="24"
+                    height="24"
+                    loading="lazy"
+                    decoding="async"
+                    fetchPriority="low"
+                  />
+                </div>
+                <span>Ver todo</span>
+              </Link>
+
               {currentSegment.Categorias?.map((catItem, index) => (
                 <Link
                   key={`sidebar-cat-${catItem.IdCategoria}-${index}`}
                   to={`/categoria/${canonicalSlug}/${createSlug(catItem.NombreCategoria)}`}
                   className={`cat-nav-item ${norm(activeCatId) === norm(catItem.IdCategoria) ? 'active-filter' : ''}`}
+                  aria-current={norm(activeCatId) === norm(catItem.IdCategoria) ? 'page' : undefined}
                 >
                   <div className="cat-nav-icon">
                     <img 
                       src={catItem.Imagen ? `${AppConfig.baseImageUrl}${catItem.Imagen}` : defaultImage} 
                       alt={catItem.NombreCategoria} 
                       width="24" height="24" 
-                      loading="lazy" 
+                      loading="lazy"
+                      decoding="async"
+                      fetchPriority="low"
                       // 🚀 SANEAMIENTO EXTRA: Previene iconos rotos de categorías secundarias en el sidebar
                       onError={(e) => {
                         e.target.onerror = null;
@@ -315,7 +378,13 @@ const CategoryPage = () => {
 
           <section className="cat-right-column" aria-label="Listado de productos">
             {activeCategoryData?.SubCategorias?.length > 0 && (
-                <div className="cat-subcategories-bar">
+                <nav className="cat-subcategories-bar" aria-label={`Subcategorías de ${activeCategoryData.NombreCategoria}`}>
+                    <Link
+                      to={`/categoria/${canonicalSlug}/${createSlug(activeCategoryData.NombreCategoria)}`}
+                      className={`cat-sub-pill ${!activeSubCatId ? 'active' : ''}`}
+                    >
+                      Ver todo
+                    </Link>
                     {activeCategoryData.SubCategorias.map(sub => (
                         <Link
                           key={sub.IdSubCategoria}
@@ -325,7 +394,7 @@ const CategoryPage = () => {
                             {sub.NombreSubCategoria}
                         </Link>
                     ))}
-                </div>
+                </nav>
             )}
 
             <div className="catalog-toolbar">
@@ -342,8 +411,10 @@ const CategoryPage = () => {
                   onChange={(e) => setSortBy(e.target.value)}
                 >
                   <option value="default">Más cotizados</option>
-                  <option value="az">A-Z</option>
-                  <option value="za">Z-A</option>
+                  <option value="az">Producto: A-Z</option>
+                  <option value="za">Producto: Z-A</option>
+                  <option value="brand-az">Marca: A-Z</option>
+                  <option value="category-az">Categoría: A-Z</option>
                 </select>
               </div>
             </div>

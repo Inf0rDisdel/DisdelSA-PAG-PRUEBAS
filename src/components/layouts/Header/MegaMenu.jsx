@@ -6,6 +6,7 @@ import { AppConfig } from '../../../config/AppConfig';
 import { useMenu } from '../../../hooks/useMenu';
 import { useBanners } from 'hooks/useBanners';
 import { createSlug } from 'utils/slugify';
+import OptimizedImage from 'components/ui/OptimizedImage/OptimizedImage';
 
 const brandKeywords = ['KIMBERLY', '3M', 'WIESE', 'SILVER'];
 
@@ -93,8 +94,7 @@ const MegaMenu = () => {
         if (!item) return { to: '#' };
         if (item.type === 'marca') {
             return {
-                to: `/marca/${item.parentSlug}`,
-                state: { preSelectedCatId: item.id },
+                to: `/marca/${item.parentSlug}/${createSlug(item.name)}`,
                 title: `Ver productos de ${item.name} en Disdel`
             };
         }
@@ -117,30 +117,49 @@ const MegaMenu = () => {
     if (isLoading || isError || !menuData) return null;
 
     return (
-        <nav className={styles.megaMenuContainer} role ="navigation" arial-label="Menú de categorias">
+        <nav className={styles.megaMenuContainer} aria-label="Menú de categorías">
             {/* Columna 1: Segmentos / Marcas */}
             <div className={`${styles.megaMenuColumn} ${styles.categoriesColumn}`}>
-                <ul role="menubar" className={styles.menuList}>
+                <ul className={styles.menuList}>
                     {menuStructure.map((category) => (
                         <li
                             key={category.name}
-                            role="none"
                             className={`${styles.menuListItem} ${activeCategory === category.name ? styles.active : ''}`}
                             onMouseEnter={() => {
                                 setActiveCategory(category.name);
                                 setActiveSubItem(null); 
                             }}
                         >
-                            <div className={styles.categoryLink}>
-                                <img 
+                            <button
+                                type="button"
+                                className={styles.categoryLink}
+                                aria-pressed={activeCategory === category.name}
+                                onFocus={() => {
+                                    setActiveCategory(category.name);
+                                    setActiveSubItem(null);
+                                }}
+                                onClick={() => {
+                                    setActiveCategory(category.name);
+                                    setActiveSubItem(null);
+                                }}
+                            >
+                                <OptimizedImage
                                     src={category.icon || defaultIcon} 
-                                    alt={`Icono ${category.name}`} 
+                                    alt="" 
                                     aria-hidden="true" 
                                     className={styles.categoryIcon} 
-                                    loading="lazy" 
+                                    widths={[32, 48]}
+                                    targetWidth={48}
+                                    quality={80}
+                                    sizes="24px"
+                                    width="24"
+                                    height="24"
+                                    loading="lazy"
+                                    decoding="async"
+                                    fetchPriority="low"
                                 />
                                 <span>{category.name}</span>
-                            </div>
+                            </button>
                         </li>
                     ))}
                 </ul>
@@ -154,12 +173,11 @@ const MegaMenu = () => {
                 {currentCategoryData && currentCategoryData.subCategories.map((group, index) => (
                     <div key={index} className={styles.subcategoryGroup}>
                         <h4>{group.title}</h4>
-                        <ul role="menu">
+                        <ul>
                             {group.items?.map(item => (
-                                <li key={item.name} role="none" onMouseEnter={() => setActiveSubItem(item)}>
+                                <li key={item.name} onMouseEnter={() => setActiveSubItem(item)}>
                                     <Link 
                                         {...getLinkProps(item)} 
-                                        role="menuitem"
                                         className={styles.subLink}
                                     >
                                         {item.name}
@@ -175,10 +193,18 @@ const MegaMenu = () => {
             <div className={`${styles.megaMenuColumn} ${styles.promotionColumn}`}>
                 <div className={styles.promotionCard}>
                     <div className={styles.promoImageContainer}>
-                        <img 
+                        <OptimizedImage
                             src={activeSubItem?.image || currentCategoryData?.promotion?.image || defaultIcon} 
                             alt={activeSubItem?.name || currentCategoryData?.promotion?.title} 
+                            widths={[240, 320, 480]}
+                            targetWidth={480}
+                            quality={78}
+                            sizes="320px"
+                            width="320"
+                            height="240"
                             loading="lazy"
+                            decoding="async"
+                            fetchPriority="low"
                             className={styles.promoImg}
                         />
                     </div>

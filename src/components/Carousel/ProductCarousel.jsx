@@ -1,35 +1,45 @@
-import React,{useMemo, useState, useEffect} from 'react';
-import Slider from 'react-slick';
+import React,{useMemo, useState, useEffect, useRef} from 'react';
 import { Link } from 'react-router-dom';
-import "slick-carousel/slick/slick.css"; 
-import "slick-carousel/slick/slick-theme.css";
 import './ProductCarousel.css';
-import { AppConfig } from 'config/AppConfig';
 import { useBanners } from 'hooks/useBanners';
 import ProductCard from 'components/ui/ProductCard/ProductCard';
 import ProductCardSkeleton from 'components/ui/ProductCard/ProductCardSkeleton';
 import Skeleton from 'components/ui/Skeleton/Skeleton';
+import { getDisdelImageUrl, getOptimizedImageUrl } from 'utils/imageUrl';
 
 const ProductCarousel = ({ title, products = [], isLoading, variant = '' , viewAllUrl}) => {
   const{data: bannerData} = useBanners();
+  const scrollerRef = useRef(null);
 
-  const [isMobile, setIsMobile] = useState(typeof window !== 'undefined' ? window.innerWidth <= 480 : false);
-  const [isTablet, setIsTablet] = useState(typeof window !== 'undefined' ? window.innerWidth <= 1024 : false);
+  const [isMobile, setIsMobile] = useState(
+    () => typeof window !== 'undefined' && window.matchMedia('(max-width: 480px)').matches
+  );
+  const [isTablet, setIsTablet] = useState(
+    () => typeof window !== 'undefined' && window.matchMedia('(max-width: 1024px)').matches
+  );
 
   useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(typeof window !== 'undefined' ? window.innerWidth <= 480 : false);
-      setIsTablet(typeof window !== 'undefined' ? window.innerWidth <= 1024 : false);
+    const mobileQuery = window.matchMedia('(max-width: 480px)');
+    const tabletQuery = window.matchMedia('(max-width: 1024px)');
+    const handleMobileChange = (event) => setIsMobile(event.matches);
+    const handleTabletChange = (event) => setIsTablet(event.matches);
+
+    setIsMobile(mobileQuery.matches);
+    setIsTablet(tabletQuery.matches);
+    mobileQuery.addEventListener('change', handleMobileChange);
+    tabletQuery.addEventListener('change', handleTabletChange);
+
+    return () => {
+      mobileQuery.removeEventListener('change', handleMobileChange);
+      tabletQuery.removeEventListener('change', handleTabletChange);
     };
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
   }, []);
 
   const images = useMemo(() => {
-    const getUrl = (imgName) => imgName ? `${AppConfig.baseImageUrl}${imgName}` : '';
     const fondoImagen = bannerData?.ImagenPredeterminado?.find(i => i.Titulo?.trim() === "FondoCarousel")?.Imagen;
+    const originalBackground = getDisdelImageUrl(fondoImagen);
     return {
-      fondoImagen: getUrl(fondoImagen)
+      fondoImagen: getOptimizedImageUrl(originalBackground, 1400, 76)
     };
   }, [bannerData]);
 
@@ -51,46 +61,20 @@ const ProductCarousel = ({ title, products = [], isLoading, variant = '' , viewA
     );
   }
 
-  const settings = {
-    dots: false,
-    infinite: products.length > 5, 
-    speed: 800,
-    slidesToShow: 5, 
-    slidesToScroll: 4,
-    autoplay: false,       // DESACTIVO
-    autoplaySpeed: 3500,  // 3.5 segundos (el punto dulce del marketing)
-    pauseOnHover: true,   // Crucial para UX: detiene el scroll al interactuar
-    cssEase: "cubic-bezier(0.25, 0.46, 0.45, 0.94)",
-    responsive: [
-      {
-        breakpoint: 1024,
-        settings: {
-          slidesToShow: 3, 
-          slidesToScroll: 1,
-          dots: false,
-          arrows: true,
-          infinite: products.length > 3
-        }
-      },
-      {
-        breakpoint: 480, 
-        settings: {
-          slidesToShow: 2, 
-          slidesToScroll: 1,
-          dots: false,
-          arrows: false,
-          swipeToSlide: true,
-          infinite: products.length>2,
-          adaptiveHeight: false
-        }
-      },
-      
-    ]
-  };
-
   if (!products || products.length === 0) {
     return null; 
   }
+
+  const scrollProducts = (direction) => {
+    const scroller = scrollerRef.current;
+    if (!scroller) return;
+
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    scroller.scrollBy({
+      left: direction * Math.max(scroller.clientWidth * 0.8, 240),
+      behavior: prefersReducedMotion ? 'auto' : 'smooth'
+    });
+  };
 
   return (
     <section 
@@ -102,19 +86,45 @@ const ProductCarousel = ({ title, products = [], isLoading, variant = '' , viewA
       <div className="carousel-header">
         <h2 className="carousel-title">{title}</h2>
         {viewAllUrl && (
-          <Link to={viewAllUrl} className='carousel-view-all-btn'>
+          <Link to={viewAllUrl} className='carousel-view-all-btn' aria-label={`Ver todos los productos de ${title}`}>
             Ver todo &rarr;
           </Link>
         )}
       </div>
       
-      <Slider {...settings}>
-        {products.map((product, index) => (
-          <div key={product.IdProducto || index} className="carousel-item-padding">
-            <ProductCard product={product} index={index} />
-          </div>
-        ))}
-      </Slider>
+      <div className="product-native-slider-shell">
+        <button
+          type="button"
+          className="product-scroll-button product-scroll-button--previous"
+          aria-label={`Ver productos anteriores de ${title}`}
+          onClick={() => scrollProducts(-1)}
+        >
+          <span aria-hidden="true">&#8249;</span>
+        </button>
+
+        <div
+          ref={scrollerRef}
+          className="product-native-slider"
+          role="list"
+          aria-label={`Productos de ${title}`}
+          tabIndex="0"
+        >
+          {products.map((product, index) => (
+            <div key={product.IdProducto || index} className="carousel-item-padding" role="listitem">
+              <ProductCard product={product} index={index} priority={false} />
+            </div>
+          ))}
+        </div>
+
+        <button
+          type="button"
+          className="product-scroll-button product-scroll-button--next"
+          aria-label={`Ver más productos de ${title}`}
+          onClick={() => scrollProducts(1)}
+        >
+          <span aria-hidden="true">&#8250;</span>
+        </button>
+      </div>
     </section>
   );
 };

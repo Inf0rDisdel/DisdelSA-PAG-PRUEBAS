@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react'; 
-import { useParams, Link, useLocation, Navigate } from 'react-router-dom';
+import { useParams, Link, Navigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { FiChevronLeft, FiChevronRight } from 'react-icons/fi';
 import './BrandPage.css';
@@ -14,22 +14,25 @@ import { createSlug } from 'utils/slugify';
 import { getBrandSchema } from 'utils/schemas/brandSchema';
 import CatalogSkeleton from 'components/ui/Skeleton/CatalogSkeleton';
 import { useCatalogSeo } from 'hooks/useCatalogSeo';
+import NotFoundLegacyRedirect from 'pages/Legacy/NotFoundLegacyRedirect';
 
 const BrandPage = () => {
-  const { slug, subcat } = useParams();
+  const { slug, cat, subcat } = useParams();
   const { data: bannerData } = useBanners();
-  const location = useLocation();
   const { data: menuData, isLoading: loadingMenu } = useMenu();
   const { data: productsData, isLoading: loadingProducts } = useProducts();
 
-  const [activeCatId, setActiveCatId] = useState(null);
   const scrollRef = useRef(null);
   const [isMobile, setIsMobile] = useState(typeof window !== 'undefined' ? window.innerWidth <= 468 : false);
 
   const [sortBy, setSortBy] = useState('default');
 
   const cleanSlug = slug ? slug.replace(/\/$/, "").trim() : '';
-  const canonicalSlug = cleanSlug.toLowerCase(); 
+  const canonicalSlug = createSlug(cleanSlug);
+  const canonicalCategorySlug = createSlug(cat || '');
+  const canonicalSubcategorySlug = createSlug(subcat || '');
+  const canonicalBrandPath = `/marca/${canonicalSlug}${cat ? `/${canonicalCategorySlug}` : ''}${subcat ? `/${canonicalSubcategorySlug}` : ''}`;
+  const canonicalBrandUrl = `https://disdelsa.com${canonicalBrandPath}`;
   const norm = (id) => (id === null || id === undefined) ? '' : String(id).trim();
 
   const handleWhatsAppClick = () => {
@@ -38,26 +41,6 @@ const BrandPage = () => {
     const url = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
     window.open(url, '_blank', 'noopener,noreferrer');
   };
-
-
-  //Mapeo de IDs de marcas estáticos para la API de C#
-  const seoParams = useMemo(() => {
-    if (activeCatId) return { idCategoria: activeCatId }; // Si filtran por categoría dentro de la marca
-    
-    // Si están en la raíz de la marca, mandamos el ID de la marca correspondiente
-    const brandMapping = {
-      "wiese": 3238,
-      "kimberly-clark-professional": 29, 
-      "3m": 28,
-      "silver": 27
-    };
-    const mappedId = brandMapping[canonicalSlug];
-    if (mappedId) return { idMarca: mappedId };
-
-    return {};
-  }, [activeCatId, canonicalSlug]);
-
-  const { data: dbSeo } = useCatalogSeo(seoParams);
 
   useEffect(() => {
     const handleResize = () => setIsMobile(typeof window !== 'undefined' ? window.innerWidth <= 468 : false);
@@ -97,10 +80,8 @@ const BrandPage = () => {
   const currentBrandSegment = useMemo(() => {
     if (!menuData || canonicalSlug === "silver") return null;
 
-    return menuData.find(seg => 
-      createSlug(seg.NombreSegmento).includes(cleanSlug) || cleanSlug.includes(createSlug(seg.NombreSegmento))
-    );
-  }, [menuData, canonicalSlug, cleanSlug]);
+    return menuData.find(seg => createSlug(seg.NombreSegmento) === canonicalSlug) || null;
+  }, [menuData, canonicalSlug]);
 
 
   // --- 3. COMPILADOR EXCLUSIVO PARA LA MARCA SILVER ---
@@ -145,20 +126,84 @@ const BrandPage = () => {
         categoriesMap[catId] = {
           IdCategoria: catId,
           NombreCategoria: catName,
-          Imagen: findOfficialIcon(catName) || null
+          Imagen: findOfficialIcon(catName) || null,
+          SubCategorias: []
         };
+      }
+
+      const subcategoryName = prod.SubCategoria || prod.NombreSubCategoria;
+      const subcategoryId = prod.IdSubCategoria || subcategoryName;
+      if (
+        subcategoryName &&
+        !categoriesMap[catId].SubCategorias.some(sub => norm(sub.IdSubCategoria) === norm(subcategoryId))
+      ) {
+        categoriesMap[catId].SubCategorias.push({
+          IdSubCategoria: subcategoryId,
+          NombreSubCategoria: subcategoryName
+        });
       }
     });
 
     return Object.values(categoriesMap);
   }, [silverProductsRaw, canonicalSlug, menuData]);
 
+  // --- 4. CONVERGENCIA DE LÓGICAS (Silver Dinámico vs Estándar) ---
+  const displayCategories = useMemo(() => {
+    if (canonicalSlug === "silver") return silverCategories;
+    return currentBrandSegment?.Categorias || [];
+  }, [canonicalSlug, silverCategories, currentBrandSegment]);
+
+  // La URL es la única fuente de verdad. Esto hace que cada filtro sea
+  // enlazable, rastreable y estable incluso al recargar la página.
+  const { activeCategoryData, activeSubcategoryData, activeCatId, activeSubCatId, hasInvalidHierarchy } = useMemo(() => {
+    const selectedCategory = cat
+      ? displayCategories.find(item => createSlug(item.NombreCategoria) === canonicalCategorySlug)
+      : null;
+    const selectedSubcategory = subcat
+      ? selectedCategory?.SubCategorias?.find(
+          item => createSlug(item.NombreSubCategoria) === canonicalSubcategorySlug
+        )
+      : null;
+
+    return {
+      activeCategoryData: selectedCategory || null,
+      activeSubcategoryData: selectedSubcategory || null,
+      activeCatId: selectedCategory?.IdCategoria ?? null,
+      activeSubCatId: selectedSubcategory?.IdSubCategoria ?? null,
+      hasInvalidHierarchy: Boolean(
+        (cat && !selectedCategory) ||
+        (subcat && (!selectedCategory || !selectedSubcategory))
+      )
+    };
+  }, [cat, subcat, displayCategories, canonicalCategorySlug, canonicalSubcategorySlug]);
+
+  // Mapeo de IDs para la API SEO opcional. Priorizamos siempre el nivel
+  // más específico de la ruta: subcategoría, categoría y finalmente marca.
+  const seoParams = useMemo(() => {
+    if (activeSubCatId) return { idSubCategoria: activeSubCatId };
+    if (activeCatId) return { idCategoria: activeCatId };
+
+    const brandMapping = {
+      "wiese": 3238,
+      "kimberly-clark-professional": 29,
+      "3m": 28,
+      "silver": 27
+    };
+    const mappedId = brandMapping[canonicalSlug];
+    return mappedId ? { idMarca: mappedId } : {};
+  }, [activeSubCatId, activeCatId, canonicalSlug]);
+
+  const { data: dbSeo } = useCatalogSeo(seoParams);
+
   const silverFilteredProducts = useMemo(() => {
     if (canonicalSlug !== "silver" || silverProductsRaw.length === 0) return [];
 
     let result = silverProductsRaw;
     if (activeCatId) {
-      result = silverProductsRaw.filter(prod => norm(prod.IdCategoria) === norm(activeCatId));
+      result = result.filter(prod => norm(prod.IdCategoria) === norm(activeCatId));
+    }
+    if (activeSubCatId) {
+      result = result.filter(prod => norm(prod.IdSubCategoria) === norm(activeSubCatId));
     }
 
     const seenIds = new Set();
@@ -168,15 +213,9 @@ const BrandPage = () => {
       seenIds.add(id);
       return true;
     });
-  }, [silverProductsRaw, activeCatId, canonicalSlug]);
+  }, [silverProductsRaw, activeCatId, activeSubCatId, canonicalSlug]);
 
-  // --- 4. CONVERGENCIA DE LÓGICAS (Silver Dinámico vs Estándar) ---
-  const displayCategories = useMemo(() => {
-    if (canonicalSlug === "silver") return silverCategories;
-    return currentBrandSegment?.Categorias || [];
-  }, [canonicalSlug, silverCategories, currentBrandSegment]);
-
-  const standardFilteredProducts = useFilterProducts(productsData, currentBrandSegment, activeCatId, null);
+  const standardFilteredProducts = useFilterProducts(productsData, currentBrandSegment, activeCatId, activeSubCatId);
 
   const filteredProducts = useMemo(() => {
     if (canonicalSlug === "silver") return silverFilteredProducts;
@@ -192,6 +231,18 @@ const BrandPage = () => {
     if (!filteredProducts) return [];
     
     const productsCopy = [...filteredProducts];
+    const text = (value) => String(value || '').trim();
+    const compare = (valueA, valueB) => text(valueA).localeCompare(text(valueB), 'es', {
+      sensitivity: 'base',
+      numeric: true,
+    });
+    const compareWithEmptyLast = (valueA, valueB) => {
+      const cleanA = text(valueA);
+      const cleanB = text(valueB);
+      if (!cleanA && cleanB) return 1;
+      if (cleanA && !cleanB) return -1;
+      return compare(cleanA, cleanB);
+    };
 
     if (sortBy === 'az') {
       return productsCopy.sort((a, b) => {
@@ -209,6 +260,20 @@ const BrandPage = () => {
       });
     }
 
+    if (sortBy === 'brand-az') {
+      return productsCopy.sort((a, b) => (
+        compareWithEmptyLast(a.Marca || a.Categoria, b.Marca || b.Categoria)
+        || compare(a.Descripcion, b.Descripcion)
+      ));
+    }
+
+    if (sortBy === 'category-az') {
+      return productsCopy.sort((a, b) => (
+        compareWithEmptyLast(a.Categoria || a.NombreCategoria, b.Categoria || b.NombreCategoria)
+        || compare(a.Descripcion, b.Descripcion)
+      ));
+    }
+
     return productsCopy;
   }, [filteredProducts, sortBy]);
 
@@ -216,46 +281,25 @@ const BrandPage = () => {
   const fullSchema = useMemo(() => {
   if (!currentBrandSegment && canonicalSlug !== "silver") return null;
 
-  const baseUrl = `https://disdelsa.com/marca/${canonicalSlug}`;
-  const activeCategory = displayCategories?.find(c => norm(c.IdCategoria) === norm(activeCatId));
-
   const activeSeo = dbSeo || {};
-  const seoTitle = activeSeo.MetaTitle || activeSeo.metaTitle || (activeCategory 
-      ? `${activeCategory.NombreCategoria} ${brandNameOfficial} Guatemala` 
+  const activeFilterName = activeSubcategoryData?.NombreSubCategoria || activeCategoryData?.NombreCategoria;
+  const seoTitle = activeSeo.MetaTitle || activeSeo.metaTitle || (activeFilterName
+      ? `${activeFilterName} ${brandNameOfficial} Guatemala`
       : `Distribuidor Autorizado ${brandNameOfficial} en Guatemala`);
   
-  const seoDesc = activeSeo.MetaDescription || activeSeo.metaDescription || (activeCategory
-      ? `Compra ${activeCategory.NombreCategoria} de ${brandNameOfficial} con distribución institucional.`
+  const seoDesc = activeSeo.MetaDescription || activeSeo.metaDescription || (activeFilterName
+      ? `Compra ${activeFilterName} de ${brandNameOfficial} con distribución institucional.`
       : `Catálogo institucional de ${brandNameOfficial}. Suministros con garantía oficial.`);
 
   return getBrandSchema({
     brandName: brandNameOfficial,
     title: seoTitle,
     description: seoDesc,
-    url: baseUrl,
+    url: canonicalBrandUrl,
     logoUrl: visualConfig.banner,
     products: sortedProducts // Mantiene el orden de productos activo
   });
-  }, [currentBrandSegment, displayCategories, brandNameOfficial, sortedProducts, canonicalSlug, activeCatId, dbSeo, visualConfig.banner]);
-
-  // --- 6. EFECTOS DE NAVEGACIÓN Y FILTROS ---
-  useEffect(() => {
-    if (displayCategories.length > 0) {
-      const preId = location.state?.preSelectedCatId;
-      if (preId) {
-        const exists = displayCategories.some(c => norm(c.IdCategoria) === norm(preId));
-        setActiveCatId(exists ? preId : null);
-      }
-    }
-  }, [displayCategories, location.state]);
-
-  useEffect(() => {
-    if (!subcat || displayCategories.length === 0) return;
-    const foundCat = displayCategories.find(cat => createSlug(cat.NombreCategoria) === subcat);
-    if (foundCat) {
-      setActiveCatId(foundCat.IdCategoria);
-    }
-  }, [subcat, displayCategories]);
+  }, [currentBrandSegment, brandNameOfficial, sortedProducts, canonicalSlug, activeCategoryData, activeSubcategoryData, dbSeo, visualConfig.banner, canonicalBrandUrl]);
 
   const handleScroll = (direction) => {
     if (scrollRef.current) {
@@ -265,13 +309,25 @@ const BrandPage = () => {
     }
   };
 
-  //SI NO EXISTE LA MARCA, RETORNA AL INICIO EVITANDO EL ERROR 404
+  // Una marca inexistente no debe redirigir al inicio: eso crea un soft 404.
   if (!loadingProducts && !currentBrandSegment && !loadingMenu && canonicalSlug !== "silver") {
-    return <Navigate to="/" replace />; 
+    return <NotFoundLegacyRedirect />;
   }
 
   if (loadingMenu || loadingProducts) {
-    return <CatalogSkeleton />; // 🚀 Reutilización de código limpia y eficiente
+    return <CatalogSkeleton variant="brand" />;
+  }
+
+  if (hasInvalidHierarchy) {
+    return <NotFoundLegacyRedirect />;
+  }
+
+  if (
+    cleanSlug !== canonicalSlug ||
+    (cat && cat !== canonicalCategorySlug) ||
+    (subcat && subcat !== canonicalSubcategorySlug)
+  ) {
+    return <Navigate to={canonicalBrandPath} replace />;
   }
 
   // if (!currentBrandSegment) {
@@ -301,15 +357,23 @@ const BrandPage = () => {
       <Helmet>
         {/* 1. SEO DE BÚSQUEDA - AUTORIDAD DE DISTRIBUIDOR */}
         {/* El título ahora incluye "Distribuidor Autorizado" y "Suministros", palabras clave para jefes de compras */}
-        <title>{`Distribuidor Autorizado ${brandNameOfficial} en Guatemala | Suministros Disdel`}</title>
+        <title>{dbSeo?.MetaTitle || dbSeo?.metaTitle || (activeSubcategoryData
+          ? `${activeSubcategoryData.NombreSubCategoria} ${brandNameOfficial} | Disdel`
+          : activeCategoryData
+            ? `${activeCategoryData.NombreCategoria} ${brandNameOfficial} en Guatemala | Disdel`
+            : `Distribuidor Autorizado ${brandNameOfficial} en Guatemala | Suministros Disdel`)}</title>
         
-        <meta name="description" content={`Adquiere suministros originales ${brandNameOfficial} al por mayor. Distribución institucional con asesoría técnica y entrega rápida en Guatemala. Calidad garantizada para su empresa.`} />
-        <link rel="canonical" href={`https://disdelsa.com/marca/${canonicalSlug}`} />
+        <meta name="description" content={dbSeo?.MetaDescription || dbSeo?.metaDescription || (activeSubcategoryData
+          ? `Cotiza ${activeSubcategoryData.NombreSubCategoria} de ${brandNameOfficial} para empresas, industria, hoteles y hospitales en Guatemala.`
+          : activeCategoryData
+            ? `Compra ${activeCategoryData.NombreCategoria} de ${brandNameOfficial} con distribución institucional y entrega en Guatemala.`
+            : `Adquiere suministros originales ${brandNameOfficial} al por mayor. Distribución institucional con asesoría técnica y entrega rápida en Guatemala.`)} />
+        <link rel="canonical" href={canonicalBrandUrl} />
 
         <meta property="og:title" content={`Catálogo Mayorista ${brandNameOfficial} - Distribución Disdel`} />
         <meta property="og:description" content={`Adquiere productos originales ${brandNameOfficial} con respaldo institucional. Soluciones integrales para hoteles, hospitales y oficinas en Guatemala.`} />
         <meta property="og:image" content={visualConfig.banner || defaultImage} />
-        <meta property="og:url" content={`https://disdelsa.com/marca/${canonicalSlug}`} />
+        <meta property="og:url" content={canonicalBrandUrl} />
 
         <meta property="og:type" content="website" />
 
@@ -329,8 +393,9 @@ const BrandPage = () => {
             src={(isMobile && visualConfig.bannerMob) ? visualConfig.bannerMob : (visualConfig.banner || defaultImage)} 
             alt={brandNameOfficial} 
             className='banner-fade-in' 
-            fetchpriority="high" 
+            fetchPriority="high"
             loading="eager"
+            decoding="async"
             width="1330" 
             height="250"
             style={{ width: '100%', height: '100%', objectFit: 'cover' }}
@@ -347,8 +412,8 @@ const BrandPage = () => {
           <div className="cat-sidebar-header-mobile">
             <span className="sidebar-label-grey">CATEGORÍAS</span>
             <div className="cat-nav-arrows">
-                <button onClick={() => handleScroll('left')} className="scroll-arrow"><FiChevronLeft /></button>
-                <button onClick={() => handleScroll('right')} className="scroll-arrow"><FiChevronRight /></button>
+                <button type="button" onClick={() => handleScroll('left')} className="scroll-arrow" aria-label="Ver categorías anteriores"><FiChevronLeft aria-hidden="true" /></button>
+                <button type="button" onClick={() => handleScroll('right')} className="scroll-arrow" aria-label="Ver más categorías"><FiChevronRight aria-hidden="true" /></button>
             </div>
           </div>
           
@@ -357,8 +422,8 @@ const BrandPage = () => {
               to={`/marca/${canonicalSlug}`}
               className={`category-card-btn ${!activeCatId ? 'active-filter' : ''}`}
             >
-              <div className="cat-img-box"><img src={iconoInicio} alt="Inicio" /></div>
-              <span className="cat-text">Ver Todo</span>
+              <div className="cat-img-box"><img src={iconoInicio} alt="Inicio" width="160" height="160" loading="lazy" decoding="async" fetchPriority="low" /></div>
+              <span className="cat-text">Ver todo</span>
             </Link>
           
             {displayCategories.map((cat) => (
@@ -368,7 +433,7 @@ const BrandPage = () => {
                   className={`category-card-btn ${norm(activeCatId) === norm(cat.IdCategoria) ? 'active-filter' : ''}`}
                 >
                   <div className="cat-img-box">
-                    <img src={cat.Imagen ? `${AppConfig.baseImageUrl}${cat.Imagen}` : defaultImage} alt={cat.NombreCategoria} loading="lazy" />
+                    <img src={cat.Imagen ? `${AppConfig.baseImageUrl}${cat.Imagen}` : defaultImage} alt={cat.NombreCategoria} width="160" height="160" loading="lazy" decoding="async" fetchPriority="low" />
                   </div>
                   <span className="cat-text">{cat.NombreCategoria}</span>
                 </Link>
@@ -377,6 +442,25 @@ const BrandPage = () => {
         </aside>
 
         <main className="products-area">
+          {activeCategoryData?.SubCategorias?.length > 0 && (
+            <nav className="brand-subcategories-bar" aria-label={`Subcategorías de ${activeCategoryData.NombreCategoria}`}>
+              <Link
+                to={`/marca/${canonicalSlug}/${createSlug(activeCategoryData.NombreCategoria)}`}
+                className={`brand-sub-pill ${!activeSubCatId ? 'active' : ''}`}
+              >
+                Ver todo
+              </Link>
+              {activeCategoryData.SubCategorias.map(sub => (
+                <Link
+                  key={sub.IdSubCategoria}
+                  to={`/marca/${canonicalSlug}/${createSlug(activeCategoryData.NombreCategoria)}/${createSlug(sub.NombreSubCategoria)}`}
+                  className={`brand-sub-pill ${norm(activeSubCatId) === norm(sub.IdSubCategoria) ? 'active' : ''}`}
+                >
+                  {sub.NombreSubCategoria}
+                </Link>
+              ))}
+            </nav>
+          )}
 
           <div className="catalog-toolbar">
             <div className="toolbar-product-count">
@@ -391,8 +475,10 @@ const BrandPage = () => {
                 onChange={(e) => setSortBy(e.target.value)}
               >
                 <option value="default">Más cotizados</option>
-                <option value="az">A-Z</option>
-                <option value="za">Z-A</option>
+                <option value="az">Producto: A-Z</option>
+                <option value="za">Producto: Z-A</option>
+                <option value="brand-az">Marca: A-Z</option>
+                <option value="category-az">Categoría: A-Z</option>
               </select>
             </div>
           </div>

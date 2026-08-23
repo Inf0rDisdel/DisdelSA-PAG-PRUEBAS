@@ -1,29 +1,95 @@
-import React, { useEffect, useState } from 'react';
-import { Carousel } from 'react-responsive-carousel';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
-import "react-responsive-carousel/lib/styles/carousel.min.css";
 
-import { AppConfig } from '../../../config/AppConfig';
 import { useBanners } from '../../../hooks/useBanners';
+import { getDisdelImageUrl } from 'utils/imageUrl';
+import OptimizedImage from 'components/ui/OptimizedImage/OptimizedImage';
 import './HeroSlider.css';
+
+const NativeHeroCarousel = ({ slides, renderSlide, pauseOnHover = false }) => {
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [isPaused, setIsPaused] = useState(false);
+  const slideCount = slides.length;
+
+  useEffect(() => {
+    setActiveIndex(0);
+  }, [slides]);
+
+  useEffect(() => {
+    if (slideCount < 2 || isPaused) return undefined;
+
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduceMotion) return undefined;
+
+    const timer = window.setInterval(() => {
+      setActiveIndex((currentIndex) => (currentIndex + 1) % slideCount);
+    }, 4000);
+
+    return () => window.clearInterval(timer);
+  }, [isPaused, slideCount]);
+
+  if (!slideCount) return null;
+
+  const safeIndex = activeIndex < slideCount ? activeIndex : 0;
+
+  return (
+    <div
+      className="hero-native-carousel"
+      aria-roledescription="carrusel"
+      aria-label="Promociones de Disdel"
+      onMouseEnter={pauseOnHover ? () => setIsPaused(true) : undefined}
+      onMouseLeave={pauseOnHover ? () => setIsPaused(false) : undefined}
+    >
+      <div className="hero-native-stage">
+        {renderSlide(slides[safeIndex], safeIndex)}
+      </div>
+
+      {slideCount > 1 && (
+        <div className="hero-native-dots" role="group" aria-label="Elegir promoción">
+          {slides.map((slide, index) => {
+            const isSelected = index === safeIndex;
+
+            return (
+              <button
+                type="button"
+                className={`hero-native-dot-button${isSelected ? ' is-selected' : ''}`}
+                key={slide.EntityID || index}
+                onClick={() => setActiveIndex(index)}
+                aria-label={`Ir a la promoción ${index + 1}`}
+                aria-current={isSelected ? 'true' : undefined}
+              >
+                <span className="hero-native-dot" aria-hidden="true" />
+              </button>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+};
 
 const HeroSlider = () => {
   const { data: banners, isLoading, isError } = useBanners();
-  const [isMobile, setIsMobile] = useState(typeof window !== 'undefined' ? window.innerWidth <= 480 : false);
+  const [isMobile, setIsMobile] = useState(
+    () => typeof window !== 'undefined' && window.matchMedia('(max-width: 480px)').matches
+  );
 
   useEffect(() => {
-    const handleResize = () => setIsMobile(typeof window !== 'undefined' ? window.innerWidth <= 480 : false);
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+    const mobileQuery = window.matchMedia('(max-width: 480px)');
+    const handleBreakpointChange = (event) => setIsMobile(event.matches);
+
+    setIsMobile(mobileQuery.matches);
+    mobileQuery.addEventListener('change', handleBreakpointChange);
+    return () => mobileQuery.removeEventListener('change', handleBreakpointChange);
   }, []);
 
   // 🚀 FALLBACK SEGURO: Evita el error "disdelsa.com/imagenes/undefined" de Google
-  const defaultImageFallback = React.useMemo(
-    () => `${AppConfig.baseImageUrl}logo-disdel.png`,
+  const defaultImageFallback = useMemo(
+    () => getDisdelImageUrl('logo-disdel.png'),
     []
   );
 
-  const getBannerRoute = (ban) => {
+  const getBannerRoute = useCallback((ban) => {
     if (!ban) return null;
     const id = String(ban.EntityID);
     const titulo = (ban.Titulo || "").toLowerCase();
@@ -41,9 +107,18 @@ const HeroSlider = () => {
     }
 
     return null;
-  };
+  }, []);
 
   if (isLoading || isError) {
+    if (isMobile) {
+      return (
+        <section className="main-container mobile-hero-skeleton" aria-hidden="true">
+          <div className="mobile-carousel-skeleton"></div>
+          <div className="mobile-side-banner-skeleton"></div>
+        </section>
+      );
+    }
+
     return (
       <section className="main-container skeleton-hero" aria-hidden="true">
         <div className="banners-container-skeleton"></div>
@@ -54,17 +129,24 @@ const HeroSlider = () => {
 
   if (!banners) return null;
 
-  const renderBannerItem = (ban) => {
+  const renderBannerItem = (ban, index) => {
     const route = getBannerRoute(ban);
     const validImg = ban?.Imagen && ban.Imagen.trim() !== "" ? ban.Imagen.trim() : null;
-    const imgUrl = validImg ? `${AppConfig.baseImageUrl}${validImg}` : defaultImageFallback;
+    const imgUrl = getDisdelImageUrl(validImg) || defaultImageFallback;
 
     const bannerContent = (
       <>
-        <img 
+        <OptimizedImage
           src={imgUrl} 
           alt={ban.Titulo || "Promoción Disdel"} 
+          widths={[360, 640, 800, 960]}
+          targetWidth={960}
+          quality={76}
+          sizes="(min-width: 1400px) 760px, (min-width: 1025px) 55vw, (max-width: 480px) calc(100vw - 20px), 100vw"
           width="660" height="155"
+          loading={!isMobile && index === 0 ? "eager" : "lazy"}
+          decoding="async"
+          fetchPriority={!isMobile && index === 0 ? "auto" : "low"}
           style={{ width: '100%', height: '100%', objectFit: 'cover' }}
         />
         {route && (
@@ -93,55 +175,69 @@ const HeroSlider = () => {
     );
   };
 
+  const principalSlides = banners.sliderPrincipal || [];
+
+  const renderPrincipalSlide = (slide, index) => {
+    const route = getBannerRoute(slide);
+    const slideImg = slide?.Imagen || slide?.BannerImagenMovil;
+    const validImg = slideImg && slideImg.trim() !== "" ? slideImg.trim() : null;
+    const imgUrl = getDisdelImageUrl(validImg) || defaultImageFallback;
+    const mobileSlide = isMobile;
+
+    const slideContent = (
+      <>
+        <OptimizedImage
+          src={imgUrl}
+          alt={slide.Titulo || (mobileSlide ? "Suministros de limpieza Disdel" : "Catálogo Disdel")}
+          widths={mobileSlide ? [360, 480, 640] : [480, 640, 800, 960]}
+          targetWidth={mobileSlide ? 640 : 800}
+          quality={76}
+          sizes={mobileSlide ? "calc(100vw - 20px)" : "(min-width: 1400px) 620px, 45vw"}
+          width={mobileSlide ? "392" : "540"}
+          height={mobileSlide ? "210" : "320"}
+          style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+          fetchPriority={index === 0 ? "high" : "low"}
+          loading={index === 0 ? "eager" : "lazy"}
+          decoding={index === 0 ? "sync" : "async"}
+        />
+        {route && (
+          <span className={mobileSlide ? "banner-view-btn-mini" : "banner-view-btn"}>
+            {mobileSlide ? "Ver" : "Ver productos"}
+          </span>
+        )}
+      </>
+    );
+    const wrapperClass = mobileSlide ? "mobile-slide-wrapper" : "desktop-slide-wrapper";
+
+    if (route) {
+      return (
+        <Link
+          key={slide.EntityID}
+          to={route}
+          className={wrapperClass}
+          style={{ display: 'block', textDecoration: 'none' }}
+        >
+          {slideContent}
+        </Link>
+      );
+    }
+
+    return (
+      <div key={slide.EntityID} className={wrapperClass}>
+        {slideContent}
+      </div>
+    );
+  };
+
   return (
     <section className="main-container" aria-label="Promociones principales">
       {isMobile ? (
         <>
           <div className="mobile-hero-carousel">
-            <Carousel showArrows={false} showThumbs={false} showStatus={false}
-              infiniteLoop={true} autoPlay={true} interval={4000} stopOnHover={false}>
-              {banners.sliderPrincipal?.map((slide, index) => {
-                const route = getBannerRoute(slide);
-
-                //SANEAMIENTO: Validación de imagen para moviles
-                const slideImg = slide?.BannerImagenMovil || slide?.Imagen;
-                const validImg = slideImg && slideImg.trim() !== "" ? slideImg.trim() : null;
-                const imgUrl = validImg ? `${AppConfig.baseImageUrl}${validImg}` : defaultImageFallback;
-
-                const slideContent = (
-                  <>
-                    <img 
-                      src={imgUrl} 
-                      alt={slide.Titulo || "Suministros de limpieza Disdel"} 
-                      width="392"
-                      height="210"
-                      style={{ width: '100%', height: '210px', objectFit: 'cover'}}
-                      fetchpriority={index === 0 ? "high" : "auto"}
-                      loading={index === 0 ? "eager" : "lazy"}
-                      decoding={index === 0 ? "sync" : "async"}
-                    />
-                    {route && (
-                      <span className="banner-view-btn-mini">Ver</span>
-                    )}
-                  </>
-                );
-
-                if (route) {
-                  return (
-                    <Link key={slide.EntityID} to={route} className="mobile-slide-wrapper" style={{ display: 'block', textDecoration: 'none' }}>
-                      {slideContent}
-                    </Link>
-                  );
-                }
-
-                return (
-                  <div key={slide.EntityID} className="mobile-slide-wrapper">
-                    {slideContent}
-                  </div>
-                );
-                
-              })}
-            </Carousel>
+            <NativeHeroCarousel
+              slides={principalSlides}
+              renderSlide={renderPrincipalSlide}
+            />
           </div>
           <div className="banners-container">
             {banners.lateralesPrincipal?.slice(0, 1).map(renderBannerItem)}
@@ -155,54 +251,12 @@ const HeroSlider = () => {
           </div>
 
           <div className="slider-container">
-            <div className="carousel-wrapper">
-              {banners.sliderPrincipal?.length > 0 && (
-                <Carousel
-                  showArrows={false} showThumbs={false} showStatus={false}
-                  infiniteLoop={true} autoPlay={true} interval={4000} stopOnHover={true}
-                >
-                  {banners.sliderPrincipal.map((slide, index) => {
-                    const route = getBannerRoute(slide);
-
-                    //SANEAMIENTO: Validación de imagen para escritorio
-                    const slideImg = slide?.Imagen || slide?.BannerImagenMovil;
-                    const validImg = slideImg && slideImg.trim() !== "" ? slideImg.trim() : null;
-                    const imgUrl = validImg ? `${AppConfig.baseImageUrl}${validImg}` : defaultImageFallback;
-
-                    const slideContent = (
-                      <>
-                        <img 
-                          src={imgUrl} 
-                          alt={slide.Titulo || "Catálogo Disdel"} 
-                          width="540" height="320" 
-                          style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                          fetchpriority={index === 0 ? "high" : "low"}
-                          loading={index === 0 ? "eager" : "lazy"}
-                          decoding={index === 0 ? "sync" : "async"}
-                        />
-                        {route && (
-                          <span className="banner-view-btn">Ver productos</span>
-                        )}
-                      </>
-                    );
-
-                    // 🚀 Slider de escritorio 100% clickeable
-                    if (route) {
-                      return (
-                        <Link key={slide.EntityID} to={route} className="desktop-slide-wrapper" style={{ display: 'block', textDecoration: 'none' }}>
-                          {slideContent}
-                        </Link>
-                      );
-                    }
-
-                    return (
-                      <div key={slide.EntityID} className="desktop-slide-wrapper">
-                        {slideContent}
-                      </div>
-                    );
-                  })}
-                </Carousel>
-              )}
+            <div className="hero-carousel-wrapper">
+              <NativeHeroCarousel
+                slides={principalSlides}
+                renderSlide={renderPrincipalSlide}
+                pauseOnHover
+              />
             </div>
           </div>
         </>

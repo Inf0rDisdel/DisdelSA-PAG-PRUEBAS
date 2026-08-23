@@ -21,7 +21,7 @@
 
 /* 🚀 ALINEACIÓN DE CONTENEDORES */
 .footer-content-area {
-    max-width: 1400px !important;
+    max-width: var(--site-max-width) !important;
     margin: 0 auto !important;
     display: flex !important;
     align-items: stretch !important; /* Estira ambos lados para simetría vertical de la línea */

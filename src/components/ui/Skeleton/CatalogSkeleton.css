@@ -1,0 +1,142 @@
+.catalog-skeleton-page {
+  pointer-events: none;
+}
+
+.catalog-skeleton-page .skeleton-base {
+  max-width: 100%;
+}
+
+.catalog-skeleton-breadcrumb {
+  min-height: 20px;
+}
+
+.catalog-skeleton-banner {
+  height: 280px;
+}
+
+.catalog-skeleton-banner > .skeleton-base,
+.catalog-skeleton-brand-hero > .skeleton-base {
+  display: block;
+  border-radius: inherit;
+}
+
+.catalog-skeleton-sidebar,
+.catalog-skeleton-brand-sidebar {
+  position: relative;
+  top: auto;
+}
+
+.catalog-skeleton-category,
+.catalog-skeleton-brand-category,
+.catalog-skeleton-pill {
+  cursor: default;
+}
+
+.catalog-skeleton-pill {
+  display: flex;
+  align-items: center;
+  min-height: 42px;
+  box-sizing: border-box;
+}
+
+.catalog-skeleton-category:hover,
+.catalog-skeleton-brand-category:hover {
+  transform: none;
+  background: #ffffff;
+}
+
+.catalog-skeleton-sort {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.catalog-skeleton-brand-hero {
+  height: 250px;
+}
+
+.catalog-skeleton-brand-products {
+  align-items: stretch;
+}
+
+.catalog-skeleton-mobile-arrows {
+  display: none;
+  gap: 10px;
+}
+
+@media (min-width: 769px) {
+  .catalog-skeleton-products > .product-card {
+    min-height: 360px;
+  }
+
+  .catalog-skeleton-brand-products > .product-card {
+    min-height: 367px;
+  }
+}
+
+@media (max-width: 768px) {
+  .catalog-skeleton-banner {
+    height: 180px;
+  }
+
+  .catalog-skeleton-sidebar,
+  .catalog-skeleton-brand-sidebar {
+    position: relative !important;
+    top: auto !important;
+  }
+
+  .catalog-skeleton-toolbar {
+    align-items: flex-start;
+  }
+
+  .catalog-skeleton-sort {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .catalog-skeleton-brand-hero {
+    height: auto !important;
+    aspect-ratio: 1330 / 250;
+  }
+
+  .catalog-skeleton-mobile-arrows {
+    display: flex;
+  }
+}
+
+@media (max-width: 468px) {
+  .catalog-skeleton-banner {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 8 / 5;
+  }
+
+  .catalog-skeleton-sidebar .cat-sidebar-nav {
+    padding-right: 0 !important;
+  }
+
+  .catalog-skeleton-sidebar .cat-nav-item:nth-child(n + 4),
+  .catalog-skeleton-brand-sidebar .category-card-btn:nth-child(n + 4) {
+    display: none;
+  }
+
+  .catalog-skeleton-subcategories {
+    flex-wrap: nowrap;
+    overflow: hidden;
+  }
+
+  .catalog-skeleton-pill {
+    flex: 0 0 auto;
+  }
+
+  .catalog-skeleton-products {
+    padding-left: 10px !important;
+    padding-right: 0 !important;
+  }
+
+  .catalog-skeleton-brand-hero {
+    width: 100% !important;
+    height: auto !important;
+    aspect-ratio: 8 / 5;
+  }
+}

@@ -92,8 +92,13 @@ const QuoteForm = () => {
   };
 
   return (
-    <div className="quote-form-wrapper">
-      <h2 className="form-title">Solicitud de Cotización</h2>
+    <div
+      id="quote-form"
+      className="quote-form-wrapper"
+      tabIndex="-1"
+      aria-labelledby="quote-form-title"
+    >
+      <h2 id="quote-form-title" className="form-title">Solicitud de Cotización</h2>
       <form onSubmit={handleSubmit}>
         
         <div className="input-group">

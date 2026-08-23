@@ -23,7 +23,12 @@ const createInstance = (baseURL) => {
     response => response,
     error => {
       const message = error.response?.data?.message || 'Error de conexión';
-      console.error(`[API Error] ${error.config.url}:`, message);
+      // Algunas consultas son complementarias y ya disponen de un fallback local.
+      // Esas consultas gestionan el error en su propio hook para no llenar la
+      // consola con falsos positivos cuando el servicio auxiliar no está activo.
+      if (!error.config?.suppressErrorLog) {
+        console.error(`[API Error] ${error.config?.url || 'URL desconocida'}:`, message);
+      }
       // Aquí podrías integrar un sistema de logs como Sentry
       return Promise.reject(error);
     }

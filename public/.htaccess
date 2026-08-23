@@ -7,9 +7,42 @@
   RewriteCond %{HTTP_HOST} ^www\. [NC]
   RewriteRule ^(.*)$ https://disdelsa.com/$1 [L,R=301]
 
+  # 2. ALIAS HISTÓRICOS CON DESTINO VÁLIDO
+  # Deben resolverse en el servidor (301 real), antes de entregar React.
+  # Así Google conserva las señales de la URL antigua sin terminar en Inicio.
+  RewriteRule ^(?:marca|marcas|m)/kcp/(.+?)/?$ /marca/kimberly-clark-professional/$1 [L,R=301,NC,NE]
+  RewriteRule ^(?:marca|marcas|m)/kcp/?$ /marca/kimberly-clark-professional [L,R=301,NC,NE]
+  RewriteRule ^(?:marca|marcas|m)/kimberly-clark-profesional/(.+?)/?$ /marca/kimberly-clark-professional/$1 [L,R=301,NC,NE]
+  RewriteRule ^(?:marca|marcas|m)/kimberly-clark-profesional/?$ /marca/kimberly-clark-professional [L,R=301,NC,NE]
+  RewriteRule ^(?:categoria|category|c)/decapante/?$ /categoria/quimicos-para-limpieza/removedores-y-solventes [L,R=301,NC,NE]
+  RewriteRule ^(?:categoria|category|c)/suavizante/?$ /categoria/quimicos-para-limpieza/lavanderia/para-ropa [L,R=301,NC,NE]
+  RewriteRule ^disdelsa/?$ / [L,R=301,NC]
+  RewriteRule ^sede-central/?$ /ubicaciones [L,R=301,NC]
+  RewriteRule ^escobas-y-accesorios/?$ /categoria/herramientas-para-limpieza/escobas-y-recogedores [L,R=301,NC,NE]
+  RewriteRule ^hojas/?$ /categoria/papeleria/productos-de-papel/hojas [L,R=301,NC,NE]
+  RewriteRule ^trajes-de-proteccion/?$ /categoria/epp/proteccion-corporal/trajes-de-proteccion [L,R=301,NC,NE]
+  RewriteRule ^lgrepsa\.com/acercade\.html/?$ /quienes-somos [L,R=301,NC]
+  RewriteRule ^disdel3m\.com/politicasprivacidad/?$ /politicas-de-privacidad [L,R=301,NC,NE]
+
+  # URLs retiradas sin equivalente. Un 410 evita que Google siga intentando
+  # indexarlas como páginas válidas o como soft 404.
+  RewriteRule ^marca/[0-9]+/?$ - [G,L,NC]
+  RewriteRule ^trafico/?$ - [G,L,NC]
+  RewriteRule ^imagenes/productos/.*(?:saldos.*clientes|clientes.*saldos).*\.pdf$ - [G,L,NC]
+  RewriteRule ^producto/(?:1528\.1|1528\.2|1528\.5|ptt01126)(?:/.*)?$ - [G,L,NC]
+
+  # Las URLs históricas /producto/ID se resuelven con el sitemap local.
+  # El resultado es un 301 del servidor y no depende de ejecutar React/API.
+  RewriteRule ^producto/([^/]+)/?$ /product-redirect.php?id=$1 [L,QSA,NE]
+
   # 3. QUITAR SLASH FINAL (Para evitar contenido duplicado)
   RewriteCond %{REQUEST_FILENAME} !-d
   RewriteRule ^(.*)/$ /$1 [L,R=301]
+
+  # /index.html solo redirige cuando fue solicitado directamente. THE_REQUEST
+  # evita afectar la reescritura interna que React necesita.
+  RewriteCond %{THE_REQUEST} \s/+index\.html(?:[?\s]) [NC]
+  RewriteRule ^index\.html$ / [L,R=301]
 
   # 4. REGLA MAESTRA PARA REACT (Evita la pantalla en blanco al refrescar)
   RewriteRule ^index\.html$ - [L]
@@ -18,6 +51,10 @@
   RewriteCond %{REQUEST_FILENAME} !-l
   RewriteRule . /index.html [L]
 </IfModule>
+
+# Conserva la experiencia visual de React, manteniendo el estado HTTP 410
+# para buscadores y clientes que soliciten recursos retirados.
+ErrorDocument 410 /index.html
 
 
 <IfModule mod_expires.c>
@@ -47,6 +84,26 @@
 # Los recursos versionados conservan 1 año, pero los iconos de marca deben
 # poder revalidarse pronto cuando se actualicen.
 <IfModule mod_headers.c>
+  # Los nombres generados por React contienen hash de contenido y son
+  # inmutables. Esta regla funciona incluso si mod_expires no está activo.
+  <FilesMatch "\.(?:css|js|woff2?|ttf|otf)$">
+    Header onsuccess unset Cache-Control
+    Header always set Cache-Control "public, max-age=31536000, immutable"
+  </FilesMatch>
+
+  # El HTML debe revalidarse para no referenciar chunks de un build anterior.
+  <FilesMatch "^index\.html$">
+    Header onsuccess unset Cache-Control
+    Header always set Cache-Control "no-cache, max-age=0, must-revalidate"
+  </FilesMatch>
+
+  # Documentos de descubrimiento: deben poder actualizarse sin esperar la
+  # caché anual de los recursos versionados.
+  <FilesMatch "^(?:llms|robots)\.txt$">
+    Header onsuccess unset Cache-Control
+    Header always set Cache-Control "public, max-age=3600, must-revalidate"
+  </FilesMatch>
+
   <FilesMatch "^(favicon(?:-[0-9]+x[0-9]+)?\.(?:ico|png)|apple-touch-icon\.png)$">
     Header onsuccess unset Cache-Control
     Header always set Cache-Control "public, max-age=3600, must-revalidate"

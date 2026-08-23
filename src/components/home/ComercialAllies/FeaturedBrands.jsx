@@ -1,36 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
-import Slider from "react-slick"; 
-
-import "slick-carousel/slick/slick.css"; 
-import "slick-carousel/slick/slick-theme.css";
 import './FeaturedBrands.css'; 
 
-import { AppConfig } from '../../../config/AppConfig';
 import { useBanners } from '../../../hooks/useBanners';
 import { createSlug } from 'utils/slugify';
+import { getDisdelImageUrl } from 'utils/imageUrl';
+import OptimizedImage from 'components/ui/OptimizedImage/OptimizedImage';
 
 const FeaturedBrands = ({ isLoading: isLoadingProp }) => {
   const { data: banners, isLoading: isLoadingBanners, isError } = useBanners();
-  const [isPhone, setIsPhone] = useState(window.innerWidth <= 480);
-  
   const loading = isLoadingProp || isLoadingBanners;
-
-  useEffect(() => {
-    const handleResize = () => setIsPhone(window.innerWidth <= 480);
-    window.addEventListener('resize', handleResize, { passive: true });
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
-
-  const settings = {
-    dots: false,
-    infinite: false,
-    speed: 500,
-    slidesToShow: 3, 
-    slidesToScroll: 1,
-    arrows: false,
-    swipeToSlide: true
-  };
   
   // Skeleton Loader
   if (loading) {
@@ -53,39 +32,31 @@ const FeaturedBrands = ({ isLoading: isLoadingProp }) => {
       <h2 className="section-title">Aliados Comerciales</h2>
       
       <div className="brands-content-wrapper">
-        {isPhone ? (
-          <Slider {...settings} className="brands-phone-slider">
-            {banners.aliados.map((ban, index) => (
-              <div key={ban.EntityID} className="phone-slide-item">
-                <Link to={`/marca/${createSlug(ban.Titulo)}`} className="phone-brand-link">
-                  <img 
-                    src={`${AppConfig.baseImageUrl}${ban.Imagen}`} 
-                    alt={`Distribuidor autorizado ${ban.Titulo}`} 
-                    className="phone-brand-img"
-                    loading={index < 3 ? "eager" : "lazy"} 
-                    fetchpriority={index < 3 ? "high" : "low"}
-                  />
-                </Link>
-              </div>
-            ))}
-          </Slider>
-        ) : (
-          <div className="brands-container">
-            {banners.aliados.map((ban, index) => (
-                <Link 
-                  key={ban.EntityID} 
-                  to={`/marca/${createSlug(ban.Titulo)}`} 
-                  className="brand-item"
-                >
-                    <img 
-                      src={`${AppConfig.baseImageUrl}${ban.Imagen}`} 
-                      alt={`Distribuidor autorizado ${ban.Titulo}`} 
-                      loading={index < 6 ? "eager" : "lazy"} 
-                    />
-                </Link>
-            ))}
-          </div>
-        )}
+        <div className="brands-container" aria-label="Marcas aliadas">
+          {banners.aliados.map((ban) => (
+            <Link
+              key={ban.EntityID}
+              to={`/marca/${createSlug(ban.Titulo)}`}
+              className="brand-item"
+              aria-label={`Ver productos de ${ban.Titulo}`}
+            >
+              <OptimizedImage
+                src={getDisdelImageUrl(ban.Imagen)}
+                alt=""
+                aria-hidden="true"
+                widths={[160, 240, 360]}
+                targetWidth={360}
+                quality={78}
+                sizes="(min-width: 1025px) 321px, (min-width: 481px) 24vw, 31vw"
+                width="300"
+                height="300"
+                loading="lazy"
+                decoding="async"
+                fetchPriority="low"
+              />
+            </Link>
+          ))}
+        </div>
       </div>
     </section>
   );

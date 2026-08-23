@@ -1,7 +1,6 @@
 /* Contenedor base del carrusel */
 .product-carousel-container {
   min-height: 520px;
-  contain: layout;
   background-size: cover;
   background-position: center;
   width: 100%;
@@ -13,8 +12,6 @@
   border-radius: 10px;
   overflow: hidden; 
   contain: content;
-  will-change: transform;
-  transition: max-width 0.3s ease;
 }
 
 .carousel-header {
@@ -55,17 +52,85 @@
   }
 }
 
-/* Resto de tus estilos existentes sin modificar... */
+.product-native-slider-shell {
+  position: relative;
+}
+
+.product-native-slider {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: calc((100% - 80px) / 5);
+  gap: 20px;
+  overflow-x: auto;
+  overscroll-behavior-inline: contain;
+  scroll-snap-type: inline mandatory;
+  scrollbar-width: none;
+  padding: 10px 0 25px;
+}
+
+.product-native-slider::-webkit-scrollbar {
+  display: none;
+}
+
+.product-native-slider:focus-visible {
+  outline: 3px solid rgba(19, 94, 171, 0.4);
+  outline-offset: 3px;
+  border-radius: 10px;
+}
+
 .carousel-item-padding {
-  padding: 10px 10px;
+  scroll-snap-align: start;
+  padding: 0;
   display: flex;
   width: 100%;
+  min-width: 0;
   box-sizing: border-box;
 }
 
-.product-carousel-container .slick-list {
-  padding: 10px 28px 25px 0 !important; 
-  margin: 0 -8px;
+.product-scroll-button {
+  position: absolute;
+  top: 45%;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  color: #5fa307;
+  background: rgba(255, 255, 255, 0.96);
+  border: 1px solid rgba(10, 43, 51, 0.14);
+  border-radius: 50%;
+  box-shadow: 0 6px 20px rgba(10, 43, 51, 0.16);
+  cursor: pointer;
+  transform: translateY(-50%);
+  transition: color 0.2s ease, background-color 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+}
+
+.product-scroll-button span {
+  font-size: 2rem;
+  line-height: 1;
+  transform: translateY(-1px);
+}
+
+.product-scroll-button:hover,
+.product-scroll-button:focus-visible {
+  background: #5fa307;
+  color: #ffffff;
+  border-color: #5fa307;
+  transform: translateY(-50%) scale(1.05);
+}
+
+.product-scroll-button:focus-visible {
+  outline: 3px solid rgba(150, 193, 33, 0.38);
+  outline-offset: 3px;
+}
+
+.product-scroll-button--previous {
+  left: 2px;
+}
+
+.product-scroll-button--next {
+  right: 2px;
 }
 
 .carousel-title {
@@ -114,78 +179,35 @@
   content: "";
 }
 
-.slick-prev, .slick-next {
-  width: 48px;
-  height: 48px;
-  z-index: 100 !important;
-  top: 45%;
-
-  transition: opacity 0.3s ease, visibility 0.3s ease;
-  opacity: 0.4;
-}
-
-.slick-prev:before, .slick-next:before {
-  font-family: 'slick';
-  font-size: 28px;
-  color: #96c121 !important;
-  opacity: 1;
-}
-
-.slick-slider:hover .slick-prev,
-.slick-slider:hover .slick-next {
-  opacity: 1;
-}
-
-.slick-track {
-  display: flex !important;
-  align-items: stretch;
-  will-change: transform;
-}
-
-.slick-slide {
-  height: auto !important;
-  display: flex !important;
-  align-items: stretch;
-  justify-content: center;
-}
-
-.slick-slide > div {
-  width: 100%;
-  display: flex;
-  align-items: stretch;
-  padding: 0 8px;
-}
-
 @media (max-width: 800px) {
   .product-carousel-container {
     padding: 10px 20px;
     min-height: 460px;
   }
-  .slick-prev { left: -10px; }
-  .slick-next { right: -10px; }
+
+  .product-native-slider {
+    grid-auto-columns: calc((100% - 24px) / 3);
+    gap: 12px;
+  }
 }
 
 @media (max-width: 480px) {
-  .product-carousel-container .slick-list {
-    height: auto !important;
-    overflow: visible !important;
-    padding-bottom: 25px !important;
-  }
   .product-carousel-container {
     padding: 10px 5px;
   }
-  .slick-track {
-    display: flex !important;
-    align-items: stretch !important;
+
+  .product-native-slider {
+    grid-auto-columns: calc((100% - 10px) / 2);
+    gap: 10px;
+    padding-inline: 5px;
   }
-  .slick-slide {
-    height: auto !important;
-    display: flex !important;
-  }
+
   .carousel-item-padding {
     height: 100%;
-    display: flex;
-    width: 100%;
+  }
+
+  .product-scroll-button {
+    display: none;
   }
   .carousel-title {
     font-size: 0.9rem;

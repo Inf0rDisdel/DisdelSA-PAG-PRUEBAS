@@ -1,5 +1,3 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap');
-
 .loc-page-wrapper {
   background-color: #ffffff;
   padding-bottom: 60px;
@@ -52,7 +50,6 @@
 
 .loc-title {
   font-size: 2.4rem;
-  font-family: 'Poppins', sans-serif;
   color: #1a1a1a;
   margin-bottom: 20px;
   line-height: 1.1;

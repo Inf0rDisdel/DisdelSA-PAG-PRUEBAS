@@ -78,7 +78,7 @@ const AboutUs = () => {
         {/* 3. BANNER GRANDE (Tamaño Original) */}
         {/* Ya no está en la grid pequeña, ahora ocupa todo el ancho real */}
         <div className="full-banner-container">
-            {images.historia && <img src={images.historia} alt="Banner Historia Disdel" />}
+            {images.historia && <img src={images.historia} alt="Banner Historia Disdel" width="1584" height="396" loading="lazy" decoding="async" fetchPriority="low" />}
         </div>
 
         {/* 4. POR QUÉ COMPRAR EN DISDEL */}
@@ -96,7 +96,7 @@ const AboutUs = () => {
         <div className="vm-flex-row">
             {/* Imagen Pequeña a la izquierda */}
             <div className="vm-small-img">
-                <img src={images.misión} alt="Visión Icono" />
+                <img src={images.misión} alt="Visión Icono" width="612" height="408" loading="lazy" decoding="async" fetchPriority="low" />
             </div>
             {/* Texto a la derecha */}
             <div className="vm-text-side">
@@ -112,7 +112,7 @@ const AboutUs = () => {
         <div className="vm-flex-row">
              {/* Imagen Pequeña a la izquierda */}
              <div className="vm-small-img">
-                <img src={images.visión} alt="Misión Icono" />
+                <img src={images.visión} alt="Misión Icono" width="658" height="451" loading="lazy" decoding="async" fetchPriority="low" />
             </div>
             {/* Texto a la derecha */}
             <div className="vm-text-side">
@@ -128,8 +128,8 @@ const AboutUs = () => {
         <div className="gallery-section" style={{marginTop: '60px'}}>
             <h3 className="gallery-title">Nuestro Equipo e Instalaciones Hoy</h3>
             <div className="images-grid-3">
-                <img src={images.central} alt="Planta Disdel" />
-                <img src={images.laboratorio} alt="Instalaciones Centrales" />
+                <img src={images.central} alt="Planta Disdel" width="1600" height="1059" loading="lazy" decoding="async" fetchPriority="low" />
+                <img src={images.laboratorio} alt="Instalaciones Centrales" width="1600" height="1062" loading="lazy" decoding="async" fetchPriority="low" />
             </div>
         </div>
 

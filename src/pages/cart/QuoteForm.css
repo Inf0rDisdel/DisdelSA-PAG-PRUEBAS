@@ -1,13 +1,15 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
-
 .quote-form-wrapper {
   background-color: #ffffff;
-  font-family: 'Poppins', sans-serif;
   padding: 2.5rem 2rem;
   border-radius: 16px;
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.07);
   position: sticky;
   top: 2rem;
+  scroll-margin-top: 130px;
+}
+
+.quote-form-wrapper:focus {
+  outline: none;
 }
 
 .form-title {
@@ -18,11 +20,9 @@
 }
 
 .input-group {
-    font-family: 'Poppins', sans-serif;
     margin-bottom: 1.25rem; }
 
 .input-group label { 
-    font-family: 'Poppins', sans-serif;
     display: block;
     font-size: 0.9rem;
     font-weight: 500;
@@ -32,7 +32,6 @@
 .input-group input,
 .input-group textarea {
     width:90%; 
-    font-family: 'Poppins', sans-serif;
     padding: 0.8rem 1rem; 
     border: 1px solid #dee2e6; 
     border-radius: 8px; 
@@ -69,7 +68,6 @@
 }
 
 .swal2-toast {
-    font-family: 'Poppins', sans-serif !important;
     border-radius: 12px !important;
     box-shadow: 0 10px 30px rgba(0,0,0,0.08) !important;
 }

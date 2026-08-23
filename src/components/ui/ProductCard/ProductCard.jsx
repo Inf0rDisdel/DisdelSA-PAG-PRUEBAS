@@ -3,13 +3,14 @@ import { Link } from 'react-router-dom';
 import { FiShoppingCart } from 'react-icons/fi';
 import { useQueryClient } from '@tanstack/react-query';
 import useCartStore from 'store/useCartStore';
-import { AppConfig } from 'config/AppConfig';
 import { useBanners } from 'hooks/useBanners';
 import { fetchProductDetail } from 'hooks/useProductDetail';
 import { createSlug } from 'utils/slugify';
+import { getDisdelImageUrl } from 'utils/imageUrl';
+import OptimizedImage from 'components/ui/OptimizedImage/OptimizedImage';
 import './ProductCard.css';
 
-const ProductCard = memo(({ product, index }) => {
+const ProductCard = memo(({ product, index, priority }) => {
   const { IdProducto, Descripcion, Imagen, Marca, Categoria } = product;
   const addItem = useCartStore((state) => state.addItem);
   const { data: bannerData } = useBanners();
@@ -42,18 +43,16 @@ const ProductCard = memo(({ product, index }) => {
 
   const imageUrl = useMemo(() => {
     const found = bannerData?.ImagenPredeterminado?.find(i => i.Titulo?.trim() === "ImagenDefault3");
-    const defaultImg = found?.BannerImagenMovil || found?.Imagen ? `${AppConfig.baseImageUrl}${found.BannerImagenMovil || found.Imagen}` : '';
-    return (Imagen && Imagen.trim() !== "") 
-      ? `${AppConfig.baseImageUrl}productos/${Imagen}` 
-      : defaultImg;
+    const defaultImg = getDisdelImageUrl(found?.BannerImagenMovil || found?.Imagen);
+    return getDisdelImageUrl(Imagen, 'productos') || defaultImg;
   }, [Imagen, bannerData]);
 
   const badgeLogo = useMemo(() => {
     const found = bannerData?.Iconos?.find(i => i.Titulo?.trim() === "IconoDisdel");
-    return found ? `${AppConfig.baseImageUrl}${found.Imagen}` : '';
+    return getDisdelImageUrl(found?.Imagen);
   }, [bannerData]);
 
-  const isPriority = index < 4;
+  const isPriority = priority ?? index < 4;
   const productUrl = `/producto/${String(IdProducto).trim().toLowerCase()}/${createSlug(Descripcion)}`;
 
   return (
@@ -69,14 +68,19 @@ const ProductCard = memo(({ product, index }) => {
 
       <div className="product-brand-badge">
         {badgeLogo && (
-          <img 
+          <OptimizedImage
             src={badgeLogo} 
-            alt="Disdel" 
+            alt="" aria-hidden="true"
             className="badge-logo-img" 
+            widths={[32, 48, 64]}
+            targetWidth={48}
+            quality={80}
+            sizes="24px"
             loading="lazy" 
             decoding="async" 
-            width="50" 
-            height="16" 
+            fetchPriority="low"
+            width="24"
+            height="24"
           />
         )}
       </div>
@@ -89,14 +93,18 @@ const ProductCard = memo(({ product, index }) => {
         title={`Ver detalle de ${Descripcion}`}
       >
         <div className="product-image-container">
-          <img 
+          <OptimizedImage
             src={imageUrl} 
             alt={Descripcion} 
             className="product-image" 
+            widths={[160, 240, 320]}
+            targetWidth={240}
+            quality={78}
+            sizes="(min-width: 1025px) 150px, (min-width: 481px) 120px, 130px"
             width="200" height="200" // 🚀 Evita saltos de diseño (CLS)
             loading={isPriority ? "eager" : "lazy"} 
             decoding='async'
-            fetchpriority={isPriority ? "high" : "auto"}
+            fetchPriority={isPriority ? "high" : "low"}
             itemProp="image"
           />
         </div>
@@ -121,6 +129,7 @@ const ProductCard = memo(({ product, index }) => {
 
         <button 
           className="quote-button" 
+          aria-label={`Agregar ${Descripcion} a mi lista de cotización`}
           onClick={(e) => {
             e.preventDefault();
             const defaultPresentation = product.Unidad || product.Empaque || 'Unidad';

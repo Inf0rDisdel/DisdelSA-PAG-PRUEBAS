@@ -19,6 +19,10 @@ const BrandLegacyRedirect = () => {
 
         const searchSlug = createSlug(slug);
 
+        if (searchSlug === 'kcp' || searchSlug === 'kimberly-clark-profesional') {
+            return '/marca/kimberly-clark-professional';
+        }
+
         for (const segmento of menuData) {
 
             for (const marca of segmento.Marcas || []) {

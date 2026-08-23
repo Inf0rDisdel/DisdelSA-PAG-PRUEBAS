@@ -1,27 +1,24 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useMemo, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import Slider from "react-slick"; 
-
-import "slick-carousel/slick/slick.css"; 
-import "slick-carousel/slick/slick-theme.css";
 import './CategoryGrid.css';
 
-import { AppConfig } from '../../../config/AppConfig';
 import { useMenu } from '../../../hooks/useMenu';
 import { useBanners } from 'hooks/useBanners';
 import Skeleton from 'components/ui/Skeleton/Skeleton';
 import { createSlug } from 'utils/slugify';
+import { getDisdelImageUrl } from 'utils/imageUrl';
+import OptimizedImage from 'components/ui/OptimizedImage/OptimizedImage';
 
 const CategoryGrid = ({ isLoading: isLoadingProp }) => {
   const { data: menuData, isLoading: isLoadingMenu } = useMenu();
   const { data: bannerData, isLoading: isLoadingBanners } = useBanners();
   
-  const [sliderKey, setSliderKey] = useState(Date.now());
   const loading = isLoadingProp || isLoadingMenu || isLoadingBanners;
+  const categoryScrollerRef = useRef(null);
 
   const defaultImage = useMemo(() => {
     const imgDb = bannerData?.ImagenPredeterminado?.find (b=> b.Titulo === "ImagenDefault");
-    return imgDb ? `${AppConfig.baseImageUrl}${imgDb.Imagen}` : ''; 
+    return getDisdelImageUrl(imgDb?.Imagen);
   }, [bannerData]);
 
   const filteredCategories = useMemo(() => {
@@ -32,24 +29,15 @@ const CategoryGrid = ({ isLoading: isLoadingProp }) => {
       );
   }, [menuData]);
 
-  useEffect(() => {
-    const handleResize = () => setSliderKey(Date.now());
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
+  const scrollCategories = (direction) => {
+    const scroller = categoryScrollerRef.current;
+    if (!scroller) return;
 
-  const settings = {
-    arrows: true,
-    dots: true, 
-    infinite: false, 
-    speed: 500, 
-    slidesToShow: 5, 
-    slidesToScroll: 5,
-    responsive: [
-      { breakpoint: 1024, settings: { slidesToShow: 4, slidesToScroll: 4 } },
-      { breakpoint: 768, settings: { slidesToShow: 4, slidesToScroll: 4, arrows:true} },
-      { breakpoint: 468, settings: { slidesToShow: 3, slidesToScroll: 3, arrows: false } }
-    ]
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    scroller.scrollBy({
+      left: direction * scroller.clientWidth * 0.9,
+      behavior: reduceMotion ? 'auto' : 'smooth'
+    });
   };
   
   if (loading) {
@@ -57,11 +45,10 @@ const CategoryGrid = ({ isLoading: isLoadingProp }) => {
       <section className="cgs-section">
       <h2 className="cgs-title">Categorías Destacadas</h2>
       <div className="cgs-skeleton-grid"> 
-          {[1, 2, 3, 4].map((i) => (
+          {[1, 2, 3, 4, 5].map((i) => (
             <div key={i} className="cgs-item-skeleton">
-              <Skeleton width="100%" height="240px" style={{ borderRadius: '20px' }} />
-              {/* 👈 MUY IMPORTANTE: Reserva el espacio exacto del texto */}
-              <Skeleton width="60%" height="20px" style={{ marginTop: '16px' }} />
+              <Skeleton width="100%" className="cgs-image-skeleton" style={{ borderRadius: '20px' }} />
+              <Skeleton width="60%" height="42px" className="cgs-text-skeleton" />
             </div>
           ))}
       </div>
@@ -72,21 +59,27 @@ const CategoryGrid = ({ isLoading: isLoadingProp }) => {
   if (!filteredCategories || filteredCategories.length === 0) return null;
 
   return (
-    <section className="cgs-section" style={{ minHeight: '400px' }}>
+    <section className="cgs-section">
       <h2 className="cgs-title">Categorías Destacadas</h2>
-      <div className="cgs-slider">
-          <Slider key={sliderKey} {...settings}>
-            {filteredCategories.map((category, index) => (
-              <div key={category.IdSegmento}>
+      <div className="cgs-slider-shell">
+        <button type="button" className="cgs-scroll-button cgs-scroll-prev" onClick={() => scrollCategories(-1)} aria-label="Ver categorías anteriores">‹</button>
+        <div className="cgs-slider" ref={categoryScrollerRef} role="list" aria-label="Categorías destacadas" tabIndex="0">
+            {filteredCategories.map((category) => (
+              <div key={category.IdSegmento} className="cgs-native-slide" role="listitem">
                 <Link className="cgs-item" to={`/categoria/${createSlug(category.NombreSegmento)}`}>
                   <div className="cgs-image-wrapper">
-                    <img 
-                      src={category.Imagen ? `${AppConfig.baseImageUrl}${category.Imagen}` : defaultImage} 
-                      alt={category.NombreSegmento} 
+                    <OptimizedImage
+                      src={getDisdelImageUrl(category.Imagen) || defaultImage}
+                      alt="" aria-hidden="true"
                       className="cgs-image" 
-                      // 🚀 Mantenemos la mejora de velocidad
-                      loading={index < 4 ? "eager" : "lazy"} 
-                      fetchpriority={index < 4 ? "high" : "low"} 
+                      widths={[160, 240, 360]}
+                      targetWidth={360}
+                      quality={78}
+                      sizes="(min-width: 1025px) 260px, (min-width: 481px) 24vw, 31vw"
+                      width="240"
+                      height="240"
+                      loading="lazy"
+                      fetchPriority="low"
                       decoding="async"
                     />
                   </div>
@@ -94,7 +87,8 @@ const CategoryGrid = ({ isLoading: isLoadingProp }) => {
                 </Link>
               </div>
             ))}
-          </Slider>
+        </div>
+        <button type="button" className="cgs-scroll-button cgs-scroll-next" onClick={() => scrollCategories(1)} aria-label="Ver más categorías">›</button>
       </div>
     </section>
   );

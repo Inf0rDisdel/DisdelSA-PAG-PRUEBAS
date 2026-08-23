@@ -158,20 +158,31 @@
   padding: 10px 15px; 
   text-decoration: none; 
   color: inherit; 
+  border: 0;
+  background: transparent;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.categoryLink:focus-visible {
+  outline: 3px solid var(--color-brand-green);
+  outline-offset: -3px;
 }
 
 /* ====================================================== */
-/* AJUSTES PARA TABLET (768px) - NIVEL MASTER             */
+/* AJUSTES EXCLUSIVOS PARA TABLET                          */
 /* ====================================================== */
-@media (max-width: 768px) {
+@media (min-width: 601px) and (max-width: 1024px) {
   .megaMenuContainer {
-    /* 1. Ajustamos el ancho para que no desborde la pantalla */
-    width: 95vw; 
-    left: -20px; /* Ajuste para centrarlo un poco mejor respecto al contenedor */
-    max-width: 740px;
+    width: min(720px, calc(100vw - 24px));
+    left: 50%;
+    transform: translateX(-48%);
+    max-width: none;
     height: auto;
-    max-height: 80vh; /* Que no sea más alto que el 80% de la pantalla */
-    overflow-y: auto;
+    min-height: 300px;
+    max-height: min(68vh, 520px);
+    overflow: hidden;
   }
 
   /* 2. Ocultamos la columna de promoción en Tablet */
@@ -183,14 +194,24 @@
 
   /* 3. Reajustamos las columnas restantes (2 columnas ahora) */
   .categoriesColumn {
-    flex: 0 0 200px; /* Un poco más angosta */
+    flex: 0 0 190px;
     background-color: #f1f3f5;
+    max-height: min(68vh, 520px);
+    padding: 12px 10px;
   }
 
   .subcategoriesColumn {
     flex: 1;
-    padding: 15px;
-    display: block; /* Aseguramos que se comporte bien */
+    padding: 14px 16px;
+    display: block;
+    max-height: min(68vh, 520px);
+    overflow-y: auto;
+  }
+
+  .subcategoryGroup ul {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 2px 10px;
   }
 
   /* 4. Ajustes de legibilidad */
@@ -201,13 +222,21 @@
 
   .subcategoryGroup li a {
     font-size: 13px;
-    padding: 10px 12px; /* Área de toque más grande para dedos */
-    border-bottom: 1px solid #f8f9fa; /* Separación sutil */
+    min-height: 40px;
+    padding: 8px 10px;
+    border-bottom: 1px solid #f1f3f5;
+    display: flex;
+    align-items: center;
   }
 
   .categoriesColumn li {
     font-size: 13px;
-    padding: 15px 10px; /* Más cómodo para navegar con el pulgar */
+    padding: 2px 0;
+  }
+
+  .categoryLink {
+    min-height: 46px;
+    padding: 9px 8px;
   }
 
   .categoryIcon {

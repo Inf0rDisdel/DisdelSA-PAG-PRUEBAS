@@ -1,16 +1,9 @@
-import React, {lazy, Component, Suspense } from 'react';
+import React, {lazy, Component } from 'react';
 import { Routes, Route, Navigate, useParams } from 'react-router-dom';
-import HomeSkeleton from 'components/ui/Skeleton/HomeSkeleton';
+import HomePage from '../pages/HomePage';
 import CatalogSkeleton from 'components/ui/Skeleton/CatalogSkeleton';
 import ProductDetailSkeleton from 'components/ui/Skeleton/ProductDetailSkeleton';
 import { withSuspense } from './routeHelpers';
-
-const HomePage = lazy(() =>
-    import(
-        /* webpackChunkName: "home" */
-        '../pages/HomePage'
-    )
-);
 
 const ProductDetailPage = lazy(() =>
     import(
@@ -93,7 +86,7 @@ const AppRouter = () => {
     <ChunkErrorBoundary >
       <Routes>
 
-        <Route path="/" element={<Suspense fallback={<HomeSkeleton />}><HomePage /></Suspense>} />
+        <Route path="/" element={<HomePage />} />
 
         <Route path="/producto/:id" element={withSuspense(ProductLegacyRedirect, <ProductDetailSkeleton />)} />
         {/* Ruta Canónica Oficial */}
@@ -102,14 +95,18 @@ const AppRouter = () => {
         {/* 🚀 2. REDIRECCIONES LEGACY DE CATEGORÍAS (Atrapa enlaces viejos tipo /category/ o /c/) */}
         <Route path="/category/:slug" element={withSuspense(CategoryLegacyRedirect, <CatalogSkeleton />)} />
         <Route path="/c/:slug" element={withSuspense(CategoryLegacyRedirect, <CatalogSkeleton />)} />
+        <Route path="/categoria/decapante" element={<Navigate to="/categoria/quimicos-para-limpieza/removedores-y-solventes" replace />} />
+        <Route path="/categoria/suavizante" element={<Navigate to="/categoria/quimicos-para-limpieza/lavanderia/para-ropa" replace />} />
         {/* Ruta Canónica Oficial de Categorías */}
         <Route path="/categoria/:slug/:cat?/:subcat?" element={withSuspense(CategoryPage, <CatalogSkeleton />)} />
 
         {/* 🚀 3. REDIRECCIONES LEGACY DE MARCAS (Atrapa enlaces viejos tipo /marcas/ o /m/) */}
         <Route path="/marcas/:slug" element={withSuspense(BrandLegacyRedirect, <CatalogSkeleton />)} />
         <Route path="/m/:slug" element={withSuspense(BrandLegacyRedirect, <CatalogSkeleton />)} />
+        <Route path="/marca/kcp/:cat?/:subcat?" element={<KcpLegacyRedirect />} />
+        <Route path="/marca/kimberly-clark-profesional/:cat?/:subcat?" element={<KcpLegacyRedirect />} />
         {/* Ruta Canónica Oficial de Marcas */}
-        <Route path="/marca/:slug/:subcat?" element={withSuspense(BrandPage, <CatalogSkeleton />)} />
+        <Route path="/marca/:slug/:cat?/:subcat?" element={withSuspense(BrandPage, <CatalogSkeleton />)} />
           
         <Route path="/buscar" element={withSuspense(SearchResultsPage, <CatalogSkeleton />)}/>
         
@@ -140,6 +137,13 @@ const AppRouter = () => {
         <Route path="/conocenos" element={<Navigate to="/quienes-somos" replace />} />
         <Route path="/politicas" element={<Navigate to="/politicas-de-privacidad" replace />} />
         <Route path="/limpieza" element={<Navigate to="/categoria/herramientas-para-limpieza" replace />} />
+        <Route path="/disdelsa" element={<Navigate to="/" replace />} />
+        <Route path="/sede-central" element={<Navigate to="/ubicaciones" replace />} />
+        <Route path="/escobas-y-accesorios" element={<Navigate to="/categoria/herramientas-para-limpieza/escobas-y-recogedores" replace />} />
+        <Route path="/hojas" element={<Navigate to="/categoria/papeleria/productos-de-papel/hojas" replace />} />
+        <Route path="/trajes-de-proteccion" element={<Navigate to="/categoria/epp/proteccion-corporal/trajes-de-proteccion" replace />} />
+        <Route path="/lgrepsa.com/acercade.html" element={<Navigate to="/quienes-somos" replace />} />
+        <Route path="/disdel3m.com/PoliticasPrivacidad" element={<Navigate to="/politicas-de-privacidad" replace />} />
 
         {/* 3. REDIRECCIONES DE CATEGORÍAS (SEO) */}
         {['botiquin', 'papeleria', 'ferreteria', 'pisos-y-superficies'].map(cat => (
@@ -200,6 +204,12 @@ const LegacyRedirect = () => {
 const LgrepsaLegacyRedirect = () => {
   const { slug } = useParams();
   return <Navigate to={`/buscar?q=${slug ? slug.replace(/-/g, ' ') : ''}`} replace />;
+};
+
+const KcpLegacyRedirect = () => {
+  const { cat, subcat } = useParams();
+  const suffix = `${cat ? `/${cat}` : ''}${subcat ? `/${subcat}` : ''}`;
+  return <Navigate to={`/marca/kimberly-clark-professional${suffix}`} replace />;
 };
 
 export default React.memo(AppRouter);

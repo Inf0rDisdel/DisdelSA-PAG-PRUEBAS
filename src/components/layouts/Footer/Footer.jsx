@@ -6,6 +6,7 @@ import { FaFacebookF, FaInstagram, FaLinkedinIn } from 'react-icons/fa';
 
 import { AppConfig } from 'config/AppConfig';
 import { useBanners } from 'hooks/useBanners';
+import OptimizedImage from 'components/ui/OptimizedImage/OptimizedImage';
 
 const Footer = () => {
     const { data: bannerData } = useBanners();
@@ -125,11 +126,18 @@ const Footer = () => {
                     {/* Caja de logos de pago blanca con sombra sutil */}
                     <div className="payment-logos-card">
                     {imgVisa ? (
-                        <img
+                        <OptimizedImage
                         src={imgVisa}
                         alt="Métodos de pago aceptados"
+                        widths={[120, 240]}
+                        targetWidth={240}
+                        quality={80}
+                        sizes="120px"
                         width="120"
                         height="40"
+                        loading="lazy"
+                        decoding="async"
+                        fetchPriority="low"
                         />
                         ) : (
                         <div style={{ width: 120, height: 40 }} />
@@ -137,11 +145,18 @@ const Footer = () => {
                     </div>
                     <div className="mascot">
                         {imgMascota ? (
-                            <img
+                            <OptimizedImage
                             src={imgMascota}
                             alt="Mascota Disdel"
+                            widths={[180, 310, 480]}
+                            targetWidth={310}
+                            quality={78}
+                            sizes="310px"
                             width="310"
                             height="340"
+                            loading="lazy"
+                            decoding="async"
+                            fetchPriority="low"
                             />
                             ) : (
                             <div style={{ width: 180, height: 340 }} />

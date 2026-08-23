@@ -41,6 +41,11 @@ const PrivacyPolicy = () => {
                                 src={logoAsiDeLimpio} 
                                 alt="Así de Limpio Logo" 
                                 className="header-logo-img" 
+                                width="90"
+                                height="28"
+                                loading="lazy"
+                                decoding="async"
+                                fetchPriority="low"
                             />
                         )}
                     </div>

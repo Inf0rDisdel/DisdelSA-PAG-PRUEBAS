@@ -27,8 +27,10 @@ const queryClient = new QueryClient({
 // 2. Crear el persistidor (Guarda la data en localStorage)
 const localStoragePersister =
   typeof window !== 'undefined'
-    ? createSyncStoragePersister({
+      ? createSyncStoragePersister({
         storage: window.localStorage,
+        // Evita serializaciones síncronas durante el render crítico.
+        throttleTime: 5000,
       })
     : undefined;
 
@@ -38,6 +40,13 @@ function App() {
       client={queryClient}
       persistOptions={{
         persister: localStoragePersister,
+        buster: 'disdel-cache-v2',
+        dehydrateOptions: {
+          shouldDehydrateQuery: (query) => (
+            query.state.status === 'success' &&
+            query.queryKey[0] !== 'productos-all'
+          ),
+        },
       }}
     >
       <div className="App">

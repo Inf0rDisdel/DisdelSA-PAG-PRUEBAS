@@ -2,9 +2,9 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import './PromoLayout.css';
 
-// Imports
-import { AppConfig } from '../../../config/AppConfig';
 import { useBanners } from '../../../hooks/useBanners';
+import { getDisdelImageUrl } from 'utils/imageUrl';
+import OptimizedImage from 'components/ui/OptimizedImage/OptimizedImage';
 
 const PromoLayout = () => {
   const navigate = useNavigate();
@@ -29,9 +29,7 @@ const PromoLayout = () => {
 
     if (config) {
         // Navega dinámicamente según el 'type' definido (marca o categoria)
-        navigate(`/${config.type}/${config.segment}`, { 
-            state: { preSelectedCatId: config.catId } 
-        });
+        navigate(`/${config.type}/${config.segment}`);
     } else {
         // Caso por defecto si no está en el mapa
         const slug = title.toLowerCase().trim().replace(/\s+/g, '-');
@@ -51,9 +49,18 @@ const PromoLayout = () => {
             onClick={() => handleItemClick(ban.Titulo)}
             style={{ cursor: 'pointer' }}
           >
-            <img
-                src={`${AppConfig.baseImageUrl}${ban.Imagen}`}
+            <OptimizedImage
+                src={getDisdelImageUrl(ban.Imagen)}
                 alt={ban.Titulo || "Promoción"}
+                widths={[240, 360, 480]}
+                targetWidth={480}
+                quality={76}
+                sizes="(min-width: 1400px) 335px, (min-width: 501px) 25vw, 50vw"
+                width="325"
+                height="250"
+                loading="lazy"
+                decoding="async"
+                fetchPriority="low"
             />
             <div className="pl-card-label">
               <span>{ban.Titulo}</span>

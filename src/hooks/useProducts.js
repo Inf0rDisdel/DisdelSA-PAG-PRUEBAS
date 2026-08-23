@@ -10,7 +10,19 @@ const fetchProducts = async () => {
     return data;
 };
 
-export const useProducts = () => {
+const normalizeProducts = (products) => (
+    (Array.isArray(products) ? products : []).map((product) => ({
+        ...product,
+        IdProducto: String(product.IdProducto).trim(),
+        Marca: product.Marca?.trim() || "",
+        Categoria: product.Categoria?.trim() || "",
+        SubCategoria: product.SubCategoria?.trim() || "",
+        Segmento: product.Segmento?.trim() || "",
+        Imagen: product.Imagen?.trim() || ""
+    }))
+);
+
+export const useProducts = ({ enabled = true } = {}) => {
     return useQuery({
         queryKey: ['productos-all'],
         queryFn: fetchProducts,
@@ -20,22 +32,8 @@ export const useProducts = () => {
         refetchOnWindowFocus: false, 
         refetchOnMount: false,     
         placeholderData: (previousData) => previousData,
+        enabled,
 
-        select: (products) =>
-            products.map((product) => ({
-                ...product,
-
-                IdProducto: String(product.IdProducto).trim(),
-
-                Marca: product.Marca?.trim() || "",
-
-                Categoria: product.Categoria?.trim() || "",
-
-                SubCategoria: product.SubCategoria?.trim() || "",
-
-                Segmento: product.Segmento?.trim() || "",
-
-                Imagen: product.Imagen?.trim() || ""
-            }))
+        select: normalizeProducts
     });
 };

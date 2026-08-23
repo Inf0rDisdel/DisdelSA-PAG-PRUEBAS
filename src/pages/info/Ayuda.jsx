@@ -53,6 +53,11 @@ const Ayuda = () => {
                           src={images.ayuda || defaultIconFallback} 
                           alt="Ayuda Soporte" 
                           className="ayuda-icon"
+                          width="35"
+                          height="35"
+                          loading="lazy"
+                          decoding="async"
+                          fetchPriority="low"
                           onError={(e) => {
                             e.target.onerror = null;
                             e.target.src = defaultIconFallback;
@@ -80,6 +85,11 @@ const Ayuda = () => {
                           src={images.mercadeo || defaultIconFallback} 
                           alt="Icono Mercadeo Soporte" 
                           className="ayuda-icon"
+                          width="35"
+                          height="35"
+                          loading="lazy"
+                          decoding="async"
+                          fetchPriority="low"
                           onError={(e) => {
                             e.target.onerror = null;
                             e.target.src = defaultIconFallback;

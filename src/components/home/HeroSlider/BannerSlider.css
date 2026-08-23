@@ -6,7 +6,57 @@
   margin: 30px auto;    
   padding: 10px 0; 
   aspect-ratio: 1300 / 270;
-  contain: layout;  
+  contain: layout;
+  position: relative;
+  overflow: hidden;
+}
+
+.banner-native-stage,
+.banner-native-stage .slider-item,
+.banner-native-stage picture {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.banner-native-stage {
+  animation: banner-fade-in 420ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  transform-origin: center;
+}
+
+@keyframes banner-fade-in {
+  from { opacity: 0.58; transform: scale(1.006); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.banner-native-dots {
+  position: absolute;
+  left: 50%;
+  bottom: 16px;
+  z-index: 2;
+  display: flex;
+  gap: 8px;
+  transform: translateX(-50%);
+}
+
+.banner-native-dots button {
+  width: 10px;
+  height: 10px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.65);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.28);
+  cursor: pointer;
+}
+
+.banner-native-dots button.is-active {
+  background: #96c121;
+}
+
+.banner-native-dots button:focus-visible {
+  outline: 3px solid #fff;
+  outline-offset: 2px;
 }
 
 .banner-img {
@@ -33,19 +83,6 @@
   border-radius: 15px;
 }
 
-/* Este es el límite en escritorio */
-.banner-slider-container .slick-slide {
-  max-height: 270px; 
-}
-
-.banner-slider-container .slick-slide img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover; 
-  display: block;
-  border-radius: 15px;
-}
-
 @keyframes shimmer {
   0% { background-position: 200% 0; }
   100% { background-position: -200% 0; }
@@ -68,45 +105,12 @@
     aspect-ratio: 16 / 9; /* Ajuste para tablets */
   }
 
-  .banner-slider-container .slick-list {
-    border-radius: 12px;
-  }
+}
 
-  .banner-slider-container .slick-slide {
-    height: auto !important; 
-    /* Centra la imagen dentro del slide por si acaso */
-    display: flex !important;
-    justify-content: center;
+@media (prefers-reduced-motion: reduce) {
+  .banner-native-stage {
+    animation: none !important;
   }
-
-  .banner-slider-container .slick-slide img {
-    width: 100%;
-    /* Mantenemos la proporción original de la imagen */
-    height: auto !important; 
-    /* 'initial' asegura que no se use el cover de escritorio que a veces recorta */
-    object-fit: initial !important; 
-    border-radius: 10px;
-    display: block;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1); /* Una sombra suave para que resalte */
-  }
-
-  /* Ajustamos los puntitos para que queden pegaditos al banner */
-  .banner-slider-container .slick-dots {
-    bottom: 5px !important; 
-    position: relative; /* Esto quita el espacio vacío de abajo */
-  }
-
-  .banner-slider-container .slick-dots li button:before {
-    font-size: 8px; 
-    color: #135eab; 
-    opacity: 0.3;
-  }
-
-  .banner-slider-container .slick-dots li.slick-active button:before {
-    opacity: 1;
-    color: #135eab;
-  }
-
 }
 
 /* --- SOLO PARA MOVILES (≤ 480px) --- */
@@ -124,11 +128,6 @@
     border-radius: 0;
   }
 
-  .banner-slider-container .slick-slide {
-    max-height: none !important;
-    height: 250px !important; /* 🔥 Permite que la imagen dicte su altura original 🔥 */
-  }
-
   .banner-img {
     height: 100% !important;      /* 🔥 Mantiene la proporción original 🔥 */
     width: 100% !important;       /* 🔥 Ocupa todo el ancho de la pantalla 🔥 */
@@ -137,19 +136,9 @@
     aspect-ratio: 16 / 9;
   }
 
-  /* Estilo de los puntitos para que no choquen con la imagen */
-  .banner-slider-container .slick-dots {
-    bottom: 5px; /* Los subimos un poquito para que queden sobre el banner */
-  }
-  
-  .banner-slider-container .slick-dots li button:before {
-    color: #ffffff; /* Blancos para que resalten sobre los banners */
-    font-size: 8px;
-    opacity: 0.5;
-  }
-  
-  .banner-slider-container .slick-dots li.slick-active button:before {
-    opacity: 1;
-    color: #ffffff;
-  }
+  .banner-native-dots { bottom: 8px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .banner-native-stage { animation: none; }
 }

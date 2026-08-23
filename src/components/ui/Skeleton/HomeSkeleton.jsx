@@ -3,9 +3,8 @@ import ProductCardSkeleton from 'components/ui/ProductCard/ProductCardSkeleton';
 import './HomeSkeleton.css';
 
 export const HomeSkeleton = () => {
-  const isMobile = typeof window !== 'undefined' ? window.innerWidth <= 480 : false;
-  const productCount = isMobile ? 2 : 5;
-  const brandCount = isMobile ? 2 : 4;
+  const productCount = 5;
+  const brandCount = 4;
 
   return (
     <div className="home-skeleton-wrapper" aria-hidden="true">
@@ -22,7 +21,7 @@ export const HomeSkeleton = () => {
       </div>
 
       {/* 2. CATEGORÍAS DESTACADAS (5 Tarjetas) */}
-      <div className="skeleton-container">
+      <div className="skeleton-container skeleton-categories-section">
         <div className="skeleton-title-pill"></div>
         <div className="skeleton-categories-grid">
           {[1, 2, 3, 4, 5].map((i) => (
@@ -35,7 +34,7 @@ export const HomeSkeleton = () => {
       </div>
 
       {/* 3. ALIADOS COMERCIALES (4 Marcas) */}
-      <div className="skeleton-container">
+      <div className="skeleton-container skeleton-brands-section">
         <div className="skeleton-title-pill"></div>
         <div className="skeleton-brands-grid">
           {Array.from({ length: brandCount }).map((_, i) => (

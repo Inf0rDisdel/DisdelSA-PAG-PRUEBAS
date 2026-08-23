@@ -10,7 +10,7 @@ import useCartStore from 'store/useCartStore';
 import { useProductDetail } from 'hooks/useProductDetail';
 import { generateProductInsight, generateProductSeoDescription } from 'utils/SEO/productDescriptions';
 
-import { FiCheckCircle, FiChevronRight, FiPackage, FiTarget, FiTruck, FiAward, FiFolder, FiShoppingCart, FiSend, FiShield, FiHeadphones  } from 'react-icons/fi';
+import { FiCheckCircle, FiChevronRight, FiPackage, FiTarget, FiTruck, FiAward, FiShoppingCart, FiSend, FiShield, FiHeadphones  } from 'react-icons/fi';
 import { createSlug } from 'utils/slugify';
 
 import { getProductSchema } from 'utils/schemas/productSchema';
@@ -29,7 +29,8 @@ const isValidImage = (imgName) => {
 
 const ProductDetailPage = () => {
   const { id, slug } = useParams();
-  const cleanIdFromUrl = id ? String(id).trim().toLowerCase() : "";
+  const rawIdFromUrl = id ? String(id).trim() : "";
+  const cleanIdFromUrl = rawIdFromUrl.toLowerCase();
   const { data: product, isLoading, isError} = useProductDetail(cleanIdFromUrl);
   
   const canonicalId = useMemo(() => {
@@ -171,12 +172,6 @@ const ProductDetailPage = () => {
     });
   };
 
-  //Handler para abrir el modal del catálogo
-  const handleOpenCatalogModal = () => {
-    setCatalogStep(1); //Iniciamos siempre en el paso 1
-    setShowCatalogModal(true);
-  };
-
   const getImageUrl = useCallback((imgName) => {
     return isValidImage(imgName)
       ? `${AppConfig.baseImageUrl}productos/${imgName}`
@@ -211,7 +206,7 @@ const ProductDetailPage = () => {
 
     if (
       slug !== correctSlug ||
-      cleanIdFromUrl !== correctId
+      rawIdFromUrl !== correctId
     ) {
       navigate(
         `/producto/${correctId}/${correctSlug}`,
@@ -222,7 +217,7 @@ const ProductDetailPage = () => {
   }, [
     product,
     slug,
-    cleanIdFromUrl,
+    rawIdFromUrl,
     navigate
   ]);
  
@@ -341,7 +336,11 @@ const ProductDetailPage = () => {
                   <img 
                     src={getImageUrl(img)} 
                     alt={`Vista miniatura ${index + 1} de ${product.Descripcion}`} 
+                    width="96"
+                    height="96"
                     loading='lazy' 
+                    decoding="async"
+                    fetchPriority="low"
                     // 🚀 AGREGA ESTE BLOQUE AQUÍ TAMBIÉN:
                     onError={(e) => {
                       e.target.onerror = null; // Previene bucles infinitos de recarga
@@ -365,7 +364,9 @@ const ProductDetailPage = () => {
               width="600" height="600" // 🚀 Atributos fijos para evitar CLS
               className={`pdp-main-img ${zoomPos.show ? 'is-zoomed' : ''}`}
               style={{ transformOrigin: `${zoomPos.x}% ${zoomPos.y}%` }}
-              fetchpriority="high" // 🚀 Prioridad máxima para la imagen del producto
+              loading="eager"
+              decoding="async"
+              fetchPriority="high" // 🚀 Prioridad máxima para la imagen del producto
               itemProp="image"
 
               onError={(e) =>{
@@ -654,5 +655,3 @@ const ProductDetailPage = () => {
 };
 
 export default ProductDetailPage;
-    
-    

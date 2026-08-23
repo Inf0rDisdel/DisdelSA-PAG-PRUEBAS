@@ -66,6 +66,8 @@ const NewsletterSignup = () => {
                             className="newsletter-input" 
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
+                            aria-label="Correo electrónico para recibir promociones"
+                            autoComplete="email"
                             required 
                             disabled={mutation.isPending} 
                         />

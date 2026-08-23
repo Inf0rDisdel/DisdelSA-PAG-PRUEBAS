@@ -1,7 +1,7 @@
 /* --- CONTENEDOR PRINCIPAL CORREGIDO (Fuerza el ancho en PC) --- */
 .ayuda-container {
     width: 100%;       /* 🚀 FIX CLS / ANCHO: Evita que Flexbox encoja la página al centro */
-    max-width: 1400px; /* Ancho máximo para que no se estire demasiado */
+    max-width: var(--site-max-width); /* Ancho global del sitio */
     margin: 0 auto;    /* Centrado en la pantalla */
     padding: 60px 20px;
     min-height: 80vh;  /* Para que ocupe buen alto de pantalla */

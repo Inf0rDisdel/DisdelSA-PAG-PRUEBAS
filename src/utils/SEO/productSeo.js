@@ -42,6 +42,6 @@ export const getProductSeoData = (product) => {
     return {
         title: generateProductTitle(product),
         description: generateProductDescription(product),
-        canonical: `https://disdelsa.com/producto/${product.IdProducto}/${createSlug(product.Descripcion)}`
+        canonical: `https://disdelsa.com/producto/${String(product.IdProducto).trim().toLowerCase()}/${createSlug(product.Descripcion)}`
     };
 };

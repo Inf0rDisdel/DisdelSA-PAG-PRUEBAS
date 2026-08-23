@@ -101,10 +101,10 @@ const Locations = () => {
             
             <div className="loc-images-col">
               <div className="loc-image-wrapper loc-main-img">
-                <img src={store.imgMain} alt={store.name} />
+                <img src={store.imgMain} alt={store.name} width="600" height="480" loading="lazy" decoding="async" fetchPriority="low" />
               </div>
               <div className="loc-image-wrapper loc-secondary-img">
-                <img src={store.imgSec} alt="Detalle Ubicación" />
+                <img src={store.imgSec} alt="Detalle Ubicación" width="440" height="300" loading="lazy" decoding="async" fetchPriority="low" />
               </div>
             </div>
 
@@ -150,7 +150,7 @@ const Locations = () => {
                   className="btn-loc-action btn-waze"
                 >
                   {/* Si existe la URL de Waze, mostramos la imagen */}
-                  {images.waze && <img src={images.waze} alt="Waze" className="btn-icon-img" />}
+                  {images.waze && <img src={images.waze} alt="Waze" className="btn-icon-img" width="24" height="24" loading="lazy" decoding="async" fetchPriority="low" />}
                   Ir con Waze
                 </a>
                 
@@ -161,7 +161,7 @@ const Locations = () => {
                   className="btn-loc-action btn-maps-grey"
                 >
                   {/* Si existe la URL de Maps, mostramos la imagen */}
-                  {images.maps && <img src={images.maps} alt="Maps" className="btn-icon-img-small" />}
+                  {images.maps && <img src={images.maps} alt="Maps" className="btn-icon-img-small" width="18" height="22" loading="lazy" decoding="async" fetchPriority="low" />}
                   Ir o ver con Google Maps
                 </a>
 

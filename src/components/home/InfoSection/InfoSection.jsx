@@ -1,19 +1,20 @@
 import React, {useMemo } from 'react';
 import './InfoSection.css';
 
-import { AppConfig } from 'config/AppConfig';
 import { useBanners } from 'hooks/useBanners';
+import { getDisdelImageUrl } from 'utils/imageUrl';
+import OptimizedImage from 'components/ui/OptimizedImage/OptimizedImage';
 
 const InfoSection = () => {
     const { data: bannerData } = useBanners();
 
-    const getUrl = (dbTitle) => {
-        const found = bannerData?.Iconos?.find(i => i.Titulo?.trim() === dbTitle);
+    const infoItems = useMemo(() => {
+      const getUrl = (dbTitle) => {
+          const found = bannerData?.Iconos?.find(i => i.Titulo?.trim() === dbTitle);
+          return getDisdelImageUrl(found?.Imagen) || '';
+      };
 
-        return found ? `${AppConfig.baseImageUrl}${found.Imagen}` : '';
-    };
-
-    const infoItems = useMemo(() => [
+      return [
         { 
             icon: getUrl("IconoAtencion"), 
             title: "Asesoría personalizada", 
@@ -39,7 +40,8 @@ const InfoSection = () => {
             title: "Recoge en tienda", 
             text: "Confirma tu pedido y pasa a tienda. 27 calle 1-41, Zona 3 Ciudad de Guatemala" 
         }
-    ], [bannerData]);
+      ];
+    }, [bannerData]);
 
     return (
         <div className='info-section-container'>
@@ -48,7 +50,19 @@ const InfoSection = () => {
                     <div className="icon-wrapper">
                         {/* Solo renderizamos la imagen si la URL no está vacía */}
                         {item.icon ? (
-                            <img src={item.icon} alt={item.title} loading="lazy" />
+                            <OptimizedImage
+                              src={item.icon}
+                              alt={item.title}
+                              widths={[80, 120, 160]}
+                              targetWidth={160}
+                              quality={80}
+                              sizes="80px"
+                              width="80"
+                              height="80"
+                              loading="lazy"
+                              decoding="async"
+                              fetchPriority="low"
+                            />
                         ) : (
                             <div className="icon-placeholder" /> // Espacio vacío o spinner mientras carga
                         )}
