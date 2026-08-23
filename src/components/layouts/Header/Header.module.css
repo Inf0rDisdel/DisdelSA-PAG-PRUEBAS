@@ -125,7 +125,7 @@
 
 /* Entrada principal al menú lateral */
 .hamburgerButton {
-  display: flex;
+  display: none;
   flex: 0 0 40px;
   width: 40px;
   height: 40px;
@@ -391,6 +391,13 @@
   justify-content: flex-start !important; 
   
   width: 100%;
+}
+
+.categoriesContainer {
+  position: relative;
+  display: flex;
+  align-items: center;
+  z-index: 2000;
 }
 
 /* --- DERECHA: ACCIONES Y CARRITO --- */
@@ -683,6 +690,10 @@
 
   .desktopUserActions {
     display: none !important;
+  }
+
+  .categoriesContainer {
+    display: none;
   }
 
   .hamburgerButton {

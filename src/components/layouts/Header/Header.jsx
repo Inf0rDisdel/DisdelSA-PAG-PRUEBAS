@@ -15,6 +15,7 @@ import {
   FaSearch, FaAngleDown, FaBars, FaTimes} from 'react-icons/fa';
 
 const brandKeywords = ['KIMBERLY', '3M', 'WIESE', 'SILVER'];
+const MegaMenu = React.lazy(() => import('./MegaMenu'));
 
 const Header = () => {
   const navigate = useNavigate(); 
@@ -33,6 +34,7 @@ const Header = () => {
     cart.reduce((total, item) => total + (item.quantity || 1), 0), 
   [cart]);
 
+  const [isMegaMenuOpen, setIsMegaMenuOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [expandedSidebarCategory, setExpandedSidebarCategory] = useState(null);
   const [isLogoTransitioning, setIsLogoTransitioning] = useState(false);
@@ -111,6 +113,17 @@ const Header = () => {
       menuButton?.focus();
     };
   }, [isMobileMenuOpen]);
+
+  useEffect(() => {
+    if (!isMegaMenuOpen) return undefined;
+
+    const handleEscape = (event) => {
+      if (event.key === 'Escape') setIsMegaMenuOpen(false);
+    };
+
+    document.addEventListener('keydown', handleEscape);
+    return () => document.removeEventListener('keydown', handleEscape);
+  }, [isMegaMenuOpen]);
 
   const assets = useMemo(() => {
     const getIcon = (title) => bannerData?.Iconos?.find(i => i.Titulo?.trim() === title)?.Imagen;
@@ -298,6 +311,26 @@ const Header = () => {
           </div>
           
           <nav className={styles.mainNav} role="navigation" aria-label="Navegación principal">
+            <div
+              className={styles.categoriesContainer}
+              onMouseEnter={() => setIsMegaMenuOpen(true)}
+              onMouseLeave={() => setIsMegaMenuOpen(false)}
+            >
+              <button
+                type="button"
+                className={styles.navButton}
+                aria-haspopup="true"
+                aria-expanded={isMegaMenuOpen}
+                onClick={() => setIsMegaMenuOpen(true)}
+              >
+                Categorías <FaAngleDown aria-hidden="true" />
+              </button>
+              {isMegaMenuOpen && (
+                <React.Suspense fallback={null}>
+                  <MegaMenu />
+                </React.Suspense>
+              )}
+            </div>
             <button type="button" className={styles.navButton} onClick={() => navigate('/ayuda')}>Líneas de Asistencia</button>
           </nav>
         </div>
