@@ -58,13 +58,9 @@ const ProductCard = memo(({ product, index, priority }) => {
   return (
     <article 
       className="product-card"
-      itemScope itemType="https://schema.org/Product"
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
-
-      <meta itemProp="sku" content={IdProducto} />
-      <meta itemProp="brand" content={Marca || "Disdel"} />
 
       <div className="product-brand-badge">
         {badgeLogo && (
@@ -89,7 +85,6 @@ const ProductCard = memo(({ product, index, priority }) => {
       <Link 
         to={productUrl}
         className="product-link"
-        itemProp="url"
         title={`Ver detalle de ${Descripcion}`}
       >
         <div className="product-image-container">
@@ -105,28 +100,18 @@ const ProductCard = memo(({ product, index, priority }) => {
             loading={isPriority ? "eager" : "lazy"} 
             decoding='async'
             fetchPriority={isPriority ? "high" : "low"}
-            itemProp="image"
           />
         </div>
         
         <div className="product-info-top">
           <span className="brand-tag">{Marca || Categoria || 'Disdel'}</span>
-          <h3 className="product-title" itemProp="name">{Descripcion}</h3>
+          <h3 className="product-title">{Descripcion}</h3>
           <span className="product-detail-id">Disdel # {IdProducto}</span>
         </div>
       </Link>
 
       {/* Footer del card con botón de acción */}
-      <div 
-        className="product-card-footer"
-        itemProp="offers" 
-        itemScope 
-        itemType="https://schema.org/Offer"
-      >
-        <meta itemProp="priceCurrency" content="GTQ" />
-        <meta itemProp="price" content="0.00" />
-        <link itemProp="availability" href="https://schema.org/InStock" />
-
+      <div className="product-card-footer">
         <button 
           className="quote-button" 
           aria-label={`Agregar ${Descripcion} a mi lista de cotización`}

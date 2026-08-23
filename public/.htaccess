@@ -7,6 +7,15 @@
   RewriteCond %{HTTP_HOST} ^www\. [NC]
   RewriteRule ^(.*)$ https://disdelsa.com/$1 [L,R=301]
 
+  # El hosting conserva una carpeta física /carrito de la web anterior.
+  # La normalizamos antes de que mod_dir agregue el slash y obligamos a que
+  # la ruta canónica sea atendida por la aplicación React actual.
+  RewriteCond %{THE_REQUEST} \s/+carrito/+index\.html(?:[?\s]) [NC]
+  RewriteRule ^carrito/+index\.html$ /carrito [L,R=301,NC,NE]
+  RewriteCond %{THE_REQUEST} \s/+carrito/+(?:[?\s]) [NC]
+  RewriteRule ^carrito/+$ /carrito [L,R=301,NC,NE]
+  RewriteRule ^carrito$ /index.html [END,NC]
+
   # 2. ALIAS HISTÓRICOS CON DESTINO VÁLIDO
   # Deben resolverse en el servidor (301 real), antes de entregar React.
   # Así Google conserva las señales de la URL antigua sin terminar en Inicio.

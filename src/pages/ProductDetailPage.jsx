@@ -68,11 +68,20 @@ const ProductDetailPage = () => {
     // Leemos de forma segura el objeto de metadatos devuelto por la API
     const dbSeo = product.seo || product.Seo;
 
-    // Si la base de datos ya tiene metadatos configurados, los usamos
-    if (dbSeo && (dbSeo.titlePage || dbSeo.typePage || dbSeo.keywords || dbSeo.Tags || dbSeo.tags)) {
+    const dbDescription = dbSeo && (
+      dbSeo.description ||
+      dbSeo.descripcion ||
+      dbSeo.metaDescription ||
+      dbSeo.Descripcion
+    );
+
+    // Si la base de datos ya tiene metadatos configurados, los usamos.
+    // typePage describe el tipo de documento (por ejemplo, "product"); no es
+    // una descripción válida para buscadores ni para el JSON-LD.
+    if (dbSeo && (dbSeo.titlePage || dbDescription || dbSeo.keywords || dbSeo.Tags || dbSeo.tags)) {
       return {
         title: dbSeo.titlePage || "",
-        description: dbSeo.typePage || "",
+        description: dbDescription || "",
         keywords: dbSeo.keywords || "",
         tags: dbSeo.Tags || dbSeo.tags || ""
       };
@@ -132,15 +141,18 @@ const ProductDetailPage = () => {
   const productImages = useMemo(() => {
       if (!product) return [];
       
-      const validAdditions = product.Imagenes?.length > 0 
-        ? product.Imagenes.filter(img => isValidImage(img.Imagen)).map(img => img.Imagen) 
+      const galleryImages = Array.isArray(product.Imagenes)
+        ? product.Imagenes
+            .map((img) => typeof img === 'string' ? img : img?.Imagen)
+            .filter(isValidImage)
         : [];
 
-      if (validAdditions.length > 0) {
-        return validAdditions;
-      }
-
-      return isValidImage(product.Imagen) ? [product.Imagen] : [];
+      // La fotografía principal siempre ocupa la primera posición. Así el
+      // HTML visible, Open Graph y Product.image envían la misma señal.
+      return [...new Set([
+        ...(isValidImage(product.Imagen) ? [product.Imagen] : []),
+        ...galleryImages
+      ])];
   }, [product]);
 
   const fullSchema = useMemo(() => {
@@ -259,7 +271,7 @@ const ProductDetailPage = () => {
   // const seoKeywords = legacySeoInfo?.keywords || `${product.Categoria}, ${product.Marca}, Disdel Guatemala`;
 
   return (
-    <main className="pdp-container" itemScope itemType="https://schema.org/Product">
+    <main className="pdp-container">
     <Helmet>
     <title>{seoTitle}</title>
     <meta name="description" content={seoLongDescription} />
@@ -270,6 +282,7 @@ const ProductDetailPage = () => {
     <meta property="og:title" content={seoTitle} />
     <meta property="og:description" content={seoLongDescription} />
     <meta property="og:image" content={mainImg} />
+    <meta property="og:image:alt" content={product.Descripcion} />
     <meta property="og:url" content={currentUrl} />
     <meta property="og:type" content="product" />
     <meta property="product:category" content={product.Categoria}/>
@@ -278,9 +291,6 @@ const ProductDetailPage = () => {
 
     <meta property="og:image:secure_url" content={mainImg} />
 
-    <meta property="og:image:width" content="1200" />
-    <meta property="og:image:height" content="630" />
-    
     <meta property="product:condition" content="new" />
     <meta property="product:availability" content="in stock" />
     <meta property="product:brand" content={product.Marca || "Disdel"} />
@@ -292,6 +302,7 @@ const ProductDetailPage = () => {
     <meta name="twitter:title" content={seoTitle} />
     <meta name="twitter:description" content={seoLongDescription} />
     <meta name="twitter:image" content={mainImg} />
+    <meta name="twitter:image:alt" content={product.Descripcion} />
 
     <meta name="theme-color" content="#135eab" />
 
@@ -367,7 +378,6 @@ const ProductDetailPage = () => {
               loading="eager"
               decoding="async"
               fetchPriority="high" // 🚀 Prioridad máxima para la imagen del producto
-              itemProp="image"
 
               onError={(e) =>{
                 e.target.onerror = null;
@@ -384,9 +394,9 @@ const ProductDetailPage = () => {
                   <span className="pdp-category-badge">{product.Categoria}</span>
               </div>
       
-              <h1 className="pdp-title" itemProp="name">{product.Descripcion}</h1>
+              <h1 className="pdp-title">{product.Descripcion}</h1>
               <div className="pdp-sku-row">
-              <span className="pdp-sku">Código: <strong itemProp="sku">{product.IdProducto}</strong></span>
+              <span className="pdp-sku">Código: <strong>{product.IdProducto}</strong></span>
               <span className="pdp-stock-status in-stock">
                 <FiCheckCircle className="pdp-check-icon" /> Disponible 
               </span>

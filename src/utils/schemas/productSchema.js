@@ -53,6 +53,36 @@ export const getProductSchema = (product = {}, currentUrl = "", productImages = 
   const cleanGtin = product.CodigoBarras && product.CodigoBarras.trim() !== "" && product.CodigoBarras.trim() !== "0" && product.CodigoBarras.trim().toLowerCase() !== "n/a" ? product.CodigoBarras.trim() : undefined;
   const cleanUpc = product.UPC && product.UPC.trim() !== "" && product.UPC.trim() !== "0" && product.UPC.trim().toLowerCase() !== "n/a" ? product.UPC.trim() : undefined;
 
+  const toPositiveNumber = (value) => {
+    if (value === null || value === undefined || String(value).trim() === "") return null;
+    const parsed = Number(value);
+    return Number.isFinite(parsed) && parsed > 0 ? parsed : null;
+  };
+
+  const reviews = Array.isArray(product.Reviews) ? product.Reviews : [];
+  const reviewRatings = reviews
+    .map((review) => toPositiveNumber(review?.Rating ?? review?.Puntuacion ?? review?.ratingValue))
+    .filter(Boolean);
+  const explicitRating = toPositiveNumber(product.Puntuacion ?? product.Rating ?? product.RatingValue);
+  const explicitRatingCount = toPositiveNumber(
+    product.CantidadResenas ?? product.ReviewCount ?? product.RatingCount
+  );
+  const ratingValue = explicitRating || (
+    reviewRatings.length > 0
+      ? reviewRatings.reduce((total, rating) => total + rating, 0) / reviewRatings.length
+      : null
+  );
+  const ratingCount = explicitRatingCount || reviewRatings.length;
+  const aggregateRating = ratingValue && ratingCount > 0
+    ? {
+        "@type": "AggregateRating",
+        "ratingValue": Number(ratingValue.toFixed(1)),
+        "bestRating": 5,
+        "worstRating": 1,
+        "ratingCount": ratingCount
+      }
+    : null;
+
   return {
     "@context": "https://schema.org/",
     "@graph": [
@@ -183,14 +213,9 @@ export const getProductSchema = (product = {}, currentUrl = "", productImages = 
         },
         "url": currentUrl,
 
-        // 🔥 VALORACIÓN SIEMPRE PRESENTE: Cumple con la regla de valoración cuando no hay reseñas
-        "aggregateRating": {
-          "@type": "AggregateRating",
-          "ratingValue": "5",
-          "bestRating": "5",
-          "worstRating": "1",
-          "ratingCount": "1"
-        }
+        // Las valoraciones solo se publican cuando proceden de reseñas reales.
+        // Inventarlas puede generar resultados enriquecidos engañosos.
+        ...(aggregateRating ? { "aggregateRating": aggregateRating } : {})
       },
       getBreadcrumbs([
         { name: "Inicio", item: "https://disdelsa.com/" },

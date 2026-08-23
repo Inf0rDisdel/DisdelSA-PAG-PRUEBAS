@@ -2,17 +2,19 @@ import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { Link, useNavigate } from 'react-router-dom'; 
 import useCartStore from 'store/useCartStore';
 import styles from './Header.module.css';
-import MegaMenu from './MegaMenu';
 
 import { createSlug } from 'utils/slugify';
 
 import { useBanners } from 'hooks/useBanners';
+import { useMenu } from 'hooks/useMenu';
 import { useProducts } from 'hooks/useProducts';
 import { getDisdelImageUrl } from 'utils/imageUrl';
 import OptimizedImage from 'components/ui/OptimizedImage/OptimizedImage';
 
 import {
   FaSearch, FaAngleDown, FaBars, FaTimes} from 'react-icons/fa';
+
+const brandKeywords = ['KIMBERLY', '3M', 'WIESE', 'SILVER'];
 
 const Header = () => {
   const navigate = useNavigate(); 
@@ -31,10 +33,24 @@ const Header = () => {
     cart.reduce((total, item) => total + (item.quantity || 1), 0), 
   [cart]);
 
-  const [isMegaMenuOpen, setIsMegaMenuOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [expandedSidebarCategory, setExpandedSidebarCategory] = useState(null);
   const [isLogoTransitioning, setIsLogoTransitioning] = useState(false);
   const logoTransitionTimerRef = useRef(null);
+  const menuButtonRef = useRef(null);
+  const closeMenuButtonRef = useRef(null);
+  const { data: menuData, isLoading: isMenuLoading, isError: isMenuError } = useMenu({
+    enabled: isMobileMenuOpen
+  });
+
+  const catalogSegments = useMemo(() => {
+    if (!Array.isArray(menuData)) return [];
+
+    return menuData.filter((segment) => {
+      const segmentName = String(segment?.NombreSegmento || '').toUpperCase();
+      return !brandKeywords.some((brand) => segmentName.includes(brand));
+    });
+  }, [menuData]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -76,6 +92,26 @@ const Header = () => {
     }
   }, []);
 
+  useEffect(() => {
+    if (!isMobileMenuOpen) return undefined;
+
+    const previousOverflow = document.body.style.overflow;
+    const menuButton = menuButtonRef.current;
+    document.body.style.overflow = 'hidden';
+    closeMenuButtonRef.current?.focus();
+
+    const handleEscape = (event) => {
+      if (event.key === 'Escape') setIsMobileMenuOpen(false);
+    };
+
+    document.addEventListener('keydown', handleEscape);
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      document.removeEventListener('keydown', handleEscape);
+      menuButton?.focus();
+    };
+  }, [isMobileMenuOpen]);
+
   const assets = useMemo(() => {
     const getIcon = (title) => bannerData?.Iconos?.find(i => i.Titulo?.trim() === title)?.Imagen;
     const logoObj = bannerData?.Logo?.find(i => i.Titulo?.trim() === "LogoDisdel");
@@ -110,6 +146,11 @@ const Header = () => {
 
   const cartClasses = styles.cartLink;
   const handleContactClick = () => window.open(whatsappUrl, '_blank', 'noopener,noreferrer');
+  const closeSidebar = () => setIsMobileMenuOpen(false);
+
+  const toggleSidebarCategory = (segmentId) => {
+    setExpandedSidebarCategory((current) => current === segmentId ? null : segmentId);
+  };
 
   const handleLogoNavigation = (event) => {
     if (
@@ -144,8 +185,20 @@ const Header = () => {
     <header className={styles.header} role="banner">
       <div className={styles.headerContainer}>
 
-        {/* 1. LOGO (headerLeft) */}
+        {/* 1. MENÚ + LOGO (headerLeft) */}
         <div className={styles.headerLeft}>
+          <button
+            ref={menuButtonRef}
+            type="button"
+            className={styles.hamburgerButton}
+            onClick={() => setIsMobileMenuOpen(true)}
+            aria-label="Abrir menú principal y categorías"
+            aria-expanded={isMobileMenuOpen}
+            aria-controls="mobile-navigation"
+          >
+            <FaBars aria-hidden="true" />
+          </button>
+
           <Link
             to="/"
             aria-label="Ir al inicio de Disdel"
@@ -245,20 +298,6 @@ const Header = () => {
           </div>
           
           <nav className={styles.mainNav} role="navigation" aria-label="Navegación principal">
-            <div
-              className={styles.categoriesContainer}
-              onMouseEnter={() => setIsMegaMenuOpen(true)}
-              onMouseLeave={() => setIsMegaMenuOpen(false)}
-            >
-              <button
-                className={styles.navButton}
-                type="button"
-                aria-haspopup="true"
-                aria-expanded={isMegaMenuOpen}
-                onClick={() => setIsMegaMenuOpen((open) => !open)}
-              >Categorías <FaAngleDown aria-hidden="true" /></button>
-              {isMegaMenuOpen && <MegaMenu />}
-            </div>
             <button type="button" className={styles.navButton} onClick={() => navigate('/ayuda')}>Líneas de Asistencia</button>
           </nav>
         </div>
@@ -318,33 +357,35 @@ const Header = () => {
               <span className={styles.cartNotification} aria-hidden="true">{cartItemCount}</span>
             </Link>
           </div>
-
-
-          <button 
-            type="button"
-            className={styles.hamburgerButton} 
-            onClick={() => setIsMobileMenuOpen(true)}
-            aria-label="Abrir menú móvil"
-            aria-expanded={isMobileMenuOpen}
-            aria-controls="mobile-navigation"
-          >
-            <FaBars aria-hidden="true" />
-          </button>
         </div>
       </header>
 
-    {/* --- MENÚ LATERAL MÓVIL (SIDEBAR) --- */}
+    {/* --- MENÚ LATERAL PRINCIPAL --- */}
     <div className={`${styles.mobileMenuOverlay} ${isMobileMenuOpen ? styles.open : ''}`} onClick={() => setIsMobileMenuOpen(false)}></div>
     
-    <div
+    <aside
       id="mobile-navigation"
       className={`${styles.mobileMenu} ${isMobileMenuOpen ? styles.open : ''}`}
       aria-hidden={!isMobileMenuOpen}
+      aria-label="Menú principal y categorías"
       inert={isMobileMenuOpen ? undefined : ''}
     >
           <div className={styles.mobileMenuHeader}>
-            <h3>Menú Disdel</h3>
-            <button type="button" onClick={() => setIsMobileMenuOpen(false)} className={styles.closeButton} aria-label="Cerrar menú móvil"><FaTimes aria-hidden="true" /></button>
+            <OptimizedImage
+              src={logoMain || undefined}
+              alt="Disdel"
+              className={styles.mobileMenuLogo}
+              widths={[120, 180, 240]}
+              targetWidth={180}
+              quality={82}
+              sizes="120px"
+              width="120"
+              height="60"
+              loading="lazy"
+              decoding="async"
+              fetchPriority="low"
+            />
+            <button ref={closeMenuButtonRef} type="button" onClick={closeSidebar} className={styles.closeButton} aria-label="Cerrar menú"><FaTimes aria-hidden="true" /></button>
           </div>
 
           <nav className={styles.mobileNavLinks}>
@@ -370,13 +411,73 @@ const Header = () => {
             </a>
 
             <hr className={styles.divider} />
-            <Link to="/" onClick={() => setIsMobileMenuOpen(false)} className={styles.sidebarLinkSimple}>Inicio del Catálogo</Link>
-            <Link to="/ayuda" onClick={() => setIsMobileMenuOpen(false)} className={styles.sidebarLinkSimple}>Centro de Ayuda</Link>
+            <p className={styles.sidebarSectionTitle}>Navegación</p>
+            <Link to="/" onClick={closeSidebar} className={styles.sidebarLinkSimple}>Inicio del Catálogo</Link>
+            <Link to="/quienes-somos" onClick={closeSidebar} className={styles.sidebarLinkSimple}>Quiénes Somos</Link>
+            <Link to="/ayuda" onClick={closeSidebar} className={styles.sidebarLinkSimple}>Centro de Ayuda / Contacto</Link>
+            <Link to="/ubicaciones" onClick={closeSidebar} className={styles.sidebarLinkSimple}>Ubicaciones y tiendas</Link>
             <button type="button" onClick={handleContactClick} className={styles.sidebarLinkSimple} style={{background: 'none', border: 'none', textAlign: 'left', width: '100%', cursor: 'pointer'}}>
               WhatsApp Ventas
-          </button>
+            </button>
+
+            <div className={styles.sidebarCategories}>
+              <p className={styles.sidebarSectionTitle}>Categorías de productos</p>
+
+              {isMenuLoading && (
+                <div className={styles.sidebarMenuStatus} role="status">Cargando categorías…</div>
+              )}
+
+              {isMenuError && (
+                <div className={styles.sidebarMenuStatus}>No fue posible cargar las categorías.</div>
+              )}
+
+              {catalogSegments.map((segment) => {
+                const segmentId = String(segment.IdSegmento || segment.NombreSegmento);
+                const segmentSlug = createSlug(segment.NombreSegmento);
+                const panelId = `sidebar-category-${createSlug(segmentId)}`;
+                const isExpanded = expandedSidebarCategory === segmentId;
+
+                return (
+                  <section className={styles.sidebarCategoryGroup} key={segmentId}>
+                    <button
+                      type="button"
+                      className={`${styles.sidebarCategoryButton} ${isExpanded ? styles.expanded : ''}`}
+                      onClick={() => toggleSidebarCategory(segmentId)}
+                      aria-expanded={isExpanded}
+                      aria-controls={panelId}
+                    >
+                      <span>{segment.NombreSegmento}</span>
+                      <FaAngleDown className={styles.sidebarCategoryChevron} aria-hidden="true" />
+                    </button>
+
+                    {isExpanded && (
+                      <div id={panelId} className={styles.sidebarCategoryPanel}>
+                        <Link
+                          to={`/categoria/${segmentSlug}`}
+                          onClick={closeSidebar}
+                          className={`${styles.sidebarCategoryLink} ${styles.sidebarCategoryAll}`}
+                        >
+                          Ver todo en {segment.NombreSegmento}
+                        </Link>
+
+                        {(segment.Categorias || []).map((category) => (
+                          <Link
+                            key={category.IdCategoria || category.NombreCategoria}
+                            to={`/categoria/${segmentSlug}/${createSlug(category.NombreCategoria)}`}
+                            onClick={closeSidebar}
+                            className={styles.sidebarCategoryLink}
+                          >
+                            {category.NombreCategoria}
+                          </Link>
+                        ))}
+                      </div>
+                    )}
+                  </section>
+                );
+              })}
+            </div>
           </nav>
-      </div>
+      </aside>
 
       {isLogoTransitioning && (
         <div className={styles.logoTransitionOverlay} aria-hidden="true">

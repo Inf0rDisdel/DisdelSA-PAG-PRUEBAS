@@ -102,7 +102,7 @@
   height: 90px; /* Mantenemos el alto que elegiste */
   width: auto;  /* 🚀 CLAVE: El ancho se ajusta solo para no estirarse */
   display: block;
-  margin-left: -20px;
+  margin-left: 0;
   object-fit: contain; /* 🚀 SEGURIDAD: Evita que la imagen se salga de su área */
 
   /* --- Tus efectos existentes --- */
@@ -123,15 +123,36 @@
   transition: 0.1s;
 }
 
-/* El botón de las 3 rayitas (oculto en PC) */
+/* Entrada principal al menú lateral */
 .hamburgerButton {
-  display: none; 
-  background: none;
-  border: none;
-  color: white;
-  font-size: 28px;
+  display: flex;
+  flex: 0 0 40px;
+  width: 40px;
+  height: 40px;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-brand-green);
+  border: 0;
+  border-radius: 9px;
+  color: var(--color-on-brand-green);
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+  font-size: 22px;
   cursor: pointer;
   padding: 0;
+  transition: background-color 160ms ease, transform 160ms ease;
+}
+
+.hamburgerButton:hover {
+  background: var(--color-brand-green-hover);
+  transform: translateY(-1px);
+}
+
+.hamburgerButton:focus-visible,
+.closeButton:focus-visible,
+.sidebarCategoryButton:focus-visible,
+.sidebarCategoryLink:focus-visible {
+  outline: 3px solid rgba(19, 94, 171, 0.32);
+  outline-offset: 2px;
 }
 
 .headerCenter {
@@ -372,10 +393,6 @@
   width: 100%;
 }
 
-.categoriesContainer {
-  position: relative; /* 🚀 CRÍTICO: Permite que el MegaMenu se posicione exactamente debajo sin deformar el header */
-}
-
 /* --- DERECHA: ACCIONES Y CARRITO --- */
 .headerRight {
   display: flex;
@@ -468,7 +485,7 @@
   position: fixed;
   top: 0;
   left: 0;
-  width: 280px; /* Ancho del menú */
+  width: min(360px, 90vw);
   height: 100%;
   background-color: white;
   z-index: 2000;
@@ -483,19 +500,40 @@
 
 .mobileMenuHeader {
   background-color: #f8f9fa;
-  padding: 20px;
+  min-height: 74px;
+  padding: 8px 16px;
   display: flex;
   justify-content: space-between;
   align-items: center;
   border-bottom: 1px solid #eee;
 }
 
-.mobileMenuHeader h3 { margin: 0; color: #333; font-size: 18px; }
-.closeButton { background: none; border: none; font-size: 24px; color: #555; }
+.mobileMenuLogo {
+  width: 120px;
+  height: 60px;
+  object-fit: contain;
+}
+
+.closeButton {
+  display: inline-flex;
+  width: 42px;
+  height: 42px;
+  align-items: center;
+  justify-content: center;
+  background: #eef3f8;
+  border: none;
+  border-radius: 50%;
+  font-size: 22px;
+  color: #314158;
+  cursor: pointer;
+}
 
 .mobileNavLinks {
+  flex: 1;
+  min-height: 0;
   padding: 10px 0;
   overflow-y: auto;
+  overscroll-behavior: contain;
 }
 
 /* Estilos de los enlaces dentro del Sidebar */
@@ -524,15 +562,6 @@
 
 .divider { border: 0; border-top: 5px solid #f4f4f4; margin: 0; }
 
-.categoriesContainer {
-  position: relative !important; /* IMPORTANTE: Hace que el menú se ancle al botón */
-  display: flex;
-  align-items: center;
-  height: 100%;
-  z-index: 2000; /* Asegura que el menú quede encima de los banners */
-}
-
-
 /* ========================================================= */
 /* ===   ANIMACIÓN DE CARRITO (BUMP)                     === */
 /* ========================================================= */
@@ -555,6 +584,94 @@
 
 }
 
+.sidebarSectionTitle {
+  margin: 18px 20px 8px;
+  color: #8493a8;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.sidebarCategories {
+  padding: 0 14px 28px;
+}
+
+.sidebarCategories .sidebarSectionTitle {
+  margin-left: 2px;
+  margin-right: 2px;
+}
+
+.sidebarCategoryGroup {
+  margin-bottom: 8px;
+}
+
+.sidebarCategoryButton {
+  display: flex;
+  width: 100%;
+  min-height: 46px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 13px;
+  border: 1px solid #dce5ef;
+  border-radius: 10px;
+  background: #f7f9fc;
+  color: #173a6e;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  text-align: left;
+  cursor: pointer;
+}
+
+.sidebarCategoryButton:hover,
+.sidebarCategoryButton.expanded {
+  border-color: rgba(19, 94, 171, 0.32);
+  background: #f0f6fc;
+}
+
+.sidebarCategoryChevron {
+  flex: 0 0 auto;
+  transition: transform 180ms ease;
+}
+
+.sidebarCategoryButton.expanded .sidebarCategoryChevron {
+  transform: rotate(180deg);
+}
+
+.sidebarCategoryPanel {
+  margin: 5px 6px 10px;
+  padding: 5px 0 5px 12px;
+  border-left: 2px solid var(--color-brand-green);
+}
+
+.sidebarCategoryLink {
+  display: block;
+  padding: 9px 10px;
+  border-radius: 7px;
+  color: #4f6075;
+  font-size: 13px;
+  line-height: 1.35;
+  text-decoration: none;
+}
+
+.sidebarCategoryLink:hover {
+  background: #f2f6fa;
+  color: #135eab;
+}
+
+.sidebarCategoryAll {
+  color: #135eab;
+  font-weight: 700;
+}
+
+.sidebarMenuStatus {
+  padding: 13px;
+  color: #68798e;
+  font-size: 13px;
+}
+
 @media (min-width: 601px) and (max-width: 1024px) {
   .headerLeft { order: 1; }
 
@@ -569,11 +686,10 @@
   }
 
   .hamburgerButton {
-    order: 3;
     display: flex !important;
     flex: 0 0 38px;
-    width: 38px;
-    height: 38px;
+    width: 35px;
+    height: 35px;
     align-items: center;
     justify-content: center;
     padding: 0;
@@ -607,21 +723,19 @@
   
   .headerContainer {
     display: grid !important;
-    /* Definimos 3 columnas para la fila superior */
-    grid-template-columns: auto 1fr auto; 
+    grid-template-columns: minmax(0, 1fr) auto;
     grid-template-areas: 
-      "logo . cart"
-      "menu search search"; /* El buscador ocupa 2 columnas */
-    gap: 15px 10px; /* Más espacio vertical entre filas */
+      "left cart"
+      "search search";
+    gap: 12px 10px;
     padding: 0 15px;
     align-items: center;
   }
 
   /* --- ASIGNACIÓN DE ÁREAS --- */
-  .headerLeft { grid-area: logo; display: flex; align-items: center; }
+  .headerLeft { grid-area: left; display: flex; align-items: center; gap: 9px; }
   .desktopUserActions { display: none !important; }
   .headerRight { grid-area: cart; }
-  .hamburgerButton { grid-area: menu; }
   .headerCenter { grid-area: search; margin: 0 !important; width: 100%; }
 
   /* 1. LOGO (Fila 1 - Izquierda) */

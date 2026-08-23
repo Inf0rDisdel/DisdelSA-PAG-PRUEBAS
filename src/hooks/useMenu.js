@@ -10,10 +10,11 @@ const fetchMenu = async () => {
     return data;
 };
 
-export const useMenu = () => {
+export const useMenu = ({ enabled = true } = {}) => {
     return useQuery({
         queryKey: ['menu-arbol'], // Se guarda en la cache 
         queryFn: fetchMenu, 
+        enabled,
         gcTime: 1000* 60 *60 *24,
         staleTime: 1000 * 60 * 60, // Se mantiene en una hora 
         retry: 2,
