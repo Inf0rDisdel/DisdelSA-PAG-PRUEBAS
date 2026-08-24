@@ -10,7 +10,7 @@ import useCartStore from 'store/useCartStore';
 import { useProductDetail } from 'hooks/useProductDetail';
 import { generateProductInsight, generateProductSeoDescription } from 'utils/SEO/productDescriptions';
 
-import { FiCheckCircle, FiChevronRight, FiPackage, FiTarget, FiTruck, FiAward, FiShoppingCart, FiSend, FiShield, FiHeadphones  } from 'react-icons/fi';
+import { FiCheckCircle, FiChevronRight, FiPackage, FiTarget, FiTruck, FiAward, FiShoppingCart, FiSend, FiShield, FiHeadphones, FiMinus, FiPlus } from 'react-icons/fi';
 import { createSlug } from 'utils/slugify';
 
 import { getProductSchema } from 'utils/schemas/productSchema';
@@ -49,6 +49,7 @@ const ProductDetailPage = () => {
   const [selectedImage, setSelectedImage] = useState(null);
   const [selectedUnit, setSelectedUnit] = useState(''); 
   const [selectedType, setSelectedType] = useState('Y');
+  const [quantity, setQuantity] = useState(1);
   const [zoomPos, setZoomPos] = useState({ x: 0, y: 0, show: false });
 
   //ESTADO DEL MODAL DEL CATÁLOGO (SIMULADO)
@@ -181,7 +182,12 @@ const ProductDetailPage = () => {
       ...product, 
       presentationSelected: selectedUnit, 
       unitType: selectedType 
-    });
+    }, quantity);
+  };
+
+  const handleQuantityChange = (value) => {
+    const parsedValue = Number.parseInt(value, 10);
+    setQuantity(Number.isFinite(parsedValue) ? Math.min(999, Math.max(1, parsedValue)) : 1);
   };
 
   const getImageUrl = useCallback((imgName) => {
@@ -203,6 +209,7 @@ const ProductDetailPage = () => {
       const initialUnit = product.Unidad || product.Empaque || 'Unidad';
       setSelectedUnit(initialUnit);
       setSelectedType(product.Unidad ? 'Y' : 'N');
+      setQuantity(1);
       window.scrollTo(0, 0);
     }
   }, [product]);
@@ -442,6 +449,40 @@ const ProductDetailPage = () => {
           )}
 
           <div className="pdp-action-box">
+              <div className="pdp-quantity-row">
+                <label htmlFor="pdp-quantity" className="pdp-quantity-label">Cantidad:</label>
+                <div className="pdp-quantity-control">
+                  <button
+                    type="button"
+                    className="pdp-quantity-btn"
+                    aria-label="Reducir cantidad"
+                    disabled={quantity <= 1}
+                    onClick={() => setQuantity((current) => Math.max(1, current - 1))}
+                  >
+                    <FiMinus aria-hidden="true" />
+                  </button>
+                  <input
+                    id="pdp-quantity"
+                    className="pdp-quantity-input"
+                    type="number"
+                    inputMode="numeric"
+                    min="1"
+                    max="999"
+                    value={quantity}
+                    onChange={(event) => handleQuantityChange(event.target.value)}
+                    aria-label="Cantidad para agregar a cotización"
+                  />
+                  <button
+                    type="button"
+                    className="pdp-quantity-btn"
+                    aria-label="Aumentar cantidad"
+                    disabled={quantity >= 999}
+                    onClick={() => setQuantity((current) => Math.min(999, current + 1))}
+                  >
+                    <FiPlus aria-hidden="true" />
+                  </button>
+                </div>
+              </div>
               <div className='pdp-action-buttons-row'>
 
                 {/* ----- BOTON DE "AGREGAR A CATALOGO ---  DESCOMENTAR CUANDO YA ESTE LISTO" -----*/}
@@ -452,10 +493,10 @@ const ProductDetailPage = () => {
 
                 
                 <button className='pdp-catalog-btn-new' onClick={handleAddToCart}>
-                  <FiShoppingCart className='pdp-btn-icon' /> AGREGAR A COTIZACIÓN
+                  <FiShoppingCart className='pdp-btn-icon' /> AGREGAR {quantity} A COTIZACIÓN
                 </button>
               </div>
-              <p className='pdp-action-note'>La unidad seleccionada aparecerá en su solicitud.</p>
+              <p className='pdp-action-note'>La cantidad y presentación seleccionadas aparecerán en su solicitud.</p>
           </div>
         </section>
       </article>

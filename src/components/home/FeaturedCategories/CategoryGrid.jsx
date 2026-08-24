@@ -72,11 +72,11 @@ const CategoryGrid = ({ isLoading: isLoadingProp }) => {
                       src={getDisdelImageUrl(category.Imagen) || defaultImage}
                       alt="" aria-hidden="true"
                       className="cgs-image" 
-                      widths={[160, 240, 360]}
+                      widths={[160, 240, 360, 480]}
                       targetWidth={360}
                       quality={78}
                       sizes="(min-width: 1025px) 260px, (min-width: 481px) 24vw, 31vw"
-                      width="240"
+                      width="260"
                       height="240"
                       loading="lazy"
                       fetchPriority="low"

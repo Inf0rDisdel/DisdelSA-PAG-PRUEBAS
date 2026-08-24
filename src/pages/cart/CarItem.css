@@ -27,6 +27,27 @@
   padding: 5px;
 }
 
+.item-image-link {
+  display: block;
+  border-radius: 12px;
+  text-decoration: none;
+}
+
+.item-image-link .item-image {
+  display: block;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.item-image-link:hover .item-image {
+  transform: scale(1.04);
+  box-shadow: 0 6px 18px rgba(19, 94, 171, 0.12);
+}
+
+.item-image-link:focus-visible {
+  outline: 3px solid rgba(150, 193, 33, 0.65);
+  outline-offset: 3px;
+}
+
 .item-info { 
   text-align: left; 
 }

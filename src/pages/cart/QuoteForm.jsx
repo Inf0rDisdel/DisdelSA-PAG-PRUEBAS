@@ -29,7 +29,7 @@ const QuoteForm = () => {
     phone: '',
     email: '',
     address: '',
-    nit: 'C/F' 
+    nit: ''
   });
 
   const handleChange = (e) => {
@@ -65,7 +65,7 @@ const QuoteForm = () => {
         });
         
         // Limpiamos el formulario tras el éxito
-        setFormData({ company: '', name: '', lastname: '', phone: '', email: '', address: '', nit: 'C/F' });
+        setFormData({ company: '', name: '', lastname: '', phone: '', email: '', address: '', nit: '' });
 
       } else {
         Toast.fire({
@@ -115,10 +115,9 @@ const QuoteForm = () => {
           <label htmlFor="nit">NIT</label>
           <input 
             type="text" id="nit" 
-            placeholder="Ej: 1234567-8 o C/F" 
+            placeholder="Ej: 1234567-8"
             value={formData.nit} 
             onChange={handleChange} 
-            required
           />
         </div>
 

@@ -76,6 +76,8 @@
 
 /* 🔥 CORREGIDO: Usamos scale(1.1) para agrandar el producto un 10% dentro de la caja sin recortarlo */
 .product-image {
+  width: auto;
+  height: auto;
   max-width: 100%;
   max-height: 100%;
   object-fit: contain;

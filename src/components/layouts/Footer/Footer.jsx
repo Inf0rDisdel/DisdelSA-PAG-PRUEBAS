@@ -21,7 +21,9 @@ const Footer = () => {
 
     return (
         <footer className="footer-wrapper">
-            <div className="footer-content-area">
+            {/* Google conserva y rastrea los enlaces, pero no usará el bloque
+                repetitivo de contacto como descripción del resultado. */}
+            <div className="footer-content-area" data-nosnippet>
 
                 {/* 🚀 CONTENEDOR AZUL DISDEL */}
                 <div className="footer-container">

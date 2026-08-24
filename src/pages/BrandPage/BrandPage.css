@@ -647,6 +647,19 @@
   }
 }
 
+/* Tablet: jerarquía más compacta para evitar que el H1 domine la vista. */
+@media (min-width: 469px) and (max-width: 768px) {
+  .brand-segment-title {
+    margin: 0 auto;
+    color: #222;
+    font-size: 1.5rem;
+    font-weight: 650;
+    line-height: 1.25;
+    letter-spacing: -0.3px;
+    text-align: start;
+  }
+}
+
 /* ======================================================= */
 /*  2. MÓVILES (Hasta 768px / 468px) - 2 PRODUCTOS          */
 /* ======================================================= */

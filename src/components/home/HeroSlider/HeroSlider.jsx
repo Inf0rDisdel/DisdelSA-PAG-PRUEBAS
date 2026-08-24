@@ -7,13 +7,49 @@ import OptimizedImage from 'components/ui/OptimizedImage/OptimizedImage';
 import './HeroSlider.css';
 
 const NativeHeroCarousel = ({ slides, renderSlide, pauseOnHover = false }) => {
-  const [activeIndex, setActiveIndex] = useState(0);
+  const [slideState, setSlideState] = useState({
+    activeIndex: 0,
+    previousIndex: null,
+    transitionId: 0
+  });
   const [isPaused, setIsPaused] = useState(false);
   const slideCount = slides.length;
+  const { activeIndex, previousIndex, transitionId } = slideState;
+
+  const showSlide = useCallback((nextIndexOrUpdater) => {
+    setSlideState((current) => {
+      const requestedIndex = typeof nextIndexOrUpdater === 'function'
+        ? nextIndexOrUpdater(current.activeIndex)
+        : nextIndexOrUpdater;
+      const nextIndex = ((requestedIndex % slideCount) + slideCount) % slideCount;
+
+      if (nextIndex === current.activeIndex) return current;
+
+      return {
+        activeIndex: nextIndex,
+        previousIndex: current.activeIndex,
+        transitionId: current.transitionId + 1
+      };
+    });
+  }, [slideCount]);
 
   useEffect(() => {
-    setActiveIndex(0);
+    setSlideState({ activeIndex: 0, previousIndex: null, transitionId: 0 });
   }, [slides]);
+
+  useEffect(() => {
+    if (previousIndex === null) return undefined;
+
+    const cleanupTimer = window.setTimeout(() => {
+      setSlideState((current) => (
+        current.transitionId === transitionId
+          ? { ...current, previousIndex: null }
+          : current
+      ));
+    }, 650);
+
+    return () => window.clearTimeout(cleanupTimer);
+  }, [previousIndex, transitionId]);
 
   useEffect(() => {
     if (slideCount < 2 || isPaused) return undefined;
@@ -22,11 +58,11 @@ const NativeHeroCarousel = ({ slides, renderSlide, pauseOnHover = false }) => {
     if (reduceMotion) return undefined;
 
     const timer = window.setInterval(() => {
-      setActiveIndex((currentIndex) => (currentIndex + 1) % slideCount);
+      showSlide((currentIndex) => currentIndex + 1);
     }, 4000);
 
     return () => window.clearInterval(timer);
-  }, [isPaused, slideCount]);
+  }, [isPaused, showSlide, slideCount]);
 
   if (!slideCount) return null;
 
@@ -41,7 +77,22 @@ const NativeHeroCarousel = ({ slides, renderSlide, pauseOnHover = false }) => {
       onMouseLeave={pauseOnHover ? () => setIsPaused(false) : undefined}
     >
       <div className="hero-native-stage">
-        {renderSlide(slides[safeIndex], safeIndex)}
+        {previousIndex !== null && previousIndex !== safeIndex && (
+          <div
+            className="hero-native-layer is-leaving"
+            key={slides[previousIndex]?.EntityID || `previous-${previousIndex}`}
+            aria-hidden="true"
+            inert=""
+          >
+            {renderSlide(slides[previousIndex], previousIndex)}
+          </div>
+        )}
+        <div
+          className={`hero-native-layer${transitionId > 0 ? ' is-entering' : ' is-current'}`}
+          key={slides[safeIndex]?.EntityID || `active-${safeIndex}`}
+        >
+          {renderSlide(slides[safeIndex], safeIndex)}
+        </div>
       </div>
 
       {slideCount > 1 && (
@@ -54,7 +105,7 @@ const NativeHeroCarousel = ({ slides, renderSlide, pauseOnHover = false }) => {
                 type="button"
                 className={`hero-native-dot-button${isSelected ? ' is-selected' : ''}`}
                 key={slide.EntityID || index}
-                onClick={() => setActiveIndex(index)}
+                onClick={() => showSlide(index)}
                 aria-label={`Ir a la promoción ${index + 1}`}
                 aria-current={isSelected ? 'true' : undefined}
               >
@@ -139,15 +190,15 @@ const HeroSlider = () => {
         <OptimizedImage
           src={imgUrl} 
           alt={ban.Titulo || "Promoción Disdel"} 
-          widths={[360, 640, 800, 960]}
+          className="hero-cover-image hero-side-image"
+          widths={[360, 640, 800, 960, 1280]}
           targetWidth={960}
           quality={76}
           sizes="(min-width: 1400px) 760px, (min-width: 1025px) 55vw, (max-width: 480px) calc(100vw - 20px), 100vw"
-          width="660" height="155"
+          width="660" height="184"
           loading={!isMobile && index === 0 ? "eager" : "lazy"}
           decoding="async"
           fetchPriority={!isMobile && index === 0 ? "auto" : "low"}
-          style={{ width: '100%', height: '100%', objectFit: 'cover' }}
         />
         {route && (
           // Cambiado de Link a span para evitar anidación de enlaces inválida en HTML
@@ -189,13 +240,13 @@ const HeroSlider = () => {
         <OptimizedImage
           src={imgUrl}
           alt={slide.Titulo || (mobileSlide ? "Suministros de limpieza Disdel" : "Catálogo Disdel")}
-          widths={mobileSlide ? [360, 480, 640] : [480, 640, 800, 960]}
+          className="hero-cover-image hero-main-image"
+          widths={mobileSlide ? [360, 480, 640, 800, 960] : [480, 640, 800, 960]}
           targetWidth={mobileSlide ? 640 : 800}
           quality={76}
           sizes={mobileSlide ? "calc(100vw - 20px)" : "(min-width: 1400px) 620px, 45vw"}
           width={mobileSlide ? "392" : "540"}
-          height={mobileSlide ? "210" : "320"}
-          style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+          height={mobileSlide ? "246" : "340"}
           fetchPriority={index === 0 ? "high" : "low"}
           loading={index === 0 ? "eager" : "lazy"}
           decoding={index === 0 ? "sync" : "async"}

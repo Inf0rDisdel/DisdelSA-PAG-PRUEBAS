@@ -11,11 +11,15 @@ const useCartStore = create(
       _hasHydrated: false,
       setHasHydrated: (state) => set({ _hasHydrated: state }),
 
-      addItem: (product) => {
+      addItem: (product, quantityToAdd = 1) => {
         const { cart } = get();
         const finalPresentation = product.presentationSelected || (product.Unidad || product.Empaque || 'Unidad');
         const finalUnitType = product.unitType || (product.Unidad ? 'Y' : 'N');
         const productId = product.IdProducto || product.id;
+        const parsedQuantity = Number.parseInt(quantityToAdd, 10);
+        const finalQuantity = Number.isFinite(parsedQuantity) && parsedQuantity > 0
+          ? parsedQuantity
+          : 1;
 
         const existingItem = cart.find(item => 
           item.IdProducto === productId && item.unitType === finalUnitType
@@ -25,7 +29,7 @@ const useCartStore = create(
           set({
             cart: cart.map(item =>
               (item.IdProducto === productId && item.unitType === finalUnitType)
-                ? { ...item, quantity: (item.quantity || 1) + 1 } : item
+                ? { ...item, quantity: (item.quantity || 1) + finalQuantity } : item
             )
           });
         } else {
@@ -35,11 +39,14 @@ const useCartStore = create(
               IdProducto: productId,
               presentationSelected: finalPresentation,
               unitType: finalUnitType,
-              quantity: 1 
+              quantity: finalQuantity
             }] 
           });
         }
-        toast.success(`Agregado: ${finalPresentation}`, { position: 'top-center' });
+        toast.success(
+          `${finalQuantity} ${finalQuantity === 1 ? 'unidad agregada' : 'unidades agregadas'}: ${finalPresentation}`,
+          { position: 'top-center' }
+        );
       },
 
       removeFromCart: (id, unitType) => set({ 

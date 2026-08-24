@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import "./BannerSlider.css"; 
 
 // 1. Imports necesarios
@@ -9,7 +9,11 @@ import OptimizedImage from 'components/ui/OptimizedImage/OptimizedImage';
 const BannerSlider = () => {
   const { data: banners, isLoading, isError } = useBanners();
   const containerRef = useRef(null);
-  const [activeIndex, setActiveIndex] = useState(0);
+  const [slideState, setSlideState] = useState({
+    activeIndex: 0,
+    previousIndex: null,
+    transitionId: 0
+  });
   const [isNearViewport, setIsNearViewport] = useState(false);
   const [isPhone, setIsPhone] = useState(
     () => typeof window !== 'undefined' && window.matchMedia('(max-width: 480px)').matches
@@ -49,9 +53,42 @@ const BannerSlider = () => {
     });
   }, [banners, isPhone]);
 
+  const { activeIndex, previousIndex, transitionId } = slideState;
+
+  const showSlide = useCallback((nextIndexOrUpdater) => {
+    setSlideState((current) => {
+      const requestedIndex = typeof nextIndexOrUpdater === 'function'
+        ? nextIndexOrUpdater(current.activeIndex)
+        : nextIndexOrUpdater;
+      const nextIndex = ((requestedIndex % displayBanners.length) + displayBanners.length) % displayBanners.length;
+
+      if (nextIndex === current.activeIndex) return current;
+
+      return {
+        activeIndex: nextIndex,
+        previousIndex: current.activeIndex,
+        transitionId: current.transitionId + 1
+      };
+    });
+  }, [displayBanners.length]);
+
   useEffect(() => {
-    setActiveIndex(0);
+    setSlideState({ activeIndex: 0, previousIndex: null, transitionId: 0 });
   }, [displayBanners]);
+
+  useEffect(() => {
+    if (previousIndex === null) return undefined;
+
+    const cleanupTimer = window.setTimeout(() => {
+      setSlideState((current) => (
+        current.transitionId === transitionId
+          ? { ...current, previousIndex: null }
+          : current
+      ));
+    }, 650);
+
+    return () => window.clearTimeout(cleanupTimer);
+  }, [previousIndex, transitionId]);
 
   useEffect(() => {
     const container = containerRef.current;
@@ -74,12 +111,12 @@ const BannerSlider = () => {
 
     const timer = window.setInterval(() => {
       if (!document.hidden) {
-        setActiveIndex((current) => (current + 1) % displayBanners.length);
+        showSlide((current) => current + 1);
       }
     }, 6000);
 
     return () => window.clearInterval(timer);
-  }, [displayBanners.length, isNearViewport]);
+  }, [displayBanners.length, isNearViewport, showSlide]);
 
   if (isLoading) {
     return (
@@ -91,35 +128,59 @@ const BannerSlider = () => {
 
   if (isError || displayBanners.length === 0) return null;
 
-  const activeBanner = displayBanners[activeIndex] || displayBanners[0];
-  const mobileImage = activeBanner?.ImagenMovil || activeBanner?.BannerImagenMovil;
-  const mobileUrl = getDisdelImageUrl(mobileImage);
-  const desktopUrl = getDisdelImageUrl(activeBanner?.Imagen);
-  const finalUrl = isPhone ? (mobileUrl || desktopUrl) : (desktopUrl || mobileUrl);
+  const renderBanner = (banner) => {
+    if (!banner) return null;
 
-  if (!finalUrl) return null;
+    const mobileImage = banner.ImagenMovil || banner.BannerImagenMovil;
+    const mobileUrl = getDisdelImageUrl(mobileImage);
+    const desktopUrl = getDisdelImageUrl(banner.Imagen);
+    const finalUrl = isPhone ? (mobileUrl || desktopUrl) : (desktopUrl || mobileUrl);
+
+    if (!finalUrl) return null;
+
+    return (
+      <div className="slider-item">
+        <picture>
+          <OptimizedImage
+            src={finalUrl}
+            alt={banner.Titulo || "Promoción Disdel"}
+            className="banner-img"
+            widths={[360, 480, 640, 768, 1024, 1400]}
+            targetWidth={1400}
+            quality={74}
+            sizes="(min-width: 1400px) 1400px, 100vw"
+            width={isPhone ? "480" : "1400"}
+            height={isPhone ? "302" : "270"}
+            loading="lazy"
+            decoding="async"
+            fetchPriority="low"
+          />
+        </picture>
+      </div>
+    );
+  };
+
+  const activeBanner = displayBanners[activeIndex] || displayBanners[0];
+  if (!activeBanner) return null;
 
   return (
     <div className="banner-slider-container" ref={containerRef} aria-roledescription="carrusel" aria-label="Promociones de Disdel">
-      <div className="banner-native-stage" key={activeBanner.EntityID || activeIndex}>
-        <div className="slider-item">
-          <picture>
-            {mobileUrl && <source media="(max-width: 480px)" srcSet={mobileUrl} />}
-            <OptimizedImage
-              src={finalUrl}
-              alt={activeBanner.Titulo || "Promoción Disdel"}
-              className="banner-img"
-              widths={[480, 768, 1024, 1400]}
-              targetWidth={1400}
-              quality={74}
-              sizes="(min-width: 1400px) 1400px, 100vw"
-              width="1400"
-              height="270"
-              loading="lazy"
-              decoding="async"
-              fetchPriority="low"
-            />
-          </picture>
+      <div className="banner-native-stage">
+        {previousIndex !== null && previousIndex !== activeIndex && (
+          <div
+            className="banner-native-layer is-leaving"
+            key={displayBanners[previousIndex]?.EntityID || `previous-${previousIndex}`}
+            aria-hidden="true"
+            inert=""
+          >
+            {renderBanner(displayBanners[previousIndex])}
+          </div>
+        )}
+        <div
+          className={`banner-native-layer${transitionId > 0 ? ' is-entering' : ' is-current'}`}
+          key={activeBanner.EntityID || `active-${activeIndex}`}
+        >
+          {renderBanner(activeBanner)}
         </div>
       </div>
 
@@ -130,7 +191,7 @@ const BannerSlider = () => {
               type="button"
               key={banner.EntityID || index}
               className={index === activeIndex ? 'is-active' : ''}
-              onClick={() => setActiveIndex(index)}
+              onClick={() => showSlide(index)}
               aria-label={`Ver promoción ${index + 1}`}
               aria-current={index === activeIndex ? 'true' : undefined}
             />

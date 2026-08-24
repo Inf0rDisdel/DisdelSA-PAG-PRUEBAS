@@ -92,7 +92,7 @@ const ProductCard = memo(({ product, index, priority }) => {
             src={imageUrl} 
             alt={Descripcion} 
             className="product-image" 
-            widths={[160, 240, 320]}
+            widths={[160, 240, 320, 480, 640]}
             targetWidth={240}
             quality={78}
             sizes="(min-width: 1025px) 150px, (min-width: 481px) 120px, 130px"

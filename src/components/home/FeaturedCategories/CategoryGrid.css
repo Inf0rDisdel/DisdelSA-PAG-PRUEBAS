@@ -176,18 +176,19 @@
   justify-content: center;
   align-items: center;
   width: 100%;
+  aspect-ratio: 260 / 240;
 }
 
 /* Imagen de la categoría */
 .cgs-image {
   display: block;
-  width: 100%; /* Cambiado a 100% para que el aspect-ratio mande */
+  width: auto;
   height: auto;
-  max-width: 270px;
-  aspect-ratio: 260 / 240; /* 🚀 CRÍTICO: El navegador reserva el espacio exacto */
+  max-width: 100%;
+  max-height: 100%;
   border-radius: 20px;
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.04);
-  object-fit: cover; 
+  object-fit: contain;
   background-color: #fff;
   transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
 }
@@ -262,8 +263,10 @@
   /* 🔥 2. AJUSTE DE ICONOS PARA MÓVIL (Reparación) 🔥 */
   /* Bajamos el tamaño para que quepan 3 sin amontonarse */
   .cgs-image {
+    width: auto !important;
     height: auto !important;
-    aspect-ratio: 1 / 1; /* Cuadrados en móvil para que quepan mejor */
+    max-width: 100%;
+    max-height: 100%;
     border-radius: 12px;
   }
 
@@ -289,7 +292,7 @@
   }
 
   .cgs-image-skeleton {
-    aspect-ratio: 1 / 1;
+    aspect-ratio: 260 / 240;
   }
 
   .cgs-text-skeleton {

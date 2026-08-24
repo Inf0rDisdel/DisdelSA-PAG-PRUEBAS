@@ -1,7 +1,9 @@
 import React, { useMemo } from 'react';
 import { FiMinus, FiPlus, FiTrash2 } from 'react-icons/fi';
+import { Link } from 'react-router-dom';
 import useCartStore from 'store/useCartStore';
 import { AppConfig } from 'config/AppConfig';
+import { createSlug } from 'utils/slugify';
 import './CarItem.css';
 import { useBanners } from 'hooks/useBanners';
 
@@ -17,10 +19,16 @@ const CartItem = ({ product }) => {
 
   const { removeFromCart, updateQuantity } = useCartStore();
   const quantity = product.quantity || 1;
+  const productUrl = `/producto/${String(product.IdProducto).trim().toLowerCase()}/${createSlug(product.Descripcion)}`;
 
   return (
     <div className="cart-item-wrapper">
-      <div className="item-image-container">
+      <Link
+        to={productUrl}
+        className="item-image-container item-image-link"
+        aria-label={`Ver detalle de ${product.Descripcion}`}
+        title={`Ver detalle de ${product.Descripcion}`}
+      >
         <img
           src={product.Imagen ? `${AppConfig.baseImageUrl}productos/${product.Imagen}` : defaultImage}
           alt={product.Descripcion}
@@ -33,7 +41,7 @@ const CartItem = ({ product }) => {
           // Evitamos que la imagen se vea estirada
           style={{ objectFit: 'contain' }}
         />
-      </div>
+      </Link>
 
       <div className="item-info">
         <span className="info-label">Producto</span>

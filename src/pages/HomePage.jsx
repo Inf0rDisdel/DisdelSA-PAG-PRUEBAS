@@ -15,6 +15,11 @@ import CategoryGrid from 'components/home/FeaturedCategories/CategoryGrid';
 import FeaturedBrands from 'components/home/ComercialAllies/FeaturedBrands';
 import { getDisdelImageUrl } from 'utils/imageUrl';
 
+const HOME_FALLBACK_TITLE =
+  'Suministros y Productos de Limpieza y Mantenimiento de tus instalaciones, Articulos de limpieza, Productos de Limpieza, Elaboracion y Entrega de Kits de donaciones. Atendemos Mayoristas.';
+const HOME_FALLBACK_DESCRIPTION =
+  'Suministros, Productos y articulos de Limpieza en General, Elaboracion y Entrega de Kits, Gestor de Compras online, Productos sobre demanda, lo que no tenemos lo conseguimos o lo hacemos';
+
 // El contenido visible al abrir el home forma parte del paquete crítico.
 // Así evitamos que categorías, marcas y banner aparezcan tarde y provoquen CLS.
 const PromoNescafe = lazy(() => import('components/home/PromoNescafe/PromoNescafe'));
@@ -92,8 +97,9 @@ const HomePage = () => {
   const seoTitle = useMemo(() => {
   return (
     activeCompanyInfo.metaTitle ||
+    activeCompanyInfo.MetaTitle ||
     homeSeo?.t ||
-    "Disdel Guatemala | Líder en Suministros de Limpieza"
+    HOME_FALLBACK_TITLE
     );
   }, [activeCompanyInfo, homeSeo]);
 
@@ -104,7 +110,7 @@ const HomePage = () => {
       activeCompanyInfo.DescripcionCorta || // Campo directo C# SQL de CompaniaWeb
       activeCompanyInfo.descripcionCorta ||
       homeSeo?.d ||
-      "Productos de limpieza profesional, higiene institucional, EPP y suministros empresariales con cobertura en toda Guatemala."
+      HOME_FALLBACK_DESCRIPTION
     );
   }, [activeCompanyInfo, homeSeo]);
 
@@ -248,7 +254,7 @@ const HomePage = () => {
         clip: 'rect(0, 0, 0, 0)',
         border: '0'
         }}>
-        Disdel Guatemala | Suministros de Limpieza Profesional, Higiene y Mantenimiento Institucional para Empresas
+        {seoTitle}
       </h1>
 
       <HeroSlider />
@@ -294,7 +300,7 @@ const HomePage = () => {
       {(productsPending || carruseles.coffee.length > 0) && (
         <div className="carousel-wrapper">
           <ProductCarousel
-            title="Todo para el Coffee Break"
+            title="Insumos de Cafetería"
             products={carruseles.coffee}
             addToCart={handleAddToCart} 
             variant="carousel-coffe"

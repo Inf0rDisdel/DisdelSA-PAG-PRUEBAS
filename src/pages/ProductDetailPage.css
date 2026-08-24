@@ -446,6 +446,81 @@
   margin-bottom: 12px;
 }
 
+.pdp-quantity-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 14px;
+}
+
+.pdp-quantity-label {
+  color: #333;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.pdp-quantity-control {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 8px;
+  background: #f7f9fc;
+  border: 1px solid #dbe4ee;
+  border-radius: 999px;
+}
+
+.pdp-quantity-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  padding: 0;
+  color: #135eab;
+  background: #fff;
+  border: 1px solid #dbe4ee;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+.pdp-quantity-btn:hover:not(:disabled) {
+  color: #fff;
+  background: #135eab;
+  border-color: #135eab;
+}
+
+.pdp-quantity-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.pdp-quantity-input {
+  width: 48px;
+  padding: 4px 2px;
+  color: #1f2937;
+  background: transparent;
+  border: 0;
+  font: inherit;
+  font-size: 15px;
+  font-weight: 700;
+  text-align: center;
+  appearance: textfield;
+}
+
+.pdp-quantity-input::-webkit-outer-spin-button,
+.pdp-quantity-input::-webkit-inner-spin-button {
+  margin: 0;
+  appearance: none;
+}
+
+.pdp-quantity-input:focus-visible,
+.pdp-quantity-btn:focus-visible {
+  outline: 3px solid rgba(150, 193, 33, 0.45);
+  outline-offset: 2px;
+}
+
 /* Iconos universales dentro de los botones */
 .pdp-btn-icon {
   font-size: 20px;
@@ -851,7 +926,8 @@
   .pdp-main-grid { 
     grid-template-columns: 1fr;
     gap: 30px;
-    width: 100%; 
+    width: auto;
+    min-width: 0;
   }
 
   .pdp-specs-section{
@@ -894,12 +970,65 @@
   }
 }
 
+/* Tablet: miniaturas verticales a la izquierda de la imagen principal.
+   Desktop (> 992px) y móvil (<= 500px) conservan su composición actual. */
+@media (min-width: 501px) and (max-width: 992px) {
+  .pdp-container {
+    box-sizing: border-box;
+    padding-right: 24px;
+    padding-left: 24px;
+  }
+
+  .pdp-gallery-wrapper {
+    flex-direction: row;
+    align-items: stretch;
+    gap: 14px;
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+  }
+
+  .pdp-thumbnails-vertical {
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    width: 82px;
+    flex: 0 0 82px;
+    gap: 10px;
+  }
+
+  .pdp-thumb-item {
+    width: 72px;
+    height: 72px;
+    box-sizing: border-box;
+  }
+
+  .pdp-main-image-zoom-container {
+    flex: 1 1 0;
+    width: auto;
+    min-width: 0;
+    max-width: none;
+    height: auto;
+    aspect-ratio: 1 / 1;
+  }
+
+  .pdp-related-title {
+    font-size: 1.25rem;
+  }
+}
+
 /* Responsivo para el selector */
 @media (max-width: 500px) {
 
   .pdp-container {
-    padding: 15px 12px;
+    box-sizing: border-box;
+    padding: 15px 16px;
     overflow:hidden;
+  }
+
+  .pdp-related-section {
+    padding-right: 16px;
+    padding-left: 16px;
   }
 
   .pdp-commercial-desc-card {
