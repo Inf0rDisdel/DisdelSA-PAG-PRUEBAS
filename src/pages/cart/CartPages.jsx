@@ -1,19 +1,33 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import useCartStore from 'store/useCartStore';
 import CartItem from './CarItem';
 import EmptyCartMessage from './EmptyCartMessage';
 import QuoteForm from './QuoteForm';
+import QuoteConfirmation from './QuoteConfirmation';
 import Swal from 'sweetalert2';
 import './CartPage.css';
 
 const CartPage = () => {
   const { cart, clearCart, _hasHydrated } = useCartStore();
+  const [quoteConfirmation, setQuoteConfirmation] = useState(null);
+
+  useEffect(() => {
+    if (!quoteConfirmation) return;
+
+    const prefersReducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+    window.scrollTo({ top: 0, behavior: prefersReducedMotion ? 'auto' : 'smooth' });
+  }, [quoteConfirmation]);
 
   if (!_hasHydrated) {
     return <div className="pdp-loading">Cargando tu lista...</div>;
   }
 
   const isEmpty = !cart || cart.length === 0;
+
+  const handleQuoteSuccess = (confirmation) => {
+    setQuoteConfirmation(confirmation);
+    clearCart();
+  };
 
   const handleClearAll = () => {
     Swal.fire({
@@ -49,7 +63,11 @@ const CartPage = () => {
   };
 
   return (
-    <div className="cart-page-container">
+    <div className={`cart-page-container${quoteConfirmation ? ' has-quote-confirmation' : ''}`}>
+      {quoteConfirmation ? (
+        <QuoteConfirmation confirmation={quoteConfirmation} />
+      ) : (
+        <>
       <div className="cart-header-flex">
         <h1 className="cart-page-title">
           {isEmpty ? 'Estado de la Solicitud' : 'Mi Lista de Cotización'}
@@ -91,10 +109,12 @@ const CartPage = () => {
 
           <div className="cart-form-column">
             <div className="sticky-form-wrapper">
-                <QuoteForm /> 
+                <QuoteForm onSuccess={handleQuoteSuccess} />
             </div>
           </div>
         </div>
+      )}
+        </>
       )}
     </div>
   );

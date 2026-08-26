@@ -1,0 +1,693 @@
+/* ==========================================================================
+   QUOTE CONFIRMATION COMPONENT (Disdel Style)
+   ========================================================================== */
+
+:root {
+  --qd-primary: #0d5ca4;
+  --qd-primary-dark: #084277;
+  --qd-primary-soft: #eaf2fb;
+  --qd-accent: #8fc718;
+  --qd-text-main: #1e293b;
+  --qd-text-muted: #64748b;
+  --qd-border-subtle: #edf2f7;
+  --qd-card-radius: 28px;
+  --qd-pill-radius: 9999px;
+  --qd-shadow-main: 0 12px 36px -4px rgba(13, 92, 164, 0.09), 0 4px 12px -2px rgba(0, 0, 0, 0.03);
+  --qd-shadow-service: 0 6px 18px -2px rgba(13, 92, 164, 0.06);
+}
+
+.quote-confirmation {
+  width: 100%;
+  max-width: 620px;
+  margin: 0 auto;
+  padding: 12px 0 32px;
+  color: var(--qd-text-main);
+  box-sizing: border-box;
+  animation: quote-confirmation-reveal 400ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* --- Brand Header / Logo --- */
+.quote-confirmation-brand {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 76px;
+  margin-bottom: 16px;
+}
+
+.quote-confirmation-logo {
+  width: min(250px, 68vw);
+  height: auto;
+  max-height: 80px;
+  object-fit: contain;
+}
+
+.quote-confirmation-logo-fallback {
+  color: var(--qd-accent);
+  font-size: 2.2rem;
+  font-weight: 900;
+  letter-spacing: -0.03em;
+}
+
+/* --- Tarjeta Principal --- */
+.quote-confirmation-card {
+  position: relative;
+  overflow: visible;
+  border-radius: var(--qd-card-radius);
+  background: #ffffff;
+  border: 1px solid var(--qd-border-subtle);
+  box-shadow: var(--qd-shadow-main);
+  margin-top: 28px;
+}
+
+/* Hero Header Azul */
+.quote-confirmation-hero {
+  position: relative;
+  background: var(--qd-primary);
+  padding: 62px 24px 30px;
+  border-radius: var(--qd-card-radius) var(--qd-card-radius) 0 0;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.quote-confirmation-emblem {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translate(-50%, -42%);
+  display: grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  margin: 0;
+  border: 3px solid #ffffff;
+  border-radius: 50%;
+  background: var(--qd-primary);
+  color: #ffffff;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12);
+  z-index: 1;
+}
+
+.quote-confirmation-emblem span {
+  font-size: 1.5rem;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.quote-confirmation-emblem-image {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.quote-confirmation-hero h1 {
+  margin: 0 0 10px;
+  color: var(--qd-accent);
+  font-size: clamp(1.6rem, 3.5vw, 2.1rem);
+  font-weight: 800;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+}
+
+.quote-confirmation-hero p {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  padding: 6px 22px 8px;
+  border-radius: var(--qd-pill-radius);
+  background: var(--qd-accent);
+  color: #ffffff;
+  font-size: 0.95rem;
+  font-weight: 800;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.12);
+}
+
+/* Cuerpo de la tarjeta */
+.quote-confirmation-body {
+  padding: 32px 36px 36px;
+}
+
+/* Info de cliente */
+.quote-confirmation-client {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.quote-confirmation-client > svg {
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  padding: 8px;
+  box-sizing: border-box;
+  border-radius: 50%;
+  background: var(--qd-primary-soft);
+  color: var(--qd-primary);
+}
+
+.quote-confirmation-client p {
+  display: inline-block;
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--qd-text-main);
+  line-height: 1.4;
+}
+
+.quote-confirmation-client h2 {
+  display: inline-block;
+  margin: 0 0 0 6px;
+  color: var(--qd-primary);
+  font-size: 1.05rem;
+  font-weight: 800;
+  line-height: 1.4;
+}
+
+.quote-confirmation-client span {
+  display: block;
+  margin-top: 6px;
+  color: var(--qd-text-muted);
+  font-size: 0.92rem;
+  line-height: 1.55;
+}
+
+/* Detalles (Documento & Fecha) */
+.quote-confirmation-details {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+  margin: 28px 0 0;
+  padding: 0;
+}
+
+.quote-confirmation-detail {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.quote-confirmation-detail > svg {
+  width: 28px;
+  height: 28px;
+  margin-bottom: 8px;
+  color: var(--qd-primary);
+}
+
+.quote-confirmation-detail dt {
+  margin-bottom: 10px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--qd-text-main);
+  line-height: 1.3;
+}
+
+.quote-confirmation-detail dd {
+  width: 100%;
+  min-height: 44px;
+  margin: 0;
+  padding: 8px 14px;
+  border: 2px solid var(--qd-primary);
+  border-radius: var(--qd-pill-radius);
+  background: #ffffff;
+  color: var(--qd-primary-dark);
+  font-size: 0.86rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  box-sizing: border-box;
+  overflow-wrap: anywhere;
+}
+
+/* --- Servicios Adicionales (Cards Inferiores) --- */
+.quote-confirmation-services {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  margin-top: 18px;
+}
+
+.quote-confirmation-services article {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-height: 84px;
+  padding: 14px 18px;
+  border: 1px solid var(--qd-border-subtle);
+  border-radius: 18px;
+  background: #ffffff;
+  box-shadow: var(--qd-shadow-service);
+  box-sizing: border-box;
+}
+
+.quote-confirmation-service-icon {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--qd-primary);
+  color: #ffffff;
+}
+
+.quote-confirmation-service-icon svg {
+  width: 20px;
+  height: 20px;
+}
+
+.quote-confirmation-services h3 {
+  margin: 0;
+  color: var(--qd-primary);
+  font-size: 0.9rem;
+  font-weight: 700;
+  line-height: 1.35;
+}
+
+.quote-confirmation-services p {
+  margin: 3px 0 0;
+  color: var(--qd-text-muted);
+  font-size: 0.8rem;
+  line-height: 1.4;
+}
+
+.quote-confirmation-services p svg {
+  margin-right: 3px;
+  color: var(--qd-primary);
+  vertical-align: -1px;
+}
+
+/* --- Nota de Correo --- */
+.quote-confirmation-email-note {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 18px auto 0;
+  padding: 12px 18px;
+  border: 1px solid #d4e5f7;
+  border-radius: 14px;
+  background: #f4f8fd;
+  color: #1e3a5a;
+  text-align: left;
+}
+
+.quote-confirmation-email-note svg {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  color: var(--qd-primary);
+}
+
+.quote-confirmation-email-note p {
+  margin: 0;
+  font-size: 0.88rem;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+
+.quote-confirmation-email-note strong {
+  color: var(--qd-primary-dark);
+  font-weight: 700;
+}
+
+/* --- Botón Volver al Catálogo --- */
+.quote-confirmation-home-link {
+  display: flex;
+  width: fit-content;
+  min-height: 44px;
+  align-items: center;
+  justify-content: center;
+  margin: 20px auto 0;
+  padding: 0 32px;
+  border-radius: var(--qd-pill-radius);
+  background: var(--qd-primary);
+  color: #ffffff;
+  font-size: 0.92rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  text-decoration: none;
+  box-shadow: 0 4px 14px rgba(13, 92, 164, 0.2);
+  transition: background-color 0.2s ease, transform 0.15s ease;
+}
+
+.quote-confirmation-home-link:hover {
+  background: var(--qd-primary-dark);
+  transform: translateY(-1px);
+}
+
+/* --- Animación --- */
+@keyframes quote-confirmation-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* --- Responsive (Mobile) --- */
+@media (max-width: 640px) {
+  /* Contenedor general: separación uniforme de los bordes de pantalla */
+  .quote-confirmation {
+    padding: 12px 14px 28px;
+    box-sizing: border-box;
+  }
+
+  /* Logo superior más compacto */
+  .quote-confirmation-brand {
+    min-height: 56px;
+    margin-bottom: 10px;
+  }
+
+  .quote-confirmation-logo {
+    max-height: 58px;
+    width: auto;
+  }
+
+  /* Tarjeta principal con curvas suaves */
+  .quote-confirmation-card {
+    border-radius: 22px;
+    box-shadow: 0 8px 24px -4px rgba(13, 92, 164, 0.08), 0 2px 8px rgba(0, 0, 0, 0.03);
+    border: 1px solid #edf2f7;
+  }
+
+  /* Hero / Cabecera azul */
+  .quote-confirmation-hero {
+    padding: 54px 16px 22px;
+  }
+
+  .quote-confirmation-emblem {
+    top: 0;
+    width: 44px;
+    height: 44px;
+    border-width: 2.5px;
+  }
+
+  .quote-confirmation-emblem span {
+    font-size: 1.3rem;
+  }
+
+  .quote-confirmation-hero h1 {
+    font-size: 1.45rem;
+    margin-bottom: 8px;
+  }
+
+  .quote-confirmation-hero p {
+    font-size: 0.85rem;
+    padding: 5px 18px 6px;
+    letter-spacing: 0;
+  }
+
+  /* Cuerpo de la tarjeta */
+  .quote-confirmation-body {
+    padding: 22px 16px 24px;
+  }
+
+  /* Saludo al cliente */
+  .quote-confirmation-client {
+    grid-template-columns: 38px 1fr;
+    gap: 12px;
+    align-items: center;
+  }
+
+  .quote-confirmation-client > svg {
+    width: 38px;
+    height: 38px;
+    padding: 7px;
+  }
+
+  .quote-confirmation-client p {
+    font-size: 0.88rem;
+    display: block;
+  }
+
+  .quote-confirmation-client h2 {
+    font-size: 0.98rem;
+    display: block;
+    margin: 2px 0 0;
+  }
+
+  .quote-confirmation-client span {
+    font-size: 0.82rem;
+    line-height: 1.45;
+    margin-top: 4px;
+  }
+
+  /* Detalles: No. Cotización y Fecha en 1 sola columna */
+  .quote-confirmation-details {
+    grid-template-columns: 1fr;
+    gap: 16px;
+    margin-top: 22px;
+  }
+
+  .quote-confirmation-detail > svg {
+    width: 22px;
+    height: 22px;
+    margin-bottom: 2px;
+  }
+
+  .quote-confirmation-detail dt {
+    font-size: 0.82rem;
+    margin-bottom: 6px;
+    color: #475569;
+  }
+
+  /* Píldoras con texto adaptable (evita que se corte la fecha) */
+  .quote-confirmation-detail dd {
+    min-height: 42px;
+    padding: 8px 16px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    line-height: 1.35;
+    border-width: 1.5px;
+    border-radius: 999px;
+  }
+
+  /* Tarjetas inferiores de Entrega y Tienda */
+  .quote-confirmation-services {
+    grid-template-columns: 1fr;
+    gap: 10px;
+    margin-top: 14px;
+  }
+
+  .quote-confirmation-services article {
+    min-height: auto;
+    padding: 12px 14px;
+    border-radius: 16px;
+    gap: 12px;
+    box-shadow: 0 4px 14px rgba(13, 92, 164, 0.04);
+  }
+
+  .quote-confirmation-service-icon {
+    width: 38px;
+    height: 38px;
+  }
+
+  .quote-confirmation-service-icon svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .quote-confirmation-services h3 {
+    font-size: 0.86rem;
+  }
+
+  .quote-confirmation-services p {
+    font-size: 0.78rem;
+    margin-top: 2px;
+  }
+
+  /* Nota de correo */
+  .quote-confirmation-email-note {
+    margin-top: 14px;
+    padding: 12px 14px;
+    border-radius: 14px;
+    gap: 10px;
+    align-items: flex-start;
+  }
+
+  .quote-confirmation-email-note svg {
+    width: 18px;
+    height: 18px;
+    margin-top: 2px;
+  }
+
+  .quote-confirmation-email-note p {
+    font-size: 0.8rem;
+    line-height: 1.4;
+  }
+
+  /* Botón Volver al Catálogo (Touch Friendly) */
+  .quote-confirmation-home-link {
+    width: 100%;
+    min-height: 48px;
+    margin-top: 16px;
+    border-radius: 14px;
+    font-size: 0.92rem;
+    box-shadow: 0 4px 14px rgba(13, 92, 164, 0.25);
+  }
+
+  .quote-confirmation-home-link:active {
+    transform: scale(0.98);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .quote-confirmation {
+    animation: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .quote-confirmation {
+    padding-bottom: 8px;
+  }
+
+  .quote-confirmation-brand {
+    min-height: 72px;
+    margin-bottom: 26px;
+  }
+
+  .quote-confirmation-logo {
+    width: min(210px, 68vw);
+    max-height: 72px;
+  }
+
+  .quote-confirmation-card {
+    border-radius: 20px;
+  }
+
+  .quote-confirmation-hero {
+    padding: 62px 16px 28px;
+    border-radius: 20px 20px 0 0;
+  }
+
+  .quote-confirmation-emblem {
+    top: 0;
+    width: 58px;
+    height: 58px;
+    border-width: 3px;
+  }
+
+  .quote-confirmation-hero h1 {
+    font-size: clamp(1.75rem, 8.5vw, 2.05rem);
+    line-height: 1.1;
+  }
+
+  .quote-confirmation-hero p {
+    margin-top: 13px;
+    padding: 7px 15px 8px;
+    font-size: 1.14rem;
+  }
+
+  .quote-confirmation-body {
+    padding: 26px 14px 24px;
+  }
+
+  .quote-confirmation-client {
+    grid-template-columns: 42px 1fr;
+    gap: 10px;
+  }
+
+  .quote-confirmation-client > svg {
+    width: 38px;
+    height: 38px;
+    padding: 5px;
+  }
+
+  .quote-confirmation-client p,
+  .quote-confirmation-client h2 {
+    font-size: 0.96rem;
+  }
+
+  .quote-confirmation-client span {
+    margin-top: 7px;
+    font-size: 0.87rem;
+    line-height: 1.52;
+  }
+
+  .quote-confirmation-details {
+    gap: 20px;
+    margin-top: 26px;
+  }
+
+  .quote-confirmation-detail > svg {
+    width: 28px;
+    height: 28px;
+    margin-bottom: 6px;
+  }
+
+  .quote-confirmation-detail dt {
+    margin-bottom: 7px;
+    font-size: 0.86rem;
+  }
+
+  .quote-confirmation-detail dd {
+    min-height: 46px;
+    padding: 11px 13px;
+    font-size: 0.9rem;
+  }
+
+  .quote-confirmation-services {
+    gap: 10px;
+    margin-top: 14px;
+  }
+
+  .quote-confirmation-services article {
+    grid-template-columns: 42px 1fr;
+    gap: 10px;
+    min-height: 82px;
+    padding: 13px 14px;
+    border-radius: 14px;
+  }
+
+  .quote-confirmation-service-icon {
+    width: 40px;
+    height: 40px;
+  }
+
+  .quote-confirmation-service-icon svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  .quote-confirmation-services h3 {
+    font-size: 0.9rem;
+  }
+
+  .quote-confirmation-services p {
+    font-size: 0.8rem;
+    line-height: 1.42;
+  }
+
+  .quote-confirmation-email-note {
+    gap: 9px;
+    margin-top: 14px;
+    padding: 12px 13px;
+    border-radius: 12px;
+  }
+
+  .quote-confirmation-email-note p {
+    font-size: 0.85rem;
+    line-height: 1.42;
+  }
+
+  .quote-confirmation-home-link {
+    width: min(220px, 100%);
+    min-height: 42px;
+    margin-top: 16px;
+    padding: 0 18px;
+    font-size: 0.9rem;
+    box-sizing: border-box;
+  }
+}

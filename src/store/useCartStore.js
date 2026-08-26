@@ -4,6 +4,55 @@ import { toast } from 'react-hot-toast';
 import { solicitarCotizador } from '../api/VentasApi'; // Revisa que la ruta sea correcta
 import { VentasModels } from '../api/ventasModels'; 
 
+const getResponseValue = (response, keys) => {
+  const candidates = [
+    response,
+    response?.Data,
+    response?.data,
+    response?.Resultado,
+    response?.Resultado?.Data,
+    response?.Resultado?.data
+  ].filter((candidate) => candidate && typeof candidate === 'object');
+
+  for (const candidate of candidates) {
+    for (const key of keys) {
+      const value = candidate[key];
+      if (value !== undefined && value !== null && String(value).trim() !== '') {
+        return value;
+      }
+    }
+  }
+
+  return '';
+};
+
+const getQuoteConfirmation = (response) => ({
+  documentNumber: getResponseValue(response, [
+    'DocEntry',
+    'docEntry',
+    'EntityID',
+    'EntityId',
+    'entityID',
+    'entityId',
+    'Documento',
+    'NumeroDocumento',
+    'NoDocumento',
+    'DocNum',
+    'IdDocumento',
+    'NumeroCotizacion',
+    'NoCotizacion'
+  ]),
+  createdAt: getResponseValue(response, [
+    'FechaCreacion',
+    'FechaHoraCreacion',
+    'FechaHora',
+    'FechaDocumento',
+    'FechaHoraDocumento',
+    'CreationDate',
+    'Fecha'
+  ])
+});
+
 const useCartStore = create(
   persist(
     (set, get) => ({
@@ -76,8 +125,11 @@ const useCartStore = create(
           const res = await solicitarCotizador(dataParaEnviar);
           
           if (res && res.Resultado) {
-            get().clearCart();
-            return { success: true, message: res.Mensaje };
+            return {
+              success: true,
+              message: res.Mensaje,
+              confirmation: getQuoteConfirmation(res)
+            };
           }
           return { success: false, message: res?.Mensaje || "Error en el servidor de correos" };
         } catch (error) {

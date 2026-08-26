@@ -143,6 +143,7 @@ const AppRouter = () => {
         <Route path="/hojas" element={<Navigate to="/categoria/papeleria/productos-de-papel/hojas" replace />} />
         <Route path="/trajes-de-proteccion" element={<Navigate to="/categoria/epp/proteccion-corporal/trajes-de-proteccion" replace />} />
         <Route path="/lgrepsa.com/acercade.html" element={<Navigate to="/quienes-somos" replace />} />
+        <Route path="/lgrepsa.com/producto/:id" element={<LgrepsaProductLegacyRedirect />} />
         <Route path="/disdel3m.com/PoliticasPrivacidad" element={<Navigate to="/politicas-de-privacidad" replace />} />
 
         {/* 3. REDIRECCIONES DE CATEGORÍAS (SEO) */}
@@ -174,6 +175,7 @@ const AppRouter = () => {
         <Route path="/subcategoria/mopas-y-accesorios" element={<Navigate to="/categoria/herramientas-para-limpieza/mopa-y-mecha" replace />} />
         <Route path="/subcategoria/detergente-para-ropa" element={<Navigate to="/categoria/quimicos-para-limpieza" replace />} />
         <Route path="/subcategoria/plataformas-y-accesorios" element={<Navigate to="/categoria/papeleria" replace />} />
+        <Route path="/subcategoria/vasos-y-accesorios" element={<Navigate to="/categoria/cafeteria/desechables-biodegradables/vasos-y-accesorios" replace />} />
         
         {/* Rescate genérico para cualquier otra subcategoría vieja */}
         <Route path="/subcategoria/:slug" element={<LegacyRedirect />} />
@@ -204,6 +206,12 @@ const LegacyRedirect = () => {
 const LgrepsaLegacyRedirect = () => {
   const { slug } = useParams();
   return <Navigate to={`/buscar?q=${slug ? slug.replace(/-/g, ' ') : ''}`} replace />;
+};
+
+const LgrepsaProductLegacyRedirect = () => {
+  const { id } = useParams();
+  const canonicalId = id === '1474-1' ? '1474.1' : id;
+  return <Navigate to={`/producto/${canonicalId || ''}`} replace />;
 };
 
 const KcpLegacyRedirect = () => {

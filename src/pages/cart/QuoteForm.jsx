@@ -16,21 +16,23 @@ const Toast = Swal.mixin({
   }
 });
 
-const QuoteForm = () => {
+const EMPTY_FORM_DATA = {
+  company: '',
+  name: '',
+  lastname: '',
+  phone: '',
+  email: '',
+  address: '',
+  nit: ''
+};
+
+const QuoteForm = ({ onSuccess }) => {
   const [loading, setLoading] = useState(false);
   
   // 2. Consumimos Zustand
   const { cart, sendQuote } = useCartStore();
 
-  const [formData, setFormData] = useState({
-    company: '',
-    name: '',
-    lastname: '',
-    phone: '',
-    email: '',
-    address: '',
-    nit: ''
-  });
+  const [formData, setFormData] = useState(EMPTY_FORM_DATA);
 
   const handleChange = (e) => {
     const { id, value } = e.target;
@@ -57,16 +59,16 @@ const QuoteForm = () => {
       const resultado = await sendQuote(formData);
 
       if (resultado.success) {
-        Toast.fire({
-          icon: 'success',
-          title: resultado.message || 'Cotización enviada correctamente',
-          background: '#f0fdf4',
-          iconColor: '#22c55e'
+        const submittedData = { ...formData };
+        setFormData(EMPTY_FORM_DATA);
+        setLoading(false);
+        onSuccess?.({
+          ...resultado.confirmation,
+          customerName: `${submittedData.name} ${submittedData.lastname}`.trim(),
+          email: submittedData.email.trim(),
+          message: resultado.message
         });
-        
-        // Limpiamos el formulario tras el éxito
-        setFormData({ company: '', name: '', lastname: '', phone: '', email: '', address: '', nit: '' });
-
+        return;
       } else {
         Toast.fire({
           icon: 'error',
@@ -86,9 +88,9 @@ const QuoteForm = () => {
         background: '#fef2f2',
         iconColor: '#ef4444'
       });
-    } finally {
-      setLoading(false);
     }
+
+    setLoading(false);
   };
 
   return (

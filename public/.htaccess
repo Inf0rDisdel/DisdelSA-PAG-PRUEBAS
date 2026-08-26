@@ -31,6 +31,9 @@
   RewriteRule ^hojas/?$ /categoria/papeleria/productos-de-papel/hojas [L,R=301,NC,NE]
   RewriteRule ^trajes-de-proteccion/?$ /categoria/epp/proteccion-corporal/trajes-de-proteccion [L,R=301,NC,NE]
   RewriteRule ^lgrepsa\.com/acercade\.html/?$ /quienes-somos [L,R=301,NC]
+  RewriteRule ^lgrepsa\.com/producto/1474-1/?$ /producto/1474.1/bandeja-duroport-liso-rectangular-tamalera [L,R=301,NC,NE]
+  RewriteRule ^lgrepsa\.com/producto/([^/]+)/?$ /product-redirect.php?id=$1 [L,QSA,NC,NE]
+  RewriteRule ^subcategoria/vasos-y-accesorios/?$ /categoria/cafeteria/desechables-biodegradables/vasos-y-accesorios [L,R=301,NC,NE]
   RewriteRule ^disdel3m\.com/politicasprivacidad/?$ /politicas-de-privacidad [L,R=301,NC,NE]
 
   # URLs retiradas sin equivalente. Un 410 evita que Google siga intentando

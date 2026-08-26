@@ -238,4 +238,8 @@
   .cart-items-scroll-container {
     gap: 6px;
   }
+
+  .cart-page-container.has-quote-confirmation {
+    padding-bottom: 18px;
+  }
 }

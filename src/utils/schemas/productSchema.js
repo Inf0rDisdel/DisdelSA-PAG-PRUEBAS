@@ -2,11 +2,42 @@ import { AppConfig } from "config/AppConfig";
 import { createSlug } from "../slugify";
 import { getBreadcrumbs } from "./breadcrumbSchema";
 
+const getCleanText = (...values) => {
+  const value = values.find((item) => String(item || "").trim());
+  return value ? String(value).replace(/\s+/g, " ").trim() : "";
+};
+
+const getValidGtin = (value) => {
+  const gtin = String(value || "").trim();
+
+  if (!/^\d+$/.test(gtin) || ![8, 12, 13, 14].includes(gtin.length) || /^0+$/.test(gtin)) {
+    return null;
+  }
+
+  const digits = gtin.split("").map(Number);
+  const expectedCheckDigit = digits.pop();
+  const sum = digits
+    .reverse()
+    .reduce((total, digit, index) => total + digit * (index % 2 === 0 ? 3 : 1), 0);
+  const calculatedCheckDigit = (10 - (sum % 10)) % 10;
+
+  return calculatedCheckDigit === expectedCheckDigit ? gtin : null;
+};
+
 export const getProductSchema = (product = {}, currentUrl = "", productImages = [], legacySeo = {}, defaultImage = "") => {
   const brandName = product.Marca || "Disdel";
 
- const finalTitle = legacySeo?.t || product?.Descripcion || "Producto Disdel";
-  const finalDesc = legacySeo?.d || product?.DescripcionAux || product?.Descripcion || "Suministros de limpieza profesional en Guatemala.";
+  const finalTitle = getCleanText(
+    legacySeo?.t,
+    product?.Descripcion,
+    "Producto Disdel"
+  );
+  const finalDesc = getCleanText(
+    legacySeo?.d,
+    product?.DescripcionAux,
+    product?.Descripcion,
+    "Suministros de limpieza profesional en Guatemala."
+  );
   const semanticKeywords = [
     product.Descripcion,
     product.Categoria,
@@ -49,9 +80,16 @@ export const getProductSchema = (product = {}, currentUrl = "", productImages = 
     finalImages = [fallbackUrl];
   }
 
-  // 🚀 SANEAMIENTO DE CÓDIGOS DE BARRA (GTIN / UPC): Si es "0", vacío o "N/A", se omiten para evitar advertencias de formato incorrecto
-  const cleanGtin = product.CodigoBarras && product.CodigoBarras.trim() !== "" && product.CodigoBarras.trim() !== "0" && product.CodigoBarras.trim().toLowerCase() !== "n/a" ? product.CodigoBarras.trim() : undefined;
-  const cleanUpc = product.UPC && product.UPC.trim() !== "" && product.UPC.trim() !== "0" && product.UPC.trim().toLowerCase() !== "n/a" ? product.UPC.trim() : undefined;
+  // Publica únicamente GTIN numéricos con longitud y dígito verificador válidos.
+  // Los códigos internos permanecen representados por sku/mpn y no se confunden con GTIN.
+  const gtinProperties = [product.CodigoBarras, product.UPC].reduce((properties, value) => {
+    const gtin = getValidGtin(value);
+    if (!gtin) return properties;
+
+    const property = `gtin${gtin.length}`;
+    if (!properties[property]) properties[property] = gtin;
+    return properties;
+  }, {});
 
   const toPositiveNumber = (value) => {
     if (value === null || value === undefined || String(value).trim() === "") return null;
@@ -163,8 +201,7 @@ export const getProductSchema = (product = {}, currentUrl = "", productImages = 
         ],
 
         "keywords": semanticKeywords,
-        "gtin13": cleanGtin,
-        "gtin": cleanUpc,
+        ...gtinProperties,
         "brand":{
           "@type":"Brand",
           "@id":`https://disdelsa.com/marca/${createSlug(brandName)}#brand`,
@@ -176,37 +213,8 @@ export const getProductSchema = (product = {}, currentUrl = "", productImages = 
         "width": product.Ancho && product.Ancho !== "0" ? { "@type": "QuantitativeValue", "value": product.Ancho, "unitCode": "CMT" } : undefined,
         "depth": product.Longitud && product.Longitud !== "0" ? { "@type": "QuantitativeValue", "value": product.Longitud, "unitCode": "CMT" } : undefined,
 
-        //Si tiene precio valido (mayor a cero) intectamos "offers" con el precio limpio (finalPrice)
-        // "offers": {
-        //   "@type": "Offer",
-        //   "url": currentUrl,
-        //   "priceCurrency": "GTQ",
-        //   "price": finalPrice,
-        //   "availability": (product?.Stock > 0 || product?.Stock === undefined) ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
-        //   "itemCondition": "https://schema.org/NewCondition",
-        //   "seller": {
-        //     "@type": "Organization",
-        //     "@id": "https://disdelsa.com/#organization",
-        //     "name": "Disdel, S.A."
-        //   },
-        //   "shippingDetails": {
-        //     "@type": "OfferShippingDetails",
-        //     "@id": `${currentUrl}#shipping`,
-        //     "shippingDestination": {
-        //       "@type": "DefinedRegion",
-        //       "addressCountry": "GT"
-        //     }
-        //   },
-        //   "hasMerchantReturnPolicy": {
-        //     "@type": "MerchantReturnPolicy",
-        //     "@id": `${currentUrl}#return-policy`,
-        //     "applicableCountry": "GT",
-        //     "returnPolicyCategory": "https://schema.org/MerchantReturnFiniteReturnPeriod",
-        //     "merchantReturnDays": "30",
-        //     "returnMethod": "https://schema.org/ReturnByMail",
-        //     "returnFees": "https://schema.org/FreeReturn"
-        //   }
-        // },
+        // Este catálogo B2B solicita cotizaciones. No se publica Offer hasta que
+        // exista un precio de compra visible y políticas comerciales verificadas.
 
         "isPartOf": {
           "@id": "https://disdelsa.com/#website"
