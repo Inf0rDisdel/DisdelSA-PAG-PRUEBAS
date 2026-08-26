@@ -22,6 +22,9 @@ const config = {
   timeout: 15000,
 };
 
+const MAX_API_ATTEMPTS = 3;
+const RETRY_BASE_DELAY_MS = 1200;
+
 // ---------------- 2. REGLAS B2B Y SECCIONES DESTACADAS ----------------
 const MARCAS_TOP = [
   "KIMBERLY CLARK",
@@ -84,6 +87,39 @@ const hasValidImage = (image) => {
   );
 };
 
+const wait = (milliseconds) =>
+  new Promise((resolve) => setTimeout(resolve, milliseconds));
+
+const shouldRetryRequest = (error) => {
+  const status = error.response?.status;
+  return !status || status === 429 || status >= 500;
+};
+
+const postWithRetry = async (endpoint, label) => {
+  let lastError;
+
+  for (let attempt = 1; attempt <= MAX_API_ATTEMPTS; attempt += 1) {
+    try {
+      return await axios.post(endpoint, payload, config);
+    } catch (error) {
+      lastError = error;
+
+      if (!shouldRetryRequest(error) || attempt === MAX_API_ATTEMPTS) {
+        throw error;
+      }
+
+      const delay = RETRY_BASE_DELAY_MS * attempt;
+      const status = error.response?.status || "sin respuesta";
+      console.warn(
+        `⚠️ ${label} respondió ${status}. Reintento ${attempt + 1}/${MAX_API_ATTEMPTS} en ${delay} ms...`
+      );
+      await wait(delay);
+    }
+  }
+
+  throw lastError;
+};
+
 // ---------------- 4. GENERADOR PRINCIPAL ----------------
 async function generateSitemap() {
   const today = new Date().toISOString().split("T")[0];
@@ -106,8 +142,8 @@ async function generateSitemap() {
 
   try {
     const [menuResponse, productsResponse] = await Promise.all([
-      axios.post(API_MENU, payload, config),
-      axios.post(API_PRODUCTOS, payload, config),
+      postWithRetry(API_MENU, "API de menú"),
+      postWithRetry(API_PRODUCTOS, "API de productos"),
     ]);
 
     // --- PROCESAMIENTO DE MENÚ (CATEGORÍAS Y MARCAS) ---
@@ -209,6 +245,21 @@ ${urls
     console.log(`📄 Total URLs procesadas: ${urls.length}`);
   } catch (err) {
     console.error("❌ Error al generar el sitemap:", err.message);
+
+    const hasExistingSitemap =
+      fs.existsSync(OUTPUT_FILE) && fs.statSync(OUTPUT_FILE).size > 0;
+
+    if (hasExistingSitemap) {
+      console.warn(
+        "⚠️ La API no estuvo disponible. Se conservará el sitemap existente para completar la compilación."
+      );
+      return;
+    }
+
+    console.error(
+      "❌ No existe un sitemap válido de respaldo. Se cancela la compilación para evitar una publicación SEO incompleta."
+    );
+    process.exitCode = 1;
   }
 }
 

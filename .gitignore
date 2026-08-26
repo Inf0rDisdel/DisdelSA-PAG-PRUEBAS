@@ -28,3 +28,5 @@ yarn-error.log*
 # 🍏 MISC
 .DS_Store
 Thumbs.db
+
+.pnpm-store/
