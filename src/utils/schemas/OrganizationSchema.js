@@ -16,9 +16,13 @@ export const getOrganizationSchema = (companyInfo = {}) => {
     info.HoraCierre ||
     "17:00";
 
-  const alternate = (info.nombreAlternativo || info.NombreAlternativo) 
-    ? [info.nombreAlternativo || info.NombreAlternativo] 
-    : ["Disdel", "Disdelsa", "Disdel Guatemala"];
+  const alternate = Array.from(new Set([
+    "Disdel",
+    "Disdelsa",
+    "Disdel Guatemala",
+    info.nombreAlternativo,
+    info.NombreAlternativo
+  ].filter(Boolean)));
   
   const description = 
     info.metaDescription || 
@@ -33,7 +37,7 @@ export const getOrganizationSchema = (companyInfo = {}) => {
     
   const email = info.correo || info.Correo || "info@disdelsa.com";
   const address = info.direccion || info.Direccion || "15 Calle 16-30 Zona 1";
-  const url = info.url || info.URL || "https://disdelsa.com/";
+  const url = "https://disdelsa.com/";
   const locality = info.ciudad || info.Ciudad || "Ciudad de Guatemala";
   const postalCode = info.codigoPostal || info.CodigoPostal || "01001";
   const country = info.pais || info.Pais || "GT";

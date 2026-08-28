@@ -14,6 +14,7 @@ export const VentasModels = {
         NombreCliente: formData.company || `${formData.name} ${formData.lastname}`,
         CardCode: " ", 
         Empresa: "Disdel, S.A.",
+        Telefono: String(formData.phone || '').trim(),
         Comentario: `Tel: ${formData.phone}. Email: ${formData.email}. Obs: ${formData.address}`,
         Correo: formData.email,
         TipoCliente: "1",

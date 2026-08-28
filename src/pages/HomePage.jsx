@@ -230,7 +230,7 @@ const HomePage = () => {
 
         <meta property="og:image:width" content="1200"/>
         <meta property="og:image:height" content="630" />
-        <meta property="og:site_name" content="Disdel, S.A." />
+        <meta property="og:site_name" content="Disdel" />
 
         {/* --- TWITTER CARD --- */}
         <meta name="twitter:card" content="summary_large_image" />
@@ -266,7 +266,7 @@ const HomePage = () => {
     {/* 3. BLOQUE DE CAROUSELES (Como usan el mismo componente ProductCarousel, se envuelven juntos) */}
     <Suspense fallback={<div className="home-carousel-reservation home-carousel-reservation--double" aria-hidden="true" />}>
       {(productsPending || carruseles.cotizados.length > 0) && (
-        <div className="carousel-wrapper">
+        <div className="carousel-wrapper" data-nosnippet>
           <ProductCarousel
             title="Los más Cotizados"
             products={carruseles.cotizados}
@@ -278,7 +278,7 @@ const HomePage = () => {
       )}
 
       {(productsPending || carruseles.higiene.length > 0) && (
-        <div className="carousel-wrapper">
+        <div className="carousel-wrapper" data-nosnippet>
           <ProductCarousel
             title="Soluciones integrales de higiene"
             products={carruseles.higiene}
@@ -298,7 +298,7 @@ const HomePage = () => {
     {/* 4. ÚLTIMO BLOQUE DE LA PÁGINA (Componentes del pie de página) */}
     <Suspense fallback={<div className="home-carousel-reservation" aria-hidden="true" />}>
       {(productsPending || carruseles.coffee.length > 0) && (
-        <div className="carousel-wrapper">
+        <div className="carousel-wrapper" data-nosnippet>
           <ProductCarousel
             title="Insumos de Cafetería"
             products={carruseles.coffee}

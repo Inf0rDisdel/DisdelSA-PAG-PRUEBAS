@@ -2,10 +2,15 @@ export const getWebsiteSchema = (companyInfo = {}) => {
 
    const info = companyInfo || {};
 
-   const metaTitle =
-      info.metaTitle ||
-      info.MetaTitle ||
-      "Disdel Guatemala";
+   const siteName = "Disdel";
+
+   const alternateNames = Array.from(new Set([
+      "Disdelsa",
+      "Disdel Guatemala",
+      "Disdel, S.A.",
+      info.nombreAlternativo,
+      info.NombreAlternativo
+   ].filter(Boolean)));
 
    const metaDescription =
     info.metaDescription ||
@@ -22,7 +27,7 @@ export const getWebsiteSchema = (companyInfo = {}) => {
 
       "url":"https://disdelsa.com/",
 
-      "name":metaTitle,
+      "name":siteName,
 
       "description":metaDescription,
 
@@ -89,11 +94,7 @@ export const getWebsiteSchema = (companyInfo = {}) => {
 
         "copyrightYear":"2026",
 
-        "alternateName":[
-            "Disdel",
-            "Disdelsa",
-            "Disdel Guatemala"
-         ],
+        "alternateName":alternateNames,
 
    };
 
