@@ -6,7 +6,8 @@
 }
 
 .brand-hero {
-  width: 100%; max-width: var(--site-max-width) !important;  margin: 20px auto; width: 95%; height: 250px;
+  width: 100%; max-width: var(--site-max-width) !important; margin: 20px auto; height: 250px;
+  box-sizing: border-box;
   border-radius: 16px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.08);
   transition: height 0.3s ease;
 }
@@ -91,6 +92,7 @@
 .brand-layout {
   width: 100%; max-width: var(--site-max-width) !important;  margin: 0 auto; padding: 0 20px;
   display: grid; grid-template-columns: 300px 1fr; gap: 30px;
+  box-sizing: border-box;
 }
 
 /* Navegación de tercer nivel: marca / categoría / subcategoría */

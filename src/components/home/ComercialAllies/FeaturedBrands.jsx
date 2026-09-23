@@ -25,7 +25,20 @@ const FeaturedBrands = ({ isLoading: isLoadingProp }) => {
     );
   }
 
-  if (isError || !banners?.aliados?.length) return null;
+  // Si el servicio falla o responde vacío, no colapsamos de golpe la sección:
+  // conservar la misma reserva evita empujar todo el contenido inferior.
+  if (isError || !banners?.aliados?.length) {
+    return (
+      <section className="featured-brands-section" aria-hidden="true">
+        <div className="section-title-skeleton is-static"></div>
+        <div className="brands-container-skeleton">
+          {[1, 2, 3, 4].map((i) => (
+            <div key={i} className="brand-item-skeleton is-static"></div>
+          ))}
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section className="featured-brands-section" aria-label="Nuestras Marcas Aliadas">

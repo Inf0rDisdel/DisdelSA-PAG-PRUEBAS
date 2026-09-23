@@ -8,6 +8,7 @@ import { AppConfig } from 'config/AppConfig';
 import { useBanners } from 'hooks/useBanners';
 import useCartStore from 'store/useCartStore';
 import { useProductDetail } from 'hooks/useProductDetail';
+import { useResenasProducto } from 'hooks/useResenasProducto';
 import { generateProductInsight, generateProductSeoDescription } from 'utils/SEO/productDescriptions';
 
 import { FiCheckCircle, FiChevronRight, FiPackage, FiTarget, FiTruck, FiAward, FiShoppingCart, FiSend, FiShield, FiHeadphones, FiMinus, FiPlus } from 'react-icons/fi';
@@ -16,6 +17,7 @@ import { createSlug } from 'utils/slugify';
 import { getProductSchema } from 'utils/schemas/productSchema';
 import { optimizedSeoData } from 'utils/SEO/optimizedSeo';
 import RelatedProducts from 'components/products/RelatedProducts';
+import ResenasProducto from 'components/Resenas/ResenasProducto';
 
 const isValidImage = (imgName) => {
   if (!imgName) return false;
@@ -32,6 +34,13 @@ const ProductDetailPage = () => {
   const rawIdFromUrl = id ? String(id).trim() : "";
   const cleanIdFromUrl = rawIdFromUrl.toLowerCase();
   const { data: product, isLoading, isError} = useProductDetail(cleanIdFromUrl);
+  const {
+    resenas,
+    resumen,
+    estaCargando: estaCargandoResenas,
+    estaEnviando: estaEnviandoResena,
+    enviarResena
+  } = useResenasProducto(product?.IdProducto);
   
   const canonicalId = useMemo(() => {
     if (!product) return cleanIdFromUrl;
@@ -598,6 +607,15 @@ const ProductDetailPage = () => {
           </div>
         </div>
       </section>
+
+      <ResenasProducto
+        idProducto={product.IdProducto}
+        resenas={resenas}
+        resumen={resumen}
+        estaCargando={estaCargandoResenas}
+        estaEnviando={estaEnviandoResena}
+        onEnviarResena={enviarResena}
+      />
 
       {product && (
         <aside aria-label='Productos relacionados'>

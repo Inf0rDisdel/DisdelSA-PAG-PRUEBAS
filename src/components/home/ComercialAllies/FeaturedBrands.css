@@ -178,6 +178,11 @@
   flex: 1; height: 300px; background: #f9f9f9; border-radius: 35px;
 }
 
+.section-title-skeleton.is-static,
+.brand-item-skeleton.is-static {
+  animation: none;
+}
+
 /* Tablet (Solo afecta a brand-item dentro de esta sección) */
 @media (min-width: 481px) and (max-width: 1024px) {
   .featured-brands-section {

@@ -13,6 +13,10 @@ import HeroSlider from 'components/home/HeroSlider/HeroSlider';
 import BannerSlider from 'components/home/HeroSlider/BannerSlider';
 import CategoryGrid from 'components/home/FeaturedCategories/CategoryGrid';
 import FeaturedBrands from 'components/home/ComercialAllies/FeaturedBrands';
+import PromoNescafe from 'components/home/PromoNescafe/PromoNescafe';
+import PromoLayout from 'components/home/PromoLayout/PromoLayout';
+import NewsletterSignup from 'components/home/InfoSection/NewsLetterSignup';
+import InfoSection from 'components/home/InfoSection/InfoSection';
 import { getDisdelImageUrl } from 'utils/imageUrl';
 
 const HOME_FALLBACK_TITLE =
@@ -20,15 +24,8 @@ const HOME_FALLBACK_TITLE =
 const HOME_FALLBACK_DESCRIPTION =
   'Suministros, Productos y articulos de Limpieza en General, Elaboracion y Entrega de Kits, Gestor de Compras online, Productos sobre demanda, lo que no tenemos lo conseguimos o lo hacemos';
 
-// El contenido visible al abrir el home forma parte del paquete crítico.
-// Así evitamos que categorías, marcas y banner aparezcan tarde y provoquen CLS.
-const PromoNescafe = lazy(() => import('components/home/PromoNescafe/PromoNescafe'));
-
 //CARGA PEREZOSA : Componentes pesados que están más abajo
 const ProductCarousel = lazy(() => import('components/Carousel/ProductCarousel'));
-const PromoLayout = lazy(() => import('components/home/PromoLayout/PromoLayout'));
-const InfoSection = lazy(() => import('components/home/InfoSection/InfoSection'));
-const NewsletterSignup = lazy(() => import('components/home/InfoSection/NewsLetterSignup'));
 
 const HomePage = () => {
   const [loadProducts, setLoadProducts] = useState(false);
@@ -291,9 +288,7 @@ const HomePage = () => {
       )}
     </Suspense>
 
-    <Suspense fallback={null}>
-      <PromoNescafe />
-    </Suspense>
+    <PromoNescafe />
 
     {/* 4. ÚLTIMO BLOQUE DE LA PÁGINA (Componentes del pie de página) */}
     <Suspense fallback={<div className="home-carousel-reservation" aria-hidden="true" />}>
@@ -311,11 +306,9 @@ const HomePage = () => {
       )}
     </Suspense>
 
-    <Suspense fallback={null}>
-      <PromoLayout />
-      <NewsletterSignup />
-      <InfoSection />
-    </Suspense>
+    <PromoLayout />
+    <NewsletterSignup />
+    <InfoSection />
     </main>
   );
 };

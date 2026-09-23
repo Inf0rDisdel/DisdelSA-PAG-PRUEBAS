@@ -8,6 +8,7 @@
   width: 100%;
   max-width: var(--site-max-width) !important; 
   margin: 0 auto;
+  box-sizing: border-box;
 }
 
 .info-item {

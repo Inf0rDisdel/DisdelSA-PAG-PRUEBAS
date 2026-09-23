@@ -417,7 +417,9 @@
 @media (max-width: 480px) {
 
   .mobile-hero-skeleton {
-    min-height: 342px;
+    /* 210 px del carrusel + 110 px del banner + 12 px de separación
+       + 20 px de padding: coincide con el contenido final. */
+    min-height: 352px;
     padding: 10px;
   }
 

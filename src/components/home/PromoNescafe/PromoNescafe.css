@@ -1,7 +1,17 @@
 .promo-nescafe-wrapper {
   padding: 20px 0;
-  margin-top: 20px 0;
+  margin: 20px 0 0;
   contain: content; 
+}
+
+.promo-nescafe-title-skeleton {
+  width: min(620px, calc(100% - 40px));
+  height: 28px;
+  margin: 0 auto 25px;
+  border-radius: 8px;
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
 }
 
 .promo-nescafe-title {
@@ -29,13 +39,18 @@
 }
 
 .promo-nescafe-container-skeleton {
-  max-width: 1300px;
+  width: min(var(--site-max-width), calc(100% - 40px));
   height: 420px;
   margin: 0 auto;
   background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
   background-size: 200% 100%;
   animation: shimmer 1.5s infinite;
   border-radius: 12px;
+}
+
+.skeleton-wrapper.is-static .promo-nescafe-title-skeleton,
+.skeleton-wrapper.is-static .promo-nescafe-container-skeleton {
+  animation: none;
 }
 
 @keyframes shimmer {
@@ -117,6 +132,10 @@
   /* 2. EL TÍTULO: Lo hacemos lucir como los otros títulos pill-shape */
   .promo-nescafe-title {
     display: none !important;
+  }
+
+  .promo-nescafe-title-skeleton {
+    display: none;
   }
   
   /* 3. EL BANNER PRINCIPAL (LA IMAGEN) */

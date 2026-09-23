@@ -30,6 +30,10 @@
   margin-top: 16px;
 }
 
+.cgs-skeleton-grid.is-static .skeleton-base {
+  animation: none;
+}
+
 .cgs-title {
   position: relative;
   display: inline-flex;

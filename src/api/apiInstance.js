@@ -41,3 +41,8 @@ const createInstance = (baseURL) => {
 export const apiVentas = createInstance(AppConfig.baseUrlVentas);
 export const apiSuscripcion = createInstance(AppConfig.baseUrlSuscripcion);
 export const ApiMobil = createInstance(AppConfig.baseUrlMobil);
+
+console.log(
+  'URL utilizada por ApiMobil:',
+  ApiMobil.defaults.baseURL
+);

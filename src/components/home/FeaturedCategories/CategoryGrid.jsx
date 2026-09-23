@@ -10,7 +10,11 @@ import { getDisdelImageUrl } from 'utils/imageUrl';
 import OptimizedImage from 'components/ui/OptimizedImage/OptimizedImage';
 
 const CategoryGrid = ({ isLoading: isLoadingProp }) => {
-  const { data: menuData, isLoading: isLoadingMenu } = useMenu();
+  const {
+    data: menuData,
+    isLoading: isLoadingMenu,
+    isError: isMenuError
+  } = useMenu();
   const { data: bannerData, isLoading: isLoadingBanners } = useBanners();
   
   const loading = isLoadingProp || isLoadingMenu || isLoadingBanners;
@@ -40,11 +44,11 @@ const CategoryGrid = ({ isLoading: isLoadingProp }) => {
     });
   };
   
-  if (loading) {
+  if (loading || isMenuError) {
     return (
       <section className="cgs-section">
       <h2 className="cgs-title">Categorías Destacadas</h2>
-      <div className="cgs-skeleton-grid"> 
+      <div className={`cgs-skeleton-grid${isMenuError ? ' is-static' : ''}`}>
           {[1, 2, 3, 4, 5].map((i) => (
             <div key={i} className="cgs-item-skeleton">
               <Skeleton width="100%" className="cgs-image-skeleton" style={{ borderRadius: '20px' }} />

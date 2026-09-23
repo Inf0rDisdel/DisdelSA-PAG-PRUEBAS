@@ -1,7 +1,9 @@
 .pdp-container {
-  max-width: 1350px;
+  width: 100%;
+  max-width: var(--site-max-width);
   margin: 0 auto;
   padding: 30px 20px;
+  box-sizing: border-box;
   color: #333;
 }
 

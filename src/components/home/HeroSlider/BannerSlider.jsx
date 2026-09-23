@@ -126,7 +126,15 @@ const BannerSlider = () => {
     );
   }
 
-  if (isError || displayBanners.length === 0) return null;
+  // Una respuesta vacía no debe hacer desaparecer 270 px de contenido y
+  // provocar un salto acumulado en todo lo que aparece debajo.
+  if (isError || displayBanners.length === 0) {
+    return (
+      <div className="banner-slider-container" ref={containerRef} aria-hidden="true">
+        <div className="skeleton-shimmer is-static" style={{ width: '100%', height: '100%', borderRadius: '15px' }}></div>
+      </div>
+    );
+  }
 
   const renderBanner = (banner) => {
     if (!banner) return null;

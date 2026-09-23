@@ -19,13 +19,21 @@ const PromoNescafe = () => {
   // 🚀 EVITAR CLS: Mientras carga, mostramos el espacio reservado (Skeleton)
   if (isLoading) {
     return (
-      <div className="promo-nescafe-wrapper skeleton-wrapper">
-         <div className="promo-nescafe-container-skeleton"></div>
-      </div>
+      <section className="promo-nescafe-wrapper skeleton-wrapper" aria-hidden="true">
+        <div className="promo-nescafe-title-skeleton" />
+        <div className="promo-nescafe-container-skeleton" />
+      </section>
     );
   }
 
-  if (isError || (!bannerPrincipal && !bannerSecundario)) return null;
+  if (isError || (!bannerPrincipal && !bannerSecundario)) {
+    return (
+      <section className="promo-nescafe-wrapper skeleton-wrapper is-static" aria-hidden="true">
+        <div className="promo-nescafe-title-skeleton" />
+        <div className="promo-nescafe-container-skeleton" />
+      </section>
+    );
+  }
 
   return (
     <div className="promo-nescafe-wrapper" aria-label='Promocion Nescafé'>

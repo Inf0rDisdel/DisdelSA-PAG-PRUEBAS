@@ -37,7 +37,15 @@ const PromoLayout = () => {
     }
   };
 
-  if (isLoading || isError || !banners.promoGrid?.length) return null;
+  if (isLoading || isError || !banners?.promoGrid?.length) {
+    return (
+      <section className={`pl-section pl-section--placeholder${isError ? ' is-static' : ''}`} aria-hidden="true">
+        <div className="pl-grid-container">
+          {[1, 2, 3, 4].map((item) => <div className="pl-card pl-card--skeleton" key={item} />)}
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section className="pl-section">

@@ -1,0 +1,39 @@
+# Disdel Guatemala
+
+> Disdel, S.A. distribuye suministros de limpieza profesional, higiene institucional, protección personal, cafetería, ferretería y productos para empresas en Guatemala.
+
+Este archivo resume las secciones públicas principales de disdelsa.com. El catálogo muestra productos para cotización; la disponibilidad, presentación y condiciones comerciales deben confirmarse directamente con Disdel.
+
+## Sitio oficial
+
+- [Inicio de Disdel](https://disdelsa.com/): categorías destacadas, aliados comerciales y productos recomendados.
+- [Quiénes somos](https://disdelsa.com/quienes-somos): información corporativa de Disdel, S.A.
+- [Ubicaciones](https://disdelsa.com/ubicaciones): oficinas y puntos de atención.
+- [Centro de ayuda](https://disdelsa.com/ayuda): orientación y canales de contacto.
+- [Política de privacidad](https://disdelsa.com/politicas-de-privacidad): tratamiento y protección de datos.
+
+## Categorías principales
+
+- [Baños e higiene](https://disdelsa.com/categoria/banos-e-higiene)
+- [Botiquín](https://disdelsa.com/categoria/botiquin)
+- [Cafetería](https://disdelsa.com/categoria/cafeteria)
+- [Equipo de protección personal](https://disdelsa.com/categoria/epp)
+- [Ferretería](https://disdelsa.com/categoria/ferreteria)
+- [Herramientas para limpieza](https://disdelsa.com/categoria/herramientas-para-limpieza)
+- [Papelería](https://disdelsa.com/categoria/papeleria)
+- [Químicos para limpieza](https://disdelsa.com/categoria/quimicos-para-limpieza)
+
+## Marcas destacadas
+
+- [3M](https://disdelsa.com/marca/3m)
+- [Kimberly-Clark Professional](https://disdelsa.com/marca/kimberly-clark-professional)
+- [Wiese](https://disdelsa.com/marca/wiese)
+
+## Recursos para rastreo
+
+- [Mapa del sitio XML](https://disdelsa.com/sitemap.xml): inventario de URLs públicas y canónicas.
+- [Directivas para rastreadores](https://disdelsa.com/robots.txt): permisos y exclusiones de rastreo.
+
+## Alcance
+
+Las páginas de carrito, inicio de sesión, búsqueda interna y MyBusiness son procesos interactivos o privados y no forman parte de esta guía pública. Para información comercial vigente, utilice los canales oficiales publicados en el sitio.

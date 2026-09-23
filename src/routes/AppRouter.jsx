@@ -39,6 +39,7 @@ const CartPage = lazy(() => import('pages/cart/CartPages'));
 
 const AboutUs = lazy(() => import('pages/info/AboutUs'));
 const Ayuda = lazy(() => import('pages/info/Ayuda'));
+const Comentarios = lazy(() => import('pages/Comentarios/ComentariosPage'));
 const Locations = lazy(() => import('pages/info/Locations'));
 const PrivacyPolicy = lazy(() => import('pages/info/PrivacyPolicy'));
 
@@ -124,6 +125,7 @@ const AppRouter = () => {
 
         {/* AYUDA */}
         <Route path="/ayuda"element={withSuspense(Ayuda)}/>
+        <Route path='/opiniones' element={withSuspense(Comentarios)} />
 
         {/* UBICACIONES */}
         <Route path="/ubicaciones"element={withSuspense(Locations)}/>

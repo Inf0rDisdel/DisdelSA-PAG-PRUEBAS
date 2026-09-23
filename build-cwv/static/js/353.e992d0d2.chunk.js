@@ -1,0 +1,2 @@
+"use strict";(globalThis.webpackChunkdisdel_tienda=globalThis.webpackChunkdisdel_tienda||[]).push([[353],{6353(i,d,e){e.r(d),e.d(d,{default:()=>a});e(5043);var s=e(579);const a=()=>(0,s.jsx)("div",{children:(0,s.jsx)("h2",{children:"Iniciar Sesi\xf3n"})})}}]);
+//# sourceMappingURL=353.e992d0d2.chunk.js.map

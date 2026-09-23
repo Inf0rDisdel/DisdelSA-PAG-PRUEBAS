@@ -34,6 +34,21 @@
   width: 100%;
 }
 
+.pl-card--skeleton {
+  background: linear-gradient(90deg, #f0f2f5 25%, #e4e9ef 50%, #f0f2f5 75%);
+  background-size: 200% 100%;
+  animation: pl-shimmer 1.5s linear infinite;
+}
+
+.pl-section--placeholder.is-static .pl-card--skeleton {
+  animation: none;
+}
+
+@keyframes pl-shimmer {
+  from { background-position: 200% 0; }
+  to { background-position: -200% 0; }
+}
+
 .pl-card:hover {
   transform: translateY(-5px); 
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
