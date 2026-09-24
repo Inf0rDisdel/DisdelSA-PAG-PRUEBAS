@@ -357,7 +357,6 @@ const FormularioOpinionGeneral = ({
             value={formulario.Comentario}
             onChange={actualizarCampo}
             placeholder="Cuéntanos cómo fue tu experiencia con Disdel..."
-            minLength={20}
             maxLength={1000}
             rows={5}
             required

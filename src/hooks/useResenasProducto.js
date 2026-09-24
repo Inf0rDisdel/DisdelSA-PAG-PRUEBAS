@@ -4,6 +4,7 @@ import {
 } from '@tanstack/react-query';
 
 import { ApiMobil } from '../api/apiInstance';
+import { AppConfig } from '../config/AppConfig';
 
 const normalizarIdProducto = (idProducto) => {
   if (idProducto === null || idProducto === undefined) {
@@ -60,6 +61,7 @@ const crearResenaProducto = async ({
   }
 
   const cuerpo = {
+    IdCompañia: AppConfig.idCompania,
     NombrePublico: datosResena.NombrePublico,
     Correo: datosResena.Correo,
     Calificacion: Number(datosResena.Calificacion),

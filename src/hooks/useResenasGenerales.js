@@ -4,6 +4,7 @@ import {
 } from '@tanstack/react-query';
 
 import { ApiMobil } from '../api/apiInstance';
+import { AppConfig } from '../config/AppConfig';
 
 const obtenerResenasGenerales = async () => {
   const { data } = await ApiMobil.get(
@@ -15,6 +16,7 @@ const obtenerResenasGenerales = async () => {
 
 const crearResenaGeneral = async (datosResena) => {
   const cuerpo = {
+    IdCompañia: AppConfig.idCompania,
     NombrePublico: datosResena.NombrePublico.trim(),
     Correo: datosResena.Correo.trim(),
     Calificacion: Number(datosResena.Calificacion),

@@ -28,8 +28,8 @@ const validarFormulario = (formulario) => {
     errores.Calificacion = 'Selecciona una calificación.';
   }
 
-  if (formulario.Comentario.trim().length < 20) {
-    errores.Comentario = 'El comentario debe contener al menos 20 caracteres.';
+  if (!formulario.Comentario.trim()) {
+    errores.Comentario = 'Escribe un comentario.';
   }
 
   return errores;
@@ -171,7 +171,6 @@ const FormularioResenaProducto = ({ estaEnviando, onEnviar }) => {
         <textarea
           name="Comentario"
           rows="4"
-          minLength="20"
           maxLength="1000"
           placeholder="Comparte tu experiencia con este producto..."
           value={formulario.Comentario}

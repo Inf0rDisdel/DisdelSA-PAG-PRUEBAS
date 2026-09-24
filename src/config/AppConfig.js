@@ -1,4 +1,4 @@
-const estoyEnModoLocal = false; 
+const estoyEnModoLocal = true; 
 
 const URLs = {
     local: {
@@ -18,6 +18,7 @@ const URLs = {
 };
 
 export const AppConfig = {
+    idCompania: 1007,
     baseUrlVentas: estoyEnModoLocal ? URLs.local.ventas : URLs.produccion.ventas,
     baseUrlSuscripcion: estoyEnModoLocal ? URLs.local.suscripcion : URLs.produccion.suscripcion,
     baseUrlMaestros: estoyEnModoLocal ? URLs.local.maestros : URLs.produccion.maestros,
