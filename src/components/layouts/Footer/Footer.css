@@ -13,10 +13,32 @@
 
 /* 🚀 EL CAMBIO MAESTRO: Todo el fondo del Footer ahora es el azul oficial de Disdel */
 .footer-wrapper {
-    background-color: #135eab !important; 
+    /* El quiebre coincide con el inicio del panel derecho de 320px,
+       sin modificar el ancho global del contenido. */
+    background:
+        radial-gradient(circle at calc(100% + 30px) -25px, rgba(100, 190, 244, .23) 0 165px, transparent 166px),
+        radial-gradient(circle at calc(50% + 550px) 110%, rgba(181, 224, 249, .62) 0 150px, transparent 151px),
+        linear-gradient(90deg, #135eab 0, #135eab calc(50% + 380px), #f5f9fd calc(50% + 380px), #f5f9fd 100%) !important;
     padding: 30px 15px;
     position: relative;
     overflow: hidden;
+}
+
+/* Ondas suaves en el área clara: solo decoración CSS, sin imágenes extra. */
+.footer-wrapper::after {
+    position: absolute;
+    inset: 0 0 0 calc(50% + 380px);
+    z-index: 0;
+    content: '';
+    pointer-events: none;
+    background:
+        linear-gradient(145deg, transparent 0 30%, rgba(255, 255, 255, .78) 30.5% 39%, transparent 39.5% 100%),
+        linear-gradient(25deg, transparent 0 56%, rgba(216, 237, 250, .58) 56.5% 68%, transparent 68.5% 100%);
+}
+
+.footer-content-area {
+    position: relative;
+    z-index: 1;
 }
 
 /* 🚀 ALINEACIÓN DE CONTENEDORES */
@@ -76,12 +98,25 @@
 }
 
 .footer-column h3 {
+    position: relative;
     font-size: 0.95rem;
     font-weight: 700;
     margin-bottom: 15px;
+    padding-bottom: 11px;
     text-transform: uppercase;
     letter-spacing: 1px;
     color: #ffffff; 
+}
+
+.footer-column h3::after {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 34px;
+    height: 3px;
+    content: '';
+    background: #68c8f5;
+    border-radius: 999px;
 }
 
 .footer-column ul {
@@ -157,6 +192,7 @@
     height: auto !important; /* Auto para que herede la altura del stretch del padre */
     box-sizing: border-box !important;
     padding-left: 30px !important; /* Espacio después de la línea divisoria vertical */
+    background: transparent;
 }
 
 .products-text {
@@ -165,7 +201,7 @@
     left: 20px; 
     font-size: 1.5rem;
     font-weight: bold;
-    color: #ffffff !important; /* Texto en blanco para fondo azul */
+    color: #075eaa !important;
     line-height: 1.2;
 }
 
@@ -173,13 +209,13 @@
     font-size: 2.2rem;
     font-weight: 900;
     margin-right: 8px; 
-    color: #ffffff !important;
+    color: #075eaa !important;
 }
 
 .products-text small {
     font-size: 1.1rem;
     font-weight: 600;
-    color: #e6f2ff !important;
+    color: #4d7092 !important;
 }
 
 .mascot {
@@ -227,7 +263,7 @@
 }
 
 .footer-copyright p {
-    color: #e6f2ff !important; /* Color claro legible sobre el azul */
+    color: #4d7092 !important;
     font-size: 0.85rem;
     margin: 0;
 }
@@ -236,6 +272,14 @@
 /*                     RESPONSIVE DESIGN                   */
 /* ======================================================= */
 @media (max-width: 1200px) {
+    .footer-wrapper {
+        background: #135eab !important;
+    }
+
+    .footer-wrapper::after {
+        display: none;
+    }
+
     .footer-content-area {
         flex-direction: column;
         align-items: center;

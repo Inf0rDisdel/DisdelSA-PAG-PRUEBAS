@@ -115,6 +115,8 @@
 }
 
 .product-detail-id {
+  display: block;
+  margin-top: 6px;
   font-size: 11px;
   color: #135eab;
   font-weight: 550;

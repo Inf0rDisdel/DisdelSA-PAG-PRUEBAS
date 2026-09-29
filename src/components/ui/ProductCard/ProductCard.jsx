@@ -8,6 +8,7 @@ import { fetchProductDetail } from 'hooks/useProductDetail';
 import { createSlug } from 'utils/slugify';
 import { getDisdelImageUrl } from 'utils/imageUrl';
 import OptimizedImage from 'components/ui/OptimizedImage/OptimizedImage';
+import ProductRating from 'components/ui/ProductRating/ProductRating';
 import './ProductCard.css';
 
 const ProductCard = memo(({ product, index, priority }) => {
@@ -106,6 +107,9 @@ const ProductCard = memo(({ product, index, priority }) => {
         <div className="product-info-top">
           <span className="brand-tag">{Marca || Categoria || 'Disdel'}</span>
           <h3 className="product-title">{Descripcion}</h3>
+          <ProductRating
+            rating={product.CalificacionPromedio ?? product.calificacionPromedio}
+          />
           <span className="product-detail-id">Disdel # {IdProducto}</span>
         </div>
       </Link>

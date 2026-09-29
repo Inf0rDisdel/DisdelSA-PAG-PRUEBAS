@@ -18,6 +18,7 @@ import { getProductSchema } from 'utils/schemas/productSchema';
 import { optimizedSeoData } from 'utils/SEO/optimizedSeo';
 import RelatedProducts from 'components/products/RelatedProducts';
 import ResenasProducto from 'components/Resenas/ResenasProducto';
+import ProductRating from 'components/ui/ProductRating/ProductRating';
 
 const isValidImage = (imgName) => {
   if (!imgName) return false;
@@ -36,7 +37,6 @@ const ProductDetailPage = () => {
   const { data: product, isLoading, isError} = useProductDetail(cleanIdFromUrl);
   const {
     resenas,
-    resumen,
     estaCargando: estaCargandoResenas,
     estaEnviando: estaEnviandoResena,
     enviarResena
@@ -209,6 +209,46 @@ const ProductDetailPage = () => {
     if (!product || !product.Unidad || !product.Empaque) return false;
     return product.Unidad.trim().toLowerCase() !== product.Empaque.trim().toLowerCase();
   }, [product]);
+
+  // Las reseñas ya cargadas son la fuente de verdad visual. Mientras la API de
+  // detalle devuelve el resumen agregado en cero, calculamos el total y el
+  // promedio desde las reseñas públicas; los valores del producto quedan como
+  // respaldo para productos cuyo listado de reseñas aún no esté disponible.
+  const resumenProducto = useMemo(() => {
+    const resenasPublicadas = Array.isArray(resenas) ? resenas : [];
+    const calificaciones = resenasPublicadas
+      .map((resena) => Number(resena?.Calificacion ?? resena?.calificacion))
+      .filter((calificacion) =>
+        Number.isFinite(calificacion) && calificacion >= 1 && calificacion <= 5
+      );
+
+    const totalDesdeResenas = calificaciones.length;
+    const promedioDesdeResenas = totalDesdeResenas > 0
+      ? Number(
+        (
+          calificaciones.reduce((suma, calificacion) => suma + calificacion, 0)
+          / totalDesdeResenas
+        ).toFixed(1)
+      )
+      : null;
+
+    const promedioApi = Number(
+      product?.CalificacionPromedio ?? product?.calificacionPromedio
+    );
+    const totalApi = Number(product?.TotalComentarios ?? product?.totalComentarios);
+
+    return {
+      TotalResenas: totalDesdeResenas > 0
+        ? totalDesdeResenas
+        : (Number.isFinite(totalApi) && totalApi > 0 ? totalApi : 0),
+      Promedio: promedioDesdeResenas ?? (
+        Number.isFinite(promedioApi) && promedioApi > 0 ? promedioApi : 0
+      ),
+    };
+  }, [product, resenas]);
+
+  const calificacionProducto = resumenProducto.Promedio;
+  const totalComentariosProducto = resumenProducto.TotalResenas;
 
   useEffect(() => {
     if (product) {
@@ -411,6 +451,13 @@ const ProductDetailPage = () => {
               </div>
       
               <h1 className="pdp-title">{product.Descripcion}</h1>
+              <ProductRating
+                rating={calificacionProducto}
+                total={totalComentariosProducto}
+                variant="detail"
+                showScore
+                showTotal
+              />
               <div className="pdp-sku-row">
               <span className="pdp-sku">Código: <strong>{product.IdProducto}</strong></span>
               <span className="pdp-stock-status in-stock">
@@ -611,7 +658,7 @@ const ProductDetailPage = () => {
       <ResenasProducto
         idProducto={product.IdProducto}
         resenas={resenas}
-        resumen={resumen}
+        resumen={resumenProducto}
         estaCargando={estaCargandoResenas}
         estaEnviando={estaEnviandoResena}
         onEnviarResena={enviarResena}

@@ -1,6 +1,7 @@
 import {
   useMutation,
   useQuery,
+  useQueryClient,
 } from '@tanstack/react-query';
 
 import { ApiMobil } from '../api/apiInstance';
@@ -26,28 +27,6 @@ const obtenerResenasProducto = async (idProducto) => {
   );
 
   return Array.isArray(data) ? data : [];
-};
-
-const obtenerResumenResenasProducto = async (idProducto) => {
-  const codigoProducto = normalizarIdProducto(idProducto);
-
-  if (!codigoProducto) {
-    return {
-      TotalResenas: 0,
-      Promedio: 0,
-    };
-  }
-
-  const { data } = await ApiMobil.get(
-    `/api/PaginaWeb/GetResumenResenasProducto/${encodeURIComponent(
-      codigoProducto
-    )}`
-  );
-
-  return {
-    TotalResenas: Number(data?.TotalResenas ?? 0),
-    Promedio: Number(data?.Promedio ?? 0),
-  };
 };
 
 const crearResenaProducto = async ({
@@ -82,6 +61,7 @@ const crearResenaProducto = async ({
 };
 
 export const useResenasProducto = (idProducto) => {
+  const queryClient = useQueryClient();
   const codigoProducto = normalizarIdProducto(idProducto);
   const consultaHabilitada = Boolean(codigoProducto);
 
@@ -95,44 +75,31 @@ export const useResenasProducto = (idProducto) => {
     refetchOnWindowFocus: false,
   });
 
-  const consultaResumen = useQuery({
-    queryKey: ['resumen-resenas-producto', codigoProducto],
-    queryFn: () =>
-      obtenerResumenResenasProducto(codigoProducto),
-    enabled: consultaHabilitada,
-    staleTime: 1000 * 60 * 2,
-    gcTime: 1000 * 60 * 30,
-    retry: 1,
-    refetchOnWindowFocus: false,
-  });
-
   const crearResena = useMutation({
     mutationFn: (datosResena) =>
       crearResenaProducto({
         idProducto: codigoProducto,
         datosResena,
       }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ['resenas-producto', codigoProducto],
+      });
+
+      queryClient.invalidateQueries({
+        queryKey: ['producto-detalle', codigoProducto.toLowerCase()],
+      });
+    },
   });
 
   return {
     resenas: consultaResenas.data ?? [],
 
-    resumen: consultaResumen.data ?? {
-      TotalResenas: 0,
-      Promedio: 0,
-    },
+    estaCargando: consultaResenas.isLoading,
 
-    estaCargando:
-      consultaResenas.isLoading ||
-      consultaResumen.isLoading,
+    ocurrioError: consultaResenas.isError,
 
-    ocurrioError:
-      consultaResenas.isError ||
-      consultaResumen.isError,
-
-    error:
-      consultaResenas.error ||
-      consultaResumen.error,
+    error: consultaResenas.error,
 
     enviarResena: crearResena.mutateAsync,
     estaEnviando: crearResena.isPending,
