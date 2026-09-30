@@ -1,4 +1,4 @@
-const estoyEnModoLocal = true; 
+const estoyEnModoLocal = false; 
 
 const URLs = {
     local: {

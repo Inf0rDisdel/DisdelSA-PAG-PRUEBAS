@@ -860,6 +860,13 @@
     <loc>https://disdelsa.com/producto/10232/cinta-de-empaque-transparente-500-yds</loc>
   </url>
   <url>
+    <loc>https://disdelsa.com/producto/10234/marcador-permanente-sharpie-pfino-negro</loc>
+    <image:image>
+      <image:loc>https://disdelsa.com/imagenes/productos/10234-imgS-22-9-2026-144913-.jpg</image:loc>
+      <image:title>Marcador Permanente SHARPIE P.Fino NEGRO</image:title>
+    </image:image>
+  </url>
+  <url>
     <loc>https://disdelsa.com/producto/10242.4/borrador-con-funda-apunta-gl-2000</loc>
     <image:image>
       <image:loc>https://disdelsa.com/imagenes/productos/10242.4-imgSap-06112019124043.jpg</image:loc>
@@ -7331,13 +7338,6 @@
     <image:image>
       <image:loc>https://disdelsa.com/imagenes/productos/6598-imgS-24-3-2026-164210-.jpg</image:loc>
       <image:title>Papel Higienico Tork 2ply Universal Natural, 250mts *72905505*</image:title>
-    </image:image>
-  </url>
-  <url>
-    <loc>https://disdelsa.com/producto/6600/panuelo-faciales-tork-premium-doble-hoja-72970700</loc>
-    <image:image>
-      <image:loc>https://disdelsa.com/imagenes/productos/6600-imgS-29-5-2023-74447-.jpg</image:loc>
-      <image:title>Pañuelo Faciales TORK Premium Doble Hoja *72970700*</image:title>
     </image:image>
   </url>
   <url>
